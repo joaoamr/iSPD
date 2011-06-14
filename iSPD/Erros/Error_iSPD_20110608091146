@@ -1,9 +1,0 @@
-
----------- error description ----------
-java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key Iconic Model of Simulation
-	at java.util.ResourceBundle.getObject(ResourceBundle.java:374)
-	at java.util.ResourceBundle.getString(ResourceBundle.java:334)
-	at ispd.janela.Principal.<init>(Principal.java:66)
-	at ispd.Main.main(Main.java:50)
-
----------- error description ----------

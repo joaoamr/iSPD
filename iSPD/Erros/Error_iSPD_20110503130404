@@ -1,7 +1,0 @@
-
----------- error description ----------
-java.lang.IllegalArgumentException: input == null!
-	at javax.imageio.ImageIO.read(ImageIO.java:1322)
-	at ispd.Main.main(Main.java:44)
-
----------- error description ----------
