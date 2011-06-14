@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  *
  * @author denison_usuario
  */
-public class Iconico {
+public class IconicoXML {
 
     /**
      * Armazena uma arvore com o conteudo do arquivo xml lido
@@ -66,7 +66,7 @@ public class Iconico {
         //Indicar local do arquivo .dtd
         builder.setEntityResolver(new EntityResolver() {
 
-            InputSource substitute = new InputSource(Iconico.class.getResourceAsStream("iSPD.dtd"));
+            InputSource substitute = new InputSource(IconicoXML.class.getResourceAsStream("iSPD.dtd"));
 
             public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
                 return substitute;
@@ -90,10 +90,10 @@ public class Iconico {
             transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "iSPD.dtd");
             transformer.transform(source, result);
         } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(Iconico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IconicoXML.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         } catch (TransformerException ex) {
-            Logger.getLogger(Iconico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IconicoXML.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -109,7 +109,7 @@ public class Iconico {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.newDocument();
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(Iconico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IconicoXML.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }

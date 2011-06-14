@@ -778,7 +778,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                     try {
                         if (file.getName().endsWith(".imsx")) {
                             //Realizar leitura do arquivoo xml...
-                            Document descricao = ispd.arquivo.Iconico.ler(file);
+                            Document descricao = ispd.arquivo.IconicoXML.ler(file);
                             //Carregar na aDesenho
                             aDesenho = new AreaDesenho(1500, 1500);
                             aDesenho.setDadosSalvos(descricao);
@@ -829,7 +829,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         } else if (aDesenho != null && modificado) {
             //Implementar ações para salvar conteudo
             Document docxml = aDesenho.getDadosASalvar();
-            ispd.arquivo.Iconico.escrever(docxml, arquivoAberto);
+            ispd.arquivo.IconicoXML.escrever(docxml, arquivoAberto);
             appendNotificacao(palavras.getString("model saved"));
             salvarModificacao();
         }
@@ -1094,7 +1094,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
                 //Implementar ações para salvar conteudo
                 Document docxml = aDesenho.getDadosASalvar();
-                ispd.arquivo.Iconico.escrever(docxml, file);
+                ispd.arquivo.IconicoXML.escrever(docxml, file);
                 appendNotificacao(palavras.getString("model saved"));
                 abrirEdição(file);
             }

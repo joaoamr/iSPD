@@ -1132,7 +1132,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
      * @param descricao
      */
     public Document getDadosASalvar() {
-        Document descricao = ispd.arquivo.Iconico.novoDocumento();
+        Document descricao = ispd.arquivo.IconicoXML.novoDocumento();
         Element system = descricao.createElement("system");
         system.setAttribute("version", "1");
         descricao.appendChild(system);
