@@ -1,0 +1,8 @@
+
+---------- error description ----------
+java.lang.ClassCastException: ispd.janela.Icone cannot be cast to Interface.Icone
+	at Interface.AguardaSimulacao.iniciarSimulacao(Unknown Source)
+	at Interface.AguardaSimulacao.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:662)
+
+---------- error description ----------

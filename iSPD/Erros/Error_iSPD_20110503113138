@@ -1,0 +1,33 @@
+
+---------- error description ----------
+java.lang.NullPointerException
+	at javax.swing.ImageIcon.<init>(ImageIcon.java:167)
+	at ispd.janela.componenteauxiliar.Icone.draw(Icone.java:131)
+	at ispd.janela.AreaDesenho.paintComponent(AreaDesenho.java:327)
+	at javax.swing.JComponent.paint(JComponent.java:1029)
+	at javax.swing.JComponent.paintToOffscreen(JComponent.java:5124)
+	at javax.swing.RepaintManager$PaintManager.paintDoubleBuffered(RepaintManager.java:1479)
+	at javax.swing.RepaintManager$PaintManager.paint(RepaintManager.java:1410)
+	at javax.swing.RepaintManager.paint(RepaintManager.java:1224)
+	at javax.swing.JComponent._paintImmediately(JComponent.java:5072)
+	at javax.swing.JComponent.paintImmediately(JComponent.java:4882)
+	at javax.swing.RepaintManager.paintDirtyRegions(RepaintManager.java:785)
+	at javax.swing.RepaintManager.paintDirtyRegions(RepaintManager.java:713)
+	at javax.swing.RepaintManager.seqPaintDirtyRegions(RepaintManager.java:693)
+	at javax.swing.SystemEventQueueUtilities$ComponentWorkRequest.run(SystemEventQueueUtilities.java:125)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:209)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:642)
+	at java.awt.EventQueue.access$000(EventQueue.java:85)
+	at java.awt.EventQueue$1.run(EventQueue.java:603)
+	at java.awt.EventQueue$1.run(EventQueue.java:601)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.AccessControlContext$1.doIntersectionPrivilege(AccessControlContext.java:87)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:612)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:269)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:184)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:174)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:169)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:122)
+
+---------- error description ----------
