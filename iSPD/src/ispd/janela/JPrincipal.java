@@ -1066,6 +1066,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             }
             FileWriter writer;
             try {
+                System.out.println(aDesenho.toString());
                 writer = new FileWriter(file);
                 PrintWriter saida = new PrintWriter(writer, true);
                 saida.print(aDesenho.toString());

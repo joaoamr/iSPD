@@ -72,9 +72,9 @@ public class CargaTaskNode extends GerarCarga {
             String escalonador = valores[0];
             int numeroTarefas = Integer.parseInt(valores[1]);
             double maxComputacao = Double.parseDouble(valores[2]);
-            double minComputacao = Double.parseDouble(valores[2]);
-            double maxComunicacao = Double.parseDouble(valores[2]);
-            double minComunicacao = Double.parseDouble(valores[2]);
+            double minComputacao = Double.parseDouble(valores[3]);
+            double maxComunicacao = Double.parseDouble(valores[4]);
+            double minComunicacao = Double.parseDouble(valores[5]);
             newObj = new CargaTaskNode(aplicacao, proprietario, escalonador,
                     numeroTarefas, maxComputacao, minComputacao, maxComunicacao, minComunicacao);
         } catch (Exception e) {

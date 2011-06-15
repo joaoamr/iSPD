@@ -9,6 +9,7 @@ import ispd.janela.SplashWindow;
 import ispd.janela.JPrincipal;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -25,6 +26,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Locale.setDefault(new Locale("en", "US"));
         //Exibir e armazenar erros durante execução:
         LogExceptions logExceptions = new LogExceptions(null);
         Thread.setDefaultUncaughtExceptionHandler(logExceptions);
