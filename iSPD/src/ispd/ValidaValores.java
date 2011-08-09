@@ -1,6 +1,9 @@
 package ispd;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 public class ValidaValores {
@@ -9,6 +12,16 @@ public class ValidaValores {
      * Lista com os nomes dos icones
      */
     private static HashSet<String> listaNos = new HashSet<String>();
+
+    private static List<String> palavrasReservadasJava =
+    Arrays.asList(
+     "abstract","assert","boolean","break","byte","case","catch","char","class","const"
+     ,"continue","default","do","double","else","enum","extends","false","final","finally"
+     ,"float","for","goto","if","implements","import","instanceof","int","interface"
+     ,"long","native","new","null","package","private","protected","public","return"
+     ,"short","static","strictfp","super","switch","synchronized","this","throw","throws"
+     ,"transient","true","try","void","volatile","while"
+    );
 
     public static void setListaNos(HashSet<String> listaNos) {
         ValidaValores.listaNos = listaNos;
@@ -70,6 +83,21 @@ public class ValidaValores {
             return true;
         } else {
             JOptionPane.showMessageDialog(null, "Please enter a valid name.\nThe name must begin with a letter.", "Warning", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+    }
+
+    /**
+     * Metodo para validar se o nome fornecido pelo usuário corresponde a um nome valido para uma classe Java.
+     */
+    public static boolean validaNomeClasse(String temp) {
+        if (temp.matches("[a-zA-Z$_][a-zA-Z0-9$_]*")) {
+            if(palavrasReservadasJava.contains(temp)){
+                return false;
+            }else{
+                return true;
+            }
+        } else {
             return false;
         }
     }
