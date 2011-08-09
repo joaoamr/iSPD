@@ -11,6 +11,7 @@
 
 package ispd.janela;
 
+import ispd.ValidaValores;
 import java.awt.Toolkit;
 
 /**
@@ -23,6 +24,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
     public GerarEscalonador(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.jScrollPanePrincipal.setViewportView(this.jPanelPasso1);
     }
 
     /** This method is called from within the constructor to
@@ -34,113 +36,116 @@ public class GerarEscalonador extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jPanelPasso1 = new javax.swing.JPanel();
+        jLabelNomeEsc = new javax.swing.JLabel();
+        jTextFieldP1NomeEsc = new javax.swing.JTextField();
+        jLabelLocalArq = new javax.swing.JLabel();
+        jTextFieldLocalArq = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
+        jLabelP1Informacao = new javax.swing.JLabel();
+        jPanelPasso2 = new javax.swing.JPanel();
         jPanelPassos = new javax.swing.JPanel();
         jLabelPassos = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelPasso1 = new javax.swing.JLabel();
+        jLabelPasso2 = new javax.swing.JLabel();
+        jLabelPasso3 = new javax.swing.JLabel();
+        jPanelControle = new javax.swing.JPanel();
+        jButtonVoltar = new javax.swing.JButton();
+        jButtonProximo = new javax.swing.JButton();
+        jButtonFinalizar = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        jScrollPanePrincipal = new javax.swing.JScrollPane();
+
+        jPanelPasso1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Informar nome", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
+
+        jLabelNomeEsc.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelNomeEsc.setText("Nome do escalonador: ");
+
+        jTextFieldP1NomeEsc.setText("NovoEscalonador");
+        jTextFieldP1NomeEsc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldP1NomeEscKeyReleased(evt);
+            }
+        });
+
+        jLabelLocalArq.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelLocalArq.setText("Local do arquivo:");
+
+        jTextFieldLocalArq.setEditable(false);
+        jTextFieldLocalArq.setText("F:\\Projetos\\bibliotecas\\iSPD\\ispd\\externo\\escalonador\\NovoEscalonador.java");
+
+        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
+
+        jLabelP1Informacao.setForeground(new java.awt.Color(204, 0, 0));
+
+        javax.swing.GroupLayout jPanelPasso1Layout = new javax.swing.GroupLayout(jPanelPasso1);
+        jPanelPasso1.setLayout(jPanelPasso1Layout);
+        jPanelPasso1Layout.setHorizontalGroup(
+            jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPasso1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelNomeEsc)
+                    .addComponent(jLabelLocalArq))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldLocalArq, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                    .addComponent(jTextFieldP1NomeEsc, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
+                .addContainerGap())
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+            .addGroup(jPanelPasso1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelP1Informacao, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanelPasso1Layout.setVerticalGroup(
+            jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPasso1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelNomeEsc)
+                    .addComponent(jTextFieldP1NomeEsc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelLocalArq)
+                    .addComponent(jTextFieldLocalArq, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabelP1Informacao, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(56, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanelPasso2Layout = new javax.swing.GroupLayout(jPanelPasso2);
+        jPanelPasso2.setLayout(jPanelPasso2Layout);
+        jPanelPasso2Layout.setHorizontalGroup(
+            jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanelPasso2Layout.setVerticalGroup(
+            jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Novo Escalonador");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Informar nome", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
-
-        jLabel2.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
-        jLabel2.setText("Nome do escalonador: ");
-
-        jTextField1.setText("NovoEscalonador");
-
-        jLabel3.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
-        jLabel3.setText("Local do arquivo:");
-
-        jTextField2.setEditable(false);
-        jTextField2.setText("F:\\Projetos\\bibliotecas\\iSPD\\ispd\\externo\\escalonador\\NovoEscalonador.java");
-
-        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-
-        jButton1.setText("< Voltar");
-        jButton1.setEnabled(false);
-
-        jButton2.setText("Próximo >");
-
-        jButton3.setText("Finalizar");
-        jButton3.setEnabled(false);
-
-        jButton4.setText("Cancelar");
-
-        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
-                .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
-                .addContainerGap(140, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
-                .addContainerGap())
-        );
-
         jPanelPassos.setBackground(new java.awt.Color(255, 255, 255));
         jPanelPassos.setBorder(new javax.swing.border.MatteBorder(null));
 
-        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12));
+        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
         jLabelPassos.setText("<html><b>Passos<br>----------------</b></html>");
 
-        jLabel1.setText("1 - Informar nome");
+        jLabelPasso1.setText("1 - Informar nome");
+
+        jLabelPasso2.setText("2 - Caracteristicas");
+        jLabelPasso2.setEnabled(false);
+
+        jLabelPasso3.setText("3 - Escalonar Tarefas");
+        jLabelPasso3.setEnabled(false);
 
         javax.swing.GroupLayout jPanelPassosLayout = new javax.swing.GroupLayout(jPanelPassos);
         jPanelPassos.setLayout(jPanelPassosLayout);
@@ -150,7 +155,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanelPassosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelPassos)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabelPasso1)
+                    .addComponent(jLabelPasso2)
+                    .addComponent(jLabelPasso3))
                 .addContainerGap())
         );
         jPanelPassosLayout.setVerticalGroup(
@@ -159,9 +166,52 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabelPassos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addContainerGap(241, Short.MAX_VALUE))
+                .addComponent(jLabelPasso1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelPasso2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelPasso3)
+                .addContainerGap(191, Short.MAX_VALUE))
         );
+
+        jButtonVoltar.setText("< Voltar");
+        jButtonVoltar.setEnabled(false);
+
+        jButtonProximo.setText("Próximo >");
+
+        jButtonFinalizar.setText("Finalizar");
+        jButtonFinalizar.setEnabled(false);
+
+        jButtonCancelar.setText("Cancelar");
+
+        javax.swing.GroupLayout jPanelControleLayout = new javax.swing.GroupLayout(jPanelControle);
+        jPanelControle.setLayout(jPanelControleLayout);
+        jPanelControleLayout.setHorizontalGroup(
+            jPanelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelControleLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonVoltar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonProximo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonFinalizar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonCancelar)
+                .addContainerGap(178, Short.MAX_VALUE))
+        );
+        jPanelControleLayout.setVerticalGroup(
+            jPanelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelControleLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonVoltar)
+                    .addComponent(jButtonProximo)
+                    .addComponent(jButtonFinalizar)
+                    .addComponent(jButtonCancelar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -171,21 +221,43 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanelPassos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+                    .addComponent(jPanelControle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelPassos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanelControle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelPassos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextFieldP1NomeEscKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldP1NomeEscKeyReleased
+        // TODO add your handling code here:
+        if(this.jTextFieldP1NomeEsc.getText().equals("")){
+            this.jLabelP1Informacao.setText("Forneça um nome de classe Java válido");
+            this.jButtonProximo.setEnabled(false);
+        }else if(ValidaValores.validaNomeClasse(this.jTextFieldP1NomeEsc.getText())){
+            this.jLabelP1Informacao.setText("");
+            this.jButtonProximo.setEnabled(true);
+        }else{
+            this.jLabelP1Informacao.setText("O nome da classe não é válido");
+            this.jButtonProximo.setEnabled(false);
+        }
+    }//GEN-LAST:event_jTextFieldP1NomeEscKeyReleased
 
     /**
     * @param args the command line arguments
@@ -205,20 +277,26 @@ public class GerarEscalonador extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonFinalizar;
+    private javax.swing.JButton jButtonProximo;
+    private javax.swing.JButton jButtonVoltar;
+    private javax.swing.JLabel jLabelLocalArq;
+    private javax.swing.JLabel jLabelNomeEsc;
+    private javax.swing.JLabel jLabelP1Informacao;
+    private javax.swing.JLabel jLabelPasso1;
+    private javax.swing.JLabel jLabelPasso2;
+    private javax.swing.JLabel jLabelPasso3;
     private javax.swing.JLabel jLabelPassos;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelControle;
+    private javax.swing.JPanel jPanelPasso1;
+    private javax.swing.JPanel jPanelPasso2;
     private javax.swing.JPanel jPanelPassos;
+    private javax.swing.JScrollPane jScrollPanePrincipal;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextFieldLocalArq;
+    private javax.swing.JTextField jTextFieldP1NomeEsc;
     // End of variables declaration//GEN-END:variables
 
 }
