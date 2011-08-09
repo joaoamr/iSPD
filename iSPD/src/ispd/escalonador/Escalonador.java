@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author denison_usuario
- */
+
 package ispd.escalonador;
 
 import ispd.motor.Recurso;
 import ispd.motor.Tarefa;
 import java.util.ArrayList;
-
+/**
+ * Classe abstrata que define os métodos que devem ser implementados por cada política de escalonamento
+ * 
+ * @author diogots
+ */
 public abstract class Escalonador {
     //Atributos
     protected ArrayList<Recurso> recursos;
