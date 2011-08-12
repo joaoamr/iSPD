@@ -12,6 +12,7 @@ package ispd.janela;
 
 import ispd.ValidaValores;
 import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,18 +20,31 @@ import java.awt.Toolkit;
  */
 public class GerarEscalonador extends javax.swing.JDialog {
 
+    private final int INICIAL = 0;
+    private final int VARIAVEL = 1;
+    private final int OPERADOR = 2;
+    private final int ABRE_CHAVE = 3;
+    private final int FECHA_CHAVE = 4;
     private int passoAtual;
     private String caminho;
     private String ordenacao;
     private String formula;
+    private String botaoAtual;
+    private int tipoBotao;
+    private int contaParent;
 
     /** Creates new form GerarEscalonador */
     public GerarEscalonador(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.caminho = "C:\\lol\\";
         this.passoAtual = 1;
+        //Inicio das variaveis para formula
         this.ordenacao = "Random";
         this.formula = "";
+        this.botaoAtual = "";
+        this.tipoBotao = INICIAL;
+        this.contaParent = 0;
+        //Fim das variaveis para formula
         initComponents();
         this.jScrollPanePrincipal.setViewportView(this.jPanelPasso1);
     }
@@ -164,6 +178,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPasso2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Informar as características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
         jLabelP1Informacao1.setForeground(new java.awt.Color(204, 0, 0));
+        jPanelPasso2.add(jLabelP1Informacao1);
 
         jRadioButtonEstatica.setSelected(true);
         jRadioButtonEstatica.setText("Estática");
@@ -172,6 +187,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonEstaticaActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonEstatica);
 
         jRadioButtonDinamica.setText("Dinâmica");
         jRadioButtonDinamica.addActionListener(new java.awt.event.ActionListener() {
@@ -179,10 +195,13 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonDinamicaActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonDinamica);
 
         jLabel1.setText("Busca de informações:");
+        jPanelPasso2.add(jLabel1);
 
         jLabel2.setText("Topologia:");
+        jPanelPasso2.add(jLabel2);
 
         jRadioButtonCentralizada.setSelected(true);
         jRadioButtonCentralizada.setText("Centralizada");
@@ -191,6 +210,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonCentralizadaActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonCentralizada);
 
         jRadioButtonDistribuida.setText("Distribuida");
         jRadioButtonDistribuida.addActionListener(new java.awt.event.ActionListener() {
@@ -198,14 +218,17 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonDistribuidaActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonDistribuida);
 
         jLabelP2Forma.setText("Forma de atualização");
         jLabelP2Forma.setEnabled(false);
+        jPanelPasso2.add(jLabelP2Forma);
 
         jFormattedTextFieldP2Tempo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         jFormattedTextFieldP2Tempo.setText("1");
         jFormattedTextFieldP2Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jFormattedTextFieldP2Tempo.setEnabled(false);
+        jPanelPasso2.add(jFormattedTextFieldP2Tempo);
 
         jRadioButtonP2Tempo.setSelected(true);
         jRadioButtonP2Tempo.setText("Intervalo de tempo");
@@ -216,6 +239,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonP2TempoActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonP2Tempo);
 
         jRadioButtonP2Tarefa.setText("Chegada de tarefa");
         jRadioButtonP2Tarefa.setEnabled(false);
@@ -224,6 +248,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonP2TarefaActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonP2Tarefa);
 
         jRadioButtonP2Misto.setText("Misto");
         jRadioButtonP2Misto.setEnabled(false);
@@ -232,85 +257,12 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 jRadioButtonP2MistoActionPerformed(evt);
             }
         });
+        jPanelPasso2.add(jRadioButtonP2Misto);
 
         jFormattedTextFieldP2Misto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         jFormattedTextFieldP2Misto.setText("1");
         jFormattedTextFieldP2Misto.setEnabled(false);
-
-        javax.swing.GroupLayout jPanelPasso2Layout = new javax.swing.GroupLayout(jPanelPasso2);
-        jPanelPasso2.setLayout(jPanelPasso2Layout);
-        jPanelPasso2Layout.setHorizontalGroup(
-            jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButtonDinamica)
-                            .addComponent(jRadioButtonEstatica)))
-                    .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelPasso2Layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addGap(84, 84, 84)
-                                    .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jRadioButtonCentralizada)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jRadioButtonDistribuida)))
-                                .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                                    .addGap(10, 10, 10)
-                                    .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jRadioButtonP2Tarefa)
-                                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelPasso2Layout.createSequentialGroup()
-                                                .addComponent(jRadioButtonP2Misto)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jFormattedTextFieldP2Misto, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelPasso2Layout.createSequentialGroup()
-                                                .addComponent(jRadioButtonP2Tempo)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jFormattedTextFieldP2Tempo, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabelP2Forma))
-                        .addGap(123, 123, 123)
-                        .addComponent(jLabelP1Informacao1, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        jPanelPasso2Layout.setVerticalGroup(
-            jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                        .addGap(124, 124, 124)
-                        .addComponent(jLabelP1Informacao1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanelPasso2Layout.createSequentialGroup()
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButtonEstatica)
-                            .addComponent(jRadioButtonCentralizada))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButtonDinamica)
-                            .addComponent(jRadioButtonDistribuida))
-                        .addGap(11, 11, 11)
-                        .addComponent(jLabelP2Forma)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButtonP2Tempo)
-                            .addComponent(jFormattedTextFieldP2Tempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButtonP2Tarefa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanelPasso2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButtonP2Misto)
-                            .addComponent(jFormattedTextFieldP2Misto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanelPasso2.add(jFormattedTextFieldP2Misto);
 
         jPanelPasso3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Ordem de atendimento das tarefas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
         jPanelPasso3.setPreferredSize(new java.awt.Dimension(559, 244));
@@ -318,14 +270,10 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelFormula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelFormula.setText("Fórmula:");
 
+        jTextFieldP3Formula.setBackground(new java.awt.Color(255, 255, 255));
         jTextFieldP3Formula.setEditable(false);
-        jTextFieldP3Formula.setFont(new java.awt.Font("Verdana", 1, 11));
+        jTextFieldP3Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
         jTextFieldP3Formula.setText("Random( )");
-        jTextFieldP3Formula.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldP3FormulaActionPerformed(evt);
-            }
-        });
 
         jLabelP1Informacao2.setForeground(new java.awt.Color(204, 0, 0));
 
@@ -341,16 +289,41 @@ public class GerarEscalonador extends javax.swing.JDialog {
         });
 
         jButtonP3Sub.setText("-");
+        jButtonP3Sub.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonP3SubActionPerformed(evt);
+            }
+        });
 
         jButtonP3AbreParent.setText("(");
+        jButtonP3AbreParent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonP3AbreParentActionPerformed(evt);
+            }
+        });
 
         jButtonP3FechaParent.setText(")");
+        jButtonP3FechaParent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonP3FechaParentActionPerformed(evt);
+            }
+        });
 
         jButtonP3Div.setText("/");
+        jButtonP3Div.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonP3DivActionPerformed(evt);
+            }
+        });
 
         jButtonP3Mult.setText("*");
         jButtonP3Mult.setMaximumSize(new java.awt.Dimension(37, 23));
         jButtonP3Mult.setMinimumSize(new java.awt.Dimension(37, 23));
+        jButtonP3Mult.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonP3MultActionPerformed(evt);
+            }
+        });
 
         jButtonP3Voltar.setText("←");
         jButtonP3Voltar.addActionListener(new java.awt.event.ActionListener() {
@@ -372,7 +345,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonP3Div, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(jButtonP3Sub, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonP3Sub, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                     .addComponent(jButtonP3FechaParent, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonP3Voltar)
@@ -383,6 +356,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonP3Voltar, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonP3Add, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -394,9 +368,8 @@ public class GerarEscalonador extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonP3AbreParent)
-                            .addComponent(jButtonP3FechaParent)))
-                    .addComponent(jButtonP3Voltar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(4, Short.MAX_VALUE))
+                            .addComponent(jButtonP3FechaParent))))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Variaveis"));
@@ -463,15 +436,15 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButtonP3NTSubmetidas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
-                            .addComponent(jButtonP3TComputacao, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
+                            .addComponent(jButtonP3NTSubmetidas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                            .addComponent(jButtonP3TComputacao, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButtonP3TComunicacao, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(3, 3, 3)
-                                .addComponent(jButtonP3NTAtendidas, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)))))
+                                .addComponent(jButtonP3NTAtendidas, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -489,7 +462,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonP3NTConcluidas)
                     .addComponent(jButtonP3PComputUser))
-                .addContainerGap(4, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Ordenação"));
@@ -525,26 +498,22 @@ public class GerarEscalonador extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jRadioButtonP3Crescente)
-                .addContainerGap(22, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jRadioButtonP3Decrescente)
-                .addContainerGap())
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jRadioButtonP3Random)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButtonP3Crescente)
+                    .addComponent(jRadioButtonP3Decrescente)
+                    .addComponent(jRadioButtonP3Random))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jRadioButtonP3Crescente)
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addComponent(jRadioButtonP3Decrescente)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addComponent(jRadioButtonP3Random))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jRadioButtonP3Random)
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout jPanelPasso3Layout = new javax.swing.GroupLayout(jPanelPasso3);
@@ -583,8 +552,8 @@ public class GerarEscalonador extends javax.swing.JDialog {
                         .addComponent(jLabelP1Informacao2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelPasso3Layout.createSequentialGroup()
                         .addGroup(jPanelPasso3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, 0, 128, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, 0, 128, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, 0, 129, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, 0, 129, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())))
         );
@@ -632,7 +601,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addComponent(jLabelPasso2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabelPasso3)
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addContainerGap(240, Short.MAX_VALUE))
         );
 
         jButtonVoltar.setText("< Voltar");
@@ -668,7 +637,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addComponent(jButtonFinalizar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonCancelar)
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addContainerGap(309, Short.MAX_VALUE))
         );
         jPanelControleLayout.setVerticalGroup(
             jPanelControleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -741,13 +710,13 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 this.jLabelPasso1.setEnabled(false);
                 this.jLabelPasso2.setEnabled(true);
                 this.passoAtual = 2;
-            break;
+                break;
             case 2:
                 this.jScrollPanePrincipal.setViewportView(this.jPanelPasso3);
                 this.jLabelPasso2.setEnabled(false);
                 this.jLabelPasso3.setEnabled(true);
                 this.passoAtual = 3;
-            break;
+                break;
         }
     }//GEN-LAST:event_jButtonProximoActionPerformed
 
@@ -761,14 +730,14 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 this.jLabelPasso1.setEnabled(true);
                 this.jLabelPasso2.setEnabled(false);
                 this.passoAtual = 1;
-            break;
+                break;
             case 3:
                 this.jScrollPanePrincipal.setViewportView(this.jPanelPasso2);
                 this.jButtonProximo.setEnabled(true);
                 this.jLabelPasso2.setEnabled(true);
                 this.jLabelPasso3.setEnabled(false);
                 this.passoAtual = 2;
-            break;
+                break;
         }
     }//GEN-LAST:event_jButtonVoltarActionPerformed
 
@@ -870,55 +839,114 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
     private void jButtonP3TComputacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3TComputacaoActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [TCP]");
+        pressionarVariavel("[TCP]");
     }//GEN-LAST:event_jButtonP3TComputacaoActionPerformed
 
     private void jButtonP3AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3AddActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" +");
+        pressionarOperador("+");
     }//GEN-LAST:event_jButtonP3AddActionPerformed
 
     private void jButtonP3VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3VoltarActionPerformed
         // TODO add your handling code here:
         String temp[] = this.formula.split(" ");
-        this.formula = "";
-        if(temp!=null){
-            this.formula += temp[0];
-        }
-        for(int i=1; i < temp.length-1; i++){
-            this.formula += " " + temp[i];
+        String operador = "+ - / * ";
+        if (!temp[0].equals("")) {
+            this.botaoAtual = temp[temp.length-1]+" ";
+            if(operador.contains(botaoAtual)){
+                this.tipoBotao = OPERADOR;
+            }else if(botaoAtual.contains("(")){
+                this.tipoBotao = ABRE_CHAVE;
+            }else if(botaoAtual.contains(")")){
+                this.tipoBotao = FECHA_CHAVE;
+            }else{
+                this.tipoBotao = VARIAVEL;
+            }
+            this.formula = "";
+            for(int i=0; i < temp.length-1; i++){
+                this.formula += temp[i]+" ";
+            }
+        }else{
+            this.botaoAtual = "";
+            this.tipoBotao = INICIAL;
+            this.formula = "";
         }
         inserirFormula(null);
     }//GEN-LAST:event_jButtonP3VoltarActionPerformed
 
     private void jButtonP3NTSubmetidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3NTSubmetidasActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [NTS]");
+        pressionarVariavel("[NTS]");
     }//GEN-LAST:event_jButtonP3NTSubmetidasActionPerformed
 
     private void jButtonP3NTConcluidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3NTConcluidasActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [NTC]");
+        pressionarVariavel("[NTC]");
     }//GEN-LAST:event_jButtonP3NTConcluidasActionPerformed
 
     private void jButtonP3NTAtendidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3NTAtendidasActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [NTA]");
+        pressionarVariavel("[NTA]");
     }//GEN-LAST:event_jButtonP3NTAtendidasActionPerformed
 
     private void jButtonP3TComunicacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3TComunicacaoActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [TC]");
+        pressionarVariavel("[TC]");
     }//GEN-LAST:event_jButtonP3TComunicacaoActionPerformed
 
     private void jButtonP3PComputUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3PComputUserActionPerformed
         // TODO add your handling code here:
-        inserirFormula(" [PCU]");
+        pressionarVariavel("[PCU]");
     }//GEN-LAST:event_jButtonP3PComputUserActionPerformed
 
-    private void jTextFieldP3FormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldP3FormulaActionPerformed
+    private void jButtonP3SubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3SubActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldP3FormulaActionPerformed
+        pressionarOperador("-");
+    }//GEN-LAST:event_jButtonP3SubActionPerformed
+
+    private void jButtonP3MultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3MultActionPerformed
+        // TODO add your handling code here:
+        pressionarOperador("*");
+    }//GEN-LAST:event_jButtonP3MultActionPerformed
+
+    private void jButtonP3DivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3DivActionPerformed
+        // TODO add your handling code here:
+        pressionarOperador("/");
+    }//GEN-LAST:event_jButtonP3DivActionPerformed
+
+    private void jButtonP3AbreParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3AbreParentActionPerformed
+        // TODO add your handling code here:
+        switch (this.tipoBotao) {
+            case INICIAL:
+                this.tipoBotao = ABRE_CHAVE;
+                this.botaoAtual = "( ";
+                break;
+            case OPERADOR:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = ABRE_CHAVE;
+                this.botaoAtual = "( ";
+                break;
+            case ABRE_CHAVE:
+                inserirFormula(this.botaoAtual);
+                break;
+        }
+        inserirFormula(null);
+    }//GEN-LAST:event_jButtonP3AbreParentActionPerformed
+
+    private void jButtonP3FechaParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP3FechaParentActionPerformed
+        // TODO add your handling code here:
+        switch (this.tipoBotao) {
+            case VARIAVEL:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = FECHA_CHAVE;
+                this.botaoAtual = ") ";
+                break;
+            case FECHA_CHAVE:
+                inserirFormula(this.botaoAtual);
+                break;
+        }
+        inserirFormula(null);
+    }//GEN-LAST:event_jButtonP3FechaParentActionPerformed
 
     private void setEnableDinamica(boolean b) {
         jLabelP2Forma.setEnabled(b);
@@ -936,6 +964,10 @@ public class GerarEscalonador extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
+                JOptionPane.showMessageDialog(null,
+                        "Concluida as alterações na formula,\n"+
+                        "porem ainda não faz a contagem dos parentes,\n"+
+                        "nem deixa o valor negativo ou possitivo\n");
                 GerarEscalonador dialog = new GerarEscalonador(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
@@ -1007,9 +1039,51 @@ public class GerarEscalonador extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void inserirFormula(String token) {
-        if(token != null){
+        if (token != null) {
             this.formula += token;
         }
-        this.jTextFieldP3Formula.setText(this.ordenacao+"("+this.formula+" )");
+        this.jTextFieldP3Formula.setText(this.ordenacao + "( " + this.formula + this.botaoAtual + ")");
+    }
+
+    private void pressionarOperador(String token) {
+        switch (this.tipoBotao) {
+            case VARIAVEL:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = OPERADOR;
+                this.botaoAtual = token+" ";
+                break;
+            case FECHA_CHAVE:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = OPERADOR;
+                this.botaoAtual = token+" ";
+                break;
+            case OPERADOR:
+                this.botaoAtual = token+" ";
+                break;
+        }
+        inserirFormula(null);
+    }
+
+    private void pressionarVariavel(String token) {
+        switch (this.tipoBotao) {
+            case INICIAL:
+                this.tipoBotao = VARIAVEL;
+                this.botaoAtual = token+" ";
+                break;
+            case OPERADOR:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = VARIAVEL;
+                this.botaoAtual = token+" ";
+                break;
+            case ABRE_CHAVE:
+                inserirFormula(this.botaoAtual);
+                this.tipoBotao = VARIAVEL;
+                this.botaoAtual = token+" ";
+                break;
+            case VARIAVEL:
+                this.botaoAtual = token+" ";
+                break;
+        }
+        inserirFormula(null);
     }
 }
