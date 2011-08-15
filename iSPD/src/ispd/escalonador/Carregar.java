@@ -8,6 +8,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,13 +48,13 @@ public class Carregar {
                 //Escalonador escalonador = (Escalonador) Class.forName("novoescalonador."+nome, true, loader).newInstance();
                 return escalonador;
             } catch (RuntimeException ex) {
-                //Logger.getLogger(CarregarClasses.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Carregar.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException ex) {
-                //Logger.getLogger(CarregarClasses.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Carregar.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
-                //Logger.getLogger(CarregarClasses.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Carregar.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
-                //Logger.getLogger(CarregarClasses.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Carregar.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
