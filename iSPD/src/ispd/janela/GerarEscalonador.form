@@ -247,55 +247,54 @@
           </Border>
         </Property>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[559, 244]"/>
+          <Dimension value="[400, 244]"/>
         </Property>
       </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                          <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                          <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="1">
-                          <EmptySpace max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="1">
                           <Component id="jLabelFormula" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jTextFieldP3Formula" max="32767" attributes="0"/>
                       </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
-                  <Component id="jLabelP1Informacao2" pref="23" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="163" max="-2" attributes="0"/>
+                  <Component id="jLabelP1Informacao2" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabelFormula" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextFieldP3Formula" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jPanel3" max="32767" attributes="1"/>
+                      <Component id="jPanel2" alignment="0" min="0" pref="225" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                           <Component id="jLabelP1Informacao2" min="-2" pref="24" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
-                      <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
-                      <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jPanel1" alignment="1" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -311,9 +310,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldP3Formula">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="11" style="1"/>
@@ -342,46 +338,39 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButtonP3AbreParent" max="32767" attributes="1"/>
-                          <Component id="jButtonP3Mult" max="32767" attributes="1"/>
-                          <Component id="jButtonP3Add" alignment="0" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jButtonP3FechaParent" alignment="0" min="-2" pref="50" max="-2" attributes="2"/>
+                          <Component id="jButtonP3AbreParent" alignment="0" min="-2" pref="50" max="-2" attributes="2"/>
+                          <Component id="jButtonP3Div" alignment="0" pref="50" max="32767" attributes="2"/>
+                          <Component id="jButtonP3Mult" alignment="0" min="-2" pref="50" max="-2" attributes="2"/>
+                          <Component id="jButtonP3Sub" alignment="0" pref="50" max="32767" attributes="2"/>
+                          <Component id="jButtonP3Add" pref="50" max="32767" attributes="2"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButtonP3FechaParent" max="32767" attributes="1"/>
-                          <Component id="jButtonP3Div" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jButtonP3Sub" alignment="0" max="32767" attributes="1"/>
-                      </Group>
+                      <Component id="jButtonP3Voltar" min="-2" pref="52" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButtonP3Voltar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace pref="20" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jButtonP3Add" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonP3Sub" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Component id="jButtonP3Voltar" alignment="1" pref="185" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jButtonP3Add" min="-2" pref="25" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jButtonP3Mult" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonP3Div" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jButtonP3Sub" min="-2" pref="25" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jButtonP3AbreParent" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonP3FechaParent" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                              <Component id="jButtonP3Mult" min="-2" pref="25" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jButtonP3Div" min="-2" pref="25" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jButtonP3AbreParent" pref="25" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jButtonP3FechaParent" pref="25" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jButtonP3Voltar" alignment="1" min="-2" pref="106" max="-2" attributes="1"/>
                       </Group>
                   </Group>
               </Group>
@@ -392,7 +381,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="+"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[37, 23]"/>
+                  <Dimension value="[37, 50]"/>
                 </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[37, 23]"/>
@@ -405,6 +394,9 @@
             <Component class="javax.swing.JButton" name="jButtonP3Sub">
               <Properties>
                 <Property name="text" type="java.lang.String" value="-"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[37, 50]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP3SubActionPerformed"/>
@@ -413,6 +405,9 @@
             <Component class="javax.swing.JButton" name="jButtonP3AbreParent">
               <Properties>
                 <Property name="text" type="java.lang.String" value="("/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[37, 50]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP3AbreParentActionPerformed"/>
@@ -421,6 +416,9 @@
             <Component class="javax.swing.JButton" name="jButtonP3FechaParent">
               <Properties>
                 <Property name="text" type="java.lang.String" value=")"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[37, 50]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP3FechaParentActionPerformed"/>
@@ -429,6 +427,9 @@
             <Component class="javax.swing.JButton" name="jButtonP3Div">
               <Properties>
                 <Property name="text" type="java.lang.String" value="/"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[37, 50]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP3DivActionPerformed"/>
@@ -438,7 +439,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="*"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[37, 23]"/>
+                  <Dimension value="[37, 50]"/>
                 </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[37, 23]"/>
@@ -471,19 +472,18 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButtonP3NTConcluidas" max="32767" attributes="1"/>
-                          <Component id="jButtonP3NTSubmetidas" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jButtonP3TComputacao" alignment="0" pref="63" max="32767" attributes="1"/>
-                          <Component id="jButtonP3Const" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButtonP3NTAtendidas" alignment="1" pref="72" max="32767" attributes="1"/>
-                          <Component id="jButtonP3PComputUser" alignment="1" pref="72" max="32767" attributes="1"/>
-                          <Component id="jButtonP3TComunicacao" alignment="1" pref="72" max="32767" attributes="1"/>
-                          <Component id="jFormattedTextP3Variavel" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Component id="jButtonP3TComputacao" alignment="0" pref="229" max="32767" attributes="1"/>
+                          <Component id="jButtonP3TComunicacao" alignment="0" pref="229" max="32767" attributes="1"/>
+                          <Component id="jButtonP3NTAtendidas" alignment="0" pref="229" max="32767" attributes="1"/>
+                          <Component id="jButtonP3PComputUser" alignment="0" pref="229" max="32767" attributes="1"/>
+                          <Component id="jButtonP3NTSubmetidas" alignment="1" pref="229" max="32767" attributes="1"/>
+                          <Component id="jButtonP3NTConcluidas" alignment="1" pref="229" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jButtonP3Const" min="-2" pref="184" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jFormattedTextP3Variavel" pref="39" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -492,28 +492,24 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace pref="16" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButtonP3TComputacao" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonP3TComunicacao" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jButtonP3TComputacao" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButtonP3TComunicacao" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButtonP3NTSubmetidas" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButtonP3NTAtendidas" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButtonP3NTConcluidas" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButtonP3PComputUser" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButtonP3NTSubmetidas" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonP3NTAtendidas" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonP3Const" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jFormattedTextP3Variavel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jButtonP3NTConcluidas" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jButtonP3Const" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jFormattedTextP3Variavel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="jButtonP3PComputUser" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -521,7 +517,7 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="jButtonP3TComputacao">
               <Properties>
-                <Property name="text" type="java.lang.String" value="TCP"/>
+                <Property name="text" type="java.lang.String" value="Tamanho Computacional - TCP"/>
                 <Property name="toolTipText" type="java.lang.String" value="Tamanho Computacional"/>
               </Properties>
               <Events>
@@ -530,7 +526,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP3TComunicacao">
               <Properties>
-                <Property name="text" type="java.lang.String" value="TC"/>
+                <Property name="text" type="java.lang.String" value="Tamanho de Comunica&#xe7;&#xe3;o - TC"/>
                 <Property name="toolTipText" type="java.lang.String" value="Tamanho da Comunica&#xe7;&#xe3;o"/>
               </Properties>
               <Events>
@@ -539,7 +535,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP3NTSubmetidas">
               <Properties>
-                <Property name="text" type="java.lang.String" value="NTS"/>
+                <Property name="text" type="java.lang.String" value="Numero de Tarefas Submetidas - NTS"/>
                 <Property name="toolTipText" type="java.lang.String" value="N&#xfa;mero de tarefas submetidas pelo usu&#xe1;rio"/>
               </Properties>
               <Events>
@@ -548,7 +544,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP3NTAtendidas">
               <Properties>
-                <Property name="text" type="java.lang.String" value="NTA"/>
+                <Property name="text" type="java.lang.String" value="Numero de Tarefas Atendidas - NTA"/>
                 <Property name="toolTipText" type="java.lang.String" value="N&#xfa;mero de tarefas atendidas do usu&#xe1;rio"/>
               </Properties>
               <Events>
@@ -557,7 +553,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP3NTConcluidas">
               <Properties>
-                <Property name="text" type="java.lang.String" value="NTC"/>
+                <Property name="text" type="java.lang.String" value="Numero de Tarefas Conclu&#xed;das - NTC"/>
                 <Property name="toolTipText" type="java.lang.String" value="N&#xfa;mero de tarefas conclu&#xed;das do usu&#xe1;rio"/>
               </Properties>
               <Events>
@@ -566,7 +562,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP3PComputUser">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PCU"/>
+                <Property name="text" type="java.lang.String" value="Poder Computacional do Usu&#xe1;rio - PCU"/>
                 <Property name="toolTipText" type="java.lang.String" value="Poder computacional do usu&#xe1;rio"/>
               </Properties>
               <Events>
@@ -608,8 +604,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jRadioButtonP3Crescente" min="-2" max="-2" attributes="0"/>
-                          <Component id="jRadioButtonP3Random" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP3Decrescente" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jRadioButtonP3Random" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="12" max="32767" attributes="0"/>
                   </Group>
@@ -620,11 +616,11 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jRadioButtonP3Crescente" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="25" max="32767" attributes="0"/>
-                      <Component id="jRadioButtonP3Decrescente" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jRadioButtonP3Random" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jRadioButtonP3Decrescente" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="jRadioButtonP3Random" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="123" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
