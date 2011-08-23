@@ -69,16 +69,15 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelP1Informacao1 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jFormattedTextFieldP2Tempo = new javax.swing.JFormattedTextField();
-        jRadioButtonP2Tempo = new javax.swing.JRadioButton();
-        jRadioButtonP2Tarefa = new javax.swing.JRadioButton();
-        jRadioButtonP2Misto = new javax.swing.JRadioButton();
+        jRadioButtonP2Saida = new javax.swing.JRadioButton();
         jRadioButtonDistribuida = new javax.swing.JRadioButton();
-        jFormattedTextFieldP2Misto = new javax.swing.JFormattedTextField();
         jRadioButtonDinamica = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         jLabelP2Forma = new javax.swing.JLabel();
         jRadioButtonCentralizada = new javax.swing.JRadioButton();
         jRadioButtonEstatica = new javax.swing.JRadioButton();
+        jRadioButtonP2Tempo = new javax.swing.JRadioButton();
+        jRadioButtonP2Chegada = new javax.swing.JRadioButton();
         jPanelPasso3 = new javax.swing.JPanel();
         jLabelFormula = new javax.swing.JLabel();
         jTextFieldP3Formula = new javax.swing.JTextField();
@@ -150,13 +149,13 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     .addComponent(jLabelLocalArq))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelPasso1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldLocalArq, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                    .addComponent(jTextFieldP1NomeEsc, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
+                    .addComponent(jTextFieldLocalArq, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                    .addComponent(jTextFieldP1NomeEsc, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
                 .addContainerGap())
             .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
             .addGroup(jPanelPasso1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabelP1Informacao, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+                .addComponent(jLabelP1Informacao, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelPasso1Layout.setVerticalGroup(
@@ -178,18 +177,81 @@ public class GerarEscalonador extends javax.swing.JDialog {
         );
 
         jPanelPasso2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Informar as características", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
+        jPanelPasso2.setMinimumSize(new java.awt.Dimension(400, 200));
+        jPanelPasso2.setLayout(null);
 
         jLabelP1Informacao1.setForeground(new java.awt.Color(204, 0, 0));
         jPanelPasso2.add(jLabelP1Informacao1);
+        jLabelP1Informacao1.setBounds(12, 39, 0, 0);
 
         jLabel1.setText("Busca de informações:");
         jPanelPasso2.add(jLabel1);
+        jLabel1.setBounds(17, 32, 108, 14);
 
         jFormattedTextFieldP2Tempo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         jFormattedTextFieldP2Tempo.setText("1");
         jFormattedTextFieldP2Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jFormattedTextFieldP2Tempo.setEnabled(false);
         jPanelPasso2.add(jFormattedTextFieldP2Tempo);
+        jFormattedTextFieldP2Tempo.setBounds(220, 140, 60, 20);
+
+        jRadioButtonP2Saida.setText("Saida de tarefa");
+        jRadioButtonP2Saida.setEnabled(false);
+        jRadioButtonP2Saida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonP2SaidaActionPerformed(evt);
+            }
+        });
+        jPanelPasso2.add(jRadioButtonP2Saida);
+        jRadioButtonP2Saida.setBounds(70, 200, 140, 23);
+        jRadioButtonP2Saida.getAccessibleContext().setAccessibleName("");
+
+        jRadioButtonDistribuida.setText("Distribuida");
+        jRadioButtonDistribuida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonDistribuidaActionPerformed(evt);
+            }
+        });
+        jPanelPasso2.add(jRadioButtonDistribuida);
+        jRadioButtonDistribuida.setBounds(290, 90, 100, 23);
+
+        jRadioButtonDinamica.setText("Dinâmica");
+        jRadioButtonDinamica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonDinamicaActionPerformed(evt);
+            }
+        });
+        jPanelPasso2.add(jRadioButtonDinamica);
+        jRadioButtonDinamica.setBounds(70, 90, 110, 23);
+
+        jLabel2.setText("Topologia:");
+        jPanelPasso2.add(jLabel2);
+        jLabel2.setBounds(270, 40, 50, 14);
+
+        jLabelP2Forma.setText("Forma de atualização");
+        jLabelP2Forma.setEnabled(false);
+        jPanelPasso2.add(jLabelP2Forma);
+        jLabelP2Forma.setBounds(20, 120, 102, 14);
+
+        jRadioButtonCentralizada.setSelected(true);
+        jRadioButtonCentralizada.setText("Centralizada");
+        jRadioButtonCentralizada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonCentralizadaActionPerformed(evt);
+            }
+        });
+        jPanelPasso2.add(jRadioButtonCentralizada);
+        jRadioButtonCentralizada.setBounds(290, 60, 100, 23);
+
+        jRadioButtonEstatica.setSelected(true);
+        jRadioButtonEstatica.setText("Estática");
+        jRadioButtonEstatica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonEstaticaActionPerformed(evt);
+            }
+        });
+        jPanelPasso2.add(jRadioButtonEstatica);
+        jRadioButtonEstatica.setBounds(70, 60, 110, 23);
 
         jRadioButtonP2Tempo.setSelected(true);
         jRadioButtonP2Tempo.setText("Intervalo de tempo");
@@ -201,79 +263,26 @@ public class GerarEscalonador extends javax.swing.JDialog {
             }
         });
         jPanelPasso2.add(jRadioButtonP2Tempo);
+        jRadioButtonP2Tempo.setBounds(70, 140, 140, 23);
 
-        jRadioButtonP2Tarefa.setText("Chegada de tarefa");
-        jRadioButtonP2Tarefa.setEnabled(false);
-        jRadioButtonP2Tarefa.addActionListener(new java.awt.event.ActionListener() {
+        jRadioButtonP2Chegada.setText("Chegada de tarefa");
+        jRadioButtonP2Chegada.setEnabled(false);
+        jRadioButtonP2Chegada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonP2TarefaActionPerformed(evt);
+                jRadioButtonP2ChegadaActionPerformed(evt);
             }
         });
-        jPanelPasso2.add(jRadioButtonP2Tarefa);
-
-        jRadioButtonP2Misto.setText("Misto");
-        jRadioButtonP2Misto.setEnabled(false);
-        jRadioButtonP2Misto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonP2MistoActionPerformed(evt);
-            }
-        });
-        jPanelPasso2.add(jRadioButtonP2Misto);
-
-        jRadioButtonDistribuida.setText("Distribuida");
-        jRadioButtonDistribuida.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonDistribuidaActionPerformed(evt);
-            }
-        });
-        jPanelPasso2.add(jRadioButtonDistribuida);
-
-        jFormattedTextFieldP2Misto.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
-        jFormattedTextFieldP2Misto.setText("1");
-        jFormattedTextFieldP2Misto.setEnabled(false);
-        jPanelPasso2.add(jFormattedTextFieldP2Misto);
-
-        jRadioButtonDinamica.setText("Dinâmica");
-        jRadioButtonDinamica.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonDinamicaActionPerformed(evt);
-            }
-        });
-        jPanelPasso2.add(jRadioButtonDinamica);
-
-        jLabel2.setText("Topologia:");
-        jPanelPasso2.add(jLabel2);
-
-        jLabelP2Forma.setText("Forma de atualização");
-        jLabelP2Forma.setEnabled(false);
-        jPanelPasso2.add(jLabelP2Forma);
-
-        jRadioButtonCentralizada.setSelected(true);
-        jRadioButtonCentralizada.setText("Centralizada");
-        jRadioButtonCentralizada.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonCentralizadaActionPerformed(evt);
-            }
-        });
-        jPanelPasso2.add(jRadioButtonCentralizada);
-
-        jRadioButtonEstatica.setSelected(true);
-        jRadioButtonEstatica.setText("Estática");
-        jRadioButtonEstatica.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonEstaticaActionPerformed(evt);
-            }
-        });
-        jPanelPasso2.add(jRadioButtonEstatica);
+        jPanelPasso2.add(jRadioButtonP2Chegada);
+        jRadioButtonP2Chegada.setBounds(70, 170, 140, 23);
 
         jPanelPasso3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Ordem de atendimento das tarefas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
-        jPanelPasso3.setPreferredSize(new java.awt.Dimension(400, 244));
+        jPanelPasso3.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        jLabelFormula.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelFormula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelFormula.setText("Fórmula:");
 
         jTextFieldP3Formula.setEditable(false);
-        jTextFieldP3Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
+        jTextFieldP3Formula.setFont(new java.awt.Font("Verdana", 1, 11));
         jTextFieldP3Formula.setText("Random( )");
 
         jLabelP1Informacao2.setForeground(new java.awt.Color(204, 0, 0));
@@ -357,9 +366,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(109, 109, 109)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonP3Voltar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                    .addComponent(jButtonP3Voltar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButtonP3Add, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -369,9 +378,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonP3Div, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonP3AbreParent, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addComponent(jButtonP3AbreParent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonP3FechaParent, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))))
+                        .addComponent(jButtonP3FechaParent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Variaveis"));
@@ -441,22 +450,22 @@ public class GerarEscalonador extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonP3TComputacao, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                    .addComponent(jButtonP3TComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                    .addComponent(jButtonP3NTAtendidas, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                    .addComponent(jButtonP3PComputUser, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                    .addComponent(jButtonP3NTSubmetidas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                    .addComponent(jButtonP3NTConcluidas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                    .addComponent(jButtonP3TComputacao, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(jButtonP3TComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(jButtonP3NTAtendidas, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(jButtonP3PComputUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonP3NTSubmetidas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(jButtonP3NTConcluidas, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jButtonP3Const, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jFormattedTextP3Variavel, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)))
+                        .addComponent(jFormattedTextP3Variavel, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(37, Short.MAX_VALUE)
                 .addComponent(jButtonP3TComputacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonP3TComunicacao)
@@ -512,7 +521,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     .addComponent(jRadioButtonP3Crescente)
                     .addComponent(jRadioButtonP3Decrescente)
                     .addComponent(jRadioButtonP3Random))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -523,7 +532,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addComponent(jRadioButtonP3Decrescente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jRadioButtonP3Random)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanelPasso3Layout = new javax.swing.GroupLayout(jPanelPasso3);
@@ -532,17 +541,17 @@ public class GerarEscalonador extends javax.swing.JDialog {
             jPanelPasso3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelPasso3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelPasso3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanelPasso3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelPasso3Layout.createSequentialGroup()
                         .addComponent(jLabelFormula)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldP3Formula))
+                        .addComponent(jTextFieldP3Formula, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE))
                     .addGroup(jPanelPasso3Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(163, 163, 163)
                 .addComponent(jLabelP1Informacao2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -557,11 +566,11 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelPasso3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, 0, 225, Short.MAX_VALUE)
                     .addGroup(jPanelPasso3Layout.createSequentialGroup()
                         .addGap(125, 125, 125)
                         .addComponent(jLabelP1Informacao2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -799,23 +808,23 @@ public class GerarEscalonador extends javax.swing.JDialog {
     private void jRadioButtonP2TempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2TempoActionPerformed
         // TODO add your handling code here:
         this.jRadioButtonP2Tempo.setSelected(true);
-        this.jRadioButtonP2Tarefa.setSelected(false);
-        this.jRadioButtonP2Misto.setSelected(false);
+        this.jRadioButtonP2Chegada.setSelected(false);
+        this.jRadioButtonP2Saida.setSelected(false);
     }//GEN-LAST:event_jRadioButtonP2TempoActionPerformed
 
-    private void jRadioButtonP2TarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2TarefaActionPerformed
+    private void jRadioButtonP2ChegadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2ChegadaActionPerformed
         // TODO add your handling code here:
         this.jRadioButtonP2Tempo.setSelected(false);
-        this.jRadioButtonP2Tarefa.setSelected(true);
-        this.jRadioButtonP2Misto.setSelected(false);
-    }//GEN-LAST:event_jRadioButtonP2TarefaActionPerformed
+        this.jRadioButtonP2Chegada.setSelected(true);
+        this.jRadioButtonP2Saida.setSelected(false);
+    }//GEN-LAST:event_jRadioButtonP2ChegadaActionPerformed
 
-    private void jRadioButtonP2MistoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2MistoActionPerformed
+    private void jRadioButtonP2SaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2SaidaActionPerformed
         // TODO add your handling code here:
         this.jRadioButtonP2Tempo.setSelected(false);
-        this.jRadioButtonP2Tarefa.setSelected(false);
-        this.jRadioButtonP2Misto.setSelected(true);
-    }//GEN-LAST:event_jRadioButtonP2MistoActionPerformed
+        this.jRadioButtonP2Chegada.setSelected(false);
+        this.jRadioButtonP2Saida.setSelected(true);
+    }//GEN-LAST:event_jRadioButtonP2SaidaActionPerformed
 
     private void jRadioButtonP3RandomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP3RandomActionPerformed
         // TODO add your handling code here:
@@ -975,10 +984,9 @@ private void jButtonP3ConstActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private void setEnableDinamica(boolean b) {
         jLabelP2Forma.setEnabled(b);
         jRadioButtonP2Tempo.setEnabled(b);
-        jRadioButtonP2Tarefa.setEnabled(b);
-        jRadioButtonP2Misto.setEnabled(b);
+        jRadioButtonP2Chegada.setEnabled(b);
+        jRadioButtonP2Saida.setEnabled(b);
         jFormattedTextFieldP2Tempo.setEnabled(b);
-        jFormattedTextFieldP2Misto.setEnabled(b);
     }
 
     /**
@@ -1018,7 +1026,6 @@ private void jButtonP3ConstActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JButton jButtonP3Voltar;
     private javax.swing.JButton jButtonProximo;
     private javax.swing.JButton jButtonVoltar;
-    private javax.swing.JFormattedTextField jFormattedTextFieldP2Misto;
     private javax.swing.JFormattedTextField jFormattedTextFieldP2Tempo;
     private javax.swing.JFormattedTextField jFormattedTextP3Variavel;
     private javax.swing.JLabel jLabel1;
@@ -1046,8 +1053,8 @@ private void jButtonP3ConstActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JRadioButton jRadioButtonDinamica;
     private javax.swing.JRadioButton jRadioButtonDistribuida;
     private javax.swing.JRadioButton jRadioButtonEstatica;
-    private javax.swing.JRadioButton jRadioButtonP2Misto;
-    private javax.swing.JRadioButton jRadioButtonP2Tarefa;
+    private javax.swing.JRadioButton jRadioButtonP2Chegada;
+    private javax.swing.JRadioButton jRadioButtonP2Saida;
     private javax.swing.JRadioButton jRadioButtonP2Tempo;
     private javax.swing.JRadioButton jRadioButtonP3Crescente;
     private javax.swing.JRadioButton jRadioButtonP3Decrescente;
