@@ -12,7 +12,14 @@ import ispd.motor.carga.CargaForNode;
 import ispd.motor.carga.CargaRandom;
 import ispd.motor.carga.CargaTaskNode;
 import ispd.motor.carga.GerarCarga;
-import ispd.motor.Recurso;
+import ispd.motor.filas.RedeDeFilas;
+import ispd.motor.filas.servidores.CS_Comunicacao;
+import ispd.motor.filas.servidores.CS_Internet;
+import ispd.motor.filas.servidores.CS_Link;
+import ispd.motor.filas.servidores.CS_Maquina;
+import ispd.motor.filas.servidores.CS_Mestre;
+import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.CS_Switch;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -266,6 +273,10 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         return h;
     }
 
+    public HashSet<Icone> getIcones() {
+        return icones;
+    }
+    
     @Override
     public Dimension getMaximumSize() {
         return getPreferredSize();
@@ -579,30 +590,6 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         objetos[2] = cargasConfiguracao.toString();
         objetos[3] = icones;
         AguardaSimulacao janela = new AguardaSimulacao(objetos);
-    }
-
-    public boolean validaIniciarSimulacao(JSimulacao janelaSimulacao) {
-        janelaSimulacao.appendNotificacao(palavras.getString("Verifying configuration of the icons.") + " -> ");
-        if (icones.isEmpty()) {
-            JOptionPane.showMessageDialog(null, palavras.getString("The model has no icons."), palavras.getString("WARNING"), JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        for (Icone I : icones) {
-            if (I.getConfigurado() == false) {
-                JOptionPane.showMessageDialog(null, palavras.getString("One or more parameters have not been configured."), palavras.getString("WARNING"), JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        }
-        janelaSimulacao.incProgresso(5);
-        janelaSimulacao.appendNotificacao("OK\n");
-        janelaSimulacao.appendNotificacao(palavras.getString("Verifying configuration of the tasks.") + " -> ");
-        if (cargasConfiguracao == null) {
-            JOptionPane.showMessageDialog(null, palavras.getString("One or more  workloads have not been configured."), palavras.getString("WARNING"), JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        janelaSimulacao.incProgresso(5);
-        janelaSimulacao.appendNotificacao("OK\n");
-        return true;
     }
 
     public void setIconeSelecionado(int tipoIcone) {
@@ -955,17 +942,17 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public String toString() {
-        StringBuffer saida = new StringBuffer();
+        StringBuilder saida = new StringBuilder();
         for (Icone I : icones) {
             if (I.getTipoIcone() == 1) {
                 saida.append(String.format("MAQ %s %f %f ", I.getNome(), I.getPoderComputacional(), I.getTaxaOcupacao()));
-                if (I.getMestre()) {
+                if (I.isMestre()) {
                     saida.append(String.format("MESTRE " + I.getAlgoritmo() + " LMAQ"));
                     List<Integer> lista = I.getEscravos();
                     for (int temp : lista) {
                         for (Icone Ico : icones) {
                             if (Ico.getIdGlobal() == temp && Ico.getTipoIcone() != 2) {
-                                saida.append(" " + Ico.getNome());
+                                saida.append(" ").append(Ico.getNome());
                             }
                         }
                     }
@@ -993,12 +980,12 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 saida.append(String.format("REDE %s %f %f %f CONECTA", I.getNome(), I.getBanda(), I.getLatencia(), I.getTaxaOcupacao()));
                 for (Icone Ico : icones) {
                     if (Ico.getIdGlobal() == I.getNoOrigem() && Ico.getTipoIcone() != 2) {
-                        saida.append(" " + Ico.getNome());
+                        saida.append(" ").append(Ico.getNome());
                     }
                 }
                 for (Icone Ico : icones) {
                     if (Ico.getIdGlobal() == I.getNoDestino() && Ico.getTipoIcone() != 2) {
-                        saida.append(" " + Ico.getNome());
+                        saida.append(" ").append(Ico.getNome());
                     }
                 }
                 saida.append("\n");
@@ -1009,13 +996,13 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         if (cargasConfiguracao != null) {
             switch (cargasConfiguracao.getTipo()) {
                 case GerarCarga.RANDOM:
-                    saida.append(" RANDOM\n" + cargasConfiguracao.toString() + "\n");
+                    saida.append(" RANDOM\n").append(cargasConfiguracao.toString()).append("\n");
                     break;
                 case GerarCarga.FORNODE:
-                    saida.append(" MAQUINA\n" + cargasConfiguracao.toString() + "\n");
+                    saida.append(" MAQUINA\n").append(cargasConfiguracao.toString()).append("\n");
                     break;
                 case GerarCarga.TRACE:
-                    saida.append(" TRACE\n" + cargasConfiguracao.toString() + "\n");
+                    saida.append(" TRACE\n").append(cargasConfiguracao.toString()).append("\n");
                     break;
             }
         }
@@ -1035,7 +1022,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                         + "<br>" + palavras.getString("Y-coordinate:") + " " + String.valueOf(I.getNumY())
                         + "<br>" + palavras.getString("Computational power:") + " " + String.valueOf(I.getPoderComputacional())
                         + "<br>" + palavras.getString("Load Factor:") + " " + String.valueOf(I.getTaxaOcupacao());
-                if (I.getMestre()) {
+                if (I.isMestre()) {
                     Texto = Texto
                             + "<br>" + palavras.getString("MASTER")
                             + "<br>" + palavras.getString("Scheduling algorithm:") + " " + I.getAlgoritmo();
@@ -1116,7 +1103,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 Texto = Texto + "<br>" + String.valueOf(i);
             }
         }
-        if (I.getTipoIcone() == 1 && I.getMestre()) {
+        if (I.getTipoIcone() == 1 && I.isMestre()) {
             List<Integer> escravos = I.getEscravos();
             Texto = Texto + "<br>" + palavras.getString("Slave Nodes:");
             for (int i : escravos) {
@@ -1150,12 +1137,12 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             icon_id.setAttribute("global", Integer.toString(I.getIdGlobal()));
             icon_id.setAttribute("local", Integer.toString(I.getIdLocal()));
             switch (I.getTipoIcone()) {
-                case Recurso.MACHINE:
+                case Icone.MACHINE:
                     aux = descricao.createElement("machine");
                     aux.setAttribute("power", Double.toString(I.getPoderComputacional()));
                     aux.setAttribute("load", Double.toString(I.getTaxaOcupacao()));
                     aux.setAttribute("owner", I.getProprietario());
-                    if (I.getMestre()) {
+                    if (I.isMestre()) {
                         //preenche escravos
                         Element master = descricao.createElement("master");
                         master.setAttribute("scheduler", I.getAlgoritmo());
@@ -1167,7 +1154,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                         aux.appendChild(master);
                     }
                     break;
-                case Recurso.NETWORK:
+                case Icone.NETWORK:
                     aux = descricao.createElement("link");
                     aux.setAttribute("bandwidth", Double.toString(I.getBanda()));
                     aux.setAttribute("load", Double.toString(I.getTaxaOcupacao()));
@@ -1181,7 +1168,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     posicao.setAttribute("x", Integer.toString(I.getNumPreX()));
                     posicao.setAttribute("y", Integer.toString(I.getNumPreY()));
                     break;
-                case Recurso.CLUSTER:
+                case Icone.CLUSTER:
                     aux = descricao.createElement("cluster");
                     aux.setAttribute("nodes", Integer.toString(I.getNumeroEscravos()));
                     aux.setAttribute("power", Double.toString(I.getPoderComputacional()));
@@ -1190,7 +1177,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     aux.setAttribute("scheduler", I.getAlgoritmo());
                     aux.setAttribute("owner", I.getProprietario());
                     break;
-                case Recurso.INTERNET:
+                case Icone.INTERNET:
                     aux = descricao.createElement("internet");
                     aux.setAttribute("bandwidth", Double.toString(I.getBanda()));
                     aux.setAttribute("load", Double.toString(I.getTaxaOcupacao()));
@@ -1285,7 +1272,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             Element id = (Element) maquina.getElementsByTagName("icon_id").item(0);
             int global = Integer.parseInt(id.getAttribute("global"));
             int local = Integer.parseInt(id.getAttribute("local"));
-            Icone I = new Icone(x, y, 0, 0, Recurso.MACHINE, local, global);
+            Icone I = new Icone(x, y, 0, 0, Icone.MACHINE, local, global);
             icones.add(I);
             I.setNome(maquina.getAttribute("id"));
             ValidaValores.addNomeIcone(I.getNome());
@@ -1314,7 +1301,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             Element id = (Element) cluster.getElementsByTagName("icon_id").item(0);
             int global = Integer.parseInt(id.getAttribute("global"));
             int local = Integer.parseInt(id.getAttribute("local"));
-            Icone I = new Icone(x, y, 0, 0, Recurso.CLUSTER, local, global);
+            Icone I = new Icone(x, y, 0, 0, Icone.CLUSTER, local, global);
             icones.add(I);
             I.setNome(cluster.getAttribute("id"));
             ValidaValores.addNomeIcone(I.getNome());
@@ -1334,7 +1321,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             Element id = (Element) inet.getElementsByTagName("icon_id").item(0);
             int global = Integer.parseInt(id.getAttribute("global"));
             int local = Integer.parseInt(id.getAttribute("local"));
-            Icone I = new Icone(x, y, 0, 0, Recurso.INTERNET, local, global);
+            Icone I = new Icone(x, y, 0, 0, Icone.INTERNET, local, global);
             icones.add(I);
             I.setNome(inet.getAttribute("id"));
             ValidaValores.addNomeIcone(I.getNome());
@@ -1354,7 +1341,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             pos = (Element) link.getElementsByTagName("position").item(1);
             int px = Integer.parseInt(pos.getAttribute("x"));
             int py = Integer.parseInt(pos.getAttribute("y"));
-            Icone I = new Icone(x, y, px, py, Recurso.NETWORK, local, global);
+            Icone I = new Icone(x, y, px, py, Icone.NETWORK, local, global);
             icones.add(I);
             I.setNome(link.getAttribute("id"));
             ValidaValores.addNomeIcone(I.getNome());
@@ -1564,7 +1551,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         Vector<String> maquinas = new Vector<String>();
 
         for (Icone I : icones) {
-            if (I.getTipoIcone() == 1 && I.getMestre()) {
+            if (I.getTipoIcone() == 1 && I.isMestre()) {
                 maquinas.add(I.getNome());
             }
             if (I.getTipoIcone() == 3) {
@@ -1572,5 +1559,161 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         return maquinas;
+    }
+
+    public RedeDeFilas getRedeDeFilas() {
+        List<CS_Processamento> mestres = new ArrayList<CS_Processamento>();
+        List<Integer> mestresNome = new ArrayList<Integer>();
+        List<CS_Maquina> maqs  = new ArrayList<CS_Maquina>();
+        List<Integer> maqsNome = new ArrayList<Integer>();
+        List<CS_Comunicacao> links = new ArrayList<CS_Comunicacao>();
+        List<CS_Internet> nets  = new ArrayList<CS_Internet>();
+        List<Integer> netsNome = new ArrayList<Integer>();
+        //cria maquinas, mestres, internets e mestres dos clusters
+        for (Icone icone : getIcones()) {
+            switch (icone.getTipoIcone()){
+                case Icone.MACHINE :
+                    if(icone.isMestre()){
+                    CS_Mestre mestre = new CS_Mestre(
+                            icone.getNome(), 
+                            icone.getProprietario(), 
+                            icone.getPoderComputacional(), 
+                            icone.getTaxaOcupacao(), 
+                            null/*Escalonador*/);
+                    mestres.add(mestre);
+                    mestresNome.add(icone.getIdGlobal());    
+                    }else{
+                    CS_Maquina maq = new CS_Maquina(
+                            icone.getNome(), 
+                            icone.getProprietario(), 
+                            icone.getPoderComputacional(), 
+                            1/*num processadores*/, 
+                            icone.getTaxaOcupacao());
+                    maqs.add(maq);
+                    maqsNome.add(icone.getIdGlobal());
+                    }
+                    break;
+                case Icone.CLUSTER :
+                    CS_Mestre clust = new CS_Mestre(
+                            icone.getNome(), 
+                            icone.getProprietario(), 
+                            icone.getPoderComputacional(), 
+                            icone.getTaxaOcupacao(), 
+                            null/*Escalonador*/);
+                    mestres.add(clust);
+                    mestresNome.add(icone.getIdGlobal());
+                    break;
+                case Icone.INTERNET :
+                    CS_Internet net = new CS_Internet(
+                            icone.getNome(), 
+                            icone.getBanda(), 
+                            icone.getTaxaOcupacao(), 
+                            icone.getLatencia());
+                    nets.add(net);
+                    netsNome.add(icone.getIdGlobal());
+                    break;
+            }
+        }
+        //cria os links e realiza a conexão entre os recursos
+        for (Icone icone : getIcones()){
+            if(icone.getTipoIcone() == Icone.NETWORK){
+                CS_Link link = new CS_Link(
+                        icone.getNome(), 
+                        icone.getBanda(), 
+                        icone.getTaxaOcupacao(), 
+                        icone.getLatencia());
+                links.add(link);
+                if(mestresNome.contains(icone.getNoDestino())){
+                    int index = mestresNome.indexOf(icone.getNoDestino());
+                    CS_Mestre mestre = (CS_Mestre) mestres.get(index);
+                    link.setConexoesSaida(mestre);
+                    mestre.addConexoesEntrada(link);
+                }else if(maqsNome.contains(icone.getNoDestino())){
+                    int index = maqsNome.indexOf(icone.getNoDestino());
+                    CS_Maquina maq = (CS_Maquina) maqs.get(index);
+                    link.setConexoesSaida(maq);
+                    maq.addConexoesEntrada(link);
+                }else if(netsNome.contains(icone.getNoDestino())){
+                    int index = netsNome.indexOf(icone.getNoDestino());
+                    CS_Internet net = nets.get(index);
+                    link.setConexoesSaida(net);
+                    net.addConexoesEntrada(link);
+                }
+                if(mestresNome.contains(icone.getNoOrigem())){
+                    int index = mestresNome.indexOf(icone.getNoOrigem());
+                    CS_Mestre mestre = (CS_Mestre) mestres.get(index);
+                    link.setConexoesEntrada(mestre);
+                    mestre.addConexoesSaida(link);
+                }else if(maqsNome.contains(icone.getNoOrigem())){
+                    int index = maqsNome.indexOf(icone.getNoOrigem());
+                    CS_Maquina maq = (CS_Maquina) maqs.get(index);
+                    link.setConexoesEntrada(maq);
+                    maq.addConexoesSaida(link);
+                }else if(netsNome.contains(icone.getNoOrigem())){
+                    int index = netsNome.indexOf(icone.getNoOrigem());
+                    CS_Internet net = nets.get(index);
+                    link.setConexoesEntrada(net);
+                    net.addConexoesSaida(link);
+                }
+            }
+        }
+        //adiciona os escravos aos mestres
+        for (Icone icone : getIcones()) {
+            if(icone.isMestre()){
+                for(Integer escravo : icone.getEscravos()){
+                    if (maqsNome.contains(escravo)) {
+                        int index = maqsNome.indexOf(escravo);
+                        CS_Processamento maq = maqs.get(index);
+                        index = mestresNome.indexOf(icone.getIdGlobal());
+                        CS_Mestre mest = (CS_Mestre) mestres.get(index);
+                        mest.addEscravo(maq);
+                        if(maq instanceof CS_Maquina){
+                            CS_Maquina maqTemp = (CS_Maquina) maq;
+                            maqTemp.addMestre(mest);
+                        }
+                    }else if (mestresNome.contains(escravo)) {
+                        int index = mestresNome.indexOf(escravo);
+                        CS_Processamento maq = mestres.get(index);
+                        index = mestresNome.indexOf(icone.getIdGlobal());
+                        CS_Mestre mest = (CS_Mestre) mestres.get(index);
+                        mest.addEscravo(maq);
+                    }
+                }
+            }
+        }
+        //cria os escravos dos clusters e realiza a conexão
+        for(Icone icone : getIcones()){
+            if(icone.getTipoIcone() == Icone.CLUSTER){
+                int index = mestresNome.indexOf(icone.getIdGlobal());
+                CS_Mestre mestreCluster = (CS_Mestre) mestres.get(index);
+                CS_Switch Switch = new CS_Switch(
+                        icone.getNome(), 
+                        icone.getBanda(), 
+                        icone.getTaxaOcupacao(), 
+                        icone.getLatencia());
+                links.add(Switch);
+                mestreCluster.addConexoesEntrada(Switch);
+                mestreCluster.addConexoesSaida(Switch);
+                Switch.addConexoesEntrada(mestreCluster);
+                Switch.addConexoesSaida(mestreCluster);
+                for(int i = 0; i < icone.getNumeroEscravos(); i++){
+                    CS_Maquina maq = new CS_Maquina(
+                            icone.getNome(), 
+                            icone.getProprietario(), 
+                            icone.getPoderComputacional(), 
+                            1/*numero de processadores*/, 
+                            icone.getTaxaOcupacao());
+                    maq.addConexoesSaida(Switch);
+                    maq.addConexoesEntrada(Switch);
+                    Switch.addConexoesEntrada(maq);
+                    Switch.addConexoesSaida(maq);
+                    maq.addMestre(mestreCluster);
+                    mestreCluster.addEscravo(maq);
+                    maqs.add(maq);
+                }
+            }
+        }
+        RedeDeFilas rdf = new RedeDeFilas(mestres, maqs, links, nets);
+        return rdf;
     }
 }

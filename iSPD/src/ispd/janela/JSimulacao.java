@@ -1,38 +1,52 @@
+package ispd.janela;
+
+import InterpretadorInterno.ModeloIconico.InterpretadorIconico;
+import InterpretadorInterno.ModeloSimulavel.InterpretadorSimulavel;
+import ispd.motor.Simulacao;
+import ispd.motor.filas.RedeDeFilas;
+import ispd.motor.filas.Tarefa;
+import java.awt.Color;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-/*
- * AguardaSimulacao.java
- *
- * Created on 01/05/2011, 17:00:06
- */
-
-package ispd.janela;
-
-import ispd.motor.Simulacao;
-
 /**
- *
+ * Realiza faz chamada ao motor de simulação e apresenta os passos realizados
+ * e porcentagem da simulação concluida
  * @author denison_usuario
  */
 public class JSimulacao extends javax.swing.JDialog implements Runnable {
 
     /** Creates new form AguardaSimulacao */
-    public JSimulacao(java.awt.Frame parent, boolean modal) {
+    public JSimulacao(java.awt.Frame parent, boolean modal, AreaDesenho area, ResourceBundle palavras) {
         super(parent, modal);
         initComponents();
+        this.palavras = palavras;
+        this.aDesenho = area;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        if(threadSim != null){
-                            //threadSim.stop();
-                            threadSim = null;
-                        }
-                        dispose();
-                    }
-                });
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (threadSim != null) {
+                    //threadSim.stop();
+                    threadSim = null;
+                }
+                dispose();
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -47,9 +61,10 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         jProgressBar = new javax.swing.JProgressBar();
         jButtonCancelar = new javax.swing.JButton();
         jScrollPane = new javax.swing.JScrollPane();
-        jTextAreaNotificacoes = new javax.swing.JTextArea();
+        jTextPaneNotificacao = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Running Simulation");
 
         jProgressBar.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
@@ -60,10 +75,9 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             }
         });
 
-        jTextAreaNotificacoes.setColumns(20);
-        jTextAreaNotificacoes.setEditable(false);
-        jTextAreaNotificacoes.setRows(5);
-        jScrollPane.setViewportView(jTextAreaNotificacoes);
+        jTextPaneNotificacao.setEditable(false);
+        jTextPaneNotificacao.setFont(new java.awt.Font("Arial", 1, 12));
+        jScrollPane.setViewportView(jTextPaneNotificacao);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -72,16 +86,16 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                    .addComponent(jProgressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
+                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(jScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(jProgressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -94,22 +108,35 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         // TODO add your handling code here:
-        if(this.threadSim != null){
+        if (this.threadSim != null) {
             //this.threadSim.stop();
             this.threadSim = null;
         }
         this.dispose();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JTextArea jTextAreaNotificacoes;
+    private javax.swing.JTextPane jTextPaneNotificacao;
     // End of variables declaration//GEN-END:variables
-    Thread threadSim;
+    private SimpleAttributeSet configuraCor = new SimpleAttributeSet();
+    private Thread threadSim;
+    private RedeDeFilas redeDeFilas;
+    private List<Tarefa> tarefas;
+    private AreaDesenho aDesenho;
+    private ResourceBundle palavras;
+    private double porcentagem = 0;
 
-    public void iniciarSimulacao(){
+    public void setRedeDeFilas(RedeDeFilas redeDeFilas) {
+        this.redeDeFilas = redeDeFilas;
+    }
+
+    public void setTarefas(List<Tarefa> tarefas) {
+        this.tarefas = tarefas;
+    }
+
+    public void iniciarSimulacao() {
         threadSim = new Thread(this);
         threadSim.start();
     }
@@ -119,21 +146,132 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     }
 
     public void setProgresso(int n) {
+        this.porcentagem = n;
         jProgressBar.setValue(n);
     }
 
     public void incProgresso(int n) {
-        int atual = jProgressBar.getValue();
-        jProgressBar.setValue(atual + n);
+        this.porcentagem += n;
+        int value = (int) porcentagem;
+        jProgressBar.setValue(value);
+    }
+    
+    public void incProgresso(double n) {
+        this.porcentagem += n;
+        int value = (int) porcentagem;
+        jProgressBar.setValue(value);
     }
 
-    public void appendNotificacao(String text) {
-        jTextAreaNotificacoes.append(text);
+    public void println(String text, Color cor) {
+        this.print(text + "\n", cor);
+    }
+    public void println(String text) {
+        this.print(text + "\n", Color.black);
+    }
+    
+    public void print(String text) {
+        this.print(text, Color.black);
+    }
+
+    public void print(String text, Color cor) {
+        Document doc = jTextPaneNotificacao.getDocument();
+        try {
+            if (cor != null) {
+                StyleConstants.setForeground(configuraCor, cor);
+            } else {
+                StyleConstants.setForeground(configuraCor, Color.black);
+            }
+            doc.insertString(doc.getLength(), text, configuraCor);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void run() {
-        Simulacao sim = new Simulacao(this,null,null,null);
-        sim.simular();
+        println("Simulation Initiated.");
+        try{
+            //0%
+            //Verifica se foi construido modelo na area de desenho
+            validarInicioSimulacao();//[5%] --> 5%
+            //escreve modelo iconico
+            this.print(palavras.getString("Writing iconic model.") + " -> ");
+            File arquivo = new File("modeloiconico");
+            try {
+                FileWriter writer = new FileWriter(arquivo);
+                PrintWriter saida = new PrintWriter(writer, true);
+                saida.print(aDesenho.toString());
+                saida.close();
+                writer.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            incProgresso(5);//[5%] --> 10%
+            this.println("OK", Color.green);
+            //interpreta modelo iconico
+            this.print(palavras.getString("Interpreting iconic model.") + " -> ");
+            InterpretadorIconico parser = new InterpretadorIconico();
+            parser.leArquivo(arquivo);
+            incProgresso(5);//[5%] --> 15%
+            this.println("OK", Color.green);
+            this.print(palavras.getString("Writing simulation model.") + " -> ");
+            parser.escreveArquivo();
+            incProgresso(5);//[5%] --> 20%
+            this.println("OK", Color.green);
+            this.print(palavras.getString("Interpreting simulation model.") + " -> ");
+            InterpretadorSimulavel parser2 = new InterpretadorSimulavel();
+            parser2.leArquivo(new File("modelosimulavel"));
+            incProgresso(5);//[5%] --> 25%
+            this.println("OK", Color.green);
+            //criar grade
+            this.print(palavras.getString("Mounting network queue.") + " -> ");
+            this.redeDeFilas = aDesenho.getRedeDeFilas();
+            incProgresso(10);//[10%] --> 35%
+            this.println("OK", Color.green);
+            //criar tarefas
+            this.print(palavras.getString("Creating tasks.") + " -> ");
+            this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas.getMestres());
+            incProgresso(10);//[10%] --> 45%
+            this.println("OK", Color.green);
+            //Verifica recursos do modelo e define roteamento
+            Simulacao sim = new Simulacao(this, redeDeFilas, tarefas);//[10%] --> 55 %
+            //Realiza asimulação
+            this.println(palavras.getString("Simulating."));
+            sim.simular();//[30%] --> 85%
+            //Obter Resultados
+            //[5%] --> 90%
+            //Apresentar resultados
+            this.print(palavras.getString("Showing results.") + " -> ");
+            JResultados janelaResultados = new JResultados(null, redeDeFilas, tarefas);
+            incProgresso(10);//[10%] --> 100%
+            this.println("OK", Color.green);
+            janelaResultados.setLocationRelativeTo(this);
+            janelaResultados.setVisible(true);
+        }catch(IllegalArgumentException erro){
+            this.println(erro.getMessage(), Color.red);
+            this.println(palavras.getString("Simulation Aborted")+"!", Color.red);
+        }
     }
-
+    
+    private void validarInicioSimulacao(){
+        this.print(palavras.getString("Verifying configuration of the icons.") + " -> ");
+        if (aDesenho == null || aDesenho.getIcones().isEmpty()) {
+            this.println(palavras.getString("Error!"), Color.red);
+            throw new IllegalArgumentException(palavras.getString("The model has no icons."));
+        }
+        for (Icone I : aDesenho.getIcones()) {
+            if (I.getConfigurado() == false) {
+                this.println(palavras.getString("Error!"), Color.red);
+                throw new IllegalArgumentException(palavras.getString("One or more parameters have not been configured."));
+            }
+        }
+        this.incProgresso(4);
+        this.println("OK", Color.green);
+        this.print(palavras.getString("Verifying configuration of the tasks.") + " -> ");
+        if (aDesenho.getCargasConfiguracao() == null) {
+            this.println(palavras.getString("Error!"), Color.red);
+            throw new IllegalArgumentException(palavras.getString("One or more  workloads have not been configured."));
+        }
+        this.incProgresso(1);
+        this.println("OK", Color.green);
+    }
 }

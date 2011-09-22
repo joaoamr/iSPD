@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class Icone implements Serializable {
-
+    public  static final int MACHINE = 1;
+    public  static final int NETWORK = 2;
+    public  static final int CLUSTER = 3;
+    public  static final int INTERNET = 4;
     private int x, y, prex, prey;
     private int tipoIcone;
     private int idLocal;
@@ -105,13 +108,13 @@ public class Icone implements Serializable {
         algoritmoEscalonamento = "---";
         proprietario = "user1";
         switch (this.tipoIcone) {
-            case 1:
+            case MACHINE:
                 iconeMaquina = new ImageIcon(getClass().getResource("imagens/botao_no.gif"));
                 break;
-            case 3:
+            case CLUSTER:
                 iconeMaquina = new ImageIcon(getClass().getResource("imagens/botao_cluster.gif"));
                 break;
-            case 4:
+            case INTERNET:
                 iconeMaquina = new ImageIcon(getClass().getResource("imagens/botao_internet.gif"));
                 break;
         }
@@ -133,7 +136,7 @@ public class Icone implements Serializable {
         }
 
 
-        if (tipoIcone == 2) {
+        if (tipoIcone == NETWORK) {
             int x1 = (int) (((((prex + x) / 2) + x) / 2) + x) / 2;
             int y1 = (int) (((((prey + y) / 2) + y) / 2) + y) / 2;
 
@@ -158,7 +161,7 @@ public class Icone implements Serializable {
 
         // Se o icone estiver ativo, desenhamos uma margem nele.
         if (estaAtivo) {
-            if (tipoIcone != 2) {
+            if (tipoIcone != NETWORK) {
                 g2d.setColor(new Color(255, 0, 0));
                 g2d.drawRect(x - 19, y - 17, 37, 34);
             } else {
@@ -178,7 +181,7 @@ public class Icone implements Serializable {
      */
     public boolean getRectEnvolvente(int tx, int ty) {
 
-        if (tipoIcone == 2) {
+        if (tipoIcone == NETWORK) {
             return areaSeta.contains(tx, ty);
         } else {
             return areaRect.contains(tx, ty);
@@ -193,24 +196,24 @@ public class Icone implements Serializable {
     public void verificaConfiguracao() {
         this.setConfigurado(false);
         switch (tipoIcone) {
-            case 1: {
+            case MACHINE: {
                 if (nome.length() != 0 && poderComputacional != 0.0 && mestre == false) {
                     this.setConfigurado(true);
                 } else if (nome.length() != 0 && poderComputacional != 0.0 && mestre == true && !algoritmoEscalonamento.equals("---") && !escravos.isEmpty()) {
                     this.setConfigurado(true);
                 }
             }
-            case 2: {
+            case NETWORK: {
                 if (nome.length() != 0 && banda != 0.0 && latencia != 0.0) {
                     this.setConfigurado(true);
                 }
             }
-            case 3: {
+            case CLUSTER: {
                 if (nome.length() != 0 && banda != 0.0 && poderComputacional != 0.0 && latencia != 0.0 && numeroEscravos != 0 && !algoritmoEscalonamento.equals("---")) {
                     this.setConfigurado(true);
                 }
             }
-            case 4: {
+            case INTERNET: {
                 if (nome.length() != 0 && banda != 0.0 && taxaOcupacao != 0.0 && latencia != 0.0) {
                     this.setConfigurado(true);
                 }
@@ -282,7 +285,7 @@ public class Icone implements Serializable {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
-        if (tipoIcone != 2) {
+        if (tipoIcone != NETWORK) {
             areaRect.setLocation(x - 15, y - 15);
         }
     }
@@ -425,7 +428,7 @@ public class Icone implements Serializable {
         return tipoIcone;
     }
 
-    public boolean getMestre() {
+    public boolean isMestre() {
         return mestre;
     }
 

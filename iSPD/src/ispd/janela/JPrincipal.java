@@ -16,7 +16,6 @@ import InterpretadorExterno.SimGrid.InterpretadorSimGrid;
 import ispd.janela.componenteauxiliar.FiltroDeArquivos;
 import ispd.janela.componenteauxiliar.Corner;
 import ispd.janela.componenteauxiliar.Rule;
-import ispd.motor.Recurso;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -666,7 +665,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
         //Realiza ação
         if (jToggleButtonMaquina.isSelected()) {
-            aDesenho.setIconeSelecionado(Recurso.MACHINE);
+            aDesenho.setIconeSelecionado(Icone.MACHINE);
             appendNotificacao(palavras.getString("Machine button selected."));
         } else {
             aDesenho.semIconeSelecionado();
@@ -681,7 +680,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonInternet.setSelected(false);
 
         if (jToggleButtonRede.isSelected()) {
-            aDesenho.setIconeSelecionado(Recurso.NETWORK);
+            aDesenho.setIconeSelecionado(Icone.NETWORK);
             appendNotificacao(palavras.getString("Network button selected."));
         } else {
             aDesenho.semIconeSelecionado();
@@ -696,7 +695,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonInternet.setSelected(false);
 
         if (jToggleButtonCluster.isSelected()) {
-            aDesenho.setIconeSelecionado(Recurso.CLUSTER);
+            aDesenho.setIconeSelecionado(Icone.CLUSTER);
             appendNotificacao(palavras.getString("Cluster button selected."));
         } else {
             aDesenho.semIconeSelecionado();
@@ -711,7 +710,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonCluster.setSelected(false);
 
         if (jToggleButtonInternet.isSelected()) {
-            aDesenho.setIconeSelecionado(Recurso.INTERNET);
+            aDesenho.setIconeSelecionado(Icone.INTERNET);
             appendNotificacao(palavras.getString("Internet button selected."));
         } else {
             aDesenho.semIconeSelecionado();
@@ -736,11 +735,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jButtonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSimularActionPerformed
         // TODO add your handling code here:
-        JSimulacao janelaSimulacao = new JSimulacao(this, true);
-        if(aDesenho.validaIniciarSimulacao(janelaSimulacao)){
-            janelaSimulacao.iniciarSimulacao();
-            janelaSimulacao.setVisible(true);
-        }
+        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho, palavras);
+        janelaSimulacao.iniciarSimulacao();
+        janelaSimulacao.setLocationRelativeTo(this);
+        janelaSimulacao.setVisible(true);
         appendNotificacao(palavras.getString("Simulate button added."));
     }//GEN-LAST:event_jButtonSimularActionPerformed
 
@@ -1066,7 +1064,6 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             }
             FileWriter writer;
             try {
-                System.out.println(aDesenho.toString());
                 writer = new FileWriter(file);
                 PrintWriter saida = new PrintWriter(writer, true);
                 saida.print(aDesenho.toString());
@@ -1287,25 +1284,25 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     public void setSelectedIcon(Icone I, String Texto) {
         if (I != null) {
             switch (I.getTipoIcone()) {
-                case Recurso.MACHINE: {
+                case Icone.MACHINE: {
                     this.jPanelMaquina.setIcone(I);
                     this.jPanelMaquina.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelMaquina);
                 }
                 break;
-                case Recurso.NETWORK: {
+                case Icone.NETWORK: {
                     this.jPanelRede.setIcone(I);
                     this.jPanelRede.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelRede);
                 }
                 break;
-                case Recurso.CLUSTER: {
+                case Icone.CLUSTER: {
                     this.jPanelCluster.setIcone(I);
                     this.jPanelCluster.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelCluster);
                 }
                 break;
-                case Recurso.INTERNET: {
+                case Icone.INTERNET: {
                     this.jPanelInternet.setIcone(I);
                     this.jPanelInternet.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelInternet);
