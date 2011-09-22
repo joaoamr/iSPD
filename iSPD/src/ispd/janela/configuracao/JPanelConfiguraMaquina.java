@@ -277,7 +277,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         this.jTextFieldNome.setText(icone.getNome());
         this.jTextFieldPoderComputacional.setText(String.valueOf(icone.getPoderComputacional()));
         this.jTextFieldTaxaOcupacao.setText(String.valueOf(icone.getTaxaOcupacao()));
-        if (icone.getMestre()) {
+        if (icone.isMestre()) {
             jRadioButtonEscravo.setSelected(false);
             jRadioButtonMestre.setSelected(true);
             jComboBoxAlgoritmos.setVisible(true);
