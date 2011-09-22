@@ -4,11 +4,12 @@
  */
 package ispd.motor.carga;
 
-import ispd.motor.Tarefa;
+import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CS_Processamento;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Descreve como gerar tarefas na forma randomica
@@ -57,10 +58,34 @@ public class CargaRandom extends GerarCarga {
     }
 
     @Override
-    public List<Tarefa> toTarefaList() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+        List<Tarefa> tarefas = new ArrayList<Tarefa>();
+        int quantidadePorMestre = this.getNumeroTarefas() / mestres.size();
+        int resto = this.getNumeroTarefas() % mestres.size();
+        Random sorteio = new Random();
+        for (CS_Processamento mestre : mestres) {
+            for (int i = 0; i < quantidadePorMestre; i++) {
+                Tarefa tarefa = new Tarefa(
+                        mestre,
+                        minComunicacao + sorteio.nextInt(maxComunicacao),
+                        0.0 /*arquivo recebimento*/,
+                        minComputacao + sorteio.nextInt(maxComputacao),
+                        0.0);
+                tarefas.add(tarefa);
+            }
+        }
+        for (int i = 0; i < resto; i++) {
+            Tarefa tarefa = new Tarefa(
+                    mestres.get(0),
+                    minComunicacao + sorteio.nextInt(maxComunicacao),
+                    0.0 /*arquivo recebimento*/,
+                    minComputacao + sorteio.nextInt(maxComputacao),
+                    0.0);
+            tarefas.add(tarefa);
+        }
+        return tarefas;
     }
-    
+
     @Override
     public String toString() {
         return String.format("%d %d %d %f\n%d %d %d %f\n%d %d %d",
@@ -71,27 +96,27 @@ public class CargaRandom extends GerarCarga {
 
     public static GerarCarga newGerarCarga(String entrada) {
         CargaRandom newObj = null;
-        try {
-            String aux = entrada.replace("\n", " ");
-            String[] valores = aux.split(" ");
-            int minComputacao = Integer.parseInt(valores[0]);
-            int AverageComputacao = Integer.parseInt(valores[1]);
-            int maxComputacao = Integer.parseInt(valores[2]);
-            double ProbabilityComputacao = Double.parseDouble(valores[3]);
-            int minComunicacao = Integer.parseInt(valores[4]);
-            int AverageComunicacao = Integer.parseInt(valores[5]);
-            int maxComunicacao = Integer.parseInt(valores[6]);
-            double ProbabilityComunicacao = Double.parseDouble(valores[7]);
-            //não usado --> valores[8]
-            int timeOfArrival = Integer.parseInt(valores[9]);
-            int numeroTarefas = Integer.parseInt(valores[10]);
-            newObj = new CargaRandom(numeroTarefas,
-                    minComputacao, maxComputacao, AverageComputacao, ProbabilityComputacao,
-                    minComunicacao, maxComunicacao, AverageComunicacao, ProbabilityComunicacao,
-                    timeOfArrival);
-        } catch (Exception e) {
-            Logger.getLogger(CargaRandom.class.getName()).log(Level.SEVERE, null, e);
-        }
+        //try {
+        String aux = entrada.replace("\n", " ");
+        String[] valores = aux.split(" ");
+        int minComputacao = Integer.parseInt(valores[0]);
+        int AverageComputacao = Integer.parseInt(valores[1]);
+        int maxComputacao = Integer.parseInt(valores[2]);
+        double ProbabilityComputacao = Double.parseDouble(valores[3]);
+        int minComunicacao = Integer.parseInt(valores[4]);
+        int AverageComunicacao = Integer.parseInt(valores[5]);
+        int maxComunicacao = Integer.parseInt(valores[6]);
+        double ProbabilityComunicacao = Double.parseDouble(valores[7]);
+        //não usado --> valores[8]
+        int timeOfArrival = Integer.parseInt(valores[9]);
+        int numeroTarefas = Integer.parseInt(valores[10]);
+        newObj = new CargaRandom(numeroTarefas,
+                minComputacao, maxComputacao, AverageComputacao, ProbabilityComputacao,
+                minComunicacao, maxComunicacao, AverageComunicacao, ProbabilityComunicacao,
+                timeOfArrival);
+        //} catch (Exception e) {
+        //    Logger.getLogger(CargaRandom.class.getName()).log(Level.SEVERE, null, e);
+        //}
         return newObj;
     }
 

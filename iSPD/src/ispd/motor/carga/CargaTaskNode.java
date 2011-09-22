@@ -4,11 +4,12 @@
  */
 package ispd.motor.carga;
 
-import ispd.motor.Tarefa;
+import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CS_Processamento;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Descreve como gerar tarefas para um nó escalonador
@@ -20,10 +21,10 @@ public class CargaTaskNode extends GerarCarga {
     private String proprietario;
     private String escalonador;
     private int numeroTarefas;
-    private double minComputacao;
-    private double maxComputacao;
-    private double minComunicacao;
-    private double maxComunicacao;
+    private Double minComputacao;
+    private Double maxComputacao;
+    private Double minComunicacao;
+    private Double maxComunicacao;
 
     public CargaTaskNode(String aplicacao, String proprietario, String escalonador, int numeroTarefas, double maxComputacao, double minComputacao, double maxComunicacao, double minComunicacao) {
         this.aplicacao = aplicacao;
@@ -51,8 +52,31 @@ public class CargaTaskNode extends GerarCarga {
     }
 
     @Override
-    public List<Tarefa> toTarefaList() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+        List<Tarefa> tarefas = new ArrayList<Tarefa>();
+        CS_Processamento mestre = null;
+        int i = 0;
+        boolean encontrou = false;
+        while (!encontrou && i < mestres.size()) {
+            if (mestres.get(i).getId().equals(this.escalonador)) {
+                encontrou = true;
+                mestre = mestres.get(i);
+            }
+            i++;
+        }
+        if (encontrou) {
+            Random sorteio = new Random();
+            for (i = 0; i < this.getNumeroTarefas(); i++) {
+                Tarefa tarefa = new Tarefa(
+                        mestre,
+                        minComunicacao + sorteio.nextInt(maxComunicacao.intValue()),
+                        0.0 /*arquivo recebimento*/,
+                        minComputacao + sorteio.nextInt(maxComputacao.intValue()),
+                        0.0);
+                tarefas.add(tarefa);
+            }
+        }
+        return tarefas;
     }
 
     @Override
@@ -65,21 +89,21 @@ public class CargaTaskNode extends GerarCarga {
 
     public static GerarCarga newGerarCarga(String entrada) {
         CargaTaskNode newObj = null;
-        try {
-            String[] valores = entrada.split(" ");
-            String aplicacao = "application0";
-            String proprietario = "user1";
-            String escalonador = valores[0];
-            int numeroTarefas = Integer.parseInt(valores[1]);
-            double maxComputacao = Double.parseDouble(valores[2]);
-            double minComputacao = Double.parseDouble(valores[3]);
-            double maxComunicacao = Double.parseDouble(valores[4]);
-            double minComunicacao = Double.parseDouble(valores[5]);
-            newObj = new CargaTaskNode(aplicacao, proprietario, escalonador,
-                    numeroTarefas, maxComputacao, minComputacao, maxComunicacao, minComunicacao);
-        } catch (Exception e) {
-            Logger.getLogger(CargaTaskNode.class.getName()).log(Level.SEVERE, null, e);
-        }
+        //try {
+        String[] valores = entrada.split(" ");
+        String aplicacao = "application0";
+        String proprietario = "user1";
+        String escalonador = valores[0];
+        int numeroTarefas = Integer.parseInt(valores[1]);
+        double maxComputacao = Double.parseDouble(valores[2]);
+        double minComputacao = Double.parseDouble(valores[3]);
+        double maxComunicacao = Double.parseDouble(valores[4]);
+        double minComunicacao = Double.parseDouble(valores[5]);
+        newObj = new CargaTaskNode(aplicacao, proprietario, escalonador,
+                numeroTarefas, maxComputacao, minComputacao, maxComunicacao, minComunicacao);
+        //} catch (Exception e) {
+        //Logger.getLogger(CargaTaskNode.class.getName()).log(Level.SEVERE, null, e);
+        //}
         return newObj;
     }
 
@@ -151,5 +175,4 @@ public class CargaTaskNode extends GerarCarga {
     public void setProprietario(String proprietario) {
         this.proprietario = proprietario;
     }
-
 }

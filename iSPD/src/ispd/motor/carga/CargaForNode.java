@@ -5,7 +5,8 @@
 
 package ispd.motor.carga;
 
-import ispd.motor.Tarefa;
+import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -47,15 +48,19 @@ public class CargaForNode extends GerarCarga{
     }
 
     @Override
-    public List<Tarefa> toTarefaList() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+        List<Tarefa> tarefas = new ArrayList<Tarefa>();
+        for(CargaTaskNode carga : this.configuracaoNo){
+            tarefas.addAll(carga.toTarefaList(mestres));
+        }
+        return tarefas;
     }
 
     @Override
     public String toString() {
-        StringBuffer saida = new StringBuffer();
+        StringBuilder saida = new StringBuilder();
         for (CargaTaskNode cargaTaskNode : configuracaoNo) {
-            saida.append(cargaTaskNode.toString() + "\n");
+            saida.append(cargaTaskNode.toString()).append("\n");
         }
         return saida.toString();
     }

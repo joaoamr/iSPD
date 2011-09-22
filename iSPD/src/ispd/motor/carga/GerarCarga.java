@@ -5,7 +5,8 @@
 
 package ispd.motor.carga;
 
-import ispd.motor.Tarefa;
+import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,7 +31,7 @@ public abstract class GerarCarga {
 
     public abstract Vector toVector();
 
-    public abstract List<Tarefa> toTarefaList();
+    public abstract List<Tarefa> toTarefaList(List<CS_Processamento> mestres);
 
     @Override
     public abstract String toString();
