@@ -2,37 +2,41 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ispd.motor;
 
+import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CentroServico;
+
 /**
- *
+ * Classe que representa os eventos que alteram o estado do modelo simulado
  * @author denison_usuario
  */
-public class EventoFuturo implements Comparable<EventoFuturo>{
-    public static final int CRIAR_TAREFA = 1;
-    public static final int RECEBER_MENSAGEM = 2;
-    public static final int ENVIAR_MENSAGEM = 3;
-    public static final int RECEBER_MENSAGEM_BLOQUEAR = 4;
-    public static final int ENVIAR_MENSAGEM_BLOQUEAR = 5;
+public class EventoFuturo implements Comparable<EventoFuturo> {
 
+    public static final int CHEGADA = 1;
+    public static final int ATENDIMENTO = 2;
+    public static final int SAÍDA = 3;
+    public static final int ESCALONAR = 4;
+    public static final int CANCELAR = 5;
+    public static final int PARAR = 6;
+    
     private Double tempoOcorrencia;
-    private int tipo;
-    private Recurso agente;
-    private Object tarefa;
+    private int tipoDeEvento;
+    private CentroServico recurso;
+    private Tarefa tarefa;
 
     /**
-     * Criacao de nova tarefa
+     * Criacao de novo evento
      * @param time tempo do relógio em que foi criada
-     * @param tipo deve ser CRIAR_TAREFA
-     * @param agente recurso que vai criar a tarefa
-     * @param tarefa tarefa a ser criada
+     * @param tipoDeEvento tipo do evento criado
+     * @param servidor servidor que executará o evento
+     * @param cliente cliente do evento
      */
-    public EventoFuturo(double time, int tipo, Recurso agente, Tarefa tarefa) {
+    public EventoFuturo(double time, int tipoDeEvento, CentroServico servidor, Tarefa cliente) {
         this.tempoOcorrencia = time;
-        this.tipo = tipo;
-        this.tarefa = tarefa;
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.recurso = servidor;
+        this.tipoDeEvento = tipoDeEvento;
+        this.tarefa = cliente;
     }
 
     /**
@@ -40,44 +44,35 @@ public class EventoFuturo implements Comparable<EventoFuturo>{
      * @return Retorna o tipo do evento de acordo com as constantes da classe
      */
     public int getTipo() {
-        return this.tipo;
+        return this.tipoDeEvento;
     }
 
     /**
      * Retorna recurso que realiza a ação
      * @return recurso que deve executar ação
      */
-    public Recurso getAgente() {
-        return this.agente;
+    public CentroServico getServidor() {
+        return this.recurso;
     }
+
     /**
      * Retorna tarefa alvo da ação
      * @return
      */
-    public Tarefa getTarefa() {
-        return (Tarefa) this.tarefa;
+    public Tarefa getCliente() {
+        return this.tarefa;
     }
-    /**
-     * Retorna tarefa alvo da ação
-     * @return
-     */
-    public Recurso getDestino() {
-        return null;
+
+    public Double getTempoOcorrencia() {
+        return tempoOcorrencia;
     }
-    /**
-     * Retorna tarefa alvo da ação
-     * @return
-     */
-    public Recurso getOrigem() {
-        return null;
-    }
+
     /**
      * Comparação necessaria para utilizar PriorityQueue
      * @param o evento que será comparado
      * @return 0 se valores iguais, um menor que 0 se "o" inferior, e maior que 0 se "o" for maior.
      */
     public int compareTo(EventoFuturo o) {
-        return tempoOcorrencia.compareTo( o.tempoOcorrencia );
+        return tempoOcorrencia.compareTo(o.tempoOcorrencia);
     }
-
 }
