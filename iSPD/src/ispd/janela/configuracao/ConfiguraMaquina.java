@@ -110,7 +110,7 @@ public class ConfiguraMaquina extends JDialog {
         ValidaValores.removeNomeIcone(jTextFieldNome.getText());
 
 
-        if (I.getMestre()) {
+        if (I.isMestre()) {
             jRadioButtonEscravo.setSelected(false);
             jRadioButtonMestre.setSelected(true);
             setMinimumSize(new java.awt.Dimension(300, 500));
