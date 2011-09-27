@@ -154,6 +154,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelPasso2 = new javax.swing.JLabel();
         jLabelPasso3 = new javax.swing.JLabel();
         jLabelPasso4 = new javax.swing.JLabel();
+        jLabelTipoGerador = new javax.swing.JLabel();
         jLabelPasso5 = new javax.swing.JLabel();
         jPanelControle = new javax.swing.JPanel();
         jButtonVoltar = new javax.swing.JButton();
@@ -379,7 +380,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addComponent(jOpAvancada)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
 
         jPanelPasso3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Avançado - Ordem de atendimento das tarefas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
@@ -1009,8 +1010,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Escalonador de Recursos"));
 
+        jList2.setBorder(javax.swing.BorderFactory.createTitledBorder("Selecione a política utilizada:"));
         jList2.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "Round-Robin (Fila circular)", "Recurso de maior poder computacional  livre", "Recurso com menor carga de trabalho", "Recurso com melhor link de comunicação" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -1021,22 +1023,23 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(62, 62, 62)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Escalonador de Tarefas"));
 
+        jList1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Selecione a política utilizada:"));
         jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "FIFO (First In, First Out)", "Maior Tarefa Primeiro (Custo de Processamento)", "Menor Tarefa Primeiro (Custo de Processamento)", "Maior Tarefa Primeiro (Custo de Comunicação)", "Menor Tarefa Primeiro (Custo de Comunicação)", "Usuário com Menos Uso da Grade Primeiro" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -1047,16 +1050,16 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanelPasso5Layout = new javax.swing.GroupLayout(jPanelPasso5);
@@ -1102,7 +1105,10 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelPasso4.setText("4 - Escalonar Recursos");
         jLabelPasso4.setEnabled(false);
 
-        jLabelPasso5.setText("Tipo de Gerador");
+        jLabelTipoGerador.setText("Tipo de Gerador");
+        jLabelTipoGerador.setEnabled(false);
+
+        jLabelPasso5.setText("5 - Escalonador simplificado");
         jLabelPasso5.setEnabled(false);
 
         javax.swing.GroupLayout jPanelPassosLayout = new javax.swing.GroupLayout(jPanelPassos);
@@ -1114,12 +1120,13 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addGroup(jPanelPassosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelPassosLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabelPasso5))
-                    .addComponent(jLabelPassos, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                        .addComponent(jLabelTipoGerador))
+                    .addComponent(jLabelPassos, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
                     .addComponent(jLabelPasso1)
                     .addComponent(jLabelPasso2)
                     .addComponent(jLabelPasso3)
-                    .addComponent(jLabelPasso4))
+                    .addComponent(jLabelPasso4)
+                    .addComponent(jLabelPasso5))
                 .addContainerGap())
         );
         jPanelPassosLayout.setVerticalGroup(
@@ -1132,12 +1139,14 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelPasso2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelPasso5)
+                .addComponent(jLabelTipoGerador)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelPasso3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelPasso4)
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelPasso5)
+                .addContainerGap(190, Short.MAX_VALUE))
         );
 
         jButtonVoltar.setText("< Voltar");
@@ -1248,10 +1257,10 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 this.passoAtual = 2;
                 break;
             case 2:
-                this.jScrollPanePrincipal.setViewportView(this.jPanelPasso3);
+                this.jScrollPanePrincipal.setViewportView(this.jTipoGerador);
                 this.jLabelPasso2.setEnabled(false);
-                this.jLabelPasso3.setEnabled(true);
-                this.passoAtual = 3;
+                this.jLabelTipoGerador.setEnabled(true);
+                this.passoAtual = 10; // vai para o tipo de gerador (passo = 10)
                 break;
             case 3: 
                 this.jScrollPanePrincipal.setViewportView(this.jPanelPasso4);
@@ -1268,6 +1277,22 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 contaParent = contaParent_r;
                 inserirFormula(null);
                 break;
+            case 10:
+                this.jLabelTipoGerador.setEnabled(false);
+                if (jOpSimples.isSelected()){
+                    
+                    this.jScrollPanePrincipal.setViewportView(this.jPanelPasso5);
+                    //this.jLabelPasso5
+                    passoAtual = 5;
+                }
+                else{
+                    this.jScrollPanePrincipal.setViewportView(this.jPanelPasso3);
+                
+                    this.jLabelPasso3.setEnabled(true);
+                    passoAtual = 3;
+                    
+                }
+                    
         }
     }//GEN-LAST:event_jButtonProximoActionPerformed
 
@@ -1305,6 +1330,19 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 contaParent = contaParent_t;
                 inserirFormula(null);          
                 break;
+            case 10:
+                this.jScrollPanePrincipal.setViewportView(this.jPanelPasso2);
+                this.jButtonProximo.setEnabled(true);
+                this.jLabelPasso2.setEnabled(true);
+                this.jLabelTipoGerador.setEnabled(false);
+                this.passoAtual = 2;
+            case 5:
+                this.jScrollPanePrincipal.setViewportView(this.jTipoGerador);
+                this.jButtonProximo.setEnabled(true);
+                this.jLabelTipoGerador.setEnabled(true);
+                this.jLabelPasso5.setEnabled(false);
+                this.passoAtual = 10;
+                
         }
     }//GEN-LAST:event_jButtonVoltarActionPerformed
 
@@ -1724,6 +1762,7 @@ private void jOpAvancadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JLabel jLabelPasso4;
     private javax.swing.JLabel jLabelPasso5;
     private javax.swing.JLabel jLabelPassos;
+    private javax.swing.JLabel jLabelTipoGerador;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JRadioButton jOpAvancada;
