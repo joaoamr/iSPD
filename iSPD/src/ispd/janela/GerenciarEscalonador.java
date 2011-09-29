@@ -49,7 +49,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         jEditorPane.setContentType("text/java");
         fecharEdicao();
         //Obtem e escreve posição atual no texto
-        new CaretMonitor(jEditorPane, jLabelCaretPos);
+        CaretMonitor caretMonitor = new CaretMonitor(jEditorPane, jLabelCaretPos);
         // Eventos de desfazer e refazer
         javax.swing.text.Document doc = jEditorPane.getDocument();
         doc.addUndoableEditListener(new UndoableEditListener() {
@@ -160,6 +160,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         jFileChooser1.setFileFilter(new FiltroDeArquivos(palavras.getString("Java Source Files (. java)"), ".java", true));
 
         setTitle(palavras.getString("Manage Schedulers")); // NOI18N
+        setAlwaysOnTop(true);
         setFocusable(false);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
 

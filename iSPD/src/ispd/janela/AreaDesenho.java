@@ -937,6 +937,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             }
             break;
         }
+        this.setLabelAtributos(I);
         repaint();
     }
 
@@ -1579,7 +1580,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                             icone.getProprietario(), 
                             icone.getPoderComputacional(), 
                             icone.getTaxaOcupacao(), 
-                            null/*Escalonador*/);
+                            icone.getAlgoritmo()/*Escalonador*/);
                     mestres.add(mestre);
                     mestresNome.add(icone.getIdGlobal());    
                     }else{
@@ -1599,7 +1600,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                             icone.getProprietario(), 
                             icone.getPoderComputacional(), 
                             icone.getTaxaOcupacao(), 
-                            null/*Escalonador*/);
+                            icone.getAlgoritmo()/*Escalonador*/);
                     mestres.add(clust);
                     mestresNome.add(icone.getIdGlobal());
                     break;

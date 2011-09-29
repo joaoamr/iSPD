@@ -125,6 +125,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jButtonTarefas = new javax.swing.JButton();
         jButtonUsuarios = new javax.swing.JButton();
         jButtonSimular = new javax.swing.JButton();
+        jScrollPaneProperties = new javax.swing.JScrollPane();
+        jPanelPropriedades = new ispd.janela.configuracao.JPanelSimples();
+        jPanelSimples.setjLabelTexto(palavras.getString("No icon selected."));
         jMenuBar = new javax.swing.JMenuBar();
         jMenuArquivo = new javax.swing.JMenu();
         jMenuItemNovo = new javax.swing.JMenuItem();
@@ -291,6 +294,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jToolBar.add(jButtonSimular);
+
+            jScrollPaneProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Properties"))); // NOI18N
+            jScrollPaneProperties.setViewportView(jPanelPropriedades);
 
             jMenuArquivo.setText(palavras.getString("File")); // NOI18N
 
@@ -586,7 +592,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPaneBarraNotifica, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jScrollPaneProperties)
+                                .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
@@ -603,7 +611,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                             .addComponent(jScrollPaneAreaDesenho, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(11, 11, 11)
-                            .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)))
+                            .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPaneProperties, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jScrollPaneBarraNotifica, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
@@ -749,6 +759,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         aDesenho.setPaineis(this);
         this.setRegua();
         jScrollPaneBarraLateral.setViewportView(null);
+        jPanelPropriedades.setjLabelTexto("");
         jScrollPaneAreaDesenho.setViewportView(aDesenho);
         appendNotificacao(palavras.getString("New model opened"));
         abrirEdição(null);
@@ -795,6 +806,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                         aDesenho.setPaineis(this);
                         this.setRegua();
                         jScrollPaneBarraLateral.setViewportView(null);
+                        jPanelPropriedades.setjLabelTexto("");
                         jScrollPaneAreaDesenho.setViewportView(aDesenho);
                         appendNotificacao(palavras.getString("model opened"));
                         abrirEdição(file);
@@ -865,6 +877,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                             aDesenho.setPaineis(this);
                             this.setRegua();
                             jScrollPaneBarraLateral.setViewportView(null);
+                            jPanelPropriedades.setjLabelTexto("");
                             jScrollPaneAreaDesenho.setViewportView(aDesenho);
                             appendNotificacao(palavras.getString("model opened"));
                             abrirEdição(null);
@@ -912,6 +925,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         if (escolha != JOptionPane.CANCEL_OPTION && escolha != JOptionPane.CLOSED_OPTION) {
             jScrollPaneAreaDesenho.setViewportView(null);
             jScrollPaneBarraLateral.setViewportView(null);
+            jPanelPropriedades.setjLabelTexto("");
             appendNotificacao(palavras.getString("model closed"));
             fecharEdicao();
         }
@@ -1151,11 +1165,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private ispd.janela.configuracao.JPanelConfiguraCluster jPanelCluster;
     private ispd.janela.configuracao.JPanelConfiguraInternet jPanelInternet;
     private ispd.janela.configuracao.JPanelConfiguraMaquina jPanelMaquina;
+    private ispd.janela.configuracao.JPanelSimples jPanelPropriedades;
     private ispd.janela.configuracao.JPanelConfiguraRede jPanelRede;
     private ispd.janela.configuracao.JPanelSimples jPanelSimples;
     private javax.swing.JScrollPane jScrollPaneAreaDesenho;
     private javax.swing.JScrollPane jScrollPaneBarraLateral;
     private javax.swing.JScrollPane jScrollPaneBarraNotifica;
+    private javax.swing.JScrollPane jScrollPaneProperties;
     private javax.swing.JTextArea jTextAreaNotifica;
     private javax.swing.JToggleButton jToggleButtonCluster;
     private javax.swing.JToggleButton jToggleButtonInternet;
@@ -1211,6 +1227,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void initTexts() {
         jScrollPaneBarraLateral.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Settings")));
+        jScrollPaneProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Properties")));
         jScrollPaneBarraNotifica.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Notifications")));
 
         jToggleButtonMaquina.setToolTipText(palavras.getString("Selects machine icon for add to the model"));
@@ -1286,29 +1303,26 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             switch (I.getTipoIcone()) {
                 case Icone.MACHINE: {
                     this.jPanelMaquina.setIcone(I);
-                    this.jPanelMaquina.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelMaquina);
                 }
                 break;
                 case Icone.NETWORK: {
                     this.jPanelRede.setIcone(I);
-                    this.jPanelRede.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelRede);
                 }
                 break;
                 case Icone.CLUSTER: {
                     this.jPanelCluster.setIcone(I);
-                    this.jPanelCluster.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelCluster);
                 }
                 break;
                 case Icone.INTERNET: {
                     this.jPanelInternet.setIcone(I);
-                    this.jPanelInternet.setTextoExtra(Texto);
                     jScrollPaneBarraLateral.setViewportView(jPanelInternet);
                 }
                 break;
             }
+            this.jPanelPropriedades.setjLabelTexto(Texto);
         } else {
             jScrollPaneBarraLateral.setViewportView(jPanelSimples);
         }

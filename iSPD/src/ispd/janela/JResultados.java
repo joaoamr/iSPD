@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-import jsyntaxpane.syntaxkits.DOSBatchSyntaxKit;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -250,7 +249,8 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         String texto = "\t\tSimulation Results\n\n";
         texto += String.format("\tTotal Simulated Time = %g \n", globais.getTempoSimulacao());
         texto += String.format("\tSatisfaction = %g %%\n", globais.getSatisfacaoMedia());
-        texto += String.format("\tTotal Idleness = %g %%\n", globais.getOciosidadeMedia());
+        texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeCompuacao());
+        texto += String.format("\tIdleness of communication resources = %g %%\n", globais.getOciosidadeComunicacao());
         texto += String.format("\tEfficiency = %g %%\n", globais.getEficiencia());
         if (globais.getEficiencia() > 70.0) {
             texto += "\tEfficiency GOOD\n ";
@@ -273,21 +273,15 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         for (Tarefa no : tarefas) {
             tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
             tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
-            tempoMedioSistemaComunicacao =
-                    no.getMetricas().getTempoEsperaComu()
-                    + no.getMetricas().getTempoComunicacao();
             tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
             tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
-            tempoMedioSistemaProcessamento =
-                    no.getMetricas().getTempoEsperaProc()
-                    + no.getMetricas().getTempoProcessamento();
         }
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / tarefas.size();
         tempoMedioComunicacao = tempoMedioComunicacao / tarefas.size();
-        tempoMedioSistemaComunicacao = tempoMedioSistemaComunicacao / tarefas.size();
         tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / tarefas.size();
         tempoMedioProcessamento = tempoMedioProcessamento / tarefas.size();
-        tempoMedioSistemaProcessamento = tempoMedioSistemaProcessamento / tarefas.size();
+        tempoMedioSistemaComunicacao = tempoMedioFilaComunicacao + tempoMedioComunicacao;
+        tempoMedioSistemaProcessamento = tempoMedioFilaProcessamento + tempoMedioProcessamento;
         texto += "\n Communication \n";
         texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaComunicacao);
         texto += String.format("    Communication average time: %g seconds.\n", tempoMedioComunicacao);

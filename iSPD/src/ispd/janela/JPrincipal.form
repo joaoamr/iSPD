@@ -531,7 +531,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPaneBarraNotifica" alignment="1" pref="780" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPaneBarraLateral" min="-2" pref="236" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jScrollPaneProperties" max="32767" attributes="1"/>
+                          <Component id="jScrollPaneBarraLateral" alignment="1" pref="236" max="32767" attributes="1"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jToolBar" alignment="1" pref="538" max="32767" attributes="0"/>
@@ -554,7 +557,9 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="11" pref="11" max="11" attributes="0"/>
-                      <Component id="jScrollPaneBarraLateral" pref="351" max="32767" attributes="1"/>
+                      <Component id="jScrollPaneBarraLateral" min="-2" pref="223" max="-2" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPaneProperties" pref="122" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -742,6 +747,26 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSimularActionPerformed"/>
           </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JScrollPane" name="jScrollPaneProperties">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Properties">
+              <ResourceString PropertyName="titleX" bundle="ispd/idioma/Idioma_en_US.properties" key="Properties" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="ispd.janela.configuracao.JPanelSimples" name="jPanelPropriedades">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelSimples.setjLabelTexto(palavras.getString(&quot;No icon selected.&quot;));"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
