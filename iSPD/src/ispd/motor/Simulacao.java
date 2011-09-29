@@ -46,7 +46,8 @@ public class Simulacao {
         if (tarefas == null || tarefas.isEmpty()) {
             throw new IllegalArgumentException("One or more  workloads have not been configured.");
         }
-        janela.print("Creating routing." + " -> ");
+        janela.print("Creating routing.");
+        janela.print(" -> ");
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             Mestre temp = (Mestre) mst;
             //Cede acesso ao mestre a fila de eventos futuros
@@ -102,7 +103,8 @@ public class Simulacao {
         }
         janela.incProgresso(30);
         janela.println("Simulation completed.", Color.green);
-        janela.print("Getting Results." + " -> ");
+        janela.print("Getting Results.");
+        janela.print(" -> ");
         redeDeFilas.setMetricasGlobais(new MetricasGlobais(redeDeFilas, getTime()));
         janela.incProgresso(5);
         janela.println("OK", Color.green);
