@@ -18,6 +18,7 @@ public abstract class Escalonador {
     //Atributos
     protected List<CS_Processamento> escravos;
     protected List<Tarefa> tarefas;
+    protected List<Tarefa> concluidas;
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
@@ -54,7 +55,11 @@ public abstract class Escalonador {
     public void addEscravo(CS_Processamento maquina) {
         this.escravos.add(maquina);
     }
-
+    
+    public void addTarefaConcluida(Tarefa tarefa) {
+        this.concluidas.add(tarefa);
+    }
+    
     public List<Tarefa> getFilaTarefas() {
         return this.tarefas;
     }
