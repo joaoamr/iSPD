@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -35,7 +36,7 @@ import javax.tools.ToolProvider;
  * @author denison_usuario
  */
 public class Escalonadores {
-    private final String DIRETORIO = "ispd/externo/escalonador";
+    private final String DIRETORIO = "ispd/externo";
     /**
      * guarda a lista de escalonadores disponiveis
      */
@@ -65,17 +66,22 @@ public class Escalonadores {
                 File jar = new File(System.getProperty("java.class.path"));
                 //carrega dependencias para compilação
                 try {
-                    //File destino = new File("politicasescalonamento/externo/escalonador");
-                    extrairDiretorioJar(jar, "motor");
                     extrairDiretorioJar(jar, "escalonador");
+                    //extrairDiretorioJar(jar, "externo");
+                    extrairDiretorioJar(jar, "motor");
                 } catch (ZipException ex) {
-                    //Logger.getLogger(ArquivosEscalonadores2.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    //Logger.getLogger(ArquivosEscalonadores2.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            criarWorkqueue();
-            compilar("Workqueue");
+            }//else{
+                //diretorio.mkdirs();
+                //File RR = new File(getClass().getResource("/ispd/externo/RoundRobin.class").getFile());
+                //copiarArquivo(RR, new File(DIRETORIO, RR.getName()));
+            //}
+            //criarRoundRobin();
+            //criarWorkqueue();
+            //compilar("Workqueue");
         } else {
             //busca apenas arquivos .class
             FilenameFilter ff = new FilenameFilter() {
@@ -220,44 +226,59 @@ public class Escalonadores {
     }
 
     /**
-     * cria arquivo java com a politica Workqueue
+     * cria arquivo java com a politica RoundRobin
      */
-    private void criarWorkqueue() {
+    private void criarRoundRobin() {
         String codigoFonte =
-                "package ispd.externo.escalonador;"
-                + "\n" + "import ispd.motor.Tarefa;"
-                + "\n" + "import ispd.escalonador.Escalonador;"
-                + "\n" + "import java.util.ArrayList;"
-                + "\n" + "public class Workqueue extends Escalonador {"
-                + "\n" + "  int totalDeTarefas;"
-                + "\n" + "  int contador;"
-                + "\n" + "  public void iniciar() {"
-                + "\n" + "    totalDeTarefas = tarefas.size();"
-                + "\n" + "    contador = 0;"
-                + "\n" + "  }"
-                + "\n" + "  public void atualizar() {"
-                + "\n" + "    System.out.println(\"não é utilizado neste algoritmo\");"
-                + "\n" + "  }"
-                + "\n" + "  public void escalonarTarefa() {}"
-                + "\n" + "  public void escalonarRecurso() {"
-                + "\n" + "    for (int i = 0; i < recursos.size()&&totalDeTarefas!=contador; i++) {"
-                + "\n" + "      if (recursos.get(i).numeroDeTarefas()==0) {"
-                + "\n" + "        recursos.get(i).AdicionarTarefa(tarefas.get(contador));"
-                + "\n" + "        contador++;"
-                + "\n" + "      }"
-                + "\n" + "    }"
-                + "\n" + "  }"
-                + "\n" + "  public void adicionarTarefa(Tarefa tarefa) {}"
-                + "\n" + "  public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {}"
-                + "\n" + "}";
+"package ispd.externo;\n\n"+
+"import ispd.escalonador.Escalonador;\n"+
+"import ispd.escalonador.Mestre;\n"+
+"import ispd.motor.filas.Tarefa;\n"+
+"import ispd.motor.filas.servidores.CS_Processamento;\n"+
+"import ispd.motor.filas.servidores.CentroServico;\n"+
+"import java.util.ArrayList;\n"+
+"import java.util.List;\n\n"+
+"/**\n * Implementação do algoritmo de escalonamento Round-Robin\n"+
+" * Atribui a proxima tarefa da fila (FIFO)\n"+
+" * para o proximo recurso de uma fila circular de recursos\n"+
+" * @author denison_usuario\n */\n"+
+"public class RoundRobin extends Escalonador{\n"+
+"    private int escravoAtual = -1;\n\n"+
+"    public RoundRobin(){\n"+
+"        this.tarefas = new ArrayList<Tarefa>();\n"+
+"        this.escravos = new ArrayList<CS_Processamento>();\n    }\n\n"+
+"    @Override\n    public void iniciar() {\n"+
+"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
+"    @Override\n    public void atualizar() {\n"+
+"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
+"    @Override\n    public Tarefa escalonarTarefa() {\n"+
+"        return tarefas.remove(0);\n    }\n\n"+
+"    @Override\n    public CS_Processamento escalonarRecurso() {\n"+
+"        escravoAtual++;\n"+
+"        if (escravos.size()<=escravoAtual) {\n"+
+"            escravoAtual=0;\n"+
+"        }\n        return escravos.get(escravoAtual);\n    }\n\n"+
+"    @Override\n    public void escalonar(Mestre mestre) {\n"+
+"        Tarefa trf = escalonarTarefa();\n"+
+"        CS_Processamento rec = escalonarRecurso();\n"+
+"        trf.setCaminho(escalonarRota(rec));\n"+
+"        mestre.enviarTarefa(trf);\n    }\n\n"+
+"    @Override\n    public void adicionarTarefa(Tarefa tarefa) {\n"+
+"        this.tarefas.add(tarefa);\n    }\n\n"+
+"    @Override\n    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {\n"+
+"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
+"    @Override\n    public List<CentroServico> escalonarRota(CentroServico destino) {\n"+
+"        int index = escravos.indexOf(destino);\n"+
+"        return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));\n"+
+"    }\n\n}";
         FileWriter arquivoFonte;
         try {
-            File local = new File(diretorio,"Workqueue.java");
+            File local = new File(diretorio,"RoundRobin.java");
             arquivoFonte = new FileWriter(local);
             arquivoFonte.write(codigoFonte); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
         } catch (IOException ex) {
-            //Logger.getLogger(GerarEscalonador.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     /**
@@ -374,25 +395,7 @@ public class Escalonadores {
         File localDestino = new File(diretorio, nomeArquivoJava.getName());
         String errosStr;
         //copiar para diretório
-        if (!localDestino.getPath().equals(nomeArquivoJava.getPath())) {
-            FileInputStream origem;
-            FileOutputStream destino;
-            FileChannel fcOrigem;
-            FileChannel fcDestino;
-            try {
-                origem = new FileInputStream(nomeArquivoJava);
-                destino = new FileOutputStream(localDestino);
-                fcOrigem = origem.getChannel();
-                fcDestino = destino.getChannel();
-                //Faz a copia
-                fcOrigem.transferTo(0, fcOrigem.size(), fcDestino);
-                origem.close();
-                destino.close();
-            } catch (IOException e) {
-                return false;
-                //e.printStackTrace();
-            }
-        }
+        copiarArquivo(nomeArquivoJava, localDestino);
         //Compilação
         JavaCompiler compilador = ToolProvider.getSystemJavaCompiler();
         if (compilador == null) {
@@ -428,5 +431,29 @@ public class Escalonadores {
             inserirLista(nome);
         }
         return true;
+    }
+    
+    private void copiarArquivo(File arquivoOrigem, File arquivoDestino){
+        //copiar para diretório
+        if (!arquivoDestino.getPath().equals(arquivoOrigem.getPath())) {
+            FileInputStream origem;
+            FileOutputStream destino;
+            FileChannel fcOrigem;
+            FileChannel fcDestino;
+            try {
+                origem = new FileInputStream(arquivoOrigem);
+                destino = new FileOutputStream(arquivoDestino);
+                fcOrigem = origem.getChannel();
+                fcDestino = destino.getChannel();
+                //Faz a copia
+                fcOrigem.transferTo(0, fcOrigem.size(), fcDestino);
+                origem.close();
+                destino.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
