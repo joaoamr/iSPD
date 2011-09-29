@@ -47,6 +47,11 @@ public abstract class CS_Comunicacao extends CentroServico {
     public double getLatencia() {
         return latencia;
     }
+
+    public double getOcupacao() {
+        return ocupacao;
+    }
+    
     /**
      * Retorna o tempo gasto
      * @param Mbits

@@ -114,8 +114,8 @@ public class CS_Maquina extends CS_Processamento {
             //buscar menor caminho!!!
             CS_Processamento novoMestre = (CS_Processamento)cliente.getOrigem();
             List<CentroServico> caminho = new ArrayList<CentroServico>(
-                    this.getMenorCaminhosIndireto(this, novoMestre)
-                    );
+                    CS_Maquina.getMenorCaminhoIndireto(this, novoMestre)
+            );
             this.addMestre(novoMestre);
             this.caminhoMestre.add(caminho);
             cliente.setCaminho(new ArrayList<CentroServico>(caminho));
@@ -155,7 +155,7 @@ public class CS_Maquina extends CS_Processamento {
         caminhoMestre = new ArrayList<List>(mestres.size());
         //Busca pelos caminhos
         for (int i = 0; i < mestres.size(); i++) {
-            caminhoMestre.add(i, this.getMenorCaminhos(this, mestres.get(i)));
+            caminhoMestre.add(i, CS_Maquina.getMenorCaminho(this, mestres.get(i)));
         }
         //verifica se todos os mestres são alcansaveis
         for(int i = 0; i < mestres.size(); i++){

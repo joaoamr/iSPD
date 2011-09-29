@@ -132,7 +132,7 @@ public abstract class CS_Processamento extends CentroServico {
      * @param destino recurso destino
      * @return caminho completo a partir do primeiro link até o recurso destino
      */
-    protected List<CentroServico> getMenorCaminhos(CS_Processamento origem, CS_Processamento destino) {
+    public static List<CentroServico> getMenorCaminho(CS_Processamento origem, CS_Processamento destino) {
         //cria vetor com distancia acumulada
         List<CentroServico> nosExpandidos = new ArrayList<CentroServico>();
         List<Object[]> caminho = new ArrayList<Object[]>();
@@ -225,7 +225,7 @@ public abstract class CS_Processamento extends CentroServico {
      * @param destino recurso destino
      * @return caminho completo a partir do primeiro link até o recurso destino
      */
-    protected List<CentroServico> getMenorCaminhosIndireto(CS_Processamento origem, CS_Processamento destino) {
+    public static List<CentroServico> getMenorCaminhoIndireto(CS_Processamento origem, CS_Processamento destino) {
         //cria vetor com distancia acumulada
         ArrayList<CentroServico> nosExpandidos = new ArrayList<CentroServico>();
         ArrayList<Object[]> caminho = new ArrayList<Object[]>();

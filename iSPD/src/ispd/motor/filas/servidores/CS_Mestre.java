@@ -4,8 +4,8 @@
  */
 package ispd.motor.filas.servidores;
 
+import ispd.escalonador.Carregar;
 import ispd.escalonador.Escalonador;
-import ispd.escalonador.RoundRobin;
 import ispd.escalonador.Mestre;
 import ispd.motor.EventoFuturo;
 import ispd.motor.Simulacao;
@@ -25,6 +25,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
     private List<Tarefa> filaProcessamento;
     private boolean maqDisponivel;
     private boolean escDisponivel;
+    private int tipoEscalonamento;
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
@@ -33,13 +34,13 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
 
     public CS_Mestre(String id, String proprietario, double PoderComputacional, double Ocupacao, String Escalonador) {
         super(id, proprietario, PoderComputacional, 1, Ocupacao);
-        //Deve ser alterado para carregar classe dinâmica
-        this.escalonador = new RoundRobin();
+        this.escalonador = Carregar.getNewEscalonador(Escalonador);
         this.filaProcessamento = new ArrayList<Tarefa>();
         this.maqDisponivel = true;
         this.escDisponivel = true;
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
+        this.tipoEscalonamento = ENQUANTO_HOUVER_TAREFAS;
     }
 
     //Métodos do centro de serviços
@@ -58,6 +59,15 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                         cliente);
                 //Event adicionado a lista de evntos futuros
                 simulacao.getEventos().offer(evtFut);
+            }else{
+                this.escalonador.addTarefaConcluida(cliente);
+            }
+            if(tipoEscalonamento == QUANDO_RECEBE_RESULTADO){
+                if(this.escalonador.getFilaTarefas().isEmpty()){
+                    this.escDisponivel = true;
+                }else{
+                    executarEscalonamento();
+                }
             }
         } else if (escDisponivel) {
             this.escDisponivel = false;
@@ -124,11 +134,13 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                     cliente.getCaminho().remove(0), cliente);
             //Event adicionado a lista de evntos futuros
             simulacao.getEventos().offer(evtFut);
-            //se fila de tarefas do servidor não estiver vazia escalona proxima tarefa
-            if (!escalonador.getFilaTarefas().isEmpty()) {
-                executarEscalonamento();
-            } else {
-                this.escDisponivel = true;
+            if(tipoEscalonamento == ENQUANTO_HOUVER_TAREFAS){
+                //se fila de tarefas do servidor não estiver vazia escalona proxima tarefa
+                if (!escalonador.getFilaTarefas().isEmpty()) {
+                    executarEscalonamento();
+                } else {
+                    this.escDisponivel = true;
+                }
             }
         }
     }
@@ -172,6 +184,10 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
         this.simulacao = simulacao;
     }
 
+    public Escalonador getEscalonador() {
+        return escalonador;
+    }
+    
     public void addConexoesSaida(CS_Link link) {
         conexoesSaida.add(link);
     }
@@ -206,7 +222,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
         caminhoEscravo = new ArrayList<List>(escravos.size());
         //Busca pelo melhor caminho
         for (int i = 0; i < escravos.size(); i++) {
-            caminhoEscravo.add(i, this.getMenorCaminhos(this, escravos.get(i)));
+            caminhoEscravo.add(i, CS_Mestre.getMenorCaminho(this, escravos.get(i)));
         }
         //verifica se todos os escravos são alcansaveis
         for (int i = 0; i < escravos.size(); i++) {
@@ -215,5 +231,13 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
             }
         }
         escalonador.setCaminhoEscravo(caminhoEscravo);
+    }
+
+    public int getTipoEscalonamento() {
+        return tipoEscalonamento;
+    }
+    
+    public void setTipoEscalonamento(int tipo) {
+        tipoEscalonamento = tipo;
     }
 }
