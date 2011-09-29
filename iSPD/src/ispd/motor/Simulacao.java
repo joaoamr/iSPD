@@ -10,6 +10,7 @@ import ispd.janela.JSimulacao;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Maquina;
+import ispd.motor.filas.servidores.CS_Mestre;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.Color;
@@ -67,6 +68,14 @@ public class Simulacao {
     }
 
     public void simular() {
+        //inicia os escalonadores
+        for(CS_Processamento mst : redeDeFilas.getMestres()){
+            CS_Mestre mestre = (CS_Mestre) mst;
+            //utilisa a classe de escalonamento diretamente 
+            //pode ser modificado para gerar um evento 
+            //mas deve ser o primeiro evento executado nos mestres
+            mestre.getEscalonador().iniciar();
+        }
         //adiciona chegada das tarefas na lista de eventos futuros
         addEventos(tarefas);
         while (!eventos.isEmpty()) {
