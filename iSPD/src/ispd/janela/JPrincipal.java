@@ -21,8 +21,6 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,21 +76,6 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.jButtonTarefas.addKeyListener(this);
         this.jButtonUsuarios.addKeyListener(this);
         this.jButtonSimular.addKeyListener(this);
-
-        addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (modificado) {
-                    int escolha = savarAlteracao();
-                    if (escolha != JOptionPane.CANCEL_OPTION && escolha != JOptionPane.CLOSED_OPTION) {
-                        System.exit(0);
-                    }
-                } else {
-                    System.exit(0);
-                }
-            }
-        });
     }
 
     /** This method is called from within the constructor to
@@ -104,13 +87,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFrameGerenciador = new ispd.janela.GerenciarEscalonador();
         jPanelMaquina = new ispd.janela.configuracao.JPanelConfiguraMaquina();
-        jPanelCluster = new ispd.janela.configuracao.JPanelConfiguraCluster();
+        jPanelCluster = new ispd.janela.configuracao.JPanelConfiguraCluster(jFrameGerenciador.getEscalonadores());
         jPanelRede = new ispd.janela.configuracao.JPanelConfiguraRede();
         jPanelInternet = new ispd.janela.configuracao.JPanelConfiguraInternet();
         jPanelSimples = new ispd.janela.configuracao.JPanelSimples();
         jPanelSimples.setjLabelTexto(palavras.getString("No icon selected."));
-        jFrameGerenciador = new ispd.janela.GerenciarEscalonador();
         jFileChooser = new javax.swing.JFileChooser();
         jScrollPaneAreaDesenho = new javax.swing.JScrollPane();
         jScrollPaneBarraLateral = new javax.swing.JScrollPane();
@@ -186,9 +169,14 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 return null;
             }});
 
-            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
             setTitle(palavras.getString("nomePrograma")); // NOI18N
             setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    formWindowClosing(evt);
+                }
+            });
 
             jScrollPaneBarraLateral.setBorder(javax.swing.BorderFactory.createTitledBorder("Settings"));
 
@@ -1123,6 +1111,19 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             modificar();
         }
     }//GEN-LAST:event_jButtonUsuariosActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        if (modificado) {
+            int escolha = savarAlteracao();
+            System.out.println(escolha + " " + JOptionPane.CANCEL_OPTION);
+            if (escolha != JOptionPane.CANCEL_OPTION && escolha != JOptionPane.CLOSED_OPTION) {
+                System.exit(0);
+            }
+        } else {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_formWindowClosing
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
@@ -1362,6 +1363,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         }
         if (escolha == JOptionPane.YES_OPTION) {
             //Implementar ações para salvar conteudo
+            jMenuItemSalvarActionPerformed(null);
             salvarModificacao();
         }
         return escolha;

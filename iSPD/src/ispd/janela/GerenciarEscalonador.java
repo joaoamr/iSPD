@@ -10,6 +10,7 @@
  */
 package ispd.janela;
 
+import ispd.ValidaValores;
 import ispd.janela.componenteauxiliar.FiltroDeArquivos;
 import ispd.arquivo.Escalonadores;
 import java.awt.BorderLayout;
@@ -82,10 +83,10 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
                 if (modificado) {
                     int escolha = savarAlteracao();
                     if (escolha != JOptionPane.CANCEL_OPTION && escolha != JOptionPane.CLOSED_OPTION) {
-                        //setVisible(false);//System.exit(0);
+                        setVisible(false);//System.exit(0);
                     }
                 } else {
-                    //setVisible(false);//System.exit(0);
+                    setVisible(false);//System.exit(0);
                 }
             }
         });
@@ -420,7 +421,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
                 String result1 = JOptionPane.showInputDialog(this, "Enter the name of the scheduler");
                 boolean nomeOk;
                 if (result1 != null) {
-                    nomeOk = testarNomeClasse(result1);
+                    nomeOk = ValidaValores.validaNomeClasse(result);
                 } else {
                     nomeOk = false;
                 }
@@ -587,7 +588,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
                         //Adicionar ao editor
                         abrirEdicao(nome, conteud.toString());
                     } else {
-                        JOptionPane.showMessageDialog(this, "Falha na importação", "Erro", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Falha na importação", "Error!", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -631,16 +632,6 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
     private String escalonadorAberto;
     private ResourceBundle palavras;
 
-    //Deve ser migrado para ValidaValores
-    private boolean testarNomeClasse(String result1) {
-        if (result1.matches("[a-zA-Z_]*\\w")) {
-            System.out.println("A string começa por um desses caracteres especiais, ou por número");
-            return true;
-        }
-        System.out.println("Não bateu");
-        return false;
-    }
-
     private void atualizarEscalonadores(ArrayList<String> escal) {
         this.jListEscalonadores.setListData(escal.toArray());
     }
@@ -673,8 +664,13 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         this.setTitle(escalonadorAberto+".java ["+palavras.getString("modified")+"] - "+palavras.getString("Manage Schedulers"));
         this.modificado = true;
     }
+    
     private void salvarModificacao(){
         this.setTitle(escalonadorAberto+".java - "+palavras.getString("Manage Schedulers"));
         this.modificado = false;
+    }
+
+    public Escalonadores getEscalonadores() {
+        return escalonadores;
     }
 }

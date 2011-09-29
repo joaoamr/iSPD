@@ -64,7 +64,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         jTextPaneNotificacao = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Running Simulation");
+        setTitle(palavras.getString("Running Simulation")); // NOI18N
 
         jProgressBar.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
@@ -163,10 +163,12 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     }
 
     public void println(String text, Color cor) {
-        this.print(text + "\n", cor);
+        this.print(text, cor);
+        this.print("\n", cor);
     }
     public void println(String text) {
-        this.print(text + "\n", Color.black);
+        this.print(text, Color.black);
+        this.print("\n", Color.black);
     }
     
     public void print(String text) {
@@ -181,7 +183,11 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             } else {
                 StyleConstants.setForeground(configuraCor, Color.black);
             }
-            doc.insertString(doc.getLength(), text, configuraCor);
+            if(palavras.containsKey(text)){
+                doc.insertString(doc.getLength(), palavras.getString(text), configuraCor);
+            }else{
+                doc.insertString(doc.getLength(), text, configuraCor);
+            }
         } catch (BadLocationException ex) {
             Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -194,7 +200,8 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             //Verifica se foi construido modelo na area de desenho
             validarInicioSimulacao();//[5%] --> 5%
             //escreve modelo iconico
-            this.print(palavras.getString("Writing iconic model.") + " -> ");
+            this.print("Writing iconic model.");
+            this.print(" -> ");
             File arquivo = new File("modeloiconico");
             try {
                 FileWriter writer = new FileWriter(arquivo);
@@ -208,39 +215,45 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             incProgresso(5);//[5%] --> 10%
             this.println("OK", Color.green);
             //interpreta modelo iconico
-            this.print(palavras.getString("Interpreting iconic model.") + " -> ");
+            this.print("Interpreting iconic model.");
+            this.print(" -> ");
             InterpretadorIconico parser = new InterpretadorIconico();
             parser.leArquivo(arquivo);
             incProgresso(5);//[5%] --> 15%
             this.println("OK", Color.green);
-            this.print(palavras.getString("Writing simulation model.") + " -> ");
+            this.print("Writing simulation model.");
+            this.print(" -> ");
             parser.escreveArquivo();
             incProgresso(5);//[5%] --> 20%
             this.println("OK", Color.green);
-            this.print(palavras.getString("Interpreting simulation model.") + " -> ");
+            this.print("Interpreting simulation model.");
+            this.print(" -> ");
             InterpretadorSimulavel parser2 = new InterpretadorSimulavel();
             parser2.leArquivo(new File("modelosimulavel"));
             incProgresso(5);//[5%] --> 25%
             this.println("OK", Color.green);
             //criar grade
-            this.print(palavras.getString("Mounting network queue.") + " -> ");
+            this.print("Mounting network queue.");
+            this.print(" -> ");
             this.redeDeFilas = aDesenho.getRedeDeFilas();
             incProgresso(10);//[10%] --> 35%
             this.println("OK", Color.green);
             //criar tarefas
-            this.print(palavras.getString("Creating tasks.") + " -> ");
+            this.print("Creating tasks.");
+            this.print(" -> ");
             this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas.getMestres());
             incProgresso(10);//[10%] --> 45%
             this.println("OK", Color.green);
             //Verifica recursos do modelo e define roteamento
             Simulacao sim = new Simulacao(this, redeDeFilas, tarefas);//[10%] --> 55 %
             //Realiza asimulação
-            this.println(palavras.getString("Simulating."));
+            this.println("Simulating.");
             sim.simular();//[30%] --> 85%
             //Obter Resultados
             //[5%] --> 90%
             //Apresentar resultados
-            this.print(palavras.getString("Showing results.") + " -> ");
+            this.print("Showing results.");
+            this.print(" -> ");
             JResultados janelaResultados = new JResultados(null, redeDeFilas, tarefas);
             incProgresso(10);//[10%] --> 100%
             this.println("OK", Color.green);
@@ -248,28 +261,31 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             janelaResultados.setVisible(true);
         }catch(IllegalArgumentException erro){
             this.println(erro.getMessage(), Color.red);
-            this.println(palavras.getString("Simulation Aborted")+"!", Color.red);
+            this.print("Simulation Aborted", Color.red);
+            this.println("!", Color.red);
         }
     }
     
     private void validarInicioSimulacao(){
-        this.print(palavras.getString("Verifying configuration of the icons.") + " -> ");
+        this.print("Verifying configuration of the icons.");
+        this.print(" -> ");
         if (aDesenho == null || aDesenho.getIcones().isEmpty()) {
-            this.println(palavras.getString("Error!"), Color.red);
-            throw new IllegalArgumentException(palavras.getString("The model has no icons."));
+            this.println("Error!", Color.red);
+            throw new IllegalArgumentException("The model has no icons.");
         }
         for (Icone I : aDesenho.getIcones()) {
             if (I.getConfigurado() == false) {
-                this.println(palavras.getString("Error!"), Color.red);
-                throw new IllegalArgumentException(palavras.getString("One or more parameters have not been configured."));
+                this.println("Error!", Color.red);
+                throw new IllegalArgumentException("One or more parameters have not been configured.");
             }
         }
         this.incProgresso(4);
         this.println("OK", Color.green);
-        this.print(palavras.getString("Verifying configuration of the tasks.") + " -> ");
+        this.print("Verifying configuration of the tasks.");
+        this.print(" -> ");
         if (aDesenho.getCargasConfiguracao() == null) {
-            this.println(palavras.getString("Error!"), Color.red);
-            throw new IllegalArgumentException(palavras.getString("One or more  workloads have not been configured."));
+            this.println("Error!", Color.red);
+            throw new IllegalArgumentException("One or more  workloads have not been configured.");
         }
         this.incProgresso(1);
         this.println("OK", Color.green);
