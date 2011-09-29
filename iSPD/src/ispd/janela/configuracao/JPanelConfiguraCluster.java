@@ -12,8 +12,11 @@ package ispd.janela.configuracao;
 
 import ispd.janela.Icone;
 import ispd.ValidaValores;
+import ispd.arquivo.Escalonadores;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 
@@ -25,13 +28,17 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
 
     private Icone icone;
     private ResourceBundle palavras;
+    private JComboBox jComboBoxAlgoritmos;
+    private Vector<String> nomesDosEscalonadores;
+    private Escalonadores escalonadores;
 
     /** Creates new form JPanelConfiguraCluster */
-    public JPanelConfiguraCluster() {
+    public JPanelConfiguraCluster(Escalonadores escalonadores) {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
-        String itens[] = {"---", "RoundRobin", "Workqueue"};
-        jComboBoxAlgoritmos = new JComboBox(itens);
+        this.escalonadores = escalonadores;
+        this.nomesDosEscalonadores = new Vector<String>(Arrays.asList(escalonadores.ESCALONADORES));
+        jComboBoxAlgoritmos = new JComboBox(nomesDosEscalonadores);
         initComponents();
         jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
         jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(90);
@@ -264,17 +271,17 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         // TODO add your handling code here:
         switch (jTableDouble.getSelectedRow()) {
             case 0:
-                if (jTableDouble.getValueAt(0, 1)!= null && ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                if (jTableDouble.getValueAt(0, 1) != null && ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
                     icone.setPoderComputacional((Double) jTableDouble.getValueAt(0, 1));
                 }
                 break;
             case 1:
-                if (jTableDouble.getValueAt(1, 1)!= null && ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                if (jTableDouble.getValueAt(1, 1) != null && ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
                     icone.setBanda((Double) jTableDouble.getValueAt(1, 1));
                 }
                 break;
             case 2:
-                if (jTableDouble.getValueAt(2, 1)!= null && ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
+                if (jTableDouble.getValueAt(2, 1) != null && ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
                     icone.setLatencia((Double) jTableDouble.getValueAt(2, 1));
                 }
                 break;
@@ -285,17 +292,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     private void jTableComboBoxPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableComboBoxPropertyChange
         // TODO add your handling code here:
         if (icone != null) {
-            switch (jComboBoxAlgoritmos.getSelectedIndex()) {
-                case 0:
-                    icone.setAlgoritmo("---");
-                    break;
-                case 1:
-                    icone.setAlgoritmo("RoundRobin");
-                    break;
-                case 2:
-                    icone.setAlgoritmo("Workqueue");
-                    break;
-            }
+            icone.setAlgoritmo(jComboBoxAlgoritmos.getSelectedItem().toString());
             jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
         }
     }//GEN-LAST:event_jTableComboBoxPropertyChange
@@ -308,9 +305,22 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     private javax.swing.JTable jTableInteiro;
     private javax.swing.JTable jTableString;
     // End of variables declaration//GEN-END:variables
-    private JComboBox jComboBoxAlgoritmos;
 
     public void setIcone(Icone icone) {
+        int numEscal = escalonadores.ESCALONADORES.length + escalonadores.listar().size();
+        if (nomesDosEscalonadores.size() > numEscal) {
+            for (String nome : nomesDosEscalonadores) {
+                if (!escalonadores.listar().contains(nome)) {
+                    nomesDosEscalonadores.remove(nome);
+                }
+            }
+        } else if (nomesDosEscalonadores.size() < numEscal) {
+            for (String nome : escalonadores.listar()) {
+                if (!nomesDosEscalonadores.contains(nome)) {
+                    nomesDosEscalonadores.add(nome);
+                }
+            }
+        }
         this.icone = icone;
         this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         jTableString.setValueAt(icone.getNome(), 0, 1);
@@ -318,12 +328,11 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         jTableDouble.setValueAt(icone.getPoderComputacional(), 0, 1);
         jTableDouble.setValueAt(icone.getBanda(), 1, 1);
         jTableDouble.setValueAt(icone.getLatencia(), 2, 1);
-        if (icone.getAlgoritmo().equals("---")) {
-            jComboBoxAlgoritmos.setSelectedIndex(0);
-        } else if (icone.getAlgoritmo().equals("RoundRobin")) {
-            jComboBoxAlgoritmos.setSelectedIndex(1);
+        int index = nomesDosEscalonadores.indexOf(icone.getAlgoritmo());
+        if (index != -1) {
+            jComboBoxAlgoritmos.setSelectedIndex(index);
         } else {
-            jComboBoxAlgoritmos.setSelectedIndex(2);
+            jComboBoxAlgoritmos.setSelectedIndex(0);
         }
         jTableComboBox.setValueAt(icone.getAlgoritmo(), 0, 1);
     }
