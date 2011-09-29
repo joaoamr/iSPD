@@ -8,7 +8,10 @@ import ispd.janela.LogExceptions;
 import ispd.janela.SplashWindow;
 import ispd.janela.JPrincipal;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,21 @@ public class Main {
         //Exibir e armazenar erros durante execução:
         LogExceptions logExceptions = new LogExceptions(null);
         Thread.setDefaultUncaughtExceptionHandler(logExceptions);
+        // cria os novos fluxos de saida para arquivo
+        FileOutputStream fosErr = null;
+        FileOutputStream fosOut = null;
+        try {
+            fosErr = new FileOutputStream("Erros/Erros_Simulador");
+            fosOut = new FileOutputStream("Erros/Saida_Simulador");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // define a impresso sobre os fluxos acima
+        PrintStream psErr = new PrintStream(fosErr);
+        PrintStream psOut = new PrintStream(fosOut);
+        // redefine os fluxos na classe System
+        //System.setErr(psErr);
+        //System.setOut(psOut);
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (ClassNotFoundException ex) {
