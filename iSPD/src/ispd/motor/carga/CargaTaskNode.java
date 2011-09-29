@@ -4,6 +4,7 @@
  */
 package ispd.motor.carga;
 
+import NumerosAleatorios.GeracaoNumAleatorios;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
@@ -65,14 +66,14 @@ public class CargaTaskNode extends GerarCarga {
             i++;
         }
         if (encontrou) {
-            Random sorteio = new Random();
+            GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
             for (i = 0; i < this.getNumeroTarefas(); i++) {
                 Tarefa tarefa = new Tarefa(
                         mestre,
-                        minComunicacao + sorteio.nextInt(maxComunicacao.intValue()),
-                        0.0 /*arquivo recebimento*/,
-                        minComputacao + sorteio.nextInt(maxComputacao.intValue()),
-                        0.0);
+                        gerador.twoStageUniform(minComunicacao, minComunicacao + (maxComunicacao - minComunicacao) / 2, maxComunicacao, 1),
+                        0.0009765625 /*arquivo recebimento*/,
+                        gerador.twoStageUniform(minComputacao, minComputacao + (maxComputacao - minComputacao) / 2, maxComputacao, 1),
+                        gerador.exponencial(0.05));
                 tarefas.add(tarefa);
             }
         }

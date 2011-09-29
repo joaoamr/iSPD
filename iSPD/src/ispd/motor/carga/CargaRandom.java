@@ -4,11 +4,11 @@
  */
 package ispd.motor.carga;
 
+import NumerosAleatorios.GeracaoNumAleatorios;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -62,25 +62,25 @@ public class CargaRandom extends GerarCarga {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
         int quantidadePorMestre = this.getNumeroTarefas() / mestres.size();
         int resto = this.getNumeroTarefas() % mestres.size();
-        Random sorteio = new Random();
+        GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
         for (CS_Processamento mestre : mestres) {
             for (int i = 0; i < quantidadePorMestre; i++) {
                 Tarefa tarefa = new Tarefa(
                         mestre,
-                        minComunicacao + sorteio.nextInt(maxComunicacao),
-                        0.0 /*arquivo recebimento*/,
-                        minComputacao + sorteio.nextInt(maxComputacao),
-                        0.0);
+                        gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
+                        0.0009765625 /*arquivo recebimento*/,
+                        gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),
+                        gerador.exponencial(timeOfArrival)/*tempo de criação*/);
                 tarefas.add(tarefa);
             }
         }
         for (int i = 0; i < resto; i++) {
             Tarefa tarefa = new Tarefa(
-                    mestres.get(0),
-                    minComunicacao + sorteio.nextInt(maxComunicacao),
-                    0.0 /*arquivo recebimento*/,
-                    minComputacao + sorteio.nextInt(maxComputacao),
-                    0.0);
+                        mestres.get(0),
+                        gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
+                        0.0009765625 /*arquivo recebimento 1 kbit*/,
+                        gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),
+                        gerador.exponencial(timeOfArrival)/*tempo de criação*/);
             tarefas.add(tarefa);
         }
         return tarefas;
