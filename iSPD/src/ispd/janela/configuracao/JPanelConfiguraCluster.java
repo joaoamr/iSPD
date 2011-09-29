@@ -14,12 +14,15 @@ import ispd.janela.Icone;
 import ispd.ValidaValores;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 
 /**
  *
  * @author denison_usuario
  */
 public class JPanelConfiguraCluster extends javax.swing.JPanel {
+
     private Icone icone;
     private ResourceBundle palavras;
 
@@ -27,7 +30,12 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     public JPanelConfiguraCluster() {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
+        String itens[] = {"---", "RoundRobin", "Workqueue"};
+        jComboBoxAlgoritmos = new JComboBox(itens);
         initComponents();
+        jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
+        jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(90);
+        jTableComboBox.getColumnModel().getColumn(1).setPreferredWidth(100);
     }
 
     /** This method is called from within the constructor to
@@ -41,83 +49,172 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
 
         jLabelTitle = new javax.swing.JLabel();
         jLabelInicial = new javax.swing.JLabel();
-        jTextFieldNome = new javax.swing.JTextField();
-        jTextFieldNumNos = new javax.swing.JTextField();
-        jTextFieldPoderComputacional = new javax.swing.JTextField();
-        jTextFieldBanda = new javax.swing.JTextField();
-        jTextFieldLatencia = new javax.swing.JTextField();
-        jComboBoxAlgoritmos = new javax.swing.JComboBox();
-        jLabelTextoExtra = new javax.swing.JLabel();
+        jTableString = new javax.swing.JTable();
+        jTableInteiro = new javax.swing.JTable();
+        jTableDouble = new javax.swing.JTable();
+        jTableComboBox = new javax.swing.JTable();
+        jLabel = new javax.swing.JLabel();
 
-        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabelTitle.setText(palavras.getString("Cluster icon configuration")); // NOI18N
 
         jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + "0");
 
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldNome.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldNomeFocusLost(evt);
+        jTableString.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Label:", "nome"}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-
-        jTextFieldNumNos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Number of nodes:")));
-        jTextFieldNumNos.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldNumNosFocusLost(evt);
-            }
-        });
-
-        jTextFieldPoderComputacional.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Computational power:") + " Mflop/s"));
-        jTextFieldPoderComputacional.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldPoderComputacionalFocusLost(evt);
-            }
-        });
-
-        jTextFieldBanda.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Bandwidth:") + " Mb/s"));
-        jTextFieldBanda.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldBandaFocusLost(evt);
-            }
-        });
-
-        jTextFieldLatencia.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Latency:") + " s"));
-        jTextFieldLatencia.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldLatenciaFocusLost(evt);
-            }
-        });
-
-        jComboBoxAlgoritmos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "---", "Round - Robin (RR)", "Workqueue" }));
-        jComboBoxAlgoritmos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Scheduling algorithm:")));
-        jComboBoxAlgoritmos.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        jTableString.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableString.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableString.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableString.getTableHeader().setResizingAllowed(false);
+        jTableString.getTableHeader().setReorderingAllowed(false);
+        jTableString.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jComboBoxAlgoritmosPropertyChange(evt);
+                jTableStringPropertyChange(evt);
             }
         });
+
+        jTableInteiro.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Nodes:", new Integer(1)}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableInteiro.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableInteiro.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableInteiro.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableInteiro.getTableHeader().setResizingAllowed(false);
+        jTableInteiro.getTableHeader().setReorderingAllowed(false);
+        jTableInteiro.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableInteiroPropertyChange(evt);
+            }
+        });
+
+        jTableDouble.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Processing:", null},
+                {"Bandwidth:", null},
+                {"Latency:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableDouble.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableDouble.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableDouble.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableDouble.getTableHeader().setResizingAllowed(false);
+        jTableDouble.getTableHeader().setReorderingAllowed(false);
+        jTableDouble.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableDoublePropertyChange(evt);
+            }
+        });
+
+        jTableComboBox.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Scheduler:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableComboBox.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableComboBox.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableComboBox.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableComboBox.getTableHeader().setResizingAllowed(false);
+        jTableComboBox.getTableHeader().setReorderingAllowed(false);
+        jTableComboBox.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableComboBoxPropertyChange(evt);
+            }
+        });
+
+        jLabel.setText("<html>Mflop/s<br>Mb/s<br>s</html>");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabelTextoExtra)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jComboBoxAlgoritmos, javax.swing.GroupLayout.Alignment.LEADING, 0, 159, Short.MAX_VALUE)
-                    .addComponent(jTextFieldLatencia, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addComponent(jTextFieldBanda, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addComponent(jTextFieldPoderComputacional, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addComponent(jTextFieldNumNos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addComponent(jTextFieldNome, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabelInicial)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabelTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
-                .addGap(241, 241, 241))
+            .addComponent(jLabelInicial)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addComponent(jTableComboBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                        .addComponent(jTableInteiro, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                        .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addComponent(jLabelTitle)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,63 +223,71 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelInicial)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTableString, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldNumNos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTableInteiro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldPoderComputacional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldBanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldLatencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(jComboBoxAlgoritmos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelTextoExtra)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addComponent(jTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextFieldNumNosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldNumNosFocusLost
+    private void jTableStringPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableStringPropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.validaInteiro(jTextFieldNumNos.getText())) {
-            icone.setNumeroEscravos(Integer.parseInt(jTextFieldNumNos.getText()));
+        if (evt.getNewValue() != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
+            if (ValidaValores.NomeIconeNaoExiste(jTableString.getValueAt(0, 1).toString()) && ValidaValores.validaNomeIcone(jTableString.getValueAt(0, 1).toString())) {
+                ValidaValores.removeNomeIcone(icone.getNome());
+                icone.setNome(jTableString.getValueAt(0, 1).toString());
+                ValidaValores.addNomeIcone(jTableString.getValueAt(0, 1).toString());
+            } else {
+                jTableString.setValueAt(icone.getNome(), 0, 1);
+            }
+        }else{
+            setIcone(icone);
         }
-}//GEN-LAST:event_jTextFieldNumNosFocusLost
+    }//GEN-LAST:event_jTableStringPropertyChange
 
-    private void jTextFieldBandaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldBandaFocusLost
+    private void jTableInteiroPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableInteiroPropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldBanda.getText())) {
-            icone.setBanda(Double.parseDouble(jTextFieldBanda.getText()));
+        if (evt.getNewValue() != null && ValidaValores.validaInteiro(jTableInteiro.getValueAt(0, 1).toString())) {
+            icone.setNumeroEscravos((Integer) jTableInteiro.getValueAt(0, 1));
+        }else{
+            setIcone(icone);
         }
-}//GEN-LAST:event_jTextFieldBandaFocusLost
+    }//GEN-LAST:event_jTableInteiroPropertyChange
 
-    private void jTextFieldLatenciaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldLatenciaFocusLost
+    private void jTableDoublePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableDoublePropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldLatencia.getText())) {
-            icone.setLatencia(Double.parseDouble(jTextFieldLatencia.getText()));
+        if (evt.getNewValue() != null) {
+            switch (jTableDouble.getSelectedRow()) {
+                case 0:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                        icone.setPoderComputacional((Double) jTableDouble.getValueAt(0, 1));
+                    }
+                    break;
+                case 1:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                        icone.setBanda((Double) jTableDouble.getValueAt(1, 1));
+                    }
+                    break;
+                case 2:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
+                        icone.setLatencia((Double) jTableDouble.getValueAt(2, 1));
+                    }
+                    break;
+            }
+        }else{
+            setIcone(icone);
         }
-}//GEN-LAST:event_jTextFieldLatenciaFocusLost
+    }//GEN-LAST:event_jTableDoublePropertyChange
 
-    private void jTextFieldNomeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldNomeFocusLost
+    private void jTableComboBoxPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableComboBoxPropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.NomeIconeNaoExiste(jTextFieldNome.getText()) && ValidaValores.validaNomeIcone(jTextFieldNome.getText())) {
-            ValidaValores.removeNomeIcone(icone.getNome());
-            icone.setNome(jTextFieldNome.getText());
-            ValidaValores.addNomeIcone(jTextFieldNome.getText());
-        }
-}//GEN-LAST:event_jTextFieldNomeFocusLost
-
-    private void jTextFieldPoderComputacionalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldPoderComputacionalFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldPoderComputacional.getText())) {
-            icone.setPoderComputacional(Double.parseDouble(jTextFieldPoderComputacional.getText()));
-        }
-    }//GEN-LAST:event_jTextFieldPoderComputacionalFocusLost
-
-    private void jComboBoxAlgoritmosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jComboBoxAlgoritmosPropertyChange
-        // TODO add your handling code here:
-        if (icone!=null) {
+        if (icone != null) {
             switch (jComboBoxAlgoritmos.getSelectedIndex()) {
                 case 0:
                     icone.setAlgoritmo("---");
@@ -194,28 +299,28 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
                     icone.setAlgoritmo("Workqueue");
                     break;
             }
+            jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
         }
-    }//GEN-LAST:event_jComboBoxAlgoritmosPropertyChange
+    }//GEN-LAST:event_jTableComboBoxPropertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBoxAlgoritmos;
+    private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabelInicial;
-    private javax.swing.JLabel jLabelTextoExtra;
     private javax.swing.JLabel jLabelTitle;
-    private javax.swing.JTextField jTextFieldBanda;
-    private javax.swing.JTextField jTextFieldLatencia;
-    private javax.swing.JTextField jTextFieldNome;
-    private javax.swing.JTextField jTextFieldNumNos;
-    private javax.swing.JTextField jTextFieldPoderComputacional;
+    private javax.swing.JTable jTableComboBox;
+    private javax.swing.JTable jTableDouble;
+    private javax.swing.JTable jTableInteiro;
+    private javax.swing.JTable jTableString;
     // End of variables declaration//GEN-END:variables
+    private JComboBox jComboBoxAlgoritmos;
 
     public void setIcone(Icone icone) {
         this.icone = icone;
         this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
-        this.jTextFieldNome.setText(icone.getNome());
-        this.jTextFieldNumNos.setText(String.valueOf(icone.getNumeroEscravos()));
-        this.jTextFieldPoderComputacional.setText(String.valueOf(icone.getPoderComputacional()));
-        this.jTextFieldBanda.setText(String.valueOf(icone.getBanda()));
-        this.jTextFieldLatencia.setText(String.valueOf(icone.getLatencia()));
+        jTableString.setValueAt(icone.getNome(), 0, 1);
+        jTableInteiro.setValueAt(icone.getNumeroEscravos(), 0, 1);
+        jTableDouble.setValueAt(icone.getPoderComputacional(), 0, 1);
+        jTableDouble.setValueAt(icone.getBanda(), 1, 1);
+        jTableDouble.setValueAt(icone.getLatencia(), 2, 1);
         if (icone.getAlgoritmo().equals("---")) {
             jComboBoxAlgoritmos.setSelectedIndex(0);
         } else if (icone.getAlgoritmo().equals("RoundRobin")) {
@@ -223,10 +328,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         } else {
             jComboBoxAlgoritmos.setSelectedIndex(2);
         }
-    }
-
-    public void setTextoExtra(String Texto) {
-        this.jLabelTextoExtra.setText(Texto);
+        jTableComboBox.setValueAt(icone.getAlgoritmo(), 0, 1);
     }
 
     public void setIdioma(ResourceBundle palavras) {
@@ -241,11 +343,11 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         } else {
             jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         }
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldNumNos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Number of nodes:")));
-        jTextFieldPoderComputacional.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Computational power:") + " Mflop/s"));
-        jTextFieldBanda.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Bandwidth:") + " Mb/s"));
-        jTextFieldLatencia.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Latency:") + " s"));
-        jComboBoxAlgoritmos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Scheduling algorithm:")));
+        jTableString.setValueAt(palavras.getString("Label:"), 0, 0);
+        jTableInteiro.setValueAt(palavras.getString("Nodes:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Processing:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Bandwidth:"), 1, 0);
+        jTableDouble.setValueAt(palavras.getString("Latency:"), 2, 0);
+        jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
     }
 }

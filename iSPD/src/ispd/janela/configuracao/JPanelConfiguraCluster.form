@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -16,27 +16,20 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="10" pref="10" max="10" attributes="0"/>
-              <Component id="jLabelTextoExtra" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jComboBoxAlgoritmos" alignment="0" pref="159" max="32767" attributes="0"/>
-                  <Component id="jTextFieldLatencia" alignment="0" pref="159" max="32767" attributes="1"/>
-                  <Component id="jTextFieldBanda" alignment="0" pref="159" max="32767" attributes="1"/>
-                  <Component id="jTextFieldPoderComputacional" alignment="0" pref="159" max="32767" attributes="1"/>
-                  <Component id="jTextFieldNumNos" alignment="0" pref="159" max="32767" attributes="1"/>
-                  <Component id="jTextFieldNome" alignment="0" pref="159" max="32767" attributes="1"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabelInicial" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="57" max="-2" attributes="0"/>
+          <Component id="jLabelInicial" min="-2" max="-2" attributes="0"/>
+          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+              <Component id="jTableComboBox" alignment="0" max="32767" attributes="1"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jTableString" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                      <Component id="jTableInteiro" alignment="0" pref="139" max="32767" attributes="1"/>
+                      <Component id="jTableDouble" alignment="0" min="-2" pref="139" max="-2" attributes="1"/>
                   </Group>
-                  <Component id="jLabelTitle" alignment="0" pref="159" max="32767" attributes="1"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="241" max="-2" attributes="0"/>
           </Group>
+          <Component id="jLabelTitle" alignment="0" min="-2" max="-2" attributes="1"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -46,20 +39,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabelInicial" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldNome" min="-2" max="-2" attributes="0"/>
+              <Component id="jTableString" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldNumNos" min="-2" max="-2" attributes="0"/>
+              <Component id="jTableInteiro" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldPoderComputacional" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jTableDouble" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel" alignment="3" min="-2" pref="48" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldBanda" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldLatencia" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="jComboBoxAlgoritmos" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabelTextoExtra" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="62" max="32767" attributes="0"/>
+              <Component id="jTableComboBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,7 +61,7 @@
           <Font name="Tahoma" size="12" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="Idioma/Idioma_en_US.properties" key="Cluster icon configuration" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Cluster icon configuration" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -82,98 +72,116 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldNome">
+    <Component class="javax.swing.JTable" name="jTableString">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Label:&quot;)" type="code"/>
-            </TitledBorder>
-          </Border>
+        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+          <Table columnCount="2" rowCount="1">
+            <Column editable="false" title="" type="java.lang.String">
+              <Data value="Label:"/>
+            </Column>
+            <Column editable="true" title="" type="java.lang.String">
+              <Data value="nome"/>
+            </Column>
+          </Table>
+        </Property>
+        <Property name="autoResizeMode" type="int" value="0"/>
+        <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+          <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldNomeFocusLost"/>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTableStringPropertyChange"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldNumNos">
+    <Component class="javax.swing.JTable" name="jTableInteiro">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Number of nodes:&quot;)" type="code"/>
-            </TitledBorder>
-          </Border>
+        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+          <Table columnCount="2" rowCount="1">
+            <Column editable="false" title="" type="java.lang.String">
+              <Data value="Nodes:"/>
+            </Column>
+            <Column editable="true" title="" type="java.lang.Integer">
+              <Data value="1"/>
+            </Column>
+          </Table>
+        </Property>
+        <Property name="autoResizeMode" type="int" value="0"/>
+        <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+          <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldNumNosFocusLost"/>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTableInteiroPropertyChange"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldPoderComputacional">
+    <Component class="javax.swing.JTable" name="jTableDouble">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Computational power:&quot;) + &quot; Mflop/s&quot;" type="code"/>
-            </TitledBorder>
-          </Border>
+        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+          <Table columnCount="2" rowCount="3">
+            <Column editable="false" title="" type="java.lang.String">
+              <Data value="Processing:"/>
+              <Data value="Bandwidth:"/>
+              <Data value="Latency:"/>
+            </Column>
+            <Column editable="true" title="" type="java.lang.Double"/>
+          </Table>
+        </Property>
+        <Property name="autoResizeMode" type="int" value="0"/>
+        <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+          <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldPoderComputacionalFocusLost"/>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTableDoublePropertyChange"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldBanda">
+    <Component class="javax.swing.JTable" name="jTableComboBox">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Bandwidth:&quot;) + &quot; Mb/s&quot;" type="code"/>
-            </TitledBorder>
-          </Border>
+        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+          <Table columnCount="2" rowCount="1">
+            <Column editable="false" title="" type="java.lang.String">
+              <Data value="Scheduler:"/>
+            </Column>
+            <Column editable="true" title="" type="java.lang.Object"/>
+          </Table>
+        </Property>
+        <Property name="autoResizeMode" type="int" value="0"/>
+        <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+        <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+          <TableHeader reorderingAllowed="false" resizingAllowed="false"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldBandaFocusLost"/>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTableComboBoxPropertyChange"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldLatencia">
+    <Component class="javax.swing.JLabel" name="jLabel">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Latency:&quot;) + &quot; s&quot;" type="code"/>
-            </TitledBorder>
-          </Border>
-        </Property>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;Mflop/s&lt;br&gt;Mb/s&lt;br&gt;s&lt;/html&gt;"/>
       </Properties>
-      <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldLatenciaFocusLost"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBoxAlgoritmos">
-      <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="3">
-            <StringItem index="0" value="---"/>
-            <StringItem index="1" value="Round - Robin (RR)"/>
-            <StringItem index="2" value="Workqueue"/>
-          </StringArray>
-        </Property>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;C&#xf3;digo do usu&#xe1;rio&gt;">
-              <Connection PropertyName="titleX" code="palavras.getString(&quot;Scheduling algorithm:&quot;)" type="code"/>
-            </TitledBorder>
-          </Border>
-        </Property>
-      </Properties>
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jComboBoxAlgoritmosPropertyChange"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabelTextoExtra">
     </Component>
   </SubComponents>
 </Form>

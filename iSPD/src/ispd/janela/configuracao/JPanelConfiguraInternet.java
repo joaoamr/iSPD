@@ -29,6 +29,7 @@ public class JPanelConfiguraInternet extends javax.swing.JPanel {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
         initComponents();
+        jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(100);
     }
 
     /** This method is called from within the constructor to
@@ -40,139 +41,172 @@ public class JPanelConfiguraInternet extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Label1 = new javax.swing.JLabel();
         jLabelTitle = new javax.swing.JLabel();
         jLabelInicial = new javax.swing.JLabel();
-        jTextFieldNome = new javax.swing.JTextField();
-        jTextFieldBanda = new javax.swing.JTextField();
-        jTextFieldTaxaOcupacao = new javax.swing.JTextField();
-        jTextFieldLatencia = new javax.swing.JTextField();
-        jLabelTextoExtra = new javax.swing.JLabel();
-
-        Label1.setText("jLabel1");
+        jTableString = new javax.swing.JTable();
+        jTableDouble = new javax.swing.JTable();
+        jLabel = new javax.swing.JLabel();
 
         jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabelTitle.setText(palavras.getString("Internet icon configuration")); // NOI18N
 
         jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + "0");
 
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldNome.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldNomeFocusLost(evt);
+        jTableString.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Label:", "nome"}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableString.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableString.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableString.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableString.getTableHeader().setResizingAllowed(false);
+        jTableString.getTableHeader().setReorderingAllowed(false);
+        jTableString.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableStringPropertyChange(evt);
             }
         });
 
-        jTextFieldBanda.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Bandwidth:") + " Mb/s"));
-        jTextFieldBanda.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldBandaFocusLost(evt);
+        jTableDouble.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Bandwidth:", null},
+                {"Load Factor:", null},
+                {"Latency:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableDouble.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableDouble.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableDouble.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableDouble.getTableHeader().setResizingAllowed(false);
+        jTableDouble.getTableHeader().setReorderingAllowed(false);
+        jTableDouble.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableDoublePropertyChange(evt);
             }
         });
 
-        jTextFieldTaxaOcupacao.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Load Factor:") + " %"));
-        jTextFieldTaxaOcupacao.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldTaxaOcupacaoFocusLost(evt);
-            }
-        });
-
-        jTextFieldLatencia.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Latency:") + " s"));
-        jTextFieldLatencia.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldLatenciaFocusLost(evt);
-            }
-        });
+        jLabel.setText("<html>Mb/s<br>%<br>s</html>");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextFieldLatencia, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(jTextFieldTaxaOcupacao, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(jLabelInicial, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelTextoExtra, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jTextFieldBanda)
-                        .addComponent(jTextFieldNome, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabelTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(148, 148, 148))
+            .addComponent(jLabelInicial)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jLabelTitle)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabelTitle)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelInicial)
-                .addGap(11, 11, 11)
-                .addComponent(jTextFieldNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextFieldBanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextFieldTaxaOcupacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextFieldLatencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54)
-                .addComponent(jLabelTextoExtra)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTableString, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextFieldNomeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldNomeFocusLost
+    private void jTableStringPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableStringPropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.NomeIconeNaoExiste(jTextFieldNome.getText()) && ValidaValores.validaNomeIcone(jTextFieldNome.getText())) {
-            ValidaValores.removeNomeIcone(icone.getNome());
-            icone.setNome(jTextFieldNome.getText());
-            ValidaValores.addNomeIcone(jTextFieldNome.getText());
+        if (evt.getNewValue() != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
+            if (ValidaValores.NomeIconeNaoExiste(jTableString.getValueAt(0, 1).toString()) && ValidaValores.validaNomeIcone(jTableString.getValueAt(0, 1).toString())) {
+                ValidaValores.removeNomeIcone(icone.getNome());
+                icone.setNome(jTableString.getValueAt(0, 1).toString());
+                ValidaValores.addNomeIcone(jTableString.getValueAt(0, 1).toString());
+            } else {
+                jTableString.setValueAt(icone.getNome(), 0, 1);
+            }
+        } else {
+            setIcone(icone);
         }
-    }//GEN-LAST:event_jTextFieldNomeFocusLost
+    }//GEN-LAST:event_jTableStringPropertyChange
 
-    private void jTextFieldBandaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldBandaFocusLost
+    private void jTableDoublePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableDoublePropertyChange
         // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldBanda.getText())) {
-            icone.setBanda(Double.parseDouble(jTextFieldBanda.getText()));
+        if (evt.getNewValue() != null) {
+            switch (jTableDouble.getSelectedRow()) {
+                case 0:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                        icone.setBanda((Double) jTableDouble.getValueAt(0, 1));
+                    }
+                    break;
+                case 1:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                        icone.setTaxaOcupacao((Double) jTableDouble.getValueAt(1, 1));
+                    }
+                    break;
+                case 2:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
+                        icone.setLatencia((Double) jTableDouble.getValueAt(2, 1));
+                    }
+                    break;
+            }
+        } else {
+            setIcone(icone);
         }
-    }//GEN-LAST:event_jTextFieldBandaFocusLost
-
-    private void jTextFieldTaxaOcupacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldTaxaOcupacaoFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldTaxaOcupacao.getText())) {
-            icone.setTaxaOcupacao(Double.parseDouble(jTextFieldTaxaOcupacao.getText()));
-        }
-    }//GEN-LAST:event_jTextFieldTaxaOcupacaoFocusLost
-
-    private void jTextFieldLatenciaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldLatenciaFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldLatencia.getText())) {
-            icone.setLatencia(Double.parseDouble(jTextFieldLatencia.getText()));
-        }
-    }//GEN-LAST:event_jTextFieldLatenciaFocusLost
+    }//GEN-LAST:event_jTableDoublePropertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Label1;
+    private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabelInicial;
-    private javax.swing.JLabel jLabelTextoExtra;
     private javax.swing.JLabel jLabelTitle;
-    private javax.swing.JTextField jTextFieldBanda;
-    private javax.swing.JTextField jTextFieldLatencia;
-    private javax.swing.JTextField jTextFieldNome;
-    private javax.swing.JTextField jTextFieldTaxaOcupacao;
+    private javax.swing.JTable jTableDouble;
+    private javax.swing.JTable jTableString;
     // End of variables declaration//GEN-END:variables
 
     public void setIcone(Icone icone) {
         this.icone = icone;
         this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
-        this.jTextFieldNome.setText(icone.getNome());
-        this.jTextFieldBanda.setText(String.valueOf(icone.getBanda()));
-        this.jTextFieldTaxaOcupacao.setText(String.valueOf(icone.getTaxaOcupacao()));
-        this.jTextFieldLatencia.setText(String.valueOf(icone.getLatencia()));
-    }
-
-    public void setTextoExtra(String Texto) {
-        this.jLabelTextoExtra.setText(Texto);
+        jTableString.setValueAt(icone.getNome(), 0, 1);
+        jTableDouble.setValueAt(icone.getBanda(), 0, 1);
+        jTableDouble.setValueAt(icone.getTaxaOcupacao(), 1, 1);
+        jTableDouble.setValueAt(icone.getLatencia(), 2, 1);
     }
 
     public void setIdioma(ResourceBundle palavras) {
@@ -187,9 +221,9 @@ public class JPanelConfiguraInternet extends javax.swing.JPanel {
         } else {
             jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         }
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldBanda.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Bandwidth:") + " Mb/s"));
-        jTextFieldTaxaOcupacao.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Load Factor:") + " %"));
-        jTextFieldLatencia.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Latency:") + " s"));
+        jTableString.setValueAt(palavras.getString("Label:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Bandwidth:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Load Factor:"), 1, 0);
+        jTableDouble.setValueAt(palavras.getString("Latency:"), 2, 0);
     }
 }

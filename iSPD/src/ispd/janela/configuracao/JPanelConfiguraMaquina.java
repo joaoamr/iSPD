@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.ListSelectionModel;
 
 /**
@@ -33,7 +35,12 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
     public JPanelConfiguraMaquina() {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
+        String itens[] = {"---", "RoundRobin", "Workqueue"};
+        jComboBoxAlgoritmos = new JComboBox(itens);
         initComponents();
+        jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
+        jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jTableComboBox.getColumnModel().getColumn(1).setPreferredWidth(100);
     }
 
     /** This method is called from within the constructor to
@@ -47,64 +54,18 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
 
         jLabelTitle = new javax.swing.JLabel();
         jLabelInicial = new javax.swing.JLabel();
-        jTextFieldNome = new javax.swing.JTextField();
-        jTextFieldPoderComputacional = new javax.swing.JTextField();
-        jTextFieldTaxaOcupacao = new javax.swing.JTextField();
-        jComboBoxAlgoritmos = new javax.swing.JComboBox();
-        jRadioButtonEscravo = new javax.swing.JRadioButton();
-        jRadioButtonMestre = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListEscravo = new javax.swing.JList();
-        jLabelTextoExtra = new javax.swing.JLabel();
+        jTableString = new javax.swing.JTable();
+        jTableDouble = new javax.swing.JTable();
+        jLabel = new javax.swing.JLabel();
+        jTableMestre = new javax.swing.JTable();
+        jTableComboBox = new javax.swing.JTable();
 
-        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabelTitle.setText(palavras.getString("Machine icon configuration")); // NOI18N
 
         jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + "0");
-
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldNome.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldNomeFocusLost(evt);
-            }
-        });
-
-        jTextFieldPoderComputacional.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Computational power:") + " Mflop/s"));
-        jTextFieldPoderComputacional.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldPoderComputacionalFocusLost(evt);
-            }
-        });
-
-        jTextFieldTaxaOcupacao.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Load Factor:") + " %"));
-        jTextFieldTaxaOcupacao.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldTaxaOcupacaoFocusLost(evt);
-            }
-        });
-
-        jComboBoxAlgoritmos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "---", "Round - Robin (RR)", "Workqueue" }));
-        jComboBoxAlgoritmos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Scheduling algorithm:")));
-        jComboBoxAlgoritmos.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jComboBoxAlgoritmosPropertyChange(evt);
-            }
-        });
-
-        jRadioButtonEscravo.setText(palavras.getString("SLAVE")); // NOI18N
-        jRadioButtonEscravo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonEscravoActionPerformed(evt);
-            }
-        });
-
-        jRadioButtonMestre.setSelected(true);
-        jRadioButtonMestre.setText(palavras.getString("MASTER")); // NOI18N
-        jRadioButtonMestre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonMestreActionPerformed(evt);
-            }
-        });
 
         jListEscravo.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Slave Nodes:")));
         jListEscravo.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -114,35 +75,162 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jListEscravo);
 
+        jTableString.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Label:", "nome"}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableString.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableString.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableString.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableString.getTableHeader().setResizingAllowed(false);
+        jTableString.getTableHeader().setReorderingAllowed(false);
+        jTableString.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableStringPropertyChange(evt);
+            }
+        });
+
+        jTableDouble.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Processing:", null},
+                {"Load Factor:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableDouble.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableDouble.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableDouble.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableDouble.getTableHeader().setResizingAllowed(false);
+        jTableDouble.getTableHeader().setReorderingAllowed(false);
+        jTableDouble.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableDoublePropertyChange(evt);
+            }
+        });
+
+        jLabel.setText("<html>\nMflop/s\n<br>\n%\n</html>");
+
+        jTableMestre.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"MASTER", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableMestre.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableMestre.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableMestre.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableMestre.getTableHeader().setResizingAllowed(false);
+        jTableMestre.getTableHeader().setReorderingAllowed(false);
+        jTableMestre.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableMestrePropertyChange(evt);
+            }
+        });
+
+        jTableComboBox.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Scheduler:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableComboBox.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableComboBox.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableComboBox.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableComboBox.getTableHeader().setResizingAllowed(false);
+        jTableComboBox.getTableHeader().setReorderingAllowed(false);
+        jTableComboBox.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableComboBoxPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(288, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jRadioButtonEscravo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButtonMestre)
-                .addContainerGap(287, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabelInicial)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextFieldNome, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                    .addComponent(jTextFieldPoderComputacional, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                    .addComponent(jTextFieldTaxaOcupacao, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                    .addComponent(jLabelTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
-                .addGap(241, 241, 241))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabelTextoExtra)
-                .addContainerGap(397, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jComboBoxAlgoritmos, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelTitle)
+                    .addComponent(jLabelInicial)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jTableMestre, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTableComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -151,99 +239,21 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
                 .addComponent(jLabelTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelInicial)
-                .addGap(13, 13, 13)
-                .addComponent(jTextFieldNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextFieldPoderComputacional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jTextFieldTaxaOcupacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTableString, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonEscravo)
-                    .addComponent(jRadioButtonMestre))
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addComponent(jTableMestre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBoxAlgoritmos, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabelTextoExtra)
-                .addGap(122, 122, 122))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextFieldNomeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldNomeFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.NomeIconeNaoExiste(jTextFieldNome.getText()) && ValidaValores.validaNomeIcone(jTextFieldNome.getText())) {
-            ValidaValores.removeNomeIcone(icone.getNome());
-            icone.setNome(jTextFieldNome.getText());
-            ValidaValores.addNomeIcone(jTextFieldNome.getText());
-        }
-}//GEN-LAST:event_jTextFieldNomeFocusLost
-
-    private void jTextFieldPoderComputacionalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldPoderComputacionalFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldPoderComputacional.getText())) {
-            icone.setPoderComputacional(Double.parseDouble(jTextFieldPoderComputacional.getText()));
-        }
-}//GEN-LAST:event_jTextFieldPoderComputacionalFocusLost
-
-    private void jComboBoxAlgoritmosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jComboBoxAlgoritmosPropertyChange
-        // TODO add your handling code here:
-        if (icone != null) {
-            switch (jComboBoxAlgoritmos.getSelectedIndex()) {
-                case 0:
-                    icone.setAlgoritmo("---");
-                    break;
-                case 1:
-                    icone.setAlgoritmo("RoundRobin");
-                    break;
-                case 2:
-                    icone.setAlgoritmo("Workqueue");
-                    break;
-            }
-        }
-}//GEN-LAST:event_jComboBoxAlgoritmosPropertyChange
-
-    private void jTextFieldTaxaOcupacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldTaxaOcupacaoFocusLost
-        // TODO add your handling code here:
-        if (ValidaValores.validaDouble(jTextFieldTaxaOcupacao.getText())) {
-            icone.setTaxaOcupacao(Double.parseDouble(jTextFieldTaxaOcupacao.getText()));
-        }
-}//GEN-LAST:event_jTextFieldTaxaOcupacaoFocusLost
-
-    private void jRadioButtonEscravoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonEscravoActionPerformed
-        // TODO add your handling code here:
-        if (jRadioButtonEscravo.isSelected()) {
-            jRadioButtonMestre.setSelected(false);
-            jComboBoxAlgoritmos.setVisible(false);
-            jListEscravo.setVisible(false);
-            jScrollPane1.setVisible(false);
-            icone.setMestre(false);
-        } else {
-            jRadioButtonMestre.setSelected(true);
-            jComboBoxAlgoritmos.setVisible(true);
-            jListEscravo.setVisible(true);
-            jScrollPane1.setVisible(true);
-            icone.setMestre(true);
-        }
-    }//GEN-LAST:event_jRadioButtonEscravoActionPerformed
-
-    private void jRadioButtonMestreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMestreActionPerformed
-        // TODO add your handling code here:
-        if (jRadioButtonMestre.isSelected()) {
-            jRadioButtonEscravo.setSelected(false);
-            jComboBoxAlgoritmos.setVisible(true);
-            jListEscravo.setVisible(true);
-            jScrollPane1.setVisible(true);
-            icone.setMestre(true);
-        } else {
-            jRadioButtonEscravo.setSelected(true);
-            jComboBoxAlgoritmos.setVisible(false);
-            jListEscravo.setVisible(false);
-            jScrollPane1.setVisible(false);
-            icone.setMestre(false);
-        }
-    }//GEN-LAST:event_jRadioButtonMestreActionPerformed
 
     private void jListEscravoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jListEscravoFocusLost
         // TODO add your handling code here:
@@ -257,39 +267,97 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             icone.setEscravos(escravos);
         }
     }//GEN-LAST:event_jListEscravoFocusLost
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBoxAlgoritmos;
-    private javax.swing.JLabel jLabelInicial;
-    private javax.swing.JLabel jLabelTextoExtra;
-    private javax.swing.JLabel jLabelTitle;
-    private javax.swing.JList jListEscravo;
-    private javax.swing.JRadioButton jRadioButtonEscravo;
-    private javax.swing.JRadioButton jRadioButtonMestre;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextFieldNome;
-    private javax.swing.JTextField jTextFieldPoderComputacional;
-    private javax.swing.JTextField jTextFieldTaxaOcupacao;
-    // End of variables declaration//GEN-END:variables
 
-    public void setIcone(Icone icone) {
-        this.icone = icone;
-        this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
-        this.jTextFieldNome.setText(icone.getNome());
-        this.jTextFieldPoderComputacional.setText(String.valueOf(icone.getPoderComputacional()));
-        this.jTextFieldTaxaOcupacao.setText(String.valueOf(icone.getTaxaOcupacao()));
-        if (icone.isMestre()) {
-            jRadioButtonEscravo.setSelected(false);
-            jRadioButtonMestre.setSelected(true);
+    private void jTableStringPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableStringPropertyChange
+        // TODO add your handling code here:
+        if (evt.getNewValue() != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
+            if (ValidaValores.NomeIconeNaoExiste(jTableString.getValueAt(0, 1).toString()) && ValidaValores.validaNomeIcone(jTableString.getValueAt(0, 1).toString())) {
+                ValidaValores.removeNomeIcone(icone.getNome());
+                icone.setNome(jTableString.getValueAt(0, 1).toString());
+                ValidaValores.addNomeIcone(jTableString.getValueAt(0, 1).toString());
+            } else {
+                jTableString.setValueAt(icone.getNome(), 0, 1);
+            }
+        } else {
+            setIcone(icone);
+        }
+    }//GEN-LAST:event_jTableStringPropertyChange
+
+    private void jTableDoublePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableDoublePropertyChange
+        // TODO add your handling code here:
+        if (evt.getNewValue() != null) {
+            switch (jTableDouble.getSelectedRow()) {
+                case 0:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                        icone.setPoderComputacional((Double) jTableDouble.getValueAt(0, 1));
+                    }
+                    break;
+                case 1:
+                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                        icone.setTaxaOcupacao((Double) jTableDouble.getValueAt(1, 1));
+                    }
+                    break;
+            }
+        } else {
+            setIcone(icone);
+        }
+    }//GEN-LAST:event_jTableDoublePropertyChange
+
+    private void jTableMestrePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMestrePropertyChange
+        // TODO add your handling code here:
+        if ((Boolean) jTableMestre.getValueAt(0, 1)) {
+            icone.setMestre(true);
+            jTableComboBox.setVisible(true);
             jComboBoxAlgoritmos.setVisible(true);
             jListEscravo.setVisible(true);
             jScrollPane1.setVisible(true);
         } else {
-            jRadioButtonEscravo.setSelected(true);
-            jRadioButtonMestre.setSelected(false);
+            icone.setMestre(false);
+            jTableComboBox.setVisible(false);
             jComboBoxAlgoritmos.setVisible(false);
             jListEscravo.setVisible(false);
             jScrollPane1.setVisible(false);
         }
+    }//GEN-LAST:event_jTableMestrePropertyChange
+
+    private void jTableComboBoxPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableComboBoxPropertyChange
+        // TODO add your handling code here:
+        if (icone != null) {
+            switch (jComboBoxAlgoritmos.getSelectedIndex()) {
+                case 0:
+                    icone.setAlgoritmo("---");
+                    break;
+                case 1:
+                    icone.setAlgoritmo("RoundRobin");
+                    break;
+                case 2:
+                    icone.setAlgoritmo("Workqueue");
+                    break;
+            }
+            jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
+        }
+    }//GEN-LAST:event_jTableComboBoxPropertyChange
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel;
+    private javax.swing.JLabel jLabelInicial;
+    private javax.swing.JLabel jLabelTitle;
+    private javax.swing.JList jListEscravo;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableComboBox;
+    private javax.swing.JTable jTableDouble;
+    private javax.swing.JTable jTableMestre;
+    private javax.swing.JTable jTableString;
+    // End of variables declaration//GEN-END:variables
+    private JComboBox jComboBoxAlgoritmos;
+
+    public void setIcone(Icone icone) {
+        this.icone = icone;
+        this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
+        jTableString.setValueAt(icone.getNome(), 0, 1);
+        jTableDouble.setValueAt(icone.getPoderComputacional(), 0, 1);
+        jTableDouble.setValueAt(icone.getTaxaOcupacao(), 1, 1);
+        jTableMestre.setValueAt(icone.isMestre(), 0, 1);
         if (icone.getAlgoritmo() != null) {
             if (icone.getAlgoritmo().equals("---")) {
                 jComboBoxAlgoritmos.setSelectedIndex(0);
@@ -298,6 +366,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             } else {
                 jComboBoxAlgoritmos.setSelectedIndex(2);
             }
+            jTableComboBox.setValueAt(icone.getAlgoritmo(), 0, 1);
         }
         jListEscravo.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         DefaultListModel listModel = new DefaultListModel();
@@ -316,10 +385,6 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jListEscravo.setSelectedIndices(tempIndices);
     }
 
-    public void setTextoExtra(String Texto) {
-        this.jLabelTextoExtra.setText(Texto);
-    }
-
     public void setIdioma(ResourceBundle palavras) {
         this.palavras = palavras;
         initTexts();
@@ -332,12 +397,11 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         } else {
             jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         }
-        jTextFieldNome.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Label:")));
-        jTextFieldPoderComputacional.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Computational power:") + " Mflop/s"));
-        jTextFieldTaxaOcupacao.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Load Factor:") + " %"));
-        jRadioButtonEscravo.setText(palavras.getString("SLAVE"));
-        jRadioButtonMestre.setText(palavras.getString("MASTER"));
-        jComboBoxAlgoritmos.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Scheduling algorithm:")));
+        jTableString.setValueAt(palavras.getString("Label:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Processing:"), 0, 0);
+        jTableDouble.setValueAt(palavras.getString("Load Factor:"), 1, 0);
+        jTableMestre.setValueAt(palavras.getString("MASTER"), 0, 0);
+        jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
         jListEscravo.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Slave Nodes:")));
     }
 }
