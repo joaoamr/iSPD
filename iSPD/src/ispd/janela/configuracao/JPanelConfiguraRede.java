@@ -155,7 +155,7 @@ public class JPanelConfiguraRede extends javax.swing.JPanel {
 
     private void jTableStringPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableStringPropertyChange
         // TODO add your handling code here:
-        if (evt.getNewValue() != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
+        if (jTableString.getValueAt(0, 1) != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
             if (ValidaValores.NomeIconeNaoExiste(jTableString.getValueAt(0, 1).toString()) && ValidaValores.validaNomeIcone(jTableString.getValueAt(0, 1).toString())) {
                 ValidaValores.removeNomeIcone(icone.getNome());
                 icone.setNome(jTableString.getValueAt(0, 1).toString());
@@ -170,27 +170,24 @@ public class JPanelConfiguraRede extends javax.swing.JPanel {
 
     private void jTableDoublePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableDoublePropertyChange
         // TODO add your handling code here:
-        if (evt.getNewValue() != null) {
             switch (jTableDouble.getSelectedRow()) {
                 case 0:
-                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                    if (jTableDouble.getValueAt(0, 1) != null &&ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
                         icone.setBanda((Double) jTableDouble.getValueAt(0, 1));
                     }
                     break;
                 case 1:
-                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                    if (jTableDouble.getValueAt(1, 1) != null &&ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
                         icone.setTaxaOcupacao((Double) jTableDouble.getValueAt(1, 1));
                     }
                     break;
                 case 2:
-                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
+                    if (jTableDouble.getValueAt(2, 1) != null &&ValidaValores.validaDouble(jTableDouble.getValueAt(2, 1).toString())) {
                         icone.setLatencia((Double) jTableDouble.getValueAt(2, 1));
                     }
                     break;
             }
-        } else {
             setIcone(icone);
-        }
     }//GEN-LAST:event_jTableDoublePropertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel;

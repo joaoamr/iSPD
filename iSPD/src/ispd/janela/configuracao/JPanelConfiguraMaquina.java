@@ -68,9 +68,14 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + "0");
 
         jListEscravo.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Slave Nodes:")));
-        jListEscravo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jListEscravoFocusLost(evt);
+        jListEscravo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jListEscravoMouseClicked(evt);
+            }
+        });
+        jListEscravo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jListEscravoKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(jListEscravo);
@@ -255,22 +260,9 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jListEscravoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jListEscravoFocusLost
-        // TODO add your handling code here:
-        if (icone != null) {
-            Vector<Integer> listaConectados = icone.getNosEscalonaveis();
-            int indices[] = jListEscravo.getSelectedIndices();
-            List<Integer> escravos = new ArrayList<Integer>();
-            for (int i = 0; i < indices.length; i++) {
-                escravos.add(listaConectados.get(indices[i]));
-            }
-            icone.setEscravos(escravos);
-        }
-    }//GEN-LAST:event_jListEscravoFocusLost
-
     private void jTableStringPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableStringPropertyChange
         // TODO add your handling code here:
-        if (evt.getNewValue() != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
+        if (jTableString.getValueAt(0, 1) != null && !icone.getNome().equals(jTableString.getValueAt(0, 1).toString())) {
             if (ValidaValores.NomeIconeNaoExiste(jTableString.getValueAt(0, 1).toString()) && ValidaValores.validaNomeIcone(jTableString.getValueAt(0, 1).toString())) {
                 ValidaValores.removeNomeIcone(icone.getNome());
                 icone.setNome(jTableString.getValueAt(0, 1).toString());
@@ -285,22 +277,19 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
 
     private void jTableDoublePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableDoublePropertyChange
         // TODO add your handling code here:
-        if (evt.getNewValue() != null) {
             switch (jTableDouble.getSelectedRow()) {
                 case 0:
-                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
+                    if (jTableDouble.getValueAt(0, 1)!=null && ValidaValores.validaDouble(jTableDouble.getValueAt(0, 1).toString())) {
                         icone.setPoderComputacional((Double) jTableDouble.getValueAt(0, 1));
                     }
                     break;
                 case 1:
-                    if (ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
+                    if (jTableDouble.getValueAt(1, 1)!=null &&ValidaValores.validaDouble(jTableDouble.getValueAt(1, 1).toString())) {
                         icone.setTaxaOcupacao((Double) jTableDouble.getValueAt(1, 1));
                     }
                     break;
             }
-        } else {
             setIcone(icone);
-        }
     }//GEN-LAST:event_jTableDoublePropertyChange
 
     private void jTableMestrePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMestrePropertyChange
@@ -337,6 +326,24 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
         }
     }//GEN-LAST:event_jTableComboBoxPropertyChange
+
+    private void jListEscravoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListEscravoMouseClicked
+        // TODO add your handling code here:
+        if (icone != null) {
+            Vector<Integer> listaConectados = icone.getNosEscalonaveis();
+            int indices[] = jListEscravo.getSelectedIndices();
+            List<Integer> escravos = new ArrayList<Integer>();
+            for (int i = 0; i < indices.length; i++) {
+                escravos.add(listaConectados.get(indices[i]));
+            }
+            icone.setEscravos(escravos);
+        }
+    }//GEN-LAST:event_jListEscravoMouseClicked
+
+    private void jListEscravoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jListEscravoKeyPressed
+        // TODO add your handling code here:
+        jListEscravoMouseClicked(null);
+    }//GEN-LAST:event_jListEscravoKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel;
