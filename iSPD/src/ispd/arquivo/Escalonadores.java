@@ -38,6 +38,11 @@ import javax.tools.ToolProvider;
 public class Escalonadores {
     private final String DIRETORIO = "ispd/externo";
     /**
+     * guarda a lista de escalonadores implementados no iSPD,
+     * e que já estão disponiveis para o usuario por padrão
+     */
+    public final String[] ESCALONADORES = { "---", "RoundRobin", "Workqueue"};
+    /**
      * guarda a lista de escalonadores disponiveis
      */
     private ArrayList<String> escalonadores;
@@ -94,10 +99,7 @@ public class Escalonadores {
             for (int i = 0; i < aux.length; i++) {
                 //remove o .class da string
                 aux[i] = aux[i].substring(0, aux[i].length() - 6);
-                //atribui escalonadores a lista de strings exceto a classe Escalonador
-                //if (!aux[i].equals("Escalonador")) {
                 escalonadores.add(aux[i]);
-                //}
             }
         }
     }
