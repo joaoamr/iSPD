@@ -33,8 +33,8 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     /** Creates new form AguardaSimulacao */
     public JSimulacao(java.awt.Frame parent, boolean modal, AreaDesenho area, ResourceBundle palavras) {
         super(parent, modal);
-        initComponents();
         this.palavras = palavras;
+        initComponents();
         this.aDesenho = area;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
 
@@ -68,7 +68,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
 
         jProgressBar.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
-        jButtonCancelar.setText("Cancelar");
+        jButtonCancelar.setText(palavras.getString("Cancel")); // NOI18N
         jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCancelarActionPerformed(evt);

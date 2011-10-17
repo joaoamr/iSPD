@@ -270,16 +270,20 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         double tempoMedioFilaProcessamento = 0;
         double tempoMedioProcessamento = 0;
         double tempoMedioSistemaProcessamento = 0;
+        int numTarefas = 0;
         for (Tarefa no : tarefas) {
+            if(no.getEstado() == Tarefa.CONCLUIDO){
             tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
             tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
             tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
             tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
+            numTarefas++;
+            }
         }
-        tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / tarefas.size();
-        tempoMedioComunicacao = tempoMedioComunicacao / tarefas.size();
-        tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / tarefas.size();
-        tempoMedioProcessamento = tempoMedioProcessamento / tarefas.size();
+        tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
+        tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;
+        tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
+        tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
         tempoMedioSistemaComunicacao = tempoMedioFilaComunicacao + tempoMedioComunicacao;
         tempoMedioSistemaProcessamento = tempoMedioFilaProcessamento + tempoMedioProcessamento;
         texto += "\n Communication \n";
