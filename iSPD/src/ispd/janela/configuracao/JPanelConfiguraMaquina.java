@@ -12,7 +12,9 @@ package ispd.janela.configuracao;
 
 import ispd.janela.Icone;
 import ispd.ValidaValores;
+import ispd.arquivo.Escalonadores;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -30,13 +32,15 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
 
     private Icone icone;
     private ResourceBundle palavras;
+    private Vector<String> nomesDosEscalonadores;
+    private Escalonadores escalonadores;
 
     /** Creates new form JPanelConfiguraMaquina */
     public JPanelConfiguraMaquina() {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
-        String itens[] = {"---", "RoundRobin", "Workqueue"};
-        jComboBoxAlgoritmos = new JComboBox(itens);
+        this.nomesDosEscalonadores = new Vector<String>(Arrays.asList(Escalonadores.ESCALONADORES));
+        jComboBoxAlgoritmos = new JComboBox(nomesDosEscalonadores);
         initComponents();
         jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
         jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -312,17 +316,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
     private void jTableComboBoxPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableComboBoxPropertyChange
         // TODO add your handling code here:
         if (icone != null) {
-            switch (jComboBoxAlgoritmos.getSelectedIndex()) {
-                case 0:
-                    icone.setAlgoritmo("---");
-                    break;
-                case 1:
-                    icone.setAlgoritmo("RoundRobin");
-                    break;
-                case 2:
-                    icone.setAlgoritmo("Workqueue");
-                    break;
-            }
+            icone.setAlgoritmo(jComboBoxAlgoritmos.getSelectedItem().toString());
             jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
         }
     }//GEN-LAST:event_jTableComboBoxPropertyChange
@@ -359,22 +353,33 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
     private JComboBox jComboBoxAlgoritmos;
 
     public void setIcone(Icone icone) {
+        int numEscal = escalonadores.ESCALONADORES.length + escalonadores.listar().size();
+        if (nomesDosEscalonadores.size() > numEscal) {
+            for (String nome : nomesDosEscalonadores) {
+                if (!escalonadores.listar().contains(nome)) {
+                    nomesDosEscalonadores.remove(nome);
+                }
+            }
+        } else if (nomesDosEscalonadores.size() < numEscal) {
+            for (String nome : escalonadores.listar()) {
+                if (!nomesDosEscalonadores.contains(nome)) {
+                    nomesDosEscalonadores.add(nome);
+                }
+            }
+        }
         this.icone = icone;
         this.jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         jTableString.setValueAt(icone.getNome(), 0, 1);
         jTableDouble.setValueAt(icone.getPoderComputacional(), 0, 1);
         jTableDouble.setValueAt(icone.getTaxaOcupacao(), 1, 1);
         jTableMestre.setValueAt(icone.isMestre(), 0, 1);
-        if (icone.getAlgoritmo() != null) {
-            if (icone.getAlgoritmo().equals("---")) {
-                jComboBoxAlgoritmos.setSelectedIndex(0);
-            } else if (icone.getAlgoritmo().equals("RoundRobin")) {
-                jComboBoxAlgoritmos.setSelectedIndex(1);
-            } else {
-                jComboBoxAlgoritmos.setSelectedIndex(2);
-            }
-            jTableComboBox.setValueAt(icone.getAlgoritmo(), 0, 1);
+        int index = nomesDosEscalonadores.indexOf(icone.getAlgoritmo());
+        if (index != -1) {
+            jComboBoxAlgoritmos.setSelectedIndex(index);
+        } else {
+            jComboBoxAlgoritmos.setSelectedIndex(0);
         }
+        jTableComboBox.setValueAt(icone.getAlgoritmo(), 0, 1);
         jListEscravo.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         DefaultListModel listModel = new DefaultListModel();
         for (int i = 0; i < icone.getNosEscalonaveis().size(); i++) {
@@ -395,6 +400,10 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
     public void setIdioma(ResourceBundle palavras) {
         this.palavras = palavras;
         initTexts();
+    }
+
+    public void setEscalonadores(Escalonadores escalonadores) {
+        this.escalonadores = escalonadores;
     }
 
     private void initTexts() {

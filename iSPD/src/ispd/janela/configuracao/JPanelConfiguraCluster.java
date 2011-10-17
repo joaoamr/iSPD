@@ -33,11 +33,10 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     private Escalonadores escalonadores;
 
     /** Creates new form JPanelConfiguraCluster */
-    public JPanelConfiguraCluster(Escalonadores escalonadores) {
+    public JPanelConfiguraCluster() {
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
-        this.escalonadores = escalonadores;
-        this.nomesDosEscalonadores = new Vector<String>(Arrays.asList(escalonadores.ESCALONADORES));
+        this.nomesDosEscalonadores = new Vector<String>(Arrays.asList(Escalonadores.ESCALONADORES));
         jComboBoxAlgoritmos = new JComboBox(nomesDosEscalonadores);
         initComponents();
         jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
@@ -341,7 +340,11 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         this.palavras = palavras;
         initTexts();
     }
-
+    
+    public void setEscalonadores(Escalonadores escalonadores) {
+        this.escalonadores = escalonadores;
+    }
+    
     private void initTexts() {
         jLabelTitle.setText(palavras.getString("Cluster icon configuration"));
         if (icone == null) {
