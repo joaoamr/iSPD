@@ -7,6 +7,7 @@ package ispd.motor;
 //import java.util.ArrayList;
 import ispd.escalonador.Mestre;
 import ispd.janela.JSimulacao;
+import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Maquina;
@@ -88,16 +89,19 @@ public class Simulacao {
             time = eventoAtual.getTempoOcorrencia();
             switch (eventoAtual.getTipo()) {
                 case EventoFuturo.CHEGADA:
-                    eventoAtual.getServidor().chegadaDeCliente(this, eventoAtual.getCliente());
+                    eventoAtual.getServidor().chegadaDeCliente(this, (Tarefa) eventoAtual.getCliente());
                     break;
                 case EventoFuturo.ATENDIMENTO:
-                    eventoAtual.getServidor().atendimento(this, eventoAtual.getCliente());
+                    eventoAtual.getServidor().atendimento(this, (Tarefa) eventoAtual.getCliente());
                     break;
                 case EventoFuturo.SAÍDA:
-                    eventoAtual.getServidor().saidaDeCliente(this, eventoAtual.getCliente());
+                    eventoAtual.getServidor().saidaDeCliente(this, (Tarefa) eventoAtual.getCliente());
                     break;
                 case EventoFuturo.ESCALONAR:
                     eventoAtual.getServidor().requisicao(this, null, EventoFuturo.ESCALONAR);
+                    break;
+                default:
+                    eventoAtual.getServidor().requisicao(this, (Mensagem) eventoAtual.getCliente(), eventoAtual.getTipo());
                     break;
             }
         }
@@ -105,9 +109,20 @@ public class Simulacao {
         janela.println("Simulation completed.", Color.green);
         janela.print("Getting Results.");
         janela.print(" -> ");
-        redeDeFilas.setMetricasGlobais(new MetricasGlobais(redeDeFilas, getTime()));
+        redeDeFilas.setMetricasGlobais(new MetricasGlobais(redeDeFilas, getTime(), tarefas));
         janela.incProgresso(5);
         janela.println("OK", Color.green);
+        for(int i = 0; i < redeDeFilas.getMestres().size(); i++){
+            CS_Mestre mst = (CS_Mestre) redeDeFilas.getMestres().get(i);
+            janela.println("Mestre: "+mst.getId()+" copias: "+mst.contCopy);
+        }
+        for(int i = 0; i < redeDeFilas.getMaquinas().size(); i++){
+            CS_Maquina maq = redeDeFilas.getMaquinas().get(i);
+            janela.println("Maq: "+maq.getId()+" canceladas: "+maq.contC+" concluidas: "+maq.contT);
+        }
+        for(Tarefa tf : tarefas){
+            janela.println("Tarefa "+tf.getIdentificador()+" estado "+tf.getEstado());
+        }
     }
 
     private void addEventos(List<Tarefa> tarefas) {
@@ -123,5 +138,9 @@ public class Simulacao {
 
     public double getTime() {
         return time;
+    }
+
+    public void addTarefa(Tarefa tarefa) {
+        tarefas.add(tarefa);
     }
 }

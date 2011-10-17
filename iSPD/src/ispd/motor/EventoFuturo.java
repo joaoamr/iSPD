@@ -4,7 +4,7 @@
  */
 package ispd.motor;
 
-import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.Cliente;
 import ispd.motor.filas.servidores.CentroServico;
 
 /**
@@ -17,13 +17,13 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
     public static final int ATENDIMENTO = 2;
     public static final int SAÍDA = 3;
     public static final int ESCALONAR = 4;
-    public static final int CANCELAR = 5;
-    public static final int PARAR = 6;
+    public static final int MENSAGEM = 5;
+    public static final int SAIDA_MENSAGEM = 6;
     
     private Double tempoOcorrencia;
     private int tipoDeEvento;
     private CentroServico recurso;
-    private Tarefa tarefa;
+    private Cliente cliente;
 
     /**
      * Criacao de novo evento
@@ -32,11 +32,11 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
      * @param servidor servidor que executará o evento
      * @param cliente cliente do evento
      */
-    public EventoFuturo(double time, int tipoDeEvento, CentroServico servidor, Tarefa cliente) {
+    public EventoFuturo(double time, int tipoDeEvento, CentroServico servidor, Cliente cliente) {
         this.tempoOcorrencia = time;
         this.recurso = servidor;
         this.tipoDeEvento = tipoDeEvento;
-        this.tarefa = cliente;
+        this.cliente = cliente;
     }
 
     /**
@@ -59,8 +59,8 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
      * Retorna tarefa alvo da ação
      * @return
      */
-    public Tarefa getCliente() {
-        return this.tarefa;
+    public Cliente getCliente() {
+        return this.cliente;
     }
 
     public Double getTempoOcorrencia() {
