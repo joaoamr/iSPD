@@ -26,6 +26,8 @@ public class MetricasTarefa {
      * Recebe tempo total que a tarefa gastou sendo transferida na rede modelada
      */
     private double tempoComunicacao = 0;
+    
+    private double eficiencia = 0;
 
     public void incTempoComunicacao(double tempoComunicacao) {
         this.tempoComunicacao += tempoComunicacao;
@@ -42,6 +44,10 @@ public class MetricasTarefa {
     public void incTempoProcessamento(double tempoProcessamento) {
         this.tempoProcessamento += tempoProcessamento;
     }
+    
+    public void calcEficiencia(double capacidadeRecebida, double tamanhoTarefa){
+        eficiencia = capacidadeRecebida / (tamanhoTarefa * tempoProcessamento);
+    }
 
     public double getTempoComunicacao() {
         return tempoComunicacao;
@@ -57,5 +63,9 @@ public class MetricasTarefa {
 
     public double getTempoProcessamento() {
         return tempoProcessamento;
+    }
+
+    public double getEficiencia() {
+        return eficiencia;
     }
 }
