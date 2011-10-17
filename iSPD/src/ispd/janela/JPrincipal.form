@@ -5,10 +5,13 @@
     <Component class="ispd.janela.GerenciarEscalonador" name="jFrameGerenciador">
     </Component>
     <Component class="ispd.janela.configuracao.JPanelConfiguraMaquina" name="jPanelMaquina">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelMaquina.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
+      </AuxValues>
     </Component>
     <Component class="ispd.janela.configuracao.JPanelConfiguraCluster" name="jPanelCluster">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ispd.janela.configuracao.JPanelConfiguraCluster(jFrameGerenciador.getEscalonadores())"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelCluster.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
       </AuxValues>
     </Component>
     <Component class="ispd.janela.configuracao.JPanelConfiguraRede" name="jPanelRede">

@@ -67,6 +67,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.jScrollPaneAreaDesenho.addKeyListener(this);
         this.jScrollPaneBarraLateral.addKeyListener(this);
         this.jScrollPaneBarraNotifica.addKeyListener(this);
+        this.jScrollPaneProperties.addKeyListener(this);
         this.jTextAreaNotifica.addKeyListener(this);
         this.jToolBar.addKeyListener(this);
         this.jToggleButtonCluster.addKeyListener(this);
@@ -76,6 +77,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.jButtonTarefas.addKeyListener(this);
         this.jButtonUsuarios.addKeyListener(this);
         this.jButtonSimular.addKeyListener(this);
+        //paineis de configuração
+        this.jPanelMaquina.addKeyListener(this);
+        this.jPanelCluster.addKeyListener(this);
+        this.jPanelInternet.addKeyListener(this);
+        this.jPanelRede.addKeyListener(this);
+        this.jPanelSimples.addKeyListener(this);
+        this.jPanelPropriedades.addKeyListener(this);
     }
 
     /** This method is called from within the constructor to
@@ -89,7 +97,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
         jFrameGerenciador = new ispd.janela.GerenciarEscalonador();
         jPanelMaquina = new ispd.janela.configuracao.JPanelConfiguraMaquina();
-        jPanelCluster = new ispd.janela.configuracao.JPanelConfiguraCluster(jFrameGerenciador.getEscalonadores());
+        jPanelMaquina.setEscalonadores(jFrameGerenciador.getEscalonadores());
+        jPanelCluster = new ispd.janela.configuracao.JPanelConfiguraCluster();
+        jPanelCluster.setEscalonadores(jFrameGerenciador.getEscalonadores());
         jPanelRede = new ispd.janela.configuracao.JPanelConfiguraRede();
         jPanelInternet = new ispd.janela.configuracao.JPanelConfiguraInternet();
         jPanelSimples = new ispd.janela.configuracao.JPanelSimples();
@@ -1326,6 +1336,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             this.jPanelPropriedades.setjLabelTexto(Texto);
         } else {
             jScrollPaneBarraLateral.setViewportView(jPanelSimples);
+            jScrollPaneProperties.setViewportView(null);
         }
     }
 
