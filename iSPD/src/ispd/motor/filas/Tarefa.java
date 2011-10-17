@@ -14,12 +14,17 @@ import java.util.List;
  * Os clientes podem ser: Tarefas
  * @author denison_usuario
  */
-public class Tarefa {
+public class Tarefa implements Cliente {
     //Estados que a tarefa pode estar
     public static final int PARADO = 1;
     public static final int PROCESSANDO = 2;
     public static final int CANCELADO = 3;
     public static final int CONCLUIDO = 4;
+    
+    private String aplicacao;
+    private int identificador;
+    private boolean copia;
+    private double porcentagemProcessado;
     /**
      * Tamanho do arquivo em Mbits que será enviado para o escravo
      */
@@ -44,10 +49,13 @@ public class Tarefa {
     private double inicioEspera;
     private MetricasTarefa metricas;
     private double tempoCriacao;
-    public int estado;
+    private int estado;
     private double tamComunicacao;
 
-    public Tarefa(CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
+    public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
+        this.aplicacao = aplicacao;
+        this.identificador = hashCode();
+        this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;
         this.arquivoEnvio = arquivoEnvio;
@@ -56,9 +64,13 @@ public class Tarefa {
         this.metricas = new MetricasTarefa();
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
+        this.porcentagemProcessado = 0;
     }
     
-    public Tarefa(CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
+    public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
+        this.aplicacao = aplicacao;
+        this.identificador = hashCode();
+        this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;
         this.arquivoEnvio = arquivoEnvio;
@@ -67,6 +79,22 @@ public class Tarefa {
         this.metricas = new MetricasTarefa();
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
+        this.porcentagemProcessado = 0;
+    }
+    
+    public Tarefa(Tarefa tarefa){
+        this.aplicacao = tarefa.getAplicacao();
+        this.identificador = tarefa.identificador;
+        this.copia = true;
+        this.origem = tarefa.getOrigem();
+        this.tamComunicacao = tarefa.arquivoEnvio;
+        this.arquivoEnvio = tarefa.arquivoEnvio;
+        this.arquivoRecebimento = tarefa.arquivoRecebimento;
+        this.tamProcessamento = tarefa.getTamProcessamento();
+        this.metricas = new MetricasTarefa();
+        this.tempoCriacao = tarefa.getTimeCriacao();
+        this.estado = PARADO;
+        this.porcentagemProcessado = 0;
     }
     
     public double getTamComunicacao() {
@@ -123,6 +151,21 @@ public class Tarefa {
         this.metricas.incTempoProcessamento(tempo - inicioEspera);
         this.tamComunicacao = arquivoRecebimento;
     }
+    
+    public double cancelar(double tempo) {
+        if(estado == PARADO || estado == PROCESSANDO){
+            this.estado = CANCELADO;
+            this.metricas.incTempoProcessamento(tempo - inicioEspera);
+            return inicioEspera;
+        }else{
+            this.estado = CANCELADO;
+            return tempo;
+        }
+    }
+    
+    public void calcEficiencia(double capacidadeRecebida){
+        this.metricas.calcEficiencia(capacidadeRecebida, tamProcessamento);
+    }
 
     public double getTimeCriacao() {
         return tempoCriacao;
@@ -135,5 +178,32 @@ public class Tarefa {
     public int getEstado() {
         return this.estado;
     }
+    
+    public int getIdentificador() {
+        return this.identificador;
+    }
+    public String getAplicacao() {
+        return aplicacao;
+    }
 
+    public boolean isCopy() {
+        return copia;
+    }
+
+    public boolean isCopyOf(Tarefa tarefa) {
+        if(this.identificador == tarefa.identificador && !this.equals(tarefa)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public double getPorcentagemProcessado() {
+        return porcentagemProcessado;
+    }
+
+    public void setPorcentagemProcessado(double porcentagemProcessado) {
+        this.porcentagemProcessado = porcentagemProcessado;
+    }
+    
 }
