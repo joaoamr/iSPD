@@ -63,6 +63,10 @@ public abstract class CS_Processamento extends CentroServico {
     public double tempoProcessar(double Mflops) {
         return (Mflops / PoderComputacionalDisponivelPorProcessador);
     }
+    
+    public double getMflopsProcessados(double tempoProc) {
+        return (tempoProc * PoderComputacionalDisponivelPorProcessador);
+    }
 
     public MetricasProcessamento getMetrica() {
         return metrica;

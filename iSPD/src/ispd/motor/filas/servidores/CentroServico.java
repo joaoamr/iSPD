@@ -1,6 +1,7 @@
 package ispd.motor.filas.servidores;
 
 import ispd.motor.Simulacao;
+import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 
 /**
@@ -37,7 +38,7 @@ public abstract class CentroServico {
      * @param cliente cliente que será alterado pela requisição
      * @param tipo constante que indica tipo de requisição
      */
-    public abstract void requisicao(Simulacao simulacao, Tarefa cliente, int tipo);
+    public abstract void requisicao(Simulacao simulacao, Mensagem cliente, int tipo);
     //Obs.: o método requisição pode necessitar de uma nova classe para ser transferida na rede interna
     //e executada apenas nnos centros de serviços
     public abstract String getId();

@@ -6,6 +6,7 @@ package ispd.motor.filas.servidores;
 
 import ispd.motor.EventoFuturo;
 import ispd.motor.Simulacao;
+import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,10 @@ public class CS_Link extends CS_Comunicacao {
     private CentroServico conexoesEntrada;
     private CentroServico conexoesSaida;
     private List<Tarefa> filaPacotes;
+    private List<Mensagem> filaMensagens;
     private boolean linkDisponivel;
+    private boolean linkDisponivelMensagem;
+    private double tempoTransmitirMensagem;
 
     public CS_Link(String id, double LarguraBanda, double Ocupacao, double Latencia) {
         super(id, LarguraBanda, Ocupacao, Latencia);
@@ -27,6 +31,9 @@ public class CS_Link extends CS_Comunicacao {
         this.conexoesSaida = null;
         this.linkDisponivel = true;
         this.filaPacotes = new ArrayList<Tarefa>();
+        this.filaMensagens = new ArrayList<Mensagem>();
+        this.tempoTransmitirMensagem = 0;
+        this.linkDisponivelMensagem = true;
     }
 
     public CentroServico getConexoesEntrada() {
@@ -112,7 +119,43 @@ public class CS_Link extends CS_Comunicacao {
     }
 
     @Override
-    public void requisicao(Simulacao simulacao, Tarefa cliente, int tipo) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void requisicao(Simulacao simulacao, Mensagem cliente, int tipo) {
+        if (tipo == EventoFuturo.SAIDA_MENSAGEM) {
+            tempoTransmitirMensagem += tempoTransmitir(cliente.getTamComunicacao());
+            //Incrementa o número de Mbits transmitido por este link
+            this.getMetrica().incMbitsTransmitidos(cliente.getTamComunicacao());
+            //Incrementa o tempo de transmissão
+            double tempoTrans = this.tempoTransmitir(cliente.getTamComunicacao());
+            this.getMetrica().incSegundosDeTransmissao(tempoTrans);
+            //Gera evento para chegada da mensagem no proximo servidor
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime() + tempoTrans,
+                    EventoFuturo.MENSAGEM,
+                    cliente.getCaminho().remove(0), cliente);
+            //Event adicionado a lista de evntos futuros
+            simulacao.getEventos().offer(evtFut);
+            if (!filaMensagens.isEmpty()) {
+                //Gera evento para chegada da mensagem no proximo servidor
+                evtFut = new EventoFuturo(
+                        simulacao.getTime() + tempoTrans,
+                        EventoFuturo.SAIDA_MENSAGEM,
+                        this, filaMensagens.remove(0));
+                //Event adicionado a lista de evntos futuros
+                simulacao.getEventos().offer(evtFut);
+            }else{
+                linkDisponivelMensagem = true;
+            }
+        } else if(linkDisponivelMensagem){
+            linkDisponivelMensagem = false;
+                //Gera evento para chegada da mensagem no proximo servidor
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(),
+                        EventoFuturo.SAIDA_MENSAGEM,
+                        this, cliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.getEventos().offer(evtFut);
+        }else{
+            filaMensagens.add(cliente);
+        }
     }
 }
