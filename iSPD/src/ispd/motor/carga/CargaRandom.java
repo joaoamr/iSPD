@@ -66,6 +66,7 @@ public class CargaRandom extends GerarCarga {
         for (CS_Processamento mestre : mestres) {
             for (int i = 0; i < quantidadePorMestre; i++) {
                 Tarefa tarefa = new Tarefa(
+                        "application1",
                         mestre,
                         gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
                         0.0009765625 /*arquivo recebimento*/,
@@ -76,6 +77,7 @@ public class CargaRandom extends GerarCarga {
         }
         for (int i = 0; i < resto; i++) {
             Tarefa tarefa = new Tarefa(
+                        "application1",
                         mestres.get(0),
                         gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
                         0.0009765625 /*arquivo recebimento 1 kbit*/,
@@ -96,7 +98,6 @@ public class CargaRandom extends GerarCarga {
 
     public static GerarCarga newGerarCarga(String entrada) {
         CargaRandom newObj = null;
-        //try {
         String aux = entrada.replace("\n", " ");
         String[] valores = aux.split(" ");
         int minComputacao = Integer.parseInt(valores[0]);
@@ -114,9 +115,6 @@ public class CargaRandom extends GerarCarga {
                 minComputacao, maxComputacao, AverageComputacao, ProbabilityComputacao,
                 minComunicacao, maxComunicacao, AverageComunicacao, ProbabilityComunicacao,
                 timeOfArrival);
-        //} catch (Exception e) {
-        //    Logger.getLogger(CargaRandom.class.getName()).log(Level.SEVERE, null, e);
-        //}
         return newObj;
     }
 

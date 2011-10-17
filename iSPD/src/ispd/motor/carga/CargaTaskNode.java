@@ -9,7 +9,6 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -69,6 +68,7 @@ public class CargaTaskNode extends GerarCarga {
             GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
             for (i = 0; i < this.getNumeroTarefas(); i++) {
                 Tarefa tarefa = new Tarefa(
+                        aplicacao,
                         mestre,
                         gerador.twoStageUniform(minComunicacao, minComunicacao + (maxComunicacao - minComunicacao) / 2, maxComunicacao, 1),
                         0.0009765625 /*arquivo recebimento*/,
