@@ -306,15 +306,17 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public void setIcone(Icone icone) {
-        int numEscal = escalonadores.ESCALONADORES.length + escalonadores.listar().size();
+        int numEscal = Escalonadores.ESCALONADORES.length + escalonadores.listar().size();
         if (nomesDosEscalonadores.size() > numEscal) {
-            for (String nome : nomesDosEscalonadores) {
+            for (int i = Escalonadores.ESCALONADORES.length; i < nomesDosEscalonadores.size(); i++) {
+                String nome = nomesDosEscalonadores.get(i);
                 if (!escalonadores.listar().contains(nome)) {
                     nomesDosEscalonadores.remove(nome);
                 }
             }
         } else if (nomesDosEscalonadores.size() < numEscal) {
-            for (String nome : escalonadores.listar()) {
+            for (int i =0; i < escalonadores.listar().size(); i++) {
+                String nome = escalonadores.listar().get(i);
                 if (!nomesDosEscalonadores.contains(nome)) {
                     nomesDosEscalonadores.add(nome);
                 }

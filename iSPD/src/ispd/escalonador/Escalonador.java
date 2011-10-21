@@ -19,6 +19,7 @@ public abstract class Escalonador {
     protected List<CS_Processamento> escravos;
     protected List<Tarefa> tarefas;
     protected List<Tarefa> concluidas;
+    protected Mestre mestre;
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
@@ -28,19 +29,15 @@ public abstract class Escalonador {
 
     public abstract void iniciar();
 
-    public abstract void atualizar();
-
     public abstract Tarefa escalonarTarefa();
 
     public abstract CS_Processamento escalonarRecurso();
 
     public abstract List<CentroServico> escalonarRota(CentroServico destino);
 
-    public abstract void escalonar(Mestre mestre);
+    public abstract void escalonar();
 
     public abstract void adicionarTarefa(Tarefa tarefa);
-
-    public abstract void adicionarFilaTarefa(ArrayList<Tarefa> tarefa);
 
     //Get e Set
 
@@ -63,4 +60,13 @@ public abstract class Escalonador {
     public List<Tarefa> getFilaTarefas() {
         return this.tarefas;
     }
+
+    public void setMestre(Mestre mestre) {
+        this.mestre = mestre;
+    }
+
+    public List<List> getCaminhoEscravo() {
+        return caminhoEscravo;
+    }
+    
 }

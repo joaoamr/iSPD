@@ -42,6 +42,10 @@ public class Tarefa implements Cliente {
      */
     private CentroServico origem;
     /**
+     * Local de destino da mensagem/tarefa
+     */
+    private CentroServico localProcessamento;
+    /**
      * Caminho que o pacote deve percorrer até o destino
      * O destino é o ultimo item desta lista
      */
@@ -108,11 +112,19 @@ public class Tarefa implements Cliente {
     public CentroServico getOrigem() {
         return origem;
     }
-
+    
+    public CentroServico getLocalProcessamento() {
+        return localProcessamento;
+    }
+    
     public List<CentroServico> getCaminho() {
         return caminho;
     }
 
+    public void setLocalProcessamento(CentroServico localProcessamento) {
+        this.localProcessamento = localProcessamento;
+    }
+    
     public void setCaminho(List<CentroServico> caminho) {
         this.caminho = caminho;
     }

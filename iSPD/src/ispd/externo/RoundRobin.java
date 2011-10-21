@@ -6,12 +6,13 @@
 package ispd.externo;
 
 import ispd.escalonador.Escalonador;
-import ispd.escalonador.Mestre;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Implementação do algoritmo de escalonamento Round-Robin
@@ -20,21 +21,17 @@ import java.util.List;
  * @author denison_usuario
  */
 public class RoundRobin extends Escalonador{
-    private int escravoAtual;
-
+    private ListIterator<CS_Processamento> recursos;
+    
     public RoundRobin(){
         this.tarefas = new ArrayList<Tarefa>();
         this.concluidas = new ArrayList<Tarefa>();
-        this.escravos = new ArrayList<CS_Processamento>();
-        this.escravoAtual = -1;
+        this.escravos = new LinkedList<CS_Processamento>();
     }
 
     @Override
-    public void iniciar() {}
-
-    @Override
-    public void atualizar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void iniciar() {
+        recursos = escravos.listIterator(0);
     }
 
     @Override
@@ -44,17 +41,19 @@ public class RoundRobin extends Escalonador{
 
     @Override
     public CS_Processamento escalonarRecurso() {
-        escravoAtual++;
-        if (escravos.size()<=escravoAtual) {
-            escravoAtual=0;
+        if (recursos.hasNext()) {
+            return recursos.next();
+        }else{
+            recursos = escravos.listIterator(0);
+            return recursos.next();
         }
-        return escravos.get(escravoAtual);
     }
 
     @Override
-    public void escalonar(Mestre mestre) {
+    public void escalonar() {
         Tarefa trf = escalonarTarefa();
         CS_Processamento rec = escalonarRecurso();
+        trf.setLocalProcessamento(rec);
         trf.setCaminho(escalonarRota(rec));
         mestre.enviarTarefa(trf);
     }
@@ -65,14 +64,8 @@ public class RoundRobin extends Escalonador{
     }
 
     @Override
-    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public List<CentroServico> escalonarRota(CentroServico destino) {
         int index = escravos.indexOf(destino);
         return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));
     }
-
 }

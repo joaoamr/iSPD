@@ -112,17 +112,6 @@ public class Simulacao {
         redeDeFilas.setMetricasGlobais(new MetricasGlobais(redeDeFilas, getTime(), tarefas));
         janela.incProgresso(5);
         janela.println("OK", Color.green);
-        for(int i = 0; i < redeDeFilas.getMestres().size(); i++){
-            CS_Mestre mst = (CS_Mestre) redeDeFilas.getMestres().get(i);
-            janela.println("Mestre: "+mst.getId()+" copias: "+mst.contCopy);
-        }
-        for(int i = 0; i < redeDeFilas.getMaquinas().size(); i++){
-            CS_Maquina maq = redeDeFilas.getMaquinas().get(i);
-            janela.println("Maq: "+maq.getId()+" canceladas: "+maq.contC+" concluidas: "+maq.contT);
-        }
-        for(Tarefa tf : tarefas){
-            janela.println("Tarefa "+tf.getIdentificador()+" estado "+tf.getEstado());
-        }
     }
 
     private void addEventos(List<Tarefa> tarefas) {

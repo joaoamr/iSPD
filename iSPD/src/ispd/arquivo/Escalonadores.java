@@ -36,12 +36,13 @@ import javax.tools.ToolProvider;
  * @author denison_usuario
  */
 public class Escalonadores {
+
     private final String DIRETORIO = "ispd/externo";
     /**
      * guarda a lista de escalonadores implementados no iSPD,
      * e que já estão disponiveis para o usuario por padrão
      */
-    public final String[] ESCALONADORES = { "---", "RoundRobin", "Workqueue"};
+    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
@@ -50,6 +51,7 @@ public class Escalonadores {
      * mantem o caminho do pacote escalonador
      */
     private File diretorio = null;
+
     /**
      * @return diretório onde fica os arquivos dos escalonadores
      */
@@ -80,9 +82,9 @@ public class Escalonadores {
                     Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }//else{
-                //diretorio.mkdirs();
-                //File RR = new File(getClass().getResource("/ispd/externo/RoundRobin.class").getFile());
-                //copiarArquivo(RR, new File(DIRETORIO, RR.getName()));
+            //diretorio.mkdirs();
+            //File RR = new File(getClass().getResource("/ispd/externo/RoundRobin.class").getFile());
+            //copiarArquivo(RR, new File(DIRETORIO, RR.getName()));
             //}
             //criarRoundRobin();
             //criarWorkqueue();
@@ -103,6 +105,7 @@ public class Escalonadores {
             }
         }
     }
+
     /**
      * Método responsável por listar os escalonadores existentes no simulador
      * ele retorna o nome de cada escalonador contido no pacote com arquivo .class
@@ -110,6 +113,7 @@ public class Escalonadores {
     public ArrayList<String> listar() {
         return escalonadores;
     }
+
     /**
      * Método responsável por remover um escalonador no simulador
      * ele recebe o nome do escalonador e remove do pacote a classe .java e .class
@@ -124,11 +128,12 @@ public class Escalonadores {
         }
         escalonador = new File(diretorio, nomeEscalonador + ".java");
         if (escalonador.exists()) {
-                escalonador.delete();
-                deletado = true;
+            escalonador.delete();
+            deletado = true;
         }
         return deletado;
     }
+
     /**
      * Realiza a leitura do arquivo .java do escalonador e retorna um String do conteudo
      */
@@ -143,14 +148,16 @@ public class Escalonadores {
                 buffer.append('\n');
                 linha = leitor.readLine();
             }
-            if(buffer.length()>0)
+            if (buffer.length() > 0) {
                 buffer.deleteCharAt(buffer.length() - 1);
+            }
             return buffer.toString();
         } catch (IOException ex) {
             Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
+
     /**
      * Este método sobrescreve o arquivo .java do escalonador informado com o buffer
      */
@@ -167,6 +174,7 @@ public class Escalonadores {
         }
         return true;
     }
+
     /**
      * Compila o arquivo .java do escalonador informado
      * caso ocorra algum erro retorna o erro caso contrario retorna null
@@ -178,46 +186,50 @@ public class Escalonadores {
     public String compilar(String escalonador) {
         //Compilação
         File arquivo = new File(diretorio, escalonador + ".java");
-        String errosStr;
+        String errosStr = null;
         JavaCompiler compilador = ToolProvider.getSystemJavaCompiler();
         if (compilador == null) {
             try {
                 Process processo = Runtime.getRuntime().exec("javac " + arquivo.getPath());
-                StringBuffer errosdoComando = new StringBuffer();
+                StringBuilder errosdoComando = new StringBuilder();
                 InputStream StreamErro = processo.getErrorStream();
                 InputStreamReader inpStrAux = new InputStreamReader(StreamErro);
                 BufferedReader SaidadoProcesso = new BufferedReader(inpStrAux);
                 String linha = SaidadoProcesso.readLine();
                 while (linha != null) {
-                    errosdoComando.append(linha + "\n");
+                    errosdoComando.append(linha).append("\n");
                     linha = SaidadoProcesso.readLine();
                 }
                 SaidadoProcesso.close();
                 errosStr = errosdoComando.toString();
             } catch (IOException ex) {
                 errosStr = "Não foi possível compilar";
-                //Logger.getLogger(GerenciaPacoteEscalonadorJar.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             OutputStream erros = new ByteArrayOutputStream();
             compilador.run(null, null, erros, arquivo.getPath());
             errosStr = erros.toString();
         }
-        if (errosStr.length() == 0) {
-            File test = new File(diretorio , escalonador+".class");
-            if(test.exists())
-                inserirLista(escalonador);
-            return null;
-        } else {
-            return errosStr;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
         }
+        File test = new File(diretorio, escalonador + ".class");
+        if (test.exists()) {
+            inserirLista(escalonador);
+        }
+        return errosStr;
     }
+
     /**
      * recebe nome do escalonar e remove ele da lista de escalonadores
      */
     private void removerLista(String nomeEscalonador) {
         escalonadores.remove(nomeEscalonador);
     }
+
     /**
      * recebe nome do escalonar e adiciona ele na lista de escalonadores
      */
@@ -232,50 +244,50 @@ public class Escalonadores {
      */
     private void criarRoundRobin() {
         String codigoFonte =
-"package ispd.externo;\n\n"+
-"import ispd.escalonador.Escalonador;\n"+
-"import ispd.escalonador.Mestre;\n"+
-"import ispd.motor.filas.Tarefa;\n"+
-"import ispd.motor.filas.servidores.CS_Processamento;\n"+
-"import ispd.motor.filas.servidores.CentroServico;\n"+
-"import java.util.ArrayList;\n"+
-"import java.util.List;\n\n"+
-"/**\n * Implementação do algoritmo de escalonamento Round-Robin\n"+
-" * Atribui a proxima tarefa da fila (FIFO)\n"+
-" * para o proximo recurso de uma fila circular de recursos\n"+
-" * @author denison_usuario\n */\n"+
-"public class RoundRobin extends Escalonador{\n"+
-"    private int escravoAtual = -1;\n\n"+
-"    public RoundRobin(){\n"+
-"        this.tarefas = new ArrayList<Tarefa>();\n"+
-"        this.escravos = new ArrayList<CS_Processamento>();\n    }\n\n"+
-"    @Override\n    public void iniciar() {\n"+
-"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
-"    @Override\n    public void atualizar() {\n"+
-"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
-"    @Override\n    public Tarefa escalonarTarefa() {\n"+
-"        return tarefas.remove(0);\n    }\n\n"+
-"    @Override\n    public CS_Processamento escalonarRecurso() {\n"+
-"        escravoAtual++;\n"+
-"        if (escravos.size()<=escravoAtual) {\n"+
-"            escravoAtual=0;\n"+
-"        }\n        return escravos.get(escravoAtual);\n    }\n\n"+
-"    @Override\n    public void escalonar(Mestre mestre) {\n"+
-"        Tarefa trf = escalonarTarefa();\n"+
-"        CS_Processamento rec = escalonarRecurso();\n"+
-"        trf.setCaminho(escalonarRota(rec));\n"+
-"        mestre.enviarTarefa(trf);\n    }\n\n"+
-"    @Override\n    public void adicionarTarefa(Tarefa tarefa) {\n"+
-"        this.tarefas.add(tarefa);\n    }\n\n"+
-"    @Override\n    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {\n"+
-"        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"+
-"    @Override\n    public List<CentroServico> escalonarRota(CentroServico destino) {\n"+
-"        int index = escravos.indexOf(destino);\n"+
-"        return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));\n"+
-"    }\n\n}";
+                "package ispd.externo;\n\n"
+                + "import ispd.escalonador.Escalonador;\n"
+                + "import ispd.escalonador.Mestre;\n"
+                + "import ispd.motor.filas.Tarefa;\n"
+                + "import ispd.motor.filas.servidores.CS_Processamento;\n"
+                + "import ispd.motor.filas.servidores.CentroServico;\n"
+                + "import java.util.ArrayList;\n"
+                + "import java.util.List;\n\n"
+                + "/**\n * Implementação do algoritmo de escalonamento Round-Robin\n"
+                + " * Atribui a proxima tarefa da fila (FIFO)\n"
+                + " * para o proximo recurso de uma fila circular de recursos\n"
+                + " * @author denison_usuario\n */\n"
+                + "public class RoundRobin extends Escalonador{\n"
+                + "    private int escravoAtual = -1;\n\n"
+                + "    public RoundRobin(){\n"
+                + "        this.tarefas = new ArrayList<Tarefa>();\n"
+                + "        this.escravos = new ArrayList<CS_Processamento>();\n    }\n\n"
+                + "    @Override\n    public void iniciar() {\n"
+                + "        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"
+                + "    @Override\n    public void atualizar() {\n"
+                + "        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"
+                + "    @Override\n    public Tarefa escalonarTarefa() {\n"
+                + "        return tarefas.remove(0);\n    }\n\n"
+                + "    @Override\n    public CS_Processamento escalonarRecurso() {\n"
+                + "        escravoAtual++;\n"
+                + "        if (escravos.size()<=escravoAtual) {\n"
+                + "            escravoAtual=0;\n"
+                + "        }\n        return escravos.get(escravoAtual);\n    }\n\n"
+                + "    @Override\n    public void escalonar(Mestre mestre) {\n"
+                + "        Tarefa trf = escalonarTarefa();\n"
+                + "        CS_Processamento rec = escalonarRecurso();\n"
+                + "        trf.setCaminho(escalonarRota(rec));\n"
+                + "        mestre.enviarTarefa(trf);\n    }\n\n"
+                + "    @Override\n    public void adicionarTarefa(Tarefa tarefa) {\n"
+                + "        this.tarefas.add(tarefa);\n    }\n\n"
+                + "    @Override\n    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {\n"
+                + "        throw new UnsupportedOperationException(\"Not supported yet.\");\n    }\n\n"
+                + "    @Override\n    public List<CentroServico> escalonarRota(CentroServico destino) {\n"
+                + "        int index = escravos.indexOf(destino);\n"
+                + "        return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));\n"
+                + "    }\n\n}";
         FileWriter arquivoFonte;
         try {
-            File local = new File(diretorio,"RoundRobin.java");
+            File local = new File(diretorio, "RoundRobin.java");
             arquivoFonte = new FileWriter(local);
             arquivoFonte.write(codigoFonte); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
@@ -283,47 +295,67 @@ public class Escalonadores {
             Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     /**
      * @param escalonador
      * @return conteudo de básico para criar uma classe que implemente um escalonador
      */
     public static String getEscalonadorJava(String escalonador) {
         String saida =
-                "package ispd.externo.escalonador;"
-                + "\n"
-                + "\n" + "import ispd.motor.Tarefa;"
-                + "\n" + "import ispd.escalonador.Escalonador;"
-                + "\n" + "import java.util.ArrayList;"
-                + "\n"
-                + "\n" + "public class " + escalonador + " extends Escalonador {"
-                + "\n"
-                + "\n" + "    public void iniciar() {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "    public void atualizar() {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "    public void escalonarTarefa() {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "    public void escalonarRecurso() {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "    public void adicionarTarefa(Tarefa tarefa) {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {"
-                + "\n" + "        throw new UnsupportedOperationException(\"Not yet implemented\");"
-                + "\n" + "    }"
-                + "\n"
-                + "\n" + "}";
+                "package ispd.externo;"
+       + "\n" + "import ispd.escalonador.Escalonador;"
+       + "\n" + "import ispd.motor.filas.Tarefa;"
+       + "\n" + "import ispd.motor.filas.servidores.CS_Processamento;"
+       + "\n" + "import ispd.motor.filas.servidores.CentroServico;"
+       + "\n" + "import java.util.ArrayList;"
+       + "\n" + "import java.util.List;"
+       + "\n"
+       + "\n" + "public class DynamicFPLTF extends Escalonador{"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public void iniciar() {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public void atualizar() {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public Tarefa escalonarTarefa() {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public CS_Processamento escalonarRecurso() {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public List<CentroServico> escalonarRota(CentroServico destino) {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public void escalonar() {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public void adicionarTarefa(Tarefa tarefa) {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "    @Override"
+       + "\n" + "    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {"
+       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+       + "\n" + "    }"
+       + "\n"
+       + "\n" + "}";
         return saida;
     }
+
     /**
      * extrai arquivos que são necessarios fora do jar
      */
@@ -386,6 +418,7 @@ public class Escalonadores {
             }
         }
     }
+
     /**
      * Método responsável por adicionar um escalonador no simulador
      * ele recebe uma classe Java compila e adiciona ao pacote a classe .java e .class
@@ -426,16 +459,17 @@ public class Escalonadores {
         if (errosStr.length() != 0) {
             return false;
         } else {
-            String nome = nomeArquivoJava.getName().substring(0,nomeArquivoJava.getName().length()-5);
-            File test = new File(diretorio , nome+".class");
-            if(!test.exists())
+            String nome = nomeArquivoJava.getName().substring(0, nomeArquivoJava.getName().length() - 5);
+            File test = new File(diretorio, nome + ".class");
+            if (!test.exists()) {
                 return false;
+            }
             inserirLista(nome);
         }
         return true;
     }
-    
-    private void copiarArquivo(File arquivoOrigem, File arquivoDestino){
+
+    private void copiarArquivo(File arquivoOrigem, File arquivoDestino) {
         //copiar para diretório
         if (!arquivoDestino.getPath().equals(arquivoOrigem.getPath())) {
             FileInputStream origem;

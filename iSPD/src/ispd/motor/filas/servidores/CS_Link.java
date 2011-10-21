@@ -73,6 +73,7 @@ public class CS_Link extends CS_Comunicacao {
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
         if (!conexoesSaida.equals(cliente.getCaminho().get(0))) {
+            System.out.println("link "+this.getId()+" tarefa "+cliente.getIdentificador()+" tempo "+simulacao.getTime()+" local "+cliente.getCaminho().get(0).getId());
             throw new IllegalArgumentException("O destino da mensagem é um recurso sem conexão com este link");
         } else {
             cliente.finalizarEsperaComunicacao(simulacao.getTime());
