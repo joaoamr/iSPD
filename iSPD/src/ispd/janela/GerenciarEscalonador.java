@@ -63,11 +63,15 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         doc.addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
-                if(!modificado)modificar();
+                if (!modificado) {
+                    modificar();
+                }
             }
 
             public void removeUpdate(DocumentEvent e) {
-                if(!modificado)modificar();
+                if (!modificado) {
+                    modificar();
+                }
             }
 
             public void changedUpdate(DocumentEvent e) {
@@ -419,11 +423,9 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
             String result = (String) JOptionPane.showInputDialog(this, "Creating the scheduler with:", null, JOptionPane.INFORMATION_MESSAGE, null, ops, ops[0]);
             if (result != null) {
                 String result1 = JOptionPane.showInputDialog(this, "Enter the name of the scheduler");
-                boolean nomeOk;
+                boolean nomeOk = false;
                 if (result1 != null) {
-                    nomeOk = ValidaValores.validaNomeClasse(result);
-                } else {
-                    nomeOk = false;
+                    nomeOk = ValidaValores.validaNomeClasse(result1);
                 }
                 if (result.equals(ops[0]) && nomeOk) {
                     //Carregar classe para esditar java
@@ -535,8 +537,8 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, erros, "Erros encontrados", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Escalonador" + escalonadorAberto + "\nCompilador com sucesso");
-                atualizarEscalonadores(escalonadores.listar());
             }
+            atualizarEscalonadores(escalonadores.listar());
         }
     }//GEN-LAST:event_jButtonCompilarActionPerformed
 
@@ -594,7 +596,6 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItemImportarActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCompilar;
     private javax.swing.JButton jButtonNovo;
@@ -637,7 +638,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
     }
 
     private int savarAlteracao() {
-        int escolha = JOptionPane.showConfirmDialog(this, palavras.getString("Do you want to save changes to") +" "+ escalonadorAberto + ".java");
+        int escolha = JOptionPane.showConfirmDialog(this, palavras.getString("Do you want to save changes to") + " " + escalonadorAberto + ".java");
         if (escolha == JOptionPane.YES_OPTION) {
             escalonadores.escrever(escalonadorAberto, this.jEditorPane.getText());
             salvarModificacao();
@@ -660,13 +661,13 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         salvarModificacao();
     }
 
-    private void modificar(){
-        this.setTitle(escalonadorAberto+".java ["+palavras.getString("modified")+"] - "+palavras.getString("Manage Schedulers"));
+    private void modificar() {
+        this.setTitle(escalonadorAberto + ".java [" + palavras.getString("modified") + "] - " + palavras.getString("Manage Schedulers"));
         this.modificado = true;
     }
-    
-    private void salvarModificacao(){
-        this.setTitle(escalonadorAberto+".java - "+palavras.getString("Manage Schedulers"));
+
+    private void salvarModificacao() {
+        this.setTitle(escalonadorAberto + ".java - " + palavras.getString("Manage Schedulers"));
         this.modificado = false;
     }
 

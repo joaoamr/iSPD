@@ -908,8 +908,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             BufferedImage img = aDesenho.createImage();
             try {
                 ImageIO.write(img, "jpg", file);
-            } catch (IOException x) {
-                x.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_jMenuItemToJPGActionPerformed
@@ -1336,7 +1336,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             this.jPanelPropriedades.setjLabelTexto(Texto);
         } else {
             jScrollPaneBarraLateral.setViewportView(jPanelSimples);
-            jScrollPaneProperties.setViewportView(null);
+            jPanelPropriedades.setjLabelTexto("");
         }
     }
 

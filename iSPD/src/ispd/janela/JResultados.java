@@ -219,7 +219,6 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     // TODO add your handling code here:
     this.jScrollPaneComunicacao.setViewportView(this.graficoPizzaComunicacao);
 }//GEN-LAST:event_jButtonCPizzaActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
@@ -270,14 +269,19 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         double tempoMedioFilaProcessamento = 0;
         double tempoMedioProcessamento = 0;
         double tempoMedioSistemaProcessamento = 0;
+        int numTarefasCanceladas = 0;
+        double MflopsDesperdicio = 0;
         int numTarefas = 0;
         for (Tarefa no : tarefas) {
-            if(no.getEstado() == Tarefa.CONCLUIDO){
-            tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
-            tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
-            tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
-            tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
-            numTarefas++;
+            if (no.getEstado() == Tarefa.CONCLUIDO) {
+                tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
+                tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
+                tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
+                tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
+                numTarefas++;
+            } else if (no.getEstado() == Tarefa.CANCELADO) {
+                MflopsDesperdicio += no.getTamProcessamento() * no.getPorcentagemProcessado();
+                numTarefasCanceladas++;
             }
         }
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
@@ -294,6 +298,11 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaProcessamento);
         texto += String.format("    Processing average time: %g seconds.\n", tempoMedioProcessamento);
         texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaProcessamento);
+        if(numTarefasCanceladas > 0){
+            texto += "\n Tasks Canceled \n";
+            texto += String.format("    Number: %d \n", numTarefasCanceladas);
+            texto += String.format("    Wasted Processing: %g Mflops", MflopsDesperdicio);
+        }
         return texto;
     }
 
@@ -377,11 +386,11 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
         if (rdf.getMaquinas() != null) {
             for (CS_Processamento maq : rdf.getMaquinas()) {
-                if(maqNomes.contains(maq.getId())){
+                if (maqNomes.contains(maq.getId())) {
                     Double valor = (Double) dadosGrafico.getValue("vermelho", maq.getId());
                     valor += maq.getMetrica().getMFlopsProcessados();
                     dadosGrafico.setValue(valor, "vermelho", maq.getId());
-                }else{
+                } else {
                     dadosGrafico.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
                 }
             }
@@ -429,11 +438,11 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
         if (rdf.getMaquinas() != null) {
             for (CS_Processamento maq : rdf.getMaquinas()) {
-                if(maqNomes.contains(maq.getId())){
+                if (maqNomes.contains(maq.getId())) {
                     Double valor = (Double) dadosGrafico.getValue(maq.getId());
                     valor += maq.getMetrica().getMFlopsProcessados();
                     dadosGrafico.setValue(maq.getId(), valor);
-                }else{
+                } else {
                     dadosGrafico.insertValue(0, maq.getId(), maq.getMetrica().getMFlopsProcessados());
                 }
             }
