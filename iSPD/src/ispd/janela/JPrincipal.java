@@ -1126,7 +1126,6 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
         if (modificado) {
             int escolha = savarAlteracao();
-            System.out.println(escolha + " " + JOptionPane.CANCEL_OPTION);
             if (escolha != JOptionPane.CANCEL_OPTION && escolha != JOptionPane.CLOSED_OPTION) {
                 System.exit(0);
             }

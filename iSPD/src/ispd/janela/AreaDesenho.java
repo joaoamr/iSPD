@@ -276,7 +276,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     public HashSet<Icone> getIcones() {
         return icones;
     }
-    
+
     @Override
     public Dimension getMaximumSize() {
         return getPreferredSize();
@@ -1565,50 +1565,62 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     public RedeDeFilas getRedeDeFilas() {
         List<CS_Processamento> mestres = new ArrayList<CS_Processamento>();
         List<Integer> mestresNome = new ArrayList<Integer>();
-        List<CS_Maquina> maqs  = new ArrayList<CS_Maquina>();
+        List<CS_Switch> clusters = new ArrayList<CS_Switch>();
+        List<Integer> clustersNome = new ArrayList<Integer>();
+        List<CS_Maquina> maqs = new ArrayList<CS_Maquina>();
         List<Integer> maqsNome = new ArrayList<Integer>();
         List<CS_Comunicacao> links = new ArrayList<CS_Comunicacao>();
-        List<CS_Internet> nets  = new ArrayList<CS_Internet>();
+        List<CS_Internet> nets = new ArrayList<CS_Internet>();
         List<Integer> netsNome = new ArrayList<Integer>();
         //cria maquinas, mestres, internets e mestres dos clusters
         for (Icone icone : getIcones()) {
-            switch (icone.getTipoIcone()){
-                case Icone.MACHINE :
-                    if(icone.isMestre()){
-                    CS_Mestre mestre = new CS_Mestre(
-                            icone.getNome(), 
-                            icone.getProprietario(), 
-                            icone.getPoderComputacional(), 
-                            icone.getTaxaOcupacao(), 
-                            icone.getAlgoritmo()/*Escalonador*/);
-                    mestres.add(mestre);
-                    mestresNome.add(icone.getIdGlobal());    
-                    }else{
-                    CS_Maquina maq = new CS_Maquina(
-                            icone.getNome(), 
-                            icone.getProprietario(), 
-                            icone.getPoderComputacional(), 
-                            1/*num processadores*/, 
-                            icone.getTaxaOcupacao());
-                    maqs.add(maq);
-                    maqsNome.add(icone.getIdGlobal());
+            switch (icone.getTipoIcone()) {
+                case Icone.MACHINE:
+                    if (icone.isMestre()) {
+                        CS_Mestre mestre = new CS_Mestre(
+                                icone.getNome(),
+                                icone.getProprietario(),
+                                icone.getPoderComputacional(),
+                                icone.getTaxaOcupacao(),
+                                icone.getAlgoritmo()/*Escalonador*/);
+                        mestres.add(mestre);
+                        mestresNome.add(icone.getIdGlobal());
+                    } else {
+                        CS_Maquina maq = new CS_Maquina(
+                                icone.getNome(),
+                                icone.getProprietario(),
+                                icone.getPoderComputacional(),
+                                1/*num processadores*/,
+                                icone.getTaxaOcupacao());
+                        maqs.add(maq);
+                        maqsNome.add(icone.getIdGlobal());
                     }
                     break;
-                case Icone.CLUSTER :
-                    CS_Mestre clust = new CS_Mestre(
-                            icone.getNome(), 
-                            icone.getProprietario(), 
-                            icone.getPoderComputacional(), 
-                            icone.getTaxaOcupacao(), 
-                            icone.getAlgoritmo()/*Escalonador*/);
-                    mestres.add(clust);
-                    mestresNome.add(icone.getIdGlobal());
+                case Icone.CLUSTER:
+                    if (icone.isMestre()) {
+                        CS_Mestre clust = new CS_Mestre(
+                                icone.getNome(),
+                                icone.getProprietario(),
+                                icone.getPoderComputacional(),
+                                icone.getTaxaOcupacao(),
+                                icone.getAlgoritmo()/*Escalonador*/);
+                        mestres.add(clust);
+                        mestresNome.add(icone.getIdGlobal());
+                    } else {
+                        CS_Switch Switch = new CS_Switch(
+                                icone.getNome(),
+                                icone.getBanda(),
+                                icone.getTaxaOcupacao(),
+                                icone.getLatencia());
+                        clusters.add(Switch);
+                        clustersNome.add(icone.getIdGlobal());
+                    }
                     break;
-                case Icone.INTERNET :
+                case Icone.INTERNET:
                     CS_Internet net = new CS_Internet(
-                            icone.getNome(), 
-                            icone.getBanda(), 
-                            icone.getTaxaOcupacao(), 
+                            icone.getNome(),
+                            icone.getBanda(),
+                            icone.getTaxaOcupacao(),
                             icone.getLatencia());
                     nets.add(net);
                     netsNome.add(icone.getIdGlobal());
@@ -1616,63 +1628,73 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         //cria os links e realiza a conexão entre os recursos
-        for (Icone icone : getIcones()){
-            if(icone.getTipoIcone() == Icone.NETWORK){
+        for (Icone icone : getIcones()) {
+            if (icone.getTipoIcone() == Icone.NETWORK) {
                 CS_Link link = new CS_Link(
-                        icone.getNome(), 
-                        icone.getBanda(), 
-                        icone.getTaxaOcupacao(), 
+                        icone.getNome(),
+                        icone.getBanda(),
+                        icone.getTaxaOcupacao(),
                         icone.getLatencia());
                 links.add(link);
-                if(mestresNome.contains(icone.getNoDestino())){
+                if (mestresNome.contains(icone.getNoDestino())) {
                     int index = mestresNome.indexOf(icone.getNoDestino());
                     CS_Mestre mestre = (CS_Mestre) mestres.get(index);
                     link.setConexoesSaida(mestre);
                     mestre.addConexoesEntrada(link);
-                }else if(maqsNome.contains(icone.getNoDestino())){
+                } else if (maqsNome.contains(icone.getNoDestino())) {
                     int index = maqsNome.indexOf(icone.getNoDestino());
                     CS_Maquina maq = (CS_Maquina) maqs.get(index);
                     link.setConexoesSaida(maq);
                     maq.addConexoesEntrada(link);
-                }else if(netsNome.contains(icone.getNoDestino())){
+                } else if (netsNome.contains(icone.getNoDestino())) {
                     int index = netsNome.indexOf(icone.getNoDestino());
                     CS_Internet net = nets.get(index);
                     link.setConexoesSaida(net);
                     net.addConexoesEntrada(link);
+                } else if (clustersNome.contains(icone.getNoDestino())) {
+                    int index = clustersNome.indexOf(icone.getNoDestino());
+                    CS_Switch swt = clusters.get(index);
+                    link.setConexoesSaida(swt);
+                    swt.addConexoesEntrada(link);
                 }
-                if(mestresNome.contains(icone.getNoOrigem())){
+                if (mestresNome.contains(icone.getNoOrigem())) {
                     int index = mestresNome.indexOf(icone.getNoOrigem());
                     CS_Mestre mestre = (CS_Mestre) mestres.get(index);
                     link.setConexoesEntrada(mestre);
                     mestre.addConexoesSaida(link);
-                }else if(maqsNome.contains(icone.getNoOrigem())){
+                } else if (maqsNome.contains(icone.getNoOrigem())) {
                     int index = maqsNome.indexOf(icone.getNoOrigem());
                     CS_Maquina maq = (CS_Maquina) maqs.get(index);
                     link.setConexoesEntrada(maq);
                     maq.addConexoesSaida(link);
-                }else if(netsNome.contains(icone.getNoOrigem())){
+                } else if (netsNome.contains(icone.getNoOrigem())) {
                     int index = netsNome.indexOf(icone.getNoOrigem());
                     CS_Internet net = nets.get(index);
                     link.setConexoesEntrada(net);
                     net.addConexoesSaida(link);
+                } else if (clustersNome.contains(icone.getNoOrigem())) {
+                    int index = clustersNome.indexOf(icone.getNoOrigem());
+                    CS_Switch swt = clusters.get(index);
+                    link.setConexoesEntrada(swt);
+                    swt.addConexoesSaida(link);
                 }
             }
         }
         //adiciona os escravos aos mestres
         for (Icone icone : getIcones()) {
-            if(icone.isMestre()){
-                for(Integer escravo : icone.getEscravos()){
+            if (icone.isMestre() && icone.getTipoIcone() != Icone.CLUSTER) {
+                for (Integer escravo : icone.getEscravos()) {
                     if (maqsNome.contains(escravo)) {
                         int index = maqsNome.indexOf(escravo);
                         CS_Processamento maq = maqs.get(index);
                         index = mestresNome.indexOf(icone.getIdGlobal());
                         CS_Mestre mest = (CS_Mestre) mestres.get(index);
                         mest.addEscravo(maq);
-                        if(maq instanceof CS_Maquina){
+                        if (maq instanceof CS_Maquina) {
                             CS_Maquina maqTemp = (CS_Maquina) maq;
                             maqTemp.addMestre(mest);
                         }
-                    }else if (mestresNome.contains(escravo)) {
+                    } else if (mestresNome.contains(escravo)) {
                         int index = mestresNome.indexOf(escravo);
                         CS_Processamento maq = mestres.get(index);
                         index = mestresNome.indexOf(icone.getIdGlobal());
@@ -1683,26 +1705,26 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         //cria os escravos dos clusters e realiza a conexão
-        for(Icone icone : getIcones()){
-            if(icone.getTipoIcone() == Icone.CLUSTER){
+        for (Icone icone : getIcones()) {
+            if (icone.isMestre() && icone.getTipoIcone() == Icone.CLUSTER) {
                 int index = mestresNome.indexOf(icone.getIdGlobal());
                 CS_Mestre mestreCluster = (CS_Mestre) mestres.get(index);
                 CS_Switch Switch = new CS_Switch(
-                        icone.getNome(), 
-                        icone.getBanda(), 
-                        icone.getTaxaOcupacao(), 
+                        icone.getNome(),
+                        icone.getBanda(),
+                        icone.getTaxaOcupacao(),
                         icone.getLatencia());
                 links.add(Switch);
                 mestreCluster.addConexoesEntrada(Switch);
                 mestreCluster.addConexoesSaida(Switch);
                 Switch.addConexoesEntrada(mestreCluster);
                 Switch.addConexoesSaida(mestreCluster);
-                for(int i = 0; i < icone.getNumeroEscravos(); i++){
+                for (int i = 0; i < icone.getNumeroEscravos(); i++) {
                     CS_Maquina maq = new CS_Maquina(
-                            icone.getNome(), 
-                            icone.getProprietario(), 
-                            icone.getPoderComputacional(), 
-                            1/*numero de processadores*/, 
+                            icone.getNome(),
+                            icone.getProprietario(),
+                            icone.getPoderComputacional(),
+                            1/*numero de processadores*/,
                             icone.getTaxaOcupacao());
                     maq.addConexoesSaida(Switch);
                     maq.addConexoesEntrada(Switch);
@@ -1711,6 +1733,40 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     maq.addMestre(mestreCluster);
                     mestreCluster.addEscravo(maq);
                     maqs.add(maq);
+                }
+            } else if (icone.getTipoIcone() == Icone.CLUSTER) {
+                List<CS_Maquina> maqTemp = new ArrayList<CS_Maquina>();
+                int index = clustersNome.indexOf(icone.getIdGlobal());
+                CS_Switch Switch = clusters.get(index);
+                links.add(Switch);
+                for (int i = 0; i < icone.getNumeroEscravos(); i++) {
+                    CS_Maquina maq = new CS_Maquina(
+                            icone.getNome(),
+                            icone.getProprietario(),
+                            icone.getPoderComputacional(),
+                            1/*numero de processadores*/,
+                            icone.getTaxaOcupacao());
+                    maq.addConexoesSaida(Switch);
+                    maq.addConexoesEntrada(Switch);
+                    Switch.addConexoesEntrada(maq);
+                    Switch.addConexoesSaida(maq);
+                    maqTemp.add(maq);
+                    maqs.add(maq);
+                }
+                //adiciona os escravos aos mestres
+                Icone[] mestresArray = new Icone[getIcones().size()];
+                getIcones().toArray(mestresArray);
+                for (int i = 0; i < mestresArray.length; i++) {
+                    if (mestresArray[i].isMestre() && mestresArray[i].getTipoIcone() != Icone.CLUSTER) {
+                        if (mestresArray[i].getEscravos().contains(icone.getIdGlobal())) {
+                            index = mestresNome.indexOf(mestresArray[i].getIdGlobal());
+                            CS_Mestre mest = (CS_Mestre) mestres.get(index);
+                            for (CS_Maquina maq : maqTemp) {
+                                mest.addEscravo(maq);
+                                maq.addMestre(mest);
+                            }
+                        }
+                    }
                 }
             }
         }
