@@ -5,11 +5,11 @@
 package ispd.externo;
 
 import ispd.escalonador.Escalonador;
-import ispd.escalonador.Mestre;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,22 +18,21 @@ import java.util.List;
  * para um recurso que está livre
  * @author denison_usuario
  */
-public class Workqueue extends Escalonador{
-    private Tarefa ultimaTarefaConcluida;
+public class Workqueue extends Escalonador {
+
+    private LinkedList<Tarefa> ultimaTarefaConcluida;
     private List<Tarefa> tarefaEnviada;
-    private int servidoresOcupados;
-    
+
     public Workqueue() {
         this.tarefas = new ArrayList<Tarefa>();
         this.escravos = new ArrayList<CS_Processamento>();
-        this.ultimaTarefaConcluida = null;
-        this.servidoresOcupados = 0;
+        this.ultimaTarefaConcluida = new LinkedList<Tarefa>();
     }
-    
+
     @Override
     public void iniciar() {
         tarefaEnviada = new ArrayList<Tarefa>(escravos.size());
-        for(int i = 0; i < escravos.size(); i++){
+        for (int i = 0; i < escravos.size(); i++) {
             tarefaEnviada.add(null);
         }
     }
@@ -48,12 +47,12 @@ public class Workqueue extends Escalonador{
 
     @Override
     public CS_Processamento escalonarRecurso() {
-        if (ultimaTarefaConcluida != null) {
-            int index = tarefaEnviada.indexOf(ultimaTarefaConcluida);
+        if (!ultimaTarefaConcluida.isEmpty()) {
+            int index = tarefaEnviada.indexOf(ultimaTarefaConcluida.getLast());
             return this.escravos.get(index);
-        }else{
-            for(int i = 0; i < tarefaEnviada.size(); i++){
-                if(tarefaEnviada.get(i) == null){
+        } else {
+            for (int i = 0; i < tarefaEnviada.size(); i++) {
+                if (tarefaEnviada.get(i) == null) {
                     return this.escravos.get(i);
                 }
             }
@@ -69,23 +68,18 @@ public class Workqueue extends Escalonador{
 
     @Override
     public void escalonar() {
-        if(servidoresOcupados == 0){
-            mestre.setTipoEscalonamento(Mestre.ENQUANTO_HOUVER_TAREFAS);
-        }
         CS_Processamento rec = escalonarRecurso();
-        if(rec != null){
+        if (rec != null) {
             Tarefa trf = escalonarTarefa();
-            if(trf != null){
+            if (trf != null) {
                 tarefaEnviada.set(escravos.indexOf(rec), trf);
-                ultimaTarefaConcluida = null;
-                servidoresOcupados++;
+                if(!ultimaTarefaConcluida.isEmpty()){
+                    ultimaTarefaConcluida.removeLast();
+                }
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
                 mestre.enviarTarefa(trf);
             }
-        }
-        if(servidoresOcupados == escravos.size()){
-            mestre.setTipoEscalonamento(Mestre.QUANDO_RECEBE_RESULTADO);
         }
     }
 
@@ -96,11 +90,9 @@ public class Workqueue extends Escalonador{
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
-        if (ultimaTarefaConcluida != null) {
-            int index = tarefaEnviada.indexOf(ultimaTarefaConcluida);
-            servidoresOcupados--;
-            tarefaEnviada.set(index, null);
+        ultimaTarefaConcluida.add(tarefa);
+        if (!tarefas.isEmpty()) {
+            mestre.executarEscalonamento();
         }
-        this.ultimaTarefaConcluida = tarefa;
     }
 }

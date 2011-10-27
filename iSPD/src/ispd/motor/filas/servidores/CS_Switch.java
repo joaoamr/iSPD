@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class CS_Switch extends CS_Comunicacao {
 
-    private List<CS_Processamento> conexoesEntrada;
-    private List<CS_Processamento> conexoesSaida;
+    private List<CentroServico> conexoesEntrada;
+    private List<CentroServico> conexoesSaida;
     private List<Tarefa> filaPacotes;
     private List<Mensagem> filaMensagens;
     private boolean linkDisponivel;
@@ -27,8 +27,8 @@ public class CS_Switch extends CS_Comunicacao {
 
     public CS_Switch(String id, double LarguraBanda, double Ocupacao, double Latencia) {
         super(id, LarguraBanda, Ocupacao, Latencia);
-        this.conexoesEntrada = new ArrayList<CS_Processamento>();
-        this.conexoesSaida = new ArrayList<CS_Processamento>();
+        this.conexoesEntrada = new ArrayList<CentroServico>();
+        this.conexoesSaida = new ArrayList<CentroServico>();
         this.linkDisponivel = true;
         this.filaPacotes = new ArrayList<Tarefa>();
         this.filaMensagens = new ArrayList<Mensagem>();
@@ -36,11 +36,11 @@ public class CS_Switch extends CS_Comunicacao {
         this.linkDisponivelMensagem = true;
     }
 
-    public void addConexoesEntrada(CS_Processamento conexao) {
+    public void addConexoesEntrada(CentroServico conexao) {
         this.conexoesEntrada.add(conexao);
     }
 
-    public void addConexoesSaida(CS_Processamento conexao) {
+    public void addConexoesSaida(CentroServico conexao) {
         this.conexoesSaida.add(conexao);
     }
 
@@ -147,7 +147,7 @@ public class CS_Switch extends CS_Comunicacao {
         }
     }
 
-    public List<CS_Processamento> getConexoesSaida() {
+    public List<CentroServico> getConexoesSaida() {
         return this.conexoesSaida;
     }
 }

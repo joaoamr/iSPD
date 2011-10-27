@@ -45,7 +45,7 @@ public class DynamicFPLTF extends Escalonador {
     public CS_Processamento escalonarRecurso() {
         int index = 0;
         double menorTempo = escravos.get(index).tempoProcessar(tarefaSelecionada.getTamProcessamento());
-        for (int i = 0; i < escravos.size(); i++) {
+        for (int i = 1; i < escravos.size(); i++) {
             double tempoEscravoI = escravos.get(i).tempoProcessar(tarefaSelecionada.getTamProcessamento());
             if (tempoTornaDisponivel.get(index) + menorTempo
                     > tempoTornaDisponivel.get(i) + tempoEscravoI) {
@@ -75,6 +75,7 @@ public class DynamicFPLTF extends Escalonador {
             trf.setCaminho(escalonarRota(rec));
             mestre.enviarTarefa(trf);
         }
+        //escrever();
         for (CS_Processamento escravo : escravos) {
             mestre.atualizar(escravo);
         }
@@ -91,16 +92,33 @@ public class DynamicFPLTF extends Escalonador {
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
+        int index = escravos.indexOf(tarefa.getLocalProcessamento());
+        if (index != -1) {
+            double custo = escravos.get(index).tempoProcessar(tarefa.getTamProcessamento());
+            if (tempoTornaDisponivel.get(index) - custo > 0) {
+                tempoTornaDisponivel.set(index, tempoTornaDisponivel.get(index) - custo);
+            }
+        }
         for (int i = 0; i < escravos.size(); i++) {
             if (escravos.get(i) instanceof CS_Maquina) {
                 CS_Processamento escravo = escravos.get(i);
                 for (int j = 0; j < escravo.getInformacaoDinamicaFila().size(); j++) {
                     Tarefa trf = (Tarefa) escravo.getInformacaoDinamicaFila().get(j);
                     double custo = escravo.tempoProcessar(trf.getTamProcessamento());
-                    tempoTornaDisponivel.set(i, tempoTornaDisponivel.get(i) - custo);
+                    if (tempoTornaDisponivel.get(i) - custo > 0) {
+                        tempoTornaDisponivel.set(i, tempoTornaDisponivel.get(i) - custo);
+                    }
                     mestre.enviarMensagem(trf, escravo, Mensagem.DEVOLVER);
                 }
+                escravo.getInformacaoDinamicaFila().clear();
             }
         }
+    }
+
+    private void escrever() {
+        for (Double item : tempoTornaDisponivel) {
+            System.out.print(" ["+item+"] ");
+        }
+        System.out.println("");
     }
 }

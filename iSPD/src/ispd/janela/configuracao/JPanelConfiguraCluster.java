@@ -58,10 +58,11 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         jTableString = new javax.swing.JTable();
         jTableInteiro = new javax.swing.JTable();
         jTableDouble = new javax.swing.JTable();
+        jTableMestre = new javax.swing.JTable();
         jTableComboBox = new javax.swing.JTable();
         jLabel = new javax.swing.JLabel();
 
-        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabelTitle.setText(palavras.getString("Cluster icon configuration")); // NOI18N
 
         jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + "0");
@@ -170,6 +171,40 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
             }
         });
 
+        jTableMestre.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"MASTER", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableMestre.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableMestre.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableMestre.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableMestre.getTableHeader().setResizingAllowed(false);
+        jTableMestre.getTableHeader().setReorderingAllowed(false);
+        jTableMestre.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableMestrePropertyChange(evt);
+            }
+        });
+
         jTableComboBox.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"Scheduler:", null}
@@ -211,16 +246,16 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabelInicial)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addComponent(jTableComboBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                        .addComponent(jTableInteiro, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                        .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addComponent(jLabelTitle)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jTableMestre, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jTableInteiro, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jTableComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,8 +272,9 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
                     .addComponent(jTableDouble, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jTableMestre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(jTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -295,6 +331,20 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
             jTableComboBox.setValueAt(jComboBoxAlgoritmos.getSelectedItem().toString(), 0, 1);
         }
     }//GEN-LAST:event_jTableComboBoxPropertyChange
+
+    private void jTableMestrePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMestrePropertyChange
+        // TODO add your handling code here:
+        if ((Boolean) jTableMestre.getValueAt(0, 1)) {
+            icone.setMestre(true);
+            jTableComboBox.setVisible(true);
+            jComboBoxAlgoritmos.setVisible(true);
+        } else {
+            icone.setMestre(false);
+            jTableComboBox.setVisible(false);
+            jComboBoxAlgoritmos.setVisible(false);
+        }
+    }//GEN-LAST:event_jTableMestrePropertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabelInicial;
@@ -302,6 +352,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
     private javax.swing.JTable jTableComboBox;
     private javax.swing.JTable jTableDouble;
     private javax.swing.JTable jTableInteiro;
+    private javax.swing.JTable jTableMestre;
     private javax.swing.JTable jTableString;
     // End of variables declaration//GEN-END:variables
 
@@ -315,7 +366,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
                 }
             }
         } else if (nomesDosEscalonadores.size() < numEscal) {
-            for (int i =0; i < escalonadores.listar().size(); i++) {
+            for (int i = 0; i < escalonadores.listar().size(); i++) {
                 String nome = escalonadores.listar().get(i);
                 if (!nomesDosEscalonadores.contains(nome)) {
                     nomesDosEscalonadores.add(nome);
@@ -330,6 +381,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         jTableDouble.setValueAt(icone.getBanda(), 1, 1);
         jTableDouble.setValueAt(icone.getLatencia(), 2, 1);
         int index = nomesDosEscalonadores.indexOf(icone.getAlgoritmo());
+        jTableMestre.setValueAt(icone.isMestre(), 0, 1);
         if (index != -1) {
             jComboBoxAlgoritmos.setSelectedIndex(index);
         } else {
@@ -342,11 +394,11 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         this.palavras = palavras;
         initTexts();
     }
-    
+
     public void setEscalonadores(Escalonadores escalonadores) {
         this.escalonadores = escalonadores;
     }
-    
+
     private void initTexts() {
         jLabelTitle.setText(palavras.getString("Cluster icon configuration"));
         if (icone == null) {
@@ -359,6 +411,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         jTableDouble.setValueAt(palavras.getString("Processing:"), 0, 0);
         jTableDouble.setValueAt(palavras.getString("Bandwidth:"), 1, 0);
         jTableDouble.setValueAt(palavras.getString("Latency:"), 2, 0);
+        jTableMestre.setValueAt(palavras.getString("MASTER"), 0, 0);
         jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
     }
 }

@@ -80,7 +80,9 @@ public class Simulacao {
         }
         //adiciona chegada das tarefas na lista de eventos futuros
         addEventos(tarefas);
+        int contt = 0, evts = 0;
         while (!eventos.isEmpty()) {
+            evts++;if(contt != eventos.size()){contt = eventos.size();System.out.println(contt);}
             //recupera o próximo evento e o executa.
             //executa estes eventos de acordo com sua ordem de chegada
             //de forma a evitar a execução de um evento antes de outro
@@ -112,6 +114,19 @@ public class Simulacao {
         redeDeFilas.setMetricasGlobais(new MetricasGlobais(redeDeFilas, getTime(), tarefas));
         janela.incProgresso(5);
         janela.println("OK", Color.green);
+        int cont = 0;
+        for (CS_Maquina maq : redeDeFilas.getMaquinas()) {
+            janela.println("Tarefas executadas na maq "+maq.getId()+" "+maq.cont);
+            cont += maq.cont;
+        }
+        janela.println("Total de tarefas executadas "+cont);
+        cont = 0;
+        for (CS_Maquina maq : redeDeFilas.getMaquinas()) {
+            janela.println("Tarefas canceladas na maq "+maq.getId()+" "+maq.cancel);
+            cont += maq.cancel;
+        }
+        janela.println("Total de tarefas canceladas "+cont);
+        System.out.println("numero de eventos "+evts);
     }
 
     private void addEventos(List<Tarefa> tarefas) {

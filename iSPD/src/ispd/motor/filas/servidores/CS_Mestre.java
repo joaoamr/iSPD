@@ -28,6 +28,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
     private boolean maqDisponivel;
     private boolean escDisponivel;
     private int tipoEscalonamento;
+    public int tarefasChegou = 0;
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
@@ -64,6 +65,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                     //Event adicionado a lista de evntos futuros
                     simulacao.getEventos().offer(evtFut);
                 } else {
+                    tarefasChegou++;
                     this.escalonador.addTarefaConcluida(cliente);
                 }
                 if (tipoEscalonamento == QUANDO_RECEBE_RESULTADO || tipoEscalonamento == AMBOS) {
@@ -156,20 +158,20 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
             escalonador.escalonar();
         } else {
             if (cliente != null) {
-                Tarefa tarefa = cliente.getTarefa();
-                if (tarefa != null && tarefa.getLocalProcessamento().equals(this)) {
-                    if (tarefa.getEstado() == Tarefa.PARADO && cliente.getTipo() != Mensagem.PARAR) {
-                        filaProcessamento.remove(cliente.getTarefa());
-                        if (cliente.getTipo() == Mensagem.DEVOLVER || cliente.getTipo() == Mensagem.DEVOLVER_COM_PREEMPCAO) {
+                if (cliente.getTarefa() != null && cliente.getTarefa().getLocalProcessamento().equals(this)) {
+                    if (cliente.getTarefa().getEstado() == Tarefa.PARADO && cliente.getTipo() != Mensagem.PARAR) {
+                        boolean temp1 = filaProcessamento.remove(cliente.getTarefa());
+                        boolean temp2 = escalonador.getFilaTarefas().remove(cliente.getTarefa());
+                        if ((temp1 || temp2) && (cliente.getTipo() == Mensagem.DEVOLVER || cliente.getTipo() == Mensagem.DEVOLVER_COM_PREEMPCAO)) {
                             EventoFuturo evtFut = new EventoFuturo(
                                     simulacao.getTime(),
                                     EventoFuturo.CHEGADA,
-                                    cliente.getOrigem(),
-                                    tarefa);
+                                    cliente.getTarefa().getOrigem(),
+                                    cliente.getTarefa());
                             //Event adicionado a lista de evntos futuros
                             simulacao.getEventos().offer(evtFut);
                         }
-                    } else if (tarefa.getEstado() == Tarefa.PROCESSANDO && cliente.getTipo() != Mensagem.DEVOLVER) {
+                    } else if (cliente.getTarefa().getEstado() == Tarefa.PROCESSANDO && cliente.getTipo() != Mensagem.DEVOLVER) {
                         //remover evento de saida do cliente do servidor
                         java.util.Iterator<EventoFuturo> interator = simulacao.getEventos().iterator();
                         boolean achou = false;

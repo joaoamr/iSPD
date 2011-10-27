@@ -20,6 +20,7 @@ public class Tarefa implements Cliente {
     public static final int PROCESSANDO = 2;
     public static final int CANCELADO = 3;
     public static final int CONCLUIDO = 4;
+    private static int contador = 0;
     
     private String aplicacao;
     private int identificador;
@@ -58,7 +59,7 @@ public class Tarefa implements Cliente {
 
     public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
         this.aplicacao = aplicacao;
-        this.identificador = hashCode();
+        this.identificador = Tarefa.contador;Tarefa.contador++;//hashCode();
         this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;
@@ -73,7 +74,7 @@ public class Tarefa implements Cliente {
     
     public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
         this.aplicacao = aplicacao;
-        this.identificador = hashCode();
+        this.identificador = Tarefa.contador;Tarefa.contador++;//hashCode();
         this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;

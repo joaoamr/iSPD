@@ -26,6 +26,8 @@ public class CS_Maquina extends CS_Processamento {
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private Tarefa tarefaEmExecucao;
+    public int cont = 0;
+    public int cancel = 0;
 
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao);
@@ -97,6 +99,7 @@ public class CS_Maquina extends CS_Processamento {
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        cont++;
         //Incrementa o número de Mbits transmitido por este link
         this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento());
         //Incrementa o tempo de transmissão
@@ -156,12 +159,12 @@ public class CS_Maquina extends CS_Processamento {
         if (cliente != null) {
             if (cliente.getTarefa() != null && cliente.getTarefa().getLocalProcessamento().equals(this)) {
                 if (cliente.getTarefa().getEstado() == Tarefa.PARADO && cliente.getTipo() != Mensagem.PARAR) {
-                    boolean removel = filaTarefas.remove(cliente.getTarefa());
-                    if (removel && (cliente.getTipo() == Mensagem.DEVOLVER || cliente.getTipo() == Mensagem.DEVOLVER_COM_PREEMPCAO)) {
+                    boolean remover = filaTarefas.remove(cliente.getTarefa());
+                    if (remover && (cliente.getTipo() == Mensagem.DEVOLVER || cliente.getTipo() == Mensagem.DEVOLVER_COM_PREEMPCAO)) {
                         EventoFuturo evtFut = new EventoFuturo(
                                 simulacao.getTime(),
                                 EventoFuturo.CHEGADA,
-                                cliente.getOrigem(),
+                                cliente.getTarefa().getOrigem(),
                                 cliente.getTarefa());
                         //Event adicionado a lista de evntos futuros
                         simulacao.getEventos().offer(evtFut);
@@ -196,6 +199,7 @@ public class CS_Maquina extends CS_Processamento {
                 }
                 switch (cliente.getTipo()) {
                     case Mensagem.CANCELAR:
+                        cancel++;
                         double inicioAtendimento = cliente.getTarefa().cancelar(simulacao.getTime());
                         double tempoProc = simulacao.getTime() - inicioAtendimento;
                         double mflopsProcessados = this.getMflopsProcessados(tempoProc);
@@ -220,7 +224,7 @@ public class CS_Maquina extends CS_Processamento {
                     this.filaTarefasDinamica.add(tarefa);
                 }
                 //enviar resultados
-                int index = mestres.indexOf(cliente.getOrigem());
+                /*int index = mestres.indexOf(cliente.getOrigem());
                 List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
                 Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.PONG);
                 novoCliente.setCaminho(caminho);
@@ -230,7 +234,7 @@ public class CS_Maquina extends CS_Processamento {
                         novoCliente.getCaminho().remove(0),
                         novoCliente);
                 //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);
+                simulacao.getEventos().offer(evtFut);*/
             }
         }
     }
