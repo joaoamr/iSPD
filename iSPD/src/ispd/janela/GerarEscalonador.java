@@ -11,7 +11,15 @@
 package ispd.janela;
 
 import ispd.ValidaValores;
+import java.awt.Color;
 import java.awt.Toolkit;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 /**
  *
@@ -27,12 +35,29 @@ public class GerarEscalonador extends javax.swing.JDialog {
     private int passoAtual;
     private String caminho;
     private String ordenacao;
-    private String formula;
-    private String formula_t = "";
-    private String formula_r = "";
-    private String botaoAtual;
-    private String botaoAtual_t = "";
-    private String botaoAtual_r = "";
+    private String ordenacao_t = "Random";
+    private String ordenacao_r = "Random";
+    private LinkedList<String> formula;
+    private LinkedList<String> formula_t = new LinkedList<String>(){
+    @Override
+    public String toString(){
+        String result = "";
+        for(String item : this){
+            result += item + " ";
+        }
+        return result;
+    }
+    };
+    private LinkedList<String> formula_r = new LinkedList<String>(){
+    @Override
+    public String toString(){
+        String result = "";
+        for(String item : this){
+            result += item + " ";
+        }
+        return result;
+    }
+    };
     private int tipoBotao;
     private int tipoBotao_t = INICIAL;
     private int tipoBotao_r = INICIAL;
@@ -47,8 +72,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         this.passoAtual = 1;
         //Inicio das variaveis para formula
         this.ordenacao = "Random";
-        this.formula = "";
-        this.botaoAtual = "";
+        this.formula = formula_t;
         this.tipoBotao = INICIAL;
         this.contaParent = 0;
         //Fim das variaveis para formula
@@ -146,7 +170,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jList1 = new javax.swing.JList();
         jPanelPasso6 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        jTextPaneP6Gramatica = new javax.swing.JTextPane();
         jPanelPassos = new javax.swing.JPanel();
         jLabelPassos = new javax.swing.JLabel();
         jLabelPasso1 = new javax.swing.JLabel();
@@ -164,7 +188,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanelPasso1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Informar nome", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
-        jLabelP1NomeEsc.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelP1NomeEsc.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelP1NomeEsc.setText("Nome do escalonador: ");
 
         jTextFieldP1NomeEsc.setText("NovoEscalonador");
@@ -174,7 +198,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
             }
         });
 
-        jLabelP1LocalArq.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelP1LocalArq.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelP1LocalArq.setText("Local do arquivo:");
 
         jTextFieldP1LocalArq.setEditable(false);
@@ -417,12 +441,12 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPasso4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Avançado - Ordem de atendimento das tarefas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
         jPanelPasso4.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        jLabelP4Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelP4Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelP4Formula.setText("Fórmula:");
 
         jTextFieldP4Formula.setEditable(false);
         jTextFieldP4Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
-        jTextFieldP4Formula.setText("Random( )");
+        jTextFieldP4Formula.setText("Random");
         jTextFieldP4Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldP4FormulaActionPerformed(evt);
@@ -719,12 +743,12 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPasso5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Avançado - Ordem de alocação do recurso", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
         jPanelPasso5.setPreferredSize(new java.awt.Dimension(600, 400));
 
-        jLabelP5Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
+        jLabelP5Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
         jLabelP5Formula.setText("Fórmula:");
 
         jTextFieldP5Formula.setEditable(false);
         jTextFieldP5Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
-        jTextFieldP5Formula.setText("Random( )");
+        jTextFieldP5Formula.setText("Random");
         jTextFieldP5Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldP5FormulaActionPerformed(evt);
@@ -893,16 +917,16 @@ public class GerarEscalonador extends javax.swing.JDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonP5PProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(jButtonP5LinkComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(jButtonP5NumTExec, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(jButtonP5TCompTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(jButtonP5PProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(jButtonP5LinkComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(jButtonP5NumTExec, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                    .addComponent(jButtonP5TCompTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(jButtonP5Const1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jFormattedTextP5DigitaConst, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
-                    .addComponent(jButtonP5TComunTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jFormattedTextP5DigitaConst, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
+                    .addComponent(jButtonP5TComunTarefa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -959,12 +983,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRadioButtonP5Crescente)
-                    .addComponent(jRadioButtonP5Random))
-                .addContainerGap(13, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jRadioButtonP5Decrescente)
-                .addContainerGap())
+                    .addComponent(jRadioButtonP5Random)
+                    .addComponent(jRadioButtonP5Decrescente))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -988,13 +1009,13 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     .addGroup(jPanelPasso5Layout.createSequentialGroup()
                         .addComponent(jLabelP5Formula)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldP5Formula, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
+                        .addComponent(jTextFieldP5Formula, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
                     .addGroup(jPanelPasso5Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanelPasso5Layout.setVerticalGroup(
@@ -1009,7 +1030,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, 0, 211, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         jPanelPasso5.getAccessibleContext().setAccessibleName("Ordem de alocação de recursos");
@@ -1095,7 +1116,9 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanelPasso6.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Finalizar", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
-        jScrollPane3.setViewportView(jTextPane1);
+        jTextPaneP6Gramatica.setEditable(false);
+        jTextPaneP6Gramatica.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jScrollPane3.setViewportView(jTextPaneP6Gramatica);
 
         javax.swing.GroupLayout jPanelPasso6Layout = new javax.swing.GroupLayout(jPanelPasso6);
         jPanelPasso6.setLayout(jPanelPasso6Layout);
@@ -1121,7 +1144,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPassos.setBackground(new java.awt.Color(255, 255, 255));
         jPanelPassos.setBorder(new javax.swing.border.MatteBorder(null));
 
-        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
+        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12));
         jLabelPassos.setText("<html><b>Passos<br>----------------</b></html>");
 
         jLabelPasso1.setText("1 - Informar nome");
@@ -1303,17 +1326,20 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 this.jLabelPasso4.setEnabled(false);
                 this.jLabelPasso5.setEnabled(true);
                 this.passoAtual = 5;
-                this.formula_t    = formula;
-                this.botaoAtual_t = botaoAtual;
-                this.contaParent_t= contaParent;
-                this.tipoBotao_t  = tipoBotao;
-                formula    = this.formula_r;
-                botaoAtual = this.botaoAtual_r;
-                tipoBotao  = this.tipoBotao_r;
-                contaParent= this.contaParent_r;
-                inserirFormula(null);
+                this.ordenacao_t = ordenacao;
+                this.contaParent_t = contaParent;
+                this.tipoBotao_t = tipoBotao;
+                ordenacao = this.ordenacao_r;
+                formula = this.formula_r;
+                tipoBotao = this.tipoBotao_r;
+                contaParent = this.contaParent_r;
+                escreverFormula();
                 break;
             case 5:
+                this.ordenacao_r = ordenacao;
+                this.contaParent_r = contaParent;
+                this.tipoBotao_r = tipoBotao;
+                escreverGramatica();
                 this.jScrollPanePrincipal.setViewportView(this.jPanelPasso6);
                 this.jLabelPasso4.setEnabled(false);
                 this.jLabelPasso5.setEnabled(false);
@@ -1321,7 +1347,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
                 this.passoAtual = 6;
                 this.jButtonProximo.setEnabled(false);
                 this.jButtonFinalizar.setEnabled(true);
-                break; 
+                break;
         }
     }//GEN-LAST:event_jButtonProximoActionPerformed
 
@@ -1358,15 +1384,16 @@ public class GerarEscalonador extends javax.swing.JDialog {
                     this.jLabelPasso4.setEnabled(true);
                     passoAtual = 4;
                 }
-                this.formula_r = formula;
-                this.botaoAtual_r = botaoAtual;
+                this.ordenacao_r = ordenacao;
+                //this.formula_r.remove();
+                //this.formula_r.addAll(formula);
                 this.contaParent_r = contaParent;
-                tipoBotao_r = tipoBotao;
-                formula = formula_t;
-                botaoAtual = botaoAtual_t;
-                tipoBotao = tipoBotao_t;
-                contaParent = contaParent_t;
-                inserirFormula(null);
+                this.tipoBotao_r = tipoBotao;
+                ordenacao = this.ordenacao_t;
+                formula = this.formula_t;
+                tipoBotao = this.tipoBotao_t;
+                contaParent = this.contaParent_t;
+                escreverFormula();
                 break;
             case 6:
                 this.jLabelPasso6.setEnabled(false);
@@ -1389,7 +1416,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         this.jRadioButtonP4Crescente.setSelected(false);
         this.jRadioButtonP4Decrescente.setSelected(false);
         this.ordenacao = "Random";
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jRadioButtonP4RandomActionPerformed
 
     private void jRadioButtonP4DecrescenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP4DecrescenteActionPerformed
@@ -1397,7 +1424,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         this.jRadioButtonP4Crescente.setSelected(false);
         this.jRadioButtonP4Decrescente.setSelected(true);
         this.ordenacao = "Decrescente";
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jRadioButtonP4DecrescenteActionPerformed
 
     private void jRadioButtonP4CrescenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP4CrescenteActionPerformed
@@ -1405,7 +1432,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         this.jRadioButtonP4Crescente.setSelected(true);
         this.jRadioButtonP4Decrescente.setSelected(false);
         this.ordenacao = "Crescente";
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jRadioButtonP4CrescenteActionPerformed
 
     private void jButtonP4TComputacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4TComputacaoActionPerformed
@@ -1420,35 +1447,31 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
     private void jButtonP4VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4VoltarActionPerformed
         // TODO add your handling code here:
-        String temp[] = this.formula.split(" ");
         String operador = "+ - / * ";
-        if (!temp[0].equals("")) {
+        if (!formula.isEmpty()) {
             if (this.tipoBotao == ABRE_CHAVE) {
                 this.contaParent--;
             } else if (this.tipoBotao == FECHA_CHAVE) {
                 this.contaParent++;
             }
-            this.botaoAtual = temp[temp.length - 1] + " ";
-            if (operador.contains(botaoAtual)) {
+            this.formula.removeLast();
+            if (formula.isEmpty()) {
+                this.tipoBotao = INICIAL;
+                this.contaParent = 0;
+            } else if (operador.contains(formula.getLast())) {
                 this.tipoBotao = OPERADOR;
-            } else if (botaoAtual.contains("(")) {
+            } else if (formula.getLast().contains("(")) {
                 this.tipoBotao = ABRE_CHAVE;
-            } else if (botaoAtual.contains(")")) {
+            } else if (formula.getLast().contains(")")) {
                 this.tipoBotao = FECHA_CHAVE;
             } else {
                 this.tipoBotao = VARIAVEL;
             }
-            this.formula = "";
-            for (int i = 0; i < temp.length - 1; i++) {
-                this.formula += temp[i] + " ";
-            }
         } else {
-            this.botaoAtual = "";
             this.tipoBotao = INICIAL;
-            this.formula = "";
             this.contaParent = 0;
         }
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jButtonP4VoltarActionPerformed
 
     private void jButtonP4NTSubmetidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4NTSubmetidasActionPerformed
@@ -1493,43 +1516,22 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
     private void jButtonP4AbreParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4AbreParentActionPerformed
         // TODO add your handling code here:
-        switch (this.tipoBotao) {
-            case INICIAL:
-                this.contaParent++;
-                this.tipoBotao = ABRE_CHAVE;
-                this.botaoAtual = "( ";
-                break;
-            case OPERADOR:
-                this.contaParent++;
-                inserirFormula(this.botaoAtual);
-                this.tipoBotao = ABRE_CHAVE;
-                this.botaoAtual = "( ";
-                break;
-            case ABRE_CHAVE:
-                this.contaParent++;
-                inserirFormula(this.botaoAtual);
-                break;
+        if (tipoBotao == INICIAL || tipoBotao == OPERADOR || tipoBotao == ABRE_CHAVE) {
+            this.contaParent++;
+            this.tipoBotao = ABRE_CHAVE;
+            this.formula.add("(");
         }
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jButtonP4AbreParentActionPerformed
 
     private void jButtonP4FechaParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4FechaParentActionPerformed
         // TODO add your handling code here:
-        if (this.contaParent != 0) {
-            switch (this.tipoBotao) {
-                case VARIAVEL:
-                    this.contaParent--;
-                    inserirFormula(this.botaoAtual);
-                    this.tipoBotao = FECHA_CHAVE;
-                    this.botaoAtual = ") ";
-                    break;
-                case FECHA_CHAVE:
-                    this.contaParent--;
-                    inserirFormula(this.botaoAtual);
-                    break;
-            }
+        if (contaParent != 0 && (tipoBotao == VARIAVEL || tipoBotao == FECHA_CHAVE)) {
+            this.contaParent--;
+            this.tipoBotao = FECHA_CHAVE;
+            this.formula.add(")");
         }
-        inserirFormula(null);
+        escreverFormula();
     }//GEN-LAST:event_jButtonP4FechaParentActionPerformed
 
 private void jButtonP4ConstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP4ConstActionPerformed
@@ -1548,11 +1550,13 @@ private void jButtonP5SubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_jButtonP5SubActionPerformed
 
 private void jButtonP5AbreParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5AbreParentActionPerformed
-// TODO add your handling code here:
+    // TODO add your handling code here:
+    jButtonP4AbreParentActionPerformed(evt);
 }//GEN-LAST:event_jButtonP5AbreParentActionPerformed
 
 private void jButtonP5FechaParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5FechaParentActionPerformed
-// TODO add your handling code here:
+    // TODO add your handling code here:
+    jButtonP4FechaParentActionPerformed(evt);
 }//GEN-LAST:event_jButtonP5FechaParentActionPerformed
 
 private void jButtonP5DivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5DivActionPerformed
@@ -1564,10 +1568,6 @@ private void jButtonP5MultActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 // TODO add your handling code here:
     pressionarOperador("*");
 }//GEN-LAST:event_jButtonP5MultActionPerformed
-
-private void jButtonP5VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5VoltarActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_jButtonP5VoltarActionPerformed
 
 private void jButtonP5PProcessamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5PProcessamentoActionPerformed
 // TODO add your handling code here:
@@ -1596,19 +1596,34 @@ private void jButtonP5TComunTarefaActionPerformed(java.awt.event.ActionEvent evt
 
 private void jButtonP5Const1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5Const1ActionPerformed
 // TODO add your handling code here:
-    pressionarVariavel("[" + this.jFormattedTextP4DigitaConst.getText() + "]");
+    pressionarVariavel("[" + this.jFormattedTextP5DigitaConst.getText() + "]");
 }//GEN-LAST:event_jButtonP5Const1ActionPerformed
 
 private void jRadioButtonP5CrescenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP5CrescenteActionPerformed
-// TODO add your handling code here:
+    // TODO add your handling code here:
+    this.jRadioButtonP5Random.setSelected(false);
+    this.jRadioButtonP5Crescente.setSelected(true);
+    this.jRadioButtonP5Decrescente.setSelected(false);
+    this.ordenacao = "Crescente";
+    escreverFormula();
 }//GEN-LAST:event_jRadioButtonP5CrescenteActionPerformed
 
 private void jRadioButtonP5DecrescenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP5DecrescenteActionPerformed
-// TODO add your handling code here:
+    // TODO add your handling code here:
+    this.jRadioButtonP5Random.setSelected(false);
+    this.jRadioButtonP5Crescente.setSelected(false);
+    this.jRadioButtonP5Decrescente.setSelected(true);
+    this.ordenacao = "Decrescente";
+    escreverFormula();
 }//GEN-LAST:event_jRadioButtonP5DecrescenteActionPerformed
 
 private void jRadioButtonP5RandomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP5RandomActionPerformed
-// TODO add your handling code here:
+    // TODO add your handling code here:
+    this.jRadioButtonP5Random.setSelected(true);
+    this.jRadioButtonP5Crescente.setSelected(false);
+    this.jRadioButtonP5Decrescente.setSelected(false);
+    this.ordenacao = "Random";
+    escreverFormula();
 }//GEN-LAST:event_jRadioButtonP5RandomActionPerformed
 
 private void jTextFieldP5FormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldP5FormulaActionPerformed
@@ -1652,22 +1667,14 @@ private void jOpAvancadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         // TODO add your handling code here:
         jRadioButtonP2Estatica.setSelected(true);
         jRadioButtonP2Dinamica.setSelected(false);
-        jLabelP2Forma.setEnabled(false);
-        jRadioButtonP2Tempo.setEnabled(false);
-        jRadioButtonP2Chegada.setEnabled(false);
-        jRadioButtonP2Saida.setEnabled(false);
-        jFormattedTextFieldP2Tempo.setEnabled(false);
+        setEnableDinamica(false);
     }//GEN-LAST:event_jRadioButtonP2EstaticaActionPerformed
 
     private void jRadioButtonP2DinamicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2DinamicaActionPerformed
         // TODO add your handling code here:
         jRadioButtonP2Estatica.setSelected(false);
         jRadioButtonP2Dinamica.setSelected(true);
-        jLabelP2Forma.setEnabled(true);
-        jRadioButtonP2Tempo.setEnabled(true);
-        jRadioButtonP2Chegada.setEnabled(true);
-        jRadioButtonP2Saida.setEnabled(true);
-        jFormattedTextFieldP2Tempo.setEnabled(true);
+        setEnableDinamica(true);
     }//GEN-LAST:event_jRadioButtonP2DinamicaActionPerformed
 
     private void jRadioButtonP2TempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonP2TempoActionPerformed
@@ -1693,6 +1700,11 @@ private void jOpAvancadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         jRadioButtonP2Centralizada.setSelected(false);
         jRadioButtonP2Distribuida.setSelected(true);
     }//GEN-LAST:event_jRadioButtonP2DistribuidaActionPerformed
+
+    private void jButtonP5VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonP5VoltarActionPerformed
+        // TODO add your handling code here:
+        jButtonP4VoltarActionPerformed(evt);
+    }//GEN-LAST:event_jButtonP5VoltarActionPerformed
 
     private void setEnableDinamica(boolean b) {
         jLabelP2Forma.setEnabled(b);
@@ -1816,61 +1828,116 @@ private void jOpAvancadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JTextField jTextFieldP1NomeEsc;
     private javax.swing.JTextField jTextFieldP4Formula;
     private javax.swing.JTextField jTextFieldP5Formula;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane jTextPaneP6Gramatica;
     // End of variables declaration//GEN-END:variables
 
-    private void inserirFormula(String token) {
-        if (token != null) {
-            this.formula += token;
-        }
-        if(this.ordenacao.equals("Random")){
+    private void escreverFormula() {
+        if (this.ordenacao.equals("Random")) {
             this.jTextFieldP4Formula.setText(this.ordenacao);
             this.jTextFieldP5Formula.setText(this.ordenacao);
-        }else{
-            this.jTextFieldP4Formula.setText(this.ordenacao + "( " + this.formula + this.botaoAtual + ")");
-            this.jTextFieldP5Formula.setText(this.ordenacao + "( " + this.formula + this.botaoAtual + ")");
+        } else {
+            this.jTextFieldP4Formula.setText(this.ordenacao + "( " + this.formula + ")");
+            this.jTextFieldP5Formula.setText(this.ordenacao + "( " + this.formula + ")");
         }
     }
 
     private void pressionarOperador(String token) {
-        switch (this.tipoBotao) {
-            case VARIAVEL:
-                inserirFormula(this.botaoAtual);
-                this.tipoBotao = OPERADOR;
-                this.botaoAtual = token + " ";
-                break;
-            case FECHA_CHAVE:
-                inserirFormula(this.botaoAtual);
-                this.tipoBotao = OPERADOR;
-                this.botaoAtual = token + " ";
-                break;
-            case OPERADOR:
-                this.botaoAtual = token + " ";
-                break;
+        if (tipoBotao == VARIAVEL || tipoBotao == FECHA_CHAVE) {
+            this.tipoBotao = OPERADOR;
+            formula.add(token);
+        } else if (tipoBotao == OPERADOR) {
+            formula.set(formula.size() - 1, token);
         }
-        inserirFormula(null);
+        escreverFormula();
     }
 
     private void pressionarVariavel(String token) {
-        switch (this.tipoBotao) {
-            case INICIAL:
-                this.tipoBotao = VARIAVEL;
-                this.botaoAtual = token + " ";
-                break;
-            case OPERADOR:
-                inserirFormula(this.botaoAtual);
-                this.tipoBotao = VARIAVEL;
-                this.botaoAtual = token + " ";
-                break;
-            case ABRE_CHAVE:
-                inserirFormula(this.botaoAtual);
-                this.tipoBotao = VARIAVEL;
-                this.botaoAtual = token + " ";
-                break;
-            case VARIAVEL:
-                this.botaoAtual = token + " ";
-                break;
+        if (tipoBotao == INICIAL || tipoBotao == OPERADOR || tipoBotao == ABRE_CHAVE) {
+            this.tipoBotao = VARIAVEL;
+            formula.add(token);
+        } else if (tipoBotao == VARIAVEL) {
+            formula.set(formula.size() - 1, token);
         }
-        inserirFormula(null);
+        escreverFormula();
+    }
+
+    private void escreverGramatica() {
+        this.jTextPaneP6Gramatica.setText("");
+        print("SCHEDULER ", Color.blue);
+        println(jTextFieldP1NomeEsc.getText());
+        if (this.jRadioButtonP2Estatica.isSelected()) {
+            println("STATIC", Color.blue);
+        } else {
+            print("DYNAMIC ", Color.blue);
+            if (this.jRadioButtonP2Chegada.isSelected()) {
+                println("TASK ENTRY", Color.blue);
+            } else if (this.jRadioButtonP2Saida.isSelected()) {
+                println("TASK OUTPUT", Color.blue);
+            } else {
+                print("TIME INTERVAL ", Color.blue);
+                println(this.jFormattedTextFieldP2Tempo.getText(), Color.green);
+            }
+        }
+        print("TASK SCHEDULER: ", Color.blue);
+        if (this.ordenacao_t.equals("Random")) {
+            println("RANDOM", Color.blue);
+        } else if (this.ordenacao_t.equals("Crescente")){
+            print("CRESCENT", Color.blue);
+            print(" ( ");
+            print(this.formula_t.toString());
+            println(")");
+        } else {
+            print("DECREASING", Color.blue);
+            print(" ( ");
+            print(this.formula_t.toString());
+            println(")");
+        }
+        print("RESOURCE SCHEDULER: ", Color.blue);
+        if (this.ordenacao_r.equals("Random")) {
+            println("RANDOM", Color.blue);
+        } else if (this.ordenacao_r.equals("Crescente")){
+            print("CRESCENT", Color.blue);
+            print(" ( ");           
+            print(this.formula_r.toString());
+            println(")");
+        } else {
+            print("DECREASING", Color.blue);
+            print(" ( ");
+            print(this.formula_r.toString());
+            println(")");
+        }
+    }
+
+    public void println(String text, Color cor) {
+        this.print(text, cor);
+        this.print("\n", cor);
+    }
+
+    public void println(String text) {
+        this.print(text, Color.black);
+        this.print("\n", Color.black);
+    }
+
+    public void print(String text) {
+        this.print(text, Color.black);
+    }
+
+    public void print(String text, Color cor) {
+        SimpleAttributeSet configuraCor = new SimpleAttributeSet();
+        Document doc = jTextPaneP6Gramatica.getDocument();
+        try {
+            if (cor != null) {
+                StyleConstants.setForeground(configuraCor, cor);
+            } else {
+                StyleConstants.setForeground(configuraCor, Color.black);
+            }
+            //if(palavras.containsKey(text)){
+            //    doc.insertString(doc.getLength(), palavras.getString(text), configuraCor);
+            //}else{
+            doc.insertString(doc.getLength(), text, configuraCor);
+            //}
+        } catch (BadLocationException ex) {
+            Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

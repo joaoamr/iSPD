@@ -463,7 +463,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="11" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Random( )"/>
+            <Property name="text" type="java.lang.String" value="Random"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldP4FormulaActionPerformed"/>
@@ -835,14 +835,14 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabelP5Formula" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextFieldP5Formula" pref="500" max="32767" attributes="0"/>
+                          <Component id="jTextFieldP5Formula" pref="523" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="1">
                           <Component id="jPanel5" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel6" min="-2" pref="106" max="-2" attributes="0"/>
+                          <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -863,7 +863,7 @@
                       <Component id="jPanel4" alignment="0" min="0" pref="211" max="32767" attributes="1"/>
                       <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="117" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -883,7 +883,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="11" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Random( )"/>
+            <Property name="text" type="java.lang.String" value="Random"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldP5FormulaActionPerformed"/>
@@ -1041,17 +1041,17 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButtonP5PProcessamento" alignment="0" pref="245" max="32767" attributes="1"/>
-                          <Component id="jButtonP5LinkComunicacao" alignment="0" pref="245" max="32767" attributes="1"/>
-                          <Component id="jButtonP5NumTExec" alignment="0" pref="245" max="32767" attributes="1"/>
-                          <Component id="jButtonP5TCompTarefa" alignment="1" pref="245" max="32767" attributes="1"/>
+                          <Component id="jButtonP5PProcessamento" alignment="0" pref="265" max="32767" attributes="1"/>
+                          <Component id="jButtonP5LinkComunicacao" alignment="0" pref="265" max="32767" attributes="1"/>
+                          <Component id="jButtonP5NumTExec" alignment="0" pref="265" max="32767" attributes="1"/>
+                          <Component id="jButtonP5TCompTarefa" alignment="1" pref="265" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                               <Component id="jButtonP5Const1" min="-2" pref="190" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jFormattedTextP5DigitaConst" pref="47" max="32767" attributes="0"/>
+                              <Component id="jFormattedTextP5DigitaConst" pref="67" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jButtonP5TComunTarefa" alignment="1" max="32767" attributes="1"/>
+                          <Component id="jButtonP5TComunTarefa" alignment="1" pref="265" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -1159,18 +1159,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jRadioButtonP5Crescente" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP5Random" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jRadioButtonP5Decrescente" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="13" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jRadioButtonP5Decrescente" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1432,7 +1428,13 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextPane" name="jTextPane1">
+            <Component class="javax.swing.JTextPane" name="jTextPaneP6Gramatica">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="12" style="1"/>
+                </Property>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>
