@@ -66,6 +66,7 @@ public class CargaRandom extends GerarCarga {
         for (CS_Processamento mestre : mestres) {
             for (int i = 0; i < quantidadePorMestre; i++) {
                 Tarefa tarefa = new Tarefa(
+                        mestre.getProprietario(),
                         "application1",
                         mestre,
                         gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
@@ -77,6 +78,7 @@ public class CargaRandom extends GerarCarga {
         }
         for (int i = 0; i < resto; i++) {
             Tarefa tarefa = new Tarefa(
+                        mestres.get(0).getProprietario(),
                         "application1",
                         mestres.get(0),
                         gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),

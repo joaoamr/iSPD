@@ -84,11 +84,6 @@ public class Workqueue extends Escalonador {
     }
 
     @Override
-    public void adicionarTarefa(Tarefa tarefa) {
-        this.tarefas.add(tarefa);
-    }
-
-    @Override
     public void addTarefaConcluida(Tarefa tarefa) {
         ultimaTarefaConcluida.add(tarefa);
         if (!tarefas.isEmpty()) {

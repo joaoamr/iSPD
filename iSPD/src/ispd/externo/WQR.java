@@ -110,11 +110,6 @@ public class WQR extends Escalonador {
     }
 
     @Override
-    public void adicionarTarefa(Tarefa tarefa) {
-        this.tarefas.add(tarefa);
-    }
-
-    @Override
     public void addTarefaConcluida(Tarefa tarefa) {
         int index = tarefaEnviada.indexOf(tarefa);
         if (index != -1) {

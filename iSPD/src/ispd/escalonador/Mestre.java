@@ -7,7 +7,6 @@ package ispd.escalonador;
 
 import ispd.motor.Simulacao;
 import ispd.motor.filas.Tarefa;
-import ispd.motor.filas.servidores.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
 
 /**

@@ -25,7 +25,6 @@ public class RoundRobin extends Escalonador{
     
     public RoundRobin(){
         this.tarefas = new ArrayList<Tarefa>();
-        this.concluidas = new ArrayList<Tarefa>();
         this.escravos = new LinkedList<CS_Processamento>();
     }
 
@@ -56,11 +55,6 @@ public class RoundRobin extends Escalonador{
         trf.setLocalProcessamento(rec);
         trf.setCaminho(escalonarRota(rec));
         mestre.enviarTarefa(trf);
-    }
-
-    @Override
-    public void adicionarTarefa(Tarefa tarefa) {
-        this.tarefas.add(tarefa);
     }
 
     @Override

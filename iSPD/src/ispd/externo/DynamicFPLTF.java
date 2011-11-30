@@ -75,10 +75,6 @@ public class DynamicFPLTF extends Escalonador {
             trf.setCaminho(escalonarRota(rec));
             mestre.enviarTarefa(trf);
         }
-        //escrever();
-        for (CS_Processamento escravo : escravos) {
-            mestre.atualizar(escravo);
-        }
     }
 
     @Override
@@ -114,11 +110,9 @@ public class DynamicFPLTF extends Escalonador {
             }
         }
     }
-
-    private void escrever() {
-        for (Double item : tempoTornaDisponivel) {
-            System.out.print(" ["+item+"] ");
-        }
-        System.out.println("");
+    
+    @Override
+    public Double getTempoAtualizar(){
+        return 0.1;
     }
 }

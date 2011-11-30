@@ -45,6 +45,7 @@ and open the template in the editor.
 <!ATTLIST cluster latency CDATA "0.0">
 <!ATTLIST cluster scheduler CDATA "---">
 <!ATTLIST cluster owner CDATA "user1">
+<!ATTLIST cluster master CDATA "false">
 
 <!ELEMENT internet (position,icon_id)>
 <!ATTLIST internet id ID #REQUIRED>

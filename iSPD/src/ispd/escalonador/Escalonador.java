@@ -11,14 +11,14 @@ package ispd.escalonador;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
-import java.util.ArrayList;
+import ispd.motor.metricas.MetricasUsuarios;
 import java.util.List;
 
 public abstract class Escalonador {
     //Atributos
     protected List<CS_Processamento> escravos;
     protected List<Tarefa> tarefas;
-    protected List<Tarefa> concluidas;
+    protected MetricasUsuarios metricaUsuarios;
     protected Mestre mestre;
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
@@ -37,7 +37,12 @@ public abstract class Escalonador {
 
     public abstract void escalonar();
 
-    public abstract void adicionarTarefa(Tarefa tarefa);
+    public void adicionarTarefa(Tarefa tarefa){
+        if(tarefa.getOrigem().equals(mestre)){
+            this.metricaUsuarios.incTarefasSubmetidas(tarefa);
+        }
+        this.tarefas.add(tarefa);
+    }
 
     //Get e Set
 
@@ -54,11 +59,21 @@ public abstract class Escalonador {
     }
     
     public void addTarefaConcluida(Tarefa tarefa) {
-        this.concluidas.add(tarefa);
+        if(tarefa.getOrigem().equals(mestre)){
+            this.metricaUsuarios.incTarefasConcluidas(tarefa);
+        }
     }
     
     public List<Tarefa> getFilaTarefas() {
         return this.tarefas;
+    }
+
+    public MetricasUsuarios getMetricaUsuarios() {
+        return metricaUsuarios;
+    }
+
+    public void setMetricaUsuarios(MetricasUsuarios metricaUsuarios) {
+        this.metricaUsuarios = metricaUsuarios;
     }
 
     public void setMestre(Mestre mestre) {
@@ -69,4 +84,7 @@ public abstract class Escalonador {
         return caminhoEscravo;
     }
     
+    public Double getTempoAtualizar(){
+        return null;
+    }
 }

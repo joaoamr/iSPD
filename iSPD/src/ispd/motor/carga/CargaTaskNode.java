@@ -68,6 +68,7 @@ public class CargaTaskNode extends GerarCarga {
             GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
             for (i = 0; i < this.getNumeroTarefas(); i++) {
                 Tarefa tarefa = new Tarefa(
+                        proprietario,
                         aplicacao,
                         mestre,
                         gerador.twoStageUniform(minComunicacao, minComunicacao + (maxComunicacao - minComunicacao) / 2, maxComunicacao, 1),

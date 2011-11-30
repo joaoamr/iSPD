@@ -1,0 +1,291 @@
+
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(Interpretador)
+
+package ispd.arquivo.interpretador.gerador;
+
+class Interpretador{
+
+	public boolean verbose;
+	private String textoVerbose = "Saida do Verbose:";
+	public boolean erroEncontrado = false;
+	private String erros = "Erros encontrados durante o parser do Gerador:";
+	
+        public void resetaObjetosParser(){
+                textoVerbose = "";
+		erroEncontrado = false;
+        }
+
+        public void printv(String msg){
+		textoVerbose = textoVerbose+"\n>"+msg;
+	}
+
+	public void addErro(String msg){
+		erros = erros+"\n"+msg;
+	}
+
+	public void resuladoParser(){
+		if(erroEncontrado){
+			MostraSaida saida = new MostraSaida("Found Errors",erros);
+			saida.setVisible(true);
+		}
+		else{
+			if(verbose){
+                            MostraSaida saida = new MostraSaida("Saida do Reconhecimento",textoVerbose);
+                            saida.setVisible(true);
+			}
+		}
+	}
+
+	public void consomeTokens(){
+		Token t = getToken(1);
+		while( t.kind != SCHEDULER && t.kind != STATIC && t.kind != DYNAMIC && t.kind != TASK && t.kind != RESOURCE && t.kind != EOF){
+			getNextToken();
+			t = getToken(1);
+		}
+	}
+
+}
+PARSER_END(Interpretador)
+
+
+
+TOKEN_MGR_DECLS:
+{
+private int contaErrosLex = 0;
+private String erros = new String("");
+
+
+public int encontrouErroLex()
+{
+	return contaErrosLex;
+}
+
+public void addErro(String msg)
+{
+	erros = erros+"\n"+msg;
+}
+
+public String getErros()
+{
+	return erros;
+}
+
+}
+
+//palavras reservadas
+
+TOKEN:	{ 
+	<SCHEDULER:  "SCHEDULER">  |
+	<STATIC:     "STATIC">     |
+	<DYNAMIC:    "DYNAMIC">    |
+	<TASK:       "TASK">       |
+	<ENTRY:      "ENTRY">      |
+	<OUTPUT:     "OUTPUT">     |
+	<TIME:	     "TIME">       |
+	<INTERVAL:   "INTERVAL">   |
+	<RANDOM:     "RANDOM">     |
+        <CRESCENT:   "CRESCENT">   |
+	<DECREASING: "DECREASING"> |
+	<RESOURCE:   "RESOURCE">
+	}
+
+// Variaveis
+
+TOKEN:	{ 
+	<tTamComp:    "[TCP]">  |
+	<tTamComu:    "[TC]">   |
+	<tNumTarSub:  "[NTS]">  |
+	<tNumTarConc: "[NTC]">  |
+	<tPoderUser:  "[PCU]">  |
+	<rPodeProc:   "[PP]">   |
+	<rLinkComu:   "[LC]">   |
+	<rtamCompTar: "[TCT]">  |
+	<rtamComuTar: "[TCMT]"> |
+        <numTarExec:  "[NTE]">
+	}
+
+TOKEN:	{ 
+	<mult:   "*">  |
+	<div:    "/">   |
+	<sub:    "-">  |
+	<add:    "+">  |
+	<lparen: "(">  |
+	<rparen: ")">
+	}
+//strings mais curtas antes para melhorar o desempenho do lexer
+
+TOKEN:	{< inteiro: (["0"-"9"])+ >}
+
+TOKEN:	{< real: ( (["0"-"9"])+"."(["0"-"9"])+ | (["0"-"9"])+","(["0"-"9"])+ ) >}
+
+TOKEN:	{< nome: (["A"-"Z","a"-"z"])+(["0"-"9"] | ["A"-"Z","a"-"z"])* >}
+
+SKIP: { " " | "\t" | "\n" | "\r" | "\f" }
+
+//comentarios
+
+<multilinecoment> SKIP: { "*/" : DEFAULT | <~[]> }
+
+<singlelinecoment> SKIP: { <["\n","\r"]> : DEFAULT | <~[]> }
+
+SKIP: { "/*" : multilinecoment }
+
+SKIP: { "//" : singlelinecoment }
+
+SPECIAL_TOKEN:
+{
+<invalido: (~["A"-"Z","a"-"z","0"-"9","!" , "@" , "#" , "$" , "%" , "&" , "(" , ")" , "-" , "_" , "+" , "=" , "{" , "}" , "[" , "]" , "~" , "^" , ";" , "." , "," , "|" , ":" , "\\" , "/", "\n" , " " , "\t" , "\b" , "#" ])+>
+	{
+		addErro("Erro na linha "+input_stream.getEndLine()+". Caracter "+image+" não é aceito.");
+		contaErrosLex++;
+	}
+}
+
+
+void Escalonador():
+{
+	resetaObjetosParser();
+}
+{
+	try{
+		Partes() <EOF> 
+		{
+			printv("Escalonador reconhecido");
+	
+			resuladoParser();
+		}
+	}
+	catch(ParseException e){
+		Token t = getToken(1);
+		addErro("Erro semantico encontrado na linha "+t.endLine+", coluna "+t.endColumn);
+		erroEncontrado = true;
+		consomeTokens();
+		resuladoParser();
+	}
+}
+
+void Partes():
+{
+
+}
+{
+    (Parte()) + { printv("Componentes reconhecidos"); }
+}
+
+void Parte():
+{
+
+}
+{
+    Nome() { printv("Reconheceu nome do escaonador"); } |
+    Caracteristica() { printv("Reconheceu caracteristicas"); } |
+    EscalonadorTarefa() { printv("Reconheceu politica de escalonamento das tarefas"); } |
+    EscalonadorRecurso() { printv("Reconheceu politica de escalonamento dos recursos"); }
+}
+
+void Nome():
+{
+	Token t;
+}
+{
+	<SCHEDULER> t=<nome> { printv("Reconheceu nome no escravo"); }
+}
+
+void Caracteristica():
+{
+
+}
+{
+	<STATIC>  |
+        <DYNAMIC> tipo_atualizacao()
+}
+
+void tipo_atualizacao():
+{
+    Token t;
+}
+{
+    <TASK> ( <ENTRY> | <OUTPUT> ) |
+    <TIME> <INTERVAL> ( t=<real> | t=<inteiro> )
+}
+
+void EscalonadorTarefa():
+{
+}
+{
+    <TASK> <SCHEDULER> ":" formula()
+}
+
+void EscalonadorRecurso():
+{
+}
+{
+    <RESOURCE> <SCHEDULER> ":" formula()
+}
+
+void formula():
+{
+}
+{
+    <RANDOM> |
+    <CRESCENT> <lparen> expressao() <rparen> |
+    <DECREASING> <lparen> expressao() <rparen>
+}
+
+void expressao():
+{
+}
+{
+    expressao2() ( ( <add> | <sub> ) expressao2() )*
+}
+
+void expressao2():
+{
+}
+{
+    expressao3() ( ( <div> | <mult> ) expressao3() )*
+}
+
+void expressao3():
+{
+}
+{
+    [ <add> | <sub> ] expressao4()
+}
+
+void expressao4():
+{
+}
+{
+    variavel()  |
+    constante() |
+    <lparen> expressao() <rparen>
+}
+
+void variavel():
+{
+}
+{
+    <tTamComp>    |
+    <tTamComu>    |
+    <tNumTarSub>  |
+    <tNumTarConc> |
+    <tPoderUser>  |
+    <rPodeProc>   |
+    <rLinkComu>   |
+    <rtamCompTar> |
+    <rtamComuTar> |
+    <numTarExec>
+}
+
+void constante():
+{
+    Token t;
+}
+{
+    "[" ( t=<inteiro> | t=<real> ) "]"
+}

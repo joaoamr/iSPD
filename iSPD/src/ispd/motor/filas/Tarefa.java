@@ -22,6 +22,7 @@ public class Tarefa implements Cliente {
     public static final int CONCLUIDO = 4;
     private static int contador = 0;
     
+    private String proprietario;
     private String aplicacao;
     private int identificador;
     private boolean copia;
@@ -57,7 +58,8 @@ public class Tarefa implements Cliente {
     private int estado;
     private double tamComunicacao;
 
-    public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
+    public Tarefa(String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
+        this.proprietario = proprietario;
         this.aplicacao = aplicacao;
         this.identificador = Tarefa.contador;Tarefa.contador++;//hashCode();
         this.copia = false;
@@ -72,7 +74,8 @@ public class Tarefa implements Cliente {
         this.porcentagemProcessado = 0;
     }
     
-    public Tarefa(String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
+    public Tarefa(String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
+        this.proprietario = proprietario;
         this.aplicacao = aplicacao;
         this.identificador = Tarefa.contador;Tarefa.contador++;//hashCode();
         this.copia = false;
@@ -88,6 +91,7 @@ public class Tarefa implements Cliente {
     }
     
     public Tarefa(Tarefa tarefa){
+        this.proprietario = tarefa.proprietario;
         this.aplicacao = tarefa.getAplicacao();
         this.identificador = tarefa.identificador;
         this.copia = true;
@@ -108,6 +112,10 @@ public class Tarefa implements Cliente {
     
     public double getTamProcessamento() {
         return tamProcessamento;
+    }
+
+    public String getProprietario() {
+        return proprietario;
     }
 
     public CentroServico getOrigem() {

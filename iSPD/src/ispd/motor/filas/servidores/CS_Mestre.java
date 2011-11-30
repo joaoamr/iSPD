@@ -66,8 +66,8 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                     simulacao.getEventos().offer(evtFut);
                 } else {
                     tarefasChegou++;
-                    this.escalonador.addTarefaConcluida(cliente);
                 }
+                this.escalonador.addTarefaConcluida(cliente);
                 if (tipoEscalonamento == QUANDO_RECEBE_RESULTADO || tipoEscalonamento == AMBOS) {
                     if (this.escalonador.getFilaTarefas().isEmpty()) {
                         this.escDisponivel = true;
@@ -293,6 +293,18 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
         msg.setCaminho(escalonador.escalonarRota(escravo));
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(),
+                EventoFuturo.MENSAGEM,
+                msg.getCaminho().remove(0),
+                msg);
+        //Event adicionado a lista de evntos futuros
+        simulacao.getEventos().offer(evtFut);
+    }
+    
+    public void atualizar(CS_Processamento escravo, Double time) {
+        Mensagem msg = new Mensagem( this, 0.011444091796875, Mensagem.ATUALIZAR);
+        msg.setCaminho(escalonador.escalonarRota(escravo));
+        EventoFuturo evtFut = new EventoFuturo(
+                time,
                 EventoFuturo.MENSAGEM,
                 msg.getCaminho().remove(0),
                 msg);
