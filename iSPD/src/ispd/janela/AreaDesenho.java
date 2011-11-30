@@ -20,6 +20,7 @@ import ispd.motor.filas.servidores.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Mestre;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CS_Switch;
+import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -1177,6 +1178,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     aux.setAttribute("latency", Double.toString(I.getLatencia()));
                     aux.setAttribute("scheduler", I.getAlgoritmo());
                     aux.setAttribute("owner", I.getProprietario());
+                    aux.setAttribute("master", I.isMestre().toString());
                     break;
                 case Icone.INTERNET:
                     aux = descricao.createElement("internet");
@@ -1312,6 +1314,9 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             I.setLatencia(Double.parseDouble(cluster.getAttribute("latency")));
             I.setAlgoritmo(cluster.getAttribute("scheduler"));
             I.setProprietario(cluster.getAttribute("owner"));
+            System.out.println(cluster.getAttribute("master"));
+            I.setMestre(Boolean.parseBoolean(cluster.getAttribute("master")));
+            System.out.println(I.isMestre().toString());
         }
         //Realiza leitura dos icones de internet
         for (int i = 0; i < internet.getLength(); i++) {
@@ -1555,7 +1560,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             if (I.getTipoIcone() == 1 && I.isMestre()) {
                 maquinas.add(I.getNome());
             }
-            if (I.getTipoIcone() == 3) {
+            if (I.getTipoIcone() == 3 && I.isMestre()) {
                 maquinas.add(I.getNome());
             }
         }
@@ -1572,6 +1577,36 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         List<CS_Comunicacao> links = new ArrayList<CS_Comunicacao>();
         List<CS_Internet> nets = new ArrayList<CS_Internet>();
         List<Integer> netsNome = new ArrayList<Integer>();
+        //cria lista de usuarios e o poder computacional cedido por cada um
+        List<String> proprietarios = new ArrayList<String>();
+        List<Double> poderComp = new ArrayList<Double>();
+        for (Icone icone : getIcones()) {
+            if(icone.getTipoIcone() == Icone.MACHINE){
+                if(proprietarios.contains(icone.getProprietario())){
+                    int index = proprietarios.indexOf(icone.getProprietario());
+                    poderComp.set(index, poderComp.get(index) + icone.getPoderComputacional());
+                }else{
+                    proprietarios.add(icone.getProprietario());
+                    poderComp.add(icone.getPoderComputacional());
+                }
+            }else if(icone.getTipoIcone() == Icone.CLUSTER && !icone.isMestre()){
+                if(proprietarios.contains(icone.getProprietario())){
+                    int index = proprietarios.indexOf(icone.getProprietario());
+                    poderComp.set(index, poderComp.get(index) + (icone.getPoderComputacional() * icone.getNumeroEscravos()));
+                }else{
+                    proprietarios.add(icone.getProprietario());
+                    poderComp.add(icone.getPoderComputacional() * icone.getNumeroEscravos());
+                }
+            }else if(icone.getTipoIcone() == Icone.CLUSTER && icone.isMestre()){
+                if(proprietarios.contains(icone.getProprietario())){
+                    int index = proprietarios.indexOf(icone.getProprietario());
+                    poderComp.set(index, poderComp.get(index) + (icone.getPoderComputacional() * icone.getNumeroEscravos()) + icone.getPoderComputacional());
+                }else{
+                    proprietarios.add(icone.getProprietario());
+                    poderComp.add((icone.getPoderComputacional() * icone.getNumeroEscravos()) + icone.getPoderComputacional());
+                }
+            }
+        }
         //cria maquinas, mestres, internets e mestres dos clusters
         for (Icone icone : getIcones()) {
             switch (icone.getTipoIcone()) {
@@ -1769,6 +1804,14 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     }
                 }
             }
+        }
+        for (CS_Processamento mestre : mestres) {
+            System.out.println("Usuarios: "+proprietarios);
+            System.out.println("Poder: "+poderComp);
+            CS_Mestre mst = (CS_Mestre) mestre;
+            MetricasUsuarios mu = new MetricasUsuarios();
+            mu.addAllUsuarios(proprietarios, poderComp);
+            mst.getEscalonador().setMetricaUsuarios(mu);
         }
         RedeDeFilas rdf = new RedeDeFilas(mestres, maqs, links, nets);
         return rdf;

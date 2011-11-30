@@ -428,7 +428,7 @@ public class Icone implements Serializable {
         return tipoIcone;
     }
 
-    public boolean isMestre() {
+    public Boolean isMestre() {
         return mestre;
     }
 

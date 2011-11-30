@@ -11,11 +11,13 @@
 package ispd.janela;
 
 import ispd.ValidaValores;
+import ispd.arquivo.interpretador.gerador.InterpretadorGerador;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -445,7 +447,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelP4Formula.setText("Fórmula:");
 
         jTextFieldP4Formula.setEditable(false);
-        jTextFieldP4Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
+        jTextFieldP4Formula.setFont(new java.awt.Font("Verdana", 1, 11));
         jTextFieldP4Formula.setText("Random");
         jTextFieldP4Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -747,7 +749,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jLabelP5Formula.setText("Fórmula:");
 
         jTextFieldP5Formula.setEditable(false);
-        jTextFieldP5Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
+        jTextFieldP5Formula.setFont(new java.awt.Font("Verdana", 1, 11));
         jTextFieldP5Formula.setText("Random");
         jTextFieldP5Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1116,7 +1118,6 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanelPasso6.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Finalizar", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
-        jTextPaneP6Gramatica.setEditable(false);
         jTextPaneP6Gramatica.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jScrollPane3.setViewportView(jTextPaneP6Gramatica);
 
@@ -1219,6 +1220,11 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jButtonFinalizar.setText("Finalizar");
         jButtonFinalizar.setEnabled(false);
+        jButtonFinalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFinalizarActionPerformed(evt);
+            }
+        });
 
         jButtonCancelar.setText("Cancelar");
 
@@ -1705,6 +1711,16 @@ private void jOpAvancadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         // TODO add your handling code here:
         jButtonP4VoltarActionPerformed(evt);
     }//GEN-LAST:event_jButtonP5VoltarActionPerformed
+
+    private void jButtonFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFinalizarActionPerformed
+        // TODO add your handling code here:
+        String codigo = jTextPaneP6Gramatica.getText();
+        InterpretadorGerador parse = new InterpretadorGerador(codigo);
+        if(!parse.executarParse()){
+            JOptionPane.showMessageDialog(this, "Escalonador reconhecido!");
+        }
+        
+    }//GEN-LAST:event_jButtonFinalizarActionPerformed
 
     private void setEnableDinamica(boolean b) {
         jLabelP2Forma.setEnabled(b);
