@@ -1312,6 +1312,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         if (I != null) {
             switch (I.getTipoIcone()) {
                 case Icone.MACHINE: {
+                    this.jPanelMaquina.setUsuarios(aDesenho.getUsuarios());
                     this.jPanelMaquina.setIcone(I);
                     jScrollPaneBarraLateral.setViewportView(jPanelMaquina);
                 }
@@ -1322,6 +1323,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
                 break;
                 case Icone.CLUSTER: {
+                    this.jPanelCluster.setUsuarios(aDesenho.getUsuarios());
                     this.jPanelCluster.setIcone(I);
                     jScrollPaneBarraLateral.setViewportView(jPanelCluster);
                 }

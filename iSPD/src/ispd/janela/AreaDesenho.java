@@ -1314,9 +1314,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             I.setLatencia(Double.parseDouble(cluster.getAttribute("latency")));
             I.setAlgoritmo(cluster.getAttribute("scheduler"));
             I.setProprietario(cluster.getAttribute("owner"));
-            System.out.println(cluster.getAttribute("master"));
             I.setMestre(Boolean.parseBoolean(cluster.getAttribute("master")));
-            System.out.println(I.isMestre().toString());
         }
         //Realiza leitura dos icones de internet
         for (int i = 0; i < internet.getLength(); i++) {
@@ -1806,8 +1804,6 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         for (CS_Processamento mestre : mestres) {
-            System.out.println("Usuarios: "+proprietarios);
-            System.out.println("Poder: "+poderComp);
             CS_Mestre mst = (CS_Mestre) mestre;
             MetricasUsuarios mu = new MetricasUsuarios();
             mu.addAllUsuarios(proprietarios, poderComp);

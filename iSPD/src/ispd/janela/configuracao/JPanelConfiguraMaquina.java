@@ -15,6 +15,7 @@ import ispd.ValidaValores;
 import ispd.arquivo.Escalonadores;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -43,6 +44,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jComboBoxAlgoritmos = new JComboBox(nomesDosEscalonadores);
         initComponents();
         jTableComboBox.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxAlgoritmos));
+        jTableComboBox1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(jComboBoxUsuarios));
         jTableDouble.getColumnModel().getColumn(0).setPreferredWidth(100);
         jTableComboBox.getColumnModel().getColumn(1).setPreferredWidth(100);
     }
@@ -56,6 +58,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBoxUsuarios = new javax.swing.JComboBox();
         jLabelTitle = new javax.swing.JLabel();
         jLabelInicial = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -65,6 +68,9 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jLabel = new javax.swing.JLabel();
         jTableMestre = new javax.swing.JTable();
         jTableComboBox = new javax.swing.JTable();
+        jTableComboBox1 = new javax.swing.JTable();
+
+        jComboBoxUsuarios.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "user1" }));
 
         jLabelTitle.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabelTitle.setText(palavras.getString("Machine icon configuration")); // NOI18N
@@ -223,23 +229,60 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             }
         });
 
+        jTableComboBox1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Owner:", null}
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableComboBox1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTableComboBox1.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTableComboBox1.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        jTableComboBox1.getTableHeader().setResizingAllowed(false);
+        jTableComboBox1.getTableHeader().setReorderingAllowed(false);
+        jTableComboBox1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTableComboBox1PropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addComponent(jLabelTitle)
+            .addComponent(jLabelInicial)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelTitle)
-                    .addComponent(jLabelInicial)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jTableMestre, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jTableString, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTableComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+                    .addComponent(jTableComboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(jTableString, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(jTableDouble, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(jTableMestre, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTableComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -251,16 +294,17 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTableString, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTableComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTableDouble, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTableMestre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -339,13 +383,21 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jListEscravoMouseClicked(null);
     }//GEN-LAST:event_jListEscravoKeyPressed
 
+    private void jTableComboBox1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableComboBox1PropertyChange
+        // TODO add your handling code here:
+        icone.setProprietario(jComboBoxUsuarios.getSelectedItem().toString());
+        jTableComboBox1.setValueAt(jComboBoxUsuarios.getSelectedItem().toString(), 0, 1);
+    }//GEN-LAST:event_jTableComboBox1PropertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox jComboBoxUsuarios;
     private javax.swing.JLabel jLabel;
     private javax.swing.JLabel jLabelInicial;
     private javax.swing.JLabel jLabelTitle;
     private javax.swing.JList jListEscravo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableComboBox;
+    private javax.swing.JTable jTableComboBox1;
     private javax.swing.JTable jTableDouble;
     private javax.swing.JTable jTableMestre;
     private javax.swing.JTable jTableString;
@@ -397,6 +449,8 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             x++;
         }
         jListEscravo.setSelectedIndices(tempIndices);
+        jComboBoxUsuarios.setSelectedItem(icone.getProprietario());
+        jTableComboBox.setValueAt(icone.getProprietario(), 0, 1);
     }
 
     public void setIdioma(ResourceBundle palavras) {
@@ -416,10 +470,15 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
             jLabelInicial.setText(palavras.getString("Configuration for the icon") + "#: " + String.valueOf(icone.getIdGlobal()));
         }
         jTableString.setValueAt(palavras.getString("Label:"), 0, 0);
+        jTableComboBox1.setValueAt(palavras.getString("Owner:"), 0, 0);
         jTableDouble.setValueAt(palavras.getString("Processing:"), 0, 0);
         jTableDouble.setValueAt(palavras.getString("Load Factor:"), 1, 0);
         jTableMestre.setValueAt(palavras.getString("MASTER"), 0, 0);
         jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
         jListEscravo.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Slave Nodes:")));
+    }
+
+    public void setUsuarios(HashSet<String> usuarios) {
+        jComboBoxUsuarios.setModel(new javax.swing.DefaultComboBoxModel(usuarios.toArray()));
     }
 }
