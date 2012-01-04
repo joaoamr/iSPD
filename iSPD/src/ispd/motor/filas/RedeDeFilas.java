@@ -10,6 +10,7 @@ import ispd.motor.filas.servidores.CS_Internet;
 import ispd.motor.filas.servidores.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
+import ispd.motor.metricas.MetricasUsuarios;
 import java.util.List;
 
 /**
@@ -33,6 +34,10 @@ public class RedeDeFilas {
      * Todos icones de internet do modelo
      */
     List<CS_Internet> internets;
+    /**
+     * Mantem métricas dos usuarios da rede de filas
+     */
+    MetricasUsuarios metricasUsuarios;
     /**
      * Armazena métricas obtidas após realiza a simulação
      */
@@ -89,6 +94,14 @@ public class RedeDeFilas {
 
     public void setMetricasGlobais(MetricasGlobais metricasGlobais) {
         this.metricasGlobais = metricasGlobais;
+    }
+
+    public MetricasUsuarios getMetricasUsuarios() {
+        return metricasUsuarios;
+    }
+
+    public void setMetricasUsuarios(MetricasUsuarios metricasUsuarios) {
+        this.metricasUsuarios = metricasUsuarios;
     }
     
 }

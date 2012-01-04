@@ -79,6 +79,9 @@ public class DynamicFPLTF extends Escalonador {
 
     @Override
     public void adicionarTarefa(Tarefa tarefa) {
+        if(tarefa.getOrigem().equals(mestre)){
+            this.metricaUsuarios.incTarefasSubmetidas(tarefa);
+        }
         int k = 0;
         while (k < tarefas.size() && tarefas.get(k).getTamProcessamento() > tarefa.getTamProcessamento()) {
             k++;
@@ -88,6 +91,7 @@ public class DynamicFPLTF extends Escalonador {
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
+        super.addTarefaConcluida(tarefa);
         int index = escravos.indexOf(tarefa.getLocalProcessamento());
         if (index != -1) {
             double custo = escravos.get(index).tempoProcessar(tarefa.getTamProcessamento());

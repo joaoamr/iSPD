@@ -85,6 +85,7 @@ public class Workqueue extends Escalonador {
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
+        super.addTarefaConcluida(tarefa);
         ultimaTarefaConcluida.add(tarefa);
         if (!tarefas.isEmpty()) {
             mestre.executarEscalonamento();

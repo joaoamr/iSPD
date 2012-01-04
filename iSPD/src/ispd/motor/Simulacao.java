@@ -102,7 +102,9 @@ public class Simulacao {
             CS_Mestre mst = (CS_Mestre) mestre;
             janela.println(mst.getId());
             janela.println(mst.getEscalonador().getMetricaUsuarios().toString());
+            redeDeFilas.getMetricasUsuarios().addMetricasUsuarios(mst.getEscalonador().getMetricaUsuarios());
         }
+        janela.println(redeDeFilas.getMetricasUsuarios().toString());
     }
 
     public void addEventos(List<Tarefa> tarefas) {
@@ -122,6 +124,10 @@ public class Simulacao {
 
     public void addTarefa(Tarefa tarefa) {
         tarefas.add(tarefa);
+    }
+
+    public RedeDeFilas getRedeDeFilas() {
+        return redeDeFilas;
     }
 
     public void iniciarEscalonadores() {

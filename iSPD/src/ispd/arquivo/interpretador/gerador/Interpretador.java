@@ -8,6 +8,58 @@ class Interpretador implements InterpretadorConstants {
         public boolean erroEncontrado = false;
         private String erros = "Erros encontrados durante o parser do Gerador:";
 
+        //booleanos para controle
+        private boolean dinamico = true;
+        private boolean tarefaCrescente = true;
+        private boolean recursoCrescente = true;
+
+        //dados para costruir classe
+        private String arquivoNome;
+        private String pacote = "package ispd.externo;\u005cn\u005cn";
+        private String imports = "import ispd.escalonador.Escalonador;\u005cn"
+                                +"import ispd.motor.filas.Tarefa;\u005cn"
+                                +"import ispd.motor.filas.servidores.CS_Processamento;\u005cn"
+                                +"import ispd.motor.filas.servidores.CentroServico;\u005cn"
+                                +"import java.util.List;\u005cn"
+                                +"import java.util.ArrayList;\u005cn\u005cn";
+        private String declaracao;
+        private String variavel = "private Tarefa tarefaSelecionada = null;\u005cn";
+        private String construtor = "";
+        private String caracteristica = "";
+        private String iniciar = "@Override\u005cnpublic void iniciar() {}\u005cn\u005cn";
+        private String decTarefa = "@Override\u005cn"
+                                  +"public Tarefa escalonarTarefa() {\u005cn";
+        private String tarefa = "";
+        private String tarefaExpressao = "";
+        private String declararVariaveisTarefa = "";
+        private String carregarVariaveisTarefa = "";
+        private String decRecurso = "@Override\u005cn"
+                                   +"public CS_Processamento escalonarRecurso() {\u005cn";
+        private String recurso = "";
+        private String recursoExpressao = "";
+        private String declararVariaveisRecurso = "";
+        private String carregarVariaveisRecurso = "";
+        private String escalonar = "@Override\u005cn"
+                                  +"public void escalonar() {\u005cn"
+                                  +"    tarefaSelecionada = escalonarTarefa();\u005cn"
+                                  +"    if(tarefaSelecionada != null){\u005cn"
+                                  +"        CentroServico rec = escalonarRecurso();\u005cn"
+                                  +"        tarefaSelecionada.setLocalProcessamento(rec);\u005cn"
+                                  +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\u005cn"
+                                  +"        mestre.enviarTarefa(tarefaSelecionada);\u005cn"
+                                  +"    }\u005cn"
+                                  +"}\u005cn\u005cn";
+        private String decAddTarefaConcluida = "";
+        private String addTarefaConcluida = "";
+        private String fimAddTarefaConcluida = "";
+        private String getTempoAtualizar = "";
+        private String rota = "@Override\u005cn"
+                             +"public List<CentroServico> escalonarRota(CentroServico destino) {\u005cn"
+                             +"    int index = escravos.indexOf(destino);\u005cn"
+                             +"    return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));\u005cn"
+                             +"}\u005cn\u005cn";
+        private String metodosPrivate = "";
+
         public void resetaObjetosParser(){
                 textoVerbose = "";
                 erroEncontrado = false;
@@ -40,6 +92,383 @@ class Interpretador implements InterpretadorConstants {
                         getNextToken();
                         t = getToken(1);
                 }
+        }
+
+        public void escreverNome(String text){
+            arquivoNome = text;
+            declaracao = "public class "+text+" extends Escalonador{\u005cn\u005cn";
+            construtor = "public "+text+"() {\u005cn"
+                        +"    this.tarefas = new ArrayList<Tarefa>();\u005cn"
+                        +"    this.escravos = new ArrayList<CS_Processamento>();\u005cn"
+                        +"}\u005cn\u005cn";
+        }
+
+        public void estatico(){
+            caracteristica = "";
+            dinamico = false;
+        }
+
+        public void dinamico(String tipo){
+            if(tipo.equals("in")){
+                caracteristica = "";
+            }
+            if(tipo.equals("out")){
+                caracteristica = "";
+            }
+            if(tipo.equals("end")){
+                decAddTarefaConcluida =   "@Override\u005cn"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\u005cn"
+                                         +"    super.addTarefaConcluida(tarefa);\u005cn";
+                addTarefaConcluida +=     "    for(CS_Processamento maq : this.getEscravos()){\u005cn"
+                                         +"        mestre.atualizar(maq);\u005cn"
+                                         +"    }\u005cn";
+                fimAddTarefaConcluida =   "}\u005cn\u005cn";
+
+            }
+        }
+
+        public void dinamicoIntervalo(String text){
+            getTempoAtualizar = "@Override\u005cn"
+                               +"public Double getTempoAtualizar(){\u005cn"
+                               +"    return "+text+";\u005cn"
+                               +"}\u005cn\u005cn";
+        }
+
+        public void formulaTarefa(String valor){
+            if("random".equals(valor)){
+                if(!imports.contains("import java.util.Random;")){
+                    imports = "import java.util.Random;\u005cn" + imports;
+                }
+                if(!variavel.contains("Random sorteio = new Random();")){
+                    variavel += "Random sorteio = new Random();\u005cn";
+                }
+                tarefa = "  int tar = sorteio.nextInt(tarefas.size());\u005cn"
+                        +"  return tarefas.remove(tar);\u005cn";
+            }else if("formula".equals(valor)){
+                String ordenac = " < ";
+                if(tarefaCrescente) ordenac = " > ";
+                tarefa = "if(!tarefas.isEmpty()){\u005cn"
+                       + declararVariaveisTarefa
+                       + "  double resultado = "+tarefaExpressao+";\u005cn"
+                       + "  int tar = 0;\u005cn"
+                       + "  for(int i = 0; i < tarefas.size(); i++){\u005cn"
+                       + carregarVariaveisTarefa
+                       + "    double expressao = "+tarefaExpressao+";\u005cn"
+                       + "    if(resultado "+ordenac+" expressao){\u005cn"
+                       + "       resultado = expressao;\u005cn"
+                       + "       tar = i;\u005cn"
+                       + "    }\u005cn"
+                       + "  }\u005cn"
+                       + "return tarefas.remove(tar);\u005cn"
+                       + "}\u005cn"
+                       + "return null;\u005cn";
+            }
+        }
+
+        public void formulaRecurso(String valor){
+            if("random".equals(valor)){
+                if(!imports.contains("import java.util.Random;")){
+                    imports = "import java.util.Random;\u005cn" + imports;
+                }
+                if(!variavel.contains("Random sorteio = new Random();")){
+                    variavel += "Random sorteio = new Random();\u005cn";
+                }
+                recurso = "  int rec = sorteio.nextInt(escravos.size());\u005cn"
+                         +"  return escravos.get(rec);\u005cn";
+            }else if("formula".equals(valor)){
+                String ordenac = " < ";
+                if(recursoCrescente) ordenac = " > ";
+                recurso = "if(!escravos.isEmpty()){\u005cn"
+                        + declararVariaveisRecurso
+                        + "  double resultado = "+recursoExpressao+";\u005cn"
+                        + "  int rec = 0;\u005cn"
+                        + "  for(int i = 0; i < escravos.size(); i++){\u005cn"
+                        + carregarVariaveisRecurso
+                        + "    double expressao = "+recursoExpressao+";\u005cn"
+                        + "    if(resultado "+ordenac+" expressao){\u005cn"
+                        + "       resultado = expressao;\u005cn"
+                        + "       rec = i;\u005cn"
+                        + "    }\u005cn"
+                        + "  }\u005cn"
+                        + "return escravos.get(rec);\u005cn"
+                        + "}\u005cn"
+                        + "return null;\u005cn";
+            }
+        }
+
+        public void addConstanteTarefa(String valor) {
+            tarefaExpressao += valor;
+        }
+
+        public void addConstanteRecurso(String valor) {
+            recursoExpressao += valor;
+        }
+
+        public void addExpressaoTarefa(int tipoToken){
+            switch (tipoToken) {
+            case add:
+              tarefaExpressao += " + ";
+              break;
+            case sub:
+              tarefaExpressao += " - ";
+              break;
+            case div:
+              tarefaExpressao += " / ";
+              break;
+            case mult:
+              tarefaExpressao += " * ";
+              break;
+            case lparen:
+              tarefaExpressao += " ( ";
+              break;
+            case rparen:
+              tarefaExpressao += " ) ";
+              break;
+            case tTamComp:
+              tarefaExpressao += "tTamComp";
+              if(!declararVariaveisTarefa.contains("tTamComp")){
+                declararVariaveisTarefa += "double tTamComp = tarefas.get(0).getTamProcessamento();\u005cn";
+              }
+              if(!carregarVariaveisTarefa.contains("tTamComp")){
+                carregarVariaveisTarefa += "tTamComp = tarefas.get(i).getTamProcessamento();\u005cn";
+              }
+              break;
+            case tTamComu:
+              tarefaExpressao += "tTamComu";
+              if(!declararVariaveisTarefa.contains("tTamComu")){
+                declararVariaveisTarefa += "double tTamComu = tarefas.get(0).getTamComunicacao();\u005cn";
+              }
+              if(!carregarVariaveisTarefa.contains("tTamComu")){
+                carregarVariaveisTarefa += "tTamComu = tarefas.get(i).getTamComunicacao();\u005cn";
+              }
+              break;
+            case tNumTarSub:
+              tarefaExpressao += "tNumTarSub";
+              if(!declararVariaveisTarefa.contains("tNumTarSub")){
+                if(dinamico)
+                    declararVariaveisTarefa += "int tNumTarSub = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasSubmetidas(tarefas.get(0).getProprietario());\u005cn";
+                else
+                    declararVariaveisTarefa += "int tNumTarSub = metricaUsuarios.getSizeTarefasSubmetidas(tarefas.get(0).getProprietario());\u005cn";
+              }
+              if(!carregarVariaveisTarefa.contains("tNumTarSub")){
+                if(dinamico)
+                    carregarVariaveisTarefa += "tNumTarSub = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasSubmetidas(tarefas.get(i).getProprietario());\u005cn";
+                else
+                    carregarVariaveisTarefa += "tNumTarSub = metricaUsuarios.getSizeTarefasSubmetidas(tarefas.get(i).getProprietario());\u005cn";
+              }
+              break;
+            case tNumTarConc:
+              tarefaExpressao += "tNumTarConc";
+              if(!declararVariaveisTarefa.contains("tNumTarConc")){
+                if(dinamico)
+                    declararVariaveisTarefa += "int tNumTarConc = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasConcluidas(tarefas.get(0).getProprietario());\u005cn";
+                else
+                    declararVariaveisTarefa += "int tNumTarConc = metricaUsuarios.getSizeTarefasConcluidas(tarefas.get(0).getProprietario());\u005cn";
+              }
+              if(!carregarVariaveisTarefa.contains("tNumTarConc")){
+                if(dinamico)
+                    carregarVariaveisTarefa += "tNumTarConc = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasConcluidas(tarefas.get(i).getProprietario());\u005cn";
+                else
+                    carregarVariaveisTarefa += "tNumTarConc = metricaUsuarios.getSizeTarefasConcluidas(tarefas.get(i).getProprietario());\u005cn";
+              }
+              break;
+            case tPoderUser:
+              tarefaExpressao += "tPoderUser";
+              if(!declararVariaveisTarefa.contains("tPoderUser")){
+                declararVariaveisTarefa += "double tPoderUser = metricaUsuarios.getPoderComputacional(tarefas.get(0).getProprietario());\u005cn";
+              }
+              if(!carregarVariaveisTarefa.contains("tPoderUser")){
+                carregarVariaveisTarefa += "tPoderUser = metricaUsuarios.getPoderComputacional(tarefas.get(i).getProprietario());\u005cn";
+              }
+              break;
+            default:
+              tarefaExpressao += "VAR";
+            }
+        }
+
+        public void addExpressaoRecurso(int tipoToken){
+            switch (tipoToken) {
+            case add:
+              recursoExpressao += " + ";
+              break;
+            case sub:
+              recursoExpressao += " - ";
+              break;
+            case div:
+              recursoExpressao += " / ";
+              break;
+            case mult:
+              recursoExpressao += " * ";
+              break;
+            case lparen:
+              recursoExpressao += " ( ";
+              break;
+            case rparen:
+              recursoExpressao += " ) ";
+              break;
+            case rPodeProc:
+              recursoExpressao += "rPodeProc";
+              if(!declararVariaveisRecurso.contains("rPodeProc")){
+                declararVariaveisRecurso += "double rPodeProc = escravos.get(0).getPoderComputacional();\u005cn";
+              }
+              if(!carregarVariaveisRecurso.contains("rPodeProc")){
+                carregarVariaveisRecurso += "rPodeProc = escravos.get(i).getPoderComputacional();\u005cn";
+              }
+              break;
+            case rLinkComu:
+              recursoExpressao += "rLinkComu";
+              if(!declararVariaveisRecurso.contains("rLinkComu")){
+                declararVariaveisRecurso += "double rLinkComu = calcularBandaLink(escravos.get(0));\u005cn";
+              }
+              if(!carregarVariaveisRecurso.contains("rLinkComu")){
+                carregarVariaveisRecurso += "rLinkComu = calcularBandaLink(escravos.get(i));\u005cn";
+              }
+              if(!metodosPrivate.contains("private double calcularBandaLink(CS_Processamento get)")){
+                metodosPrivate += "private double calcularBandaLink(CS_Processamento get) {\u005cn"
+                                 +"double total = 0;\u005cn"
+                                 +"int conec = 0;\u005cn"
+                                 +"for (CentroServico cs : escalonarRota(get)) {\u005cn"
+                                 +"    if(cs instanceof CS_Comunicacao){\u005cn"
+                                 +"         CS_Comunicacao comu = (CS_Comunicacao) cs;\u005cn"
+                                 +"         total += comu.getLarguraBanda();\u005cn"
+                                 +"         conec++;\u005cn"
+                                 +"    }\u005cn"
+                                 +"}\u005cn"
+                                 +"return total / conec;\u005cn"
+                                 +"}\u005cn\u005cn";
+              }
+              break;
+            case rtamCompTar:
+              recursoExpressao += "rtamCompTar";
+              if(!declararVariaveisRecurso.contains("rtamCompTar")){
+                declararVariaveisRecurso += "double rtamCompTar = tarefaSelecionada.getTamProcessamento();\u005cn";
+              }
+              break;
+            case rtamComuTar:
+              recursoExpressao += "rtamComuTar";
+              if(!declararVariaveisRecurso.contains("rtamComuTar")){
+                declararVariaveisRecurso += "double rtamComuTar = tarefaSelecionada.getTamComunicacao();\u005cn";
+              }
+              break;
+            case numTarExec:
+              recursoExpressao += "numTarExec";
+              if(!dinamico){
+                if(!variavel.contains("numTarExecRec")){
+                    variavel += "private List<Integer> numTarExecRec;\u005cn";
+                }
+                if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
+                    metodosPrivate += "private void addTarefasEnviadas(){\u005cn"
+                                     +"    if(tarefaSelecionada != null){\u005cn"
+                                     +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\u005cn"
+                                     +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\u005cn"
+                                     +"    }\u005cn"
+                                     +"}\u005cn\u005cn";
+                }
+                if(!escalonar.contains("addTarefasEnviadas();")){
+                    escalonar = "@Override\u005cn"
+                               +"public void escalonar() {\u005cn"
+                               +"    tarefaSelecionada = escalonarTarefa();\u005cn"
+                               +"    if(tarefaSelecionada != null){\u005cn"
+                               +"        CentroServico rec = escalonarRecurso();\u005cn"
+                               +"        tarefaSelecionada.setLocalProcessamento(rec);\u005cn"
+                               +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\u005cn"
+                               +"        addTarefasEnviadas();\u005cn"
+                               +"        mestre.enviarTarefa(tarefaSelecionada);\u005cn"
+                               +"    }\u005cn"
+                               +"}\u005cn\u005cn";
+                }
+                if(!imports.contains("import java.util.ArrayList;")){
+                    imports = "import java.util.ArrayList;\u005cn" + imports;
+                }
+                if(!iniciar.contains("numTarExecRec")){
+                    iniciar = "@Override\u005cn"
+                             +"public void iniciar() {\u005cn"
+                             +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\u005cn"
+                             +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
+                             +"        numTarExecRec.add(0);\u005cn"
+                             +"    }\u005cn"
+                             +"}\u005cn\u005cn";
+                }
+                if(!addTarefaConcluida.contains("numTarExecRec")){
+                    decAddTarefaConcluida = "@Override\u005cn"
+                                           +"public void addTarefaConcluida(Tarefa tarefa) {\u005cn"
+                                           +"    super.addTarefaConcluida(tarefa);\u005cn";
+                    addTarefaConcluida +=   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\u005cn"
+                                           +"    numTarExecRec.set(index,numTarExecRec.get(index)-1);\u005cn";
+                    fimAddTarefaConcluida = "}\u005cn\u005cn";
+                }
+              }
+              if(!declararVariaveisRecurso.contains("numTarExec")){
+                if(dinamico)
+                    declararVariaveisRecurso += "int numTarExec = escravos.get(0).getInformacaoDinamicaFila().size();\u005cn";
+                else
+                    declararVariaveisRecurso += "int numTarExec = numTarExecRec.get(0);\u005cn";
+              }
+              if(!carregarVariaveisRecurso.contains("numTarExec")){
+                if(dinamico)
+                    carregarVariaveisRecurso += "numTarExec = escravos.get(i).getInformacaoDinamicaFila().size();\u005cn";
+                else
+                    carregarVariaveisRecurso += "numTarExec = numTarExecRec.get(i);\u005cn";
+              }
+              break;
+            case mflopProce:
+              recursoExpressao += "mflopProce";
+              if(!declararVariaveisRecurso.contains("mflopProce")){
+                if(dinamico)
+                    declararVariaveisRecurso += "\u005cn";
+                else
+                    declararVariaveisRecurso += "\u005cn";
+              }
+              if(!carregarVariaveisRecurso.contains("mflopProce")){
+                if(dinamico)
+                    carregarVariaveisRecurso += "\u005cn";
+                else
+                    carregarVariaveisRecurso += "\u005cn";
+              }
+              break;
+            default:
+              recursoExpressao += "VAR";
+            }
+        }
+
+        public String getCodigo(){
+            if( !"".equals(recursoExpressao) ){
+                formulaRecurso("formula");
+            }
+            if( !"".equals(tarefaExpressao) ){
+                formulaTarefa("formula");
+            }
+            String txt = pacote
+                       + imports
+                       + declaracao
+                       + variavel + "\u005cn"
+                       + construtor
+                       + caracteristica
+                       + iniciar
+                       + decTarefa
+                       + tarefa + "}\u005cn\u005cn"
+                       + decRecurso
+                       + recurso + "}\u005cn\u005cn"
+                       + escalonar
+                       + decAddTarefaConcluida
+                       + addTarefaConcluida
+                       + fimAddTarefaConcluida
+                       + getTempoAtualizar
+                       + metodosPrivate
+                       + rota + "}";
+            return txt;
+        }
+
+        public void setTarefaCrescente(boolean valor){
+            tarefaCrescente = valor;
+        }
+
+        public void setRecursoCrescente(boolean valor){
+            recursoCrescente = valor;
+        }
+
+        public String getArquivoNome() {
+            return arquivoNome;
         }
 
   final public void Escalonador() throws ParseException {
@@ -106,16 +535,18 @@ class Interpretador implements InterpretadorConstants {
   }
 
   final public void Nome() throws ParseException {
-        Token t;
+    Token t;
     jj_consume_token(SCHEDULER);
     t = jj_consume_token(nome);
-                               printv("Reconheceu nome no escravo");
+        escreverNome(t.image);
+        printv("Reconheceu nome no escravo");
   }
 
   final public void Caracteristica() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case STATIC:
       jj_consume_token(STATIC);
+                   estatico();
       break;
     case DYNAMIC:
       jj_consume_token(DYNAMIC);
@@ -136,9 +567,15 @@ class Interpretador implements InterpretadorConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case ENTRY:
         jj_consume_token(ENTRY);
+                       dinamico("in");
         break;
       case OUTPUT:
         jj_consume_token(OUTPUT);
+                       dinamico("out");
+        break;
+      case COMPLETED:
+        jj_consume_token(COMPLETED);
+                       dinamico("end");
         break;
       default:
         jj_la1[3] = jj_gen;
@@ -161,6 +598,7 @@ class Interpretador implements InterpretadorConstants {
         jj_consume_token(-1);
         throw new ParseException();
       }
+                                                   dinamicoIntervalo(t.image);
       break;
     default:
       jj_la1[5] = jj_gen;
@@ -172,32 +610,44 @@ class Interpretador implements InterpretadorConstants {
   final public void EscalonadorTarefa() throws ParseException {
     jj_consume_token(TASK);
     jj_consume_token(SCHEDULER);
-    jj_consume_token(44);
-    formula();
+    jj_consume_token(46);
+    formula(true);
   }
 
   final public void EscalonadorRecurso() throws ParseException {
     jj_consume_token(RESOURCE);
     jj_consume_token(SCHEDULER);
-    jj_consume_token(44);
-    formula();
+    jj_consume_token(46);
+    formula(false);
   }
 
-  final public void formula() throws ParseException {
+  final public void formula(boolean tarefa) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case RANDOM:
       jj_consume_token(RANDOM);
+               if(tarefa)
+                 formulaTarefa("random");
+               else
+                 formulaRecurso("random");
       break;
     case CRESCENT:
       jj_consume_token(CRESCENT);
+                 if(tarefa)
+                   setTarefaCrescente(true);
+                 else
+                   setRecursoCrescente(true);
       jj_consume_token(lparen);
-      expressao();
+      expressao(tarefa);
       jj_consume_token(rparen);
       break;
     case DECREASING:
       jj_consume_token(DECREASING);
+                   if(tarefa)
+                 setTarefaCrescente(false);
+               else
+                 setRecursoCrescente(false);
       jj_consume_token(lparen);
-      expressao();
+      expressao(tarefa);
       jj_consume_token(rparen);
       break;
     default:
@@ -207,8 +657,8 @@ class Interpretador implements InterpretadorConstants {
     }
   }
 
-  final public void expressao() throws ParseException {
-    expressao2();
+  final public void expressao(boolean tarefa) throws ParseException {
+    expressao2(tarefa);
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -223,21 +673,29 @@ class Interpretador implements InterpretadorConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case add:
         jj_consume_token(add);
+              if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add);
         break;
       case sub:
         jj_consume_token(sub);
+              if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub);
         break;
       default:
         jj_la1[8] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      expressao2();
+      expressao2(tarefa);
     }
   }
 
-  final public void expressao2() throws ParseException {
-    expressao3();
+  final public void expressao2(boolean tarefa) throws ParseException {
+    expressao3(tarefa);
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -252,29 +710,45 @@ class Interpretador implements InterpretadorConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case div:
         jj_consume_token(div);
+              if(tarefa)
+                addExpressaoTarefa(div);
+              else
+                addExpressaoRecurso(div);
         break;
       case mult:
         jj_consume_token(mult);
+               if(tarefa)
+                addExpressaoTarefa(mult);
+              else
+                addExpressaoRecurso(mult);
         break;
       default:
         jj_la1[10] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-      expressao3();
+      expressao3(tarefa);
     }
   }
 
-  final public void expressao3() throws ParseException {
+  final public void expressao3(boolean tarefa) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case sub:
     case add:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case add:
         jj_consume_token(add);
+              if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add);
         break;
       case sub:
         jj_consume_token(sub);
+              if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub);
         break;
       default:
         jj_la1[11] = jj_gen;
@@ -286,10 +760,10 @@ class Interpretador implements InterpretadorConstants {
       jj_la1[12] = jj_gen;
       ;
     }
-    expressao4();
+    expressao4(tarefa);
   }
 
-  final public void expressao4() throws ParseException {
+  final public void expressao4(boolean tarefa) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case tTamComp:
     case tTamComu:
@@ -301,15 +775,23 @@ class Interpretador implements InterpretadorConstants {
     case rtamCompTar:
     case rtamComuTar:
     case numTarExec:
-      variavel();
+      variavel(tarefa);
       break;
-    case 45:
-      constante();
+    case 47:
+      constante(tarefa);
       break;
     case lparen:
       jj_consume_token(lparen);
-      expressao();
+               if(tarefa)
+                addExpressaoTarefa(lparen);
+              else
+                addExpressaoRecurso(lparen);
+      expressao(tarefa);
       jj_consume_token(rparen);
+               if(tarefa)
+                addExpressaoTarefa(rparen);
+              else
+                addExpressaoRecurso(rparen);
       break;
     default:
       jj_la1[13] = jj_gen;
@@ -318,37 +800,77 @@ class Interpretador implements InterpretadorConstants {
     }
   }
 
-  final public void variavel() throws ParseException {
+  final public void variavel(boolean tarefa) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case tTamComp:
       jj_consume_token(tTamComp);
+                 if(tarefa)
+                   addExpressaoTarefa(tTamComp);
+                 else
+                   addExpressaoRecurso(tTamComp);
       break;
     case tTamComu:
       jj_consume_token(tTamComu);
+                 if(tarefa)
+                   addExpressaoTarefa(tTamComu);
+                 else
+                   addExpressaoRecurso(tTamComu);
       break;
     case tNumTarSub:
       jj_consume_token(tNumTarSub);
+                   if(tarefa)
+                     addExpressaoTarefa(tNumTarSub);
+                   else
+                     addExpressaoRecurso(tNumTarSub);
       break;
     case tNumTarConc:
       jj_consume_token(tNumTarConc);
+                    if(tarefa)
+                      addExpressaoTarefa(tNumTarConc);
+                    else
+                      addExpressaoRecurso(tNumTarConc);
       break;
     case tPoderUser:
       jj_consume_token(tPoderUser);
+                   if(tarefa)
+                     addExpressaoTarefa(tPoderUser);
+                   else
+                     addExpressaoRecurso(tPoderUser);
       break;
     case rPodeProc:
       jj_consume_token(rPodeProc);
+                  if(tarefa)
+                    addExpressaoTarefa(rPodeProc);
+                  else
+                    addExpressaoRecurso(rPodeProc);
       break;
     case rLinkComu:
       jj_consume_token(rLinkComu);
+                  if(tarefa)
+                    addExpressaoTarefa(rLinkComu);
+                  else
+                    addExpressaoRecurso(rLinkComu);
       break;
     case rtamCompTar:
       jj_consume_token(rtamCompTar);
+                    if(tarefa)
+                      addExpressaoTarefa(rtamCompTar);
+                    else
+                      addExpressaoRecurso(rtamCompTar);
       break;
     case rtamComuTar:
       jj_consume_token(rtamComuTar);
+                    if(tarefa)
+                      addExpressaoTarefa(rtamComuTar);
+                    else
+                      addExpressaoRecurso(rtamComuTar);
       break;
     case numTarExec:
       jj_consume_token(numTarExec);
+                   if(tarefa)
+                     addExpressaoTarefa(numTarExec);
+                   else
+                     addExpressaoRecurso(numTarExec);
       break;
     default:
       jj_la1[14] = jj_gen;
@@ -357,22 +879,30 @@ class Interpretador implements InterpretadorConstants {
     }
   }
 
-  final public void constante() throws ParseException {
+  final public void constante(boolean tarefa) throws ParseException {
     Token t;
-    jj_consume_token(45);
+    jj_consume_token(47);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case inteiro:
       t = jj_consume_token(inteiro);
+                  if(tarefa)
+                    addConstanteTarefa(t.image);
+                  else
+                    addConstanteRecurso(t.image);
       break;
     case real:
       t = jj_consume_token(real);
+               if(tarefa)
+                 addConstanteTarefa(t.image);
+               else
+                 addConstanteRecurso(t.image);
       break;
     default:
       jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
-    jj_consume_token(46);
+    jj_consume_token(48);
   }
 
   /** Generated Token Manager. */
@@ -392,10 +922,10 @@ class Interpretador implements InterpretadorConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x101e,0x101e,0xc,0x60,0x60000000,0x90,0xe00,0x6000000,0x6000000,0x1800000,0x1800000,0x6000000,0x6000000,0x87fe000,0x7fe000,0x60000000,};
+      jj_la1_0 = new int[] {0x201e,0x201e,0xc,0xe0,0x80000000,0x110,0x1c00,0x18000000,0x18000000,0x6000000,0x6000000,0x18000000,0x18000000,0x20ffc000,0xffc000,0x80000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2000,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8000,0x0,0x1,};
    }
 
   /** Constructor with InputStream. */
@@ -512,7 +1042,7 @@ class Interpretador implements InterpretadorConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[47];
+    boolean[] la1tokens = new boolean[49];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -529,7 +1059,7 @@ class Interpretador implements InterpretadorConstants {
         }
       }
     }
-    for (int i = 0; i < 47; i++) {
+    for (int i = 0; i < 49; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -67,6 +67,8 @@ public class CargaTaskNode extends GerarCarga {
         if (encontrou) {
             GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
             for (i = 0; i < this.getNumeroTarefas(); i++) {
+                //Random sorteio = new Random();
+                //double srt = sorteio.nextInt(this.maxComputacao.intValue()) + this.minComputacao;
                 Tarefa tarefa = new Tarefa(
                         proprietario,
                         aplicacao,
@@ -91,7 +93,6 @@ public class CargaTaskNode extends GerarCarga {
 
     public static GerarCarga newGerarCarga(String entrada) {
         CargaTaskNode newObj = null;
-        //try {
         String[] valores = entrada.split(" ");
         String aplicacao = "application0";
         String proprietario = "user1";
@@ -103,9 +104,6 @@ public class CargaTaskNode extends GerarCarga {
         double minComunicacao = Double.parseDouble(valores[5]);
         newObj = new CargaTaskNode(aplicacao, proprietario, escalonador,
                 numeroTarefas, maxComputacao, minComputacao, maxComunicacao, minComunicacao);
-        //} catch (Exception e) {
-        //Logger.getLogger(CargaTaskNode.class.getName()).log(Level.SEVERE, null, e);
-        //}
         return newObj;
     }
 

@@ -46,8 +46,12 @@ public class InterpretadorGerador {
             return parser.erroEncontrado;
         }
     }
+
+    public String getNome() {
+        return parser.getArquivoNome();
+    }
     
-    public void escreverArquivo() {
-        System.err.println("Ainda não foi implementado");
+    public String getCodigo() {
+        return parser.getCodigo();
     }
 }

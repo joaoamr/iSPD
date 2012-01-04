@@ -229,6 +229,8 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                 for (Tarefa trf : escalonador.getFilaTarefas()) {
                     this.filaTarefasDinamica.add(trf);
                 }
+                //atualiza metricas dos usuarios globais
+                simulacao.getRedeDeFilas().getMetricasUsuarios().addMetricasUsuarios(escalonador.getMetricaUsuarios());
                 //enviar resultados
                 /*int index = mestres.indexOf(cliente.getOrigem());
                 List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));

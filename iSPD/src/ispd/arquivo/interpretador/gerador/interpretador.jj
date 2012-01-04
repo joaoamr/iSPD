@@ -13,7 +13,59 @@ class Interpretador{
 	private String textoVerbose = "Saida do Verbose:";
 	public boolean erroEncontrado = false;
 	private String erros = "Erros encontrados durante o parser do Gerador:";
-	
+        
+        //booleanos para controle
+        private boolean dinamico = true;
+        private boolean tarefaCrescente = true;
+        private boolean recursoCrescente = true;
+        
+        //dados para costruir classe
+        private String arquivoNome;
+        private String pacote = "package ispd.externo;\n\n";
+        private String imports = "import ispd.escalonador.Escalonador;\n"
+                                +"import ispd.motor.filas.Tarefa;\n"
+                                +"import ispd.motor.filas.servidores.CS_Processamento;\n"
+                                +"import ispd.motor.filas.servidores.CentroServico;\n"
+                                +"import java.util.List;\n"
+                                +"import java.util.ArrayList;\n\n";
+        private String declaracao;
+        private String variavel = "private Tarefa tarefaSelecionada = null;\n";
+        private String construtor = "";
+        private String caracteristica = "";
+        private String iniciar = "@Override\npublic void iniciar() {}\n\n";
+        private String decTarefa = "@Override\n"
+                                  +"public Tarefa escalonarTarefa() {\n";
+        private String tarefa = "";
+        private String tarefaExpressao = "";
+        private String declararVariaveisTarefa = "";
+        private String carregarVariaveisTarefa = "";
+        private String decRecurso = "@Override\n"
+                                   +"public CS_Processamento escalonarRecurso() {\n";
+        private String recurso = "";
+        private String recursoExpressao = "";
+        private String declararVariaveisRecurso = "";
+        private String carregarVariaveisRecurso = "";
+        private String escalonar = "@Override\n"
+                                  +"public void escalonar() {\n"
+                                  +"    tarefaSelecionada = escalonarTarefa();\n"
+                                  +"    if(tarefaSelecionada != null){\n"
+                                  +"        CentroServico rec = escalonarRecurso();\n"
+                                  +"        tarefaSelecionada.setLocalProcessamento(rec);\n"
+                                  +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\n"
+                                  +"        mestre.enviarTarefa(tarefaSelecionada);\n"
+                                  +"    }\n"
+                                  +"}\n\n";
+        private String decAddTarefaConcluida = "";
+        private String addTarefaConcluida = "";
+        private String fimAddTarefaConcluida = "";
+        private String getTempoAtualizar = "";
+        private String rota = "@Override\n"
+                             +"public List<CentroServico> escalonarRota(CentroServico destino) {\n"
+                             +"    int index = escravos.indexOf(destino);\n"
+                             +"    return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));\n"
+                             +"}\n\n";
+	private String metodosPrivate = "";
+
         public void resetaObjetosParser(){
                 textoVerbose = "";
 		erroEncontrado = false;
@@ -48,6 +100,383 @@ class Interpretador{
 		}
 	}
 
+        public void escreverNome(String text){
+            arquivoNome = text;
+            declaracao = "public class "+text+" extends Escalonador{\n\n";
+            construtor = "public "+text+"() {\n"
+                        +"    this.tarefas = new ArrayList<Tarefa>();\n"
+                        +"    this.escravos = new ArrayList<CS_Processamento>();\n"
+                        +"}\n\n";
+        }
+        
+        public void estatico(){
+            caracteristica = "";
+            dinamico = false;
+        }
+        
+        public void dinamico(String tipo){
+            if(tipo.equals("in")){
+                caracteristica = "";
+            }
+            if(tipo.equals("out")){
+                caracteristica = "";
+            }
+            if(tipo.equals("end")){
+                decAddTarefaConcluida =   "@Override\n"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\n"
+                                         +"    super.addTarefaConcluida(tarefa);\n";
+                addTarefaConcluida +=     "    for(CS_Processamento maq : this.getEscravos()){\n"
+                                         +"        mestre.atualizar(maq);\n"
+                                         +"    }\n";
+                fimAddTarefaConcluida =   "}\n\n";
+                                     
+            }
+        }
+        
+        public void dinamicoIntervalo(String text){
+            getTempoAtualizar = "@Override\n"
+                               +"public Double getTempoAtualizar(){\n"
+                               +"    return "+text+";\n"
+                               +"}\n\n";
+        }
+
+        public void formulaTarefa(String valor){
+            if("random".equals(valor)){
+                if(!imports.contains("import java.util.Random;")){
+                    imports = "import java.util.Random;\n" + imports;
+                }
+                if(!variavel.contains("Random sorteio = new Random();")){
+                    variavel += "Random sorteio = new Random();\n";
+                }
+                tarefa = "  int tar = sorteio.nextInt(tarefas.size());\n"
+                        +"  return tarefas.remove(tar);\n";
+            }else if("formula".equals(valor)){
+                String ordenac = " < ";
+                if(tarefaCrescente) ordenac = " > ";
+                tarefa = "if(!tarefas.isEmpty()){\n"
+                       + declararVariaveisTarefa
+                       + "  double resultado = "+tarefaExpressao+";\n"
+                       + "  int tar = 0;\n"
+                       + "  for(int i = 0; i < tarefas.size(); i++){\n"
+                       + carregarVariaveisTarefa
+                       + "    double expressao = "+tarefaExpressao+";\n"
+                       + "    if(resultado "+ordenac+" expressao){\n"
+                       + "       resultado = expressao;\n"
+                       + "       tar = i;\n"
+                       + "    }\n"
+                       + "  }\n"
+                       + "return tarefas.remove(tar);\n"
+                       + "}\n"
+                       + "return null;\n";
+            }
+        }
+        
+        public void formulaRecurso(String valor){
+            if("random".equals(valor)){
+                if(!imports.contains("import java.util.Random;")){
+                    imports = "import java.util.Random;\n" + imports;
+                }
+                if(!variavel.contains("Random sorteio = new Random();")){
+                    variavel += "Random sorteio = new Random();\n";
+                }
+                recurso = "  int rec = sorteio.nextInt(escravos.size());\n"
+                         +"  return escravos.get(rec);\n";
+            }else if("formula".equals(valor)){
+                String ordenac = " < ";
+                if(recursoCrescente) ordenac = " > ";
+                recurso = "if(!escravos.isEmpty()){\n"
+                        + declararVariaveisRecurso
+                        + "  double resultado = "+recursoExpressao+";\n"
+                        + "  int rec = 0;\n"
+                        + "  for(int i = 0; i < escravos.size(); i++){\n"
+                        + carregarVariaveisRecurso
+                        + "    double expressao = "+recursoExpressao+";\n"
+                        + "    if(resultado "+ordenac+" expressao){\n"
+                        + "       resultado = expressao;\n"
+                        + "       rec = i;\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "return escravos.get(rec);\n"
+                        + "}\n"
+                        + "return null;\n";
+            }
+        }
+        
+        public void addConstanteTarefa(String valor) {
+            tarefaExpressao += valor;
+        }
+
+        public void addConstanteRecurso(String valor) {
+            recursoExpressao += valor;
+        }
+        
+        public void addExpressaoTarefa(int tipoToken){
+            switch (tipoToken) {
+            case add:
+              tarefaExpressao += " + ";
+              break;
+            case sub:
+              tarefaExpressao += " - ";
+              break;
+            case div:
+              tarefaExpressao += " / ";
+              break;
+            case mult:
+              tarefaExpressao += " * ";
+              break;
+            case lparen:
+              tarefaExpressao += " ( ";
+              break;
+            case rparen:
+              tarefaExpressao += " ) ";
+              break;
+            case tTamComp:
+              tarefaExpressao += "tTamComp";
+              if(!declararVariaveisTarefa.contains("tTamComp")){
+                declararVariaveisTarefa += "double tTamComp = tarefas.get(0).getTamProcessamento();\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tTamComp")){
+                carregarVariaveisTarefa += "tTamComp = tarefas.get(i).getTamProcessamento();\n";
+              }
+              break;
+            case tTamComu:
+              tarefaExpressao += "tTamComu";
+              if(!declararVariaveisTarefa.contains("tTamComu")){
+                declararVariaveisTarefa += "double tTamComu = tarefas.get(0).getTamComunicacao();\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tTamComu")){
+                carregarVariaveisTarefa += "tTamComu = tarefas.get(i).getTamComunicacao();\n";
+              }
+              break;
+            case tNumTarSub:
+              tarefaExpressao += "tNumTarSub";
+              if(!declararVariaveisTarefa.contains("tNumTarSub")){
+                if(dinamico)
+                    declararVariaveisTarefa += "int tNumTarSub = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasSubmetidas(tarefas.get(0).getProprietario());\n";
+                else
+                    declararVariaveisTarefa += "int tNumTarSub = metricaUsuarios.getSizeTarefasSubmetidas(tarefas.get(0).getProprietario());\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tNumTarSub")){
+                if(dinamico)
+                    carregarVariaveisTarefa += "tNumTarSub = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasSubmetidas(tarefas.get(i).getProprietario());\n";
+                else
+                    carregarVariaveisTarefa += "tNumTarSub = metricaUsuarios.getSizeTarefasSubmetidas(tarefas.get(i).getProprietario());\n";
+              }
+              break;
+	    case tNumTarConc:
+              tarefaExpressao += "tNumTarConc";
+              if(!declararVariaveisTarefa.contains("tNumTarConc")){
+                if(dinamico)
+                    declararVariaveisTarefa += "int tNumTarConc = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasConcluidas(tarefas.get(0).getProprietario());\n";
+                else
+                    declararVariaveisTarefa += "int tNumTarConc = metricaUsuarios.getSizeTarefasConcluidas(tarefas.get(0).getProprietario());\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tNumTarConc")){
+                if(dinamico)
+                    carregarVariaveisTarefa += "tNumTarConc = mestre.getSimulacao().getRedeDeFilas().getMetricasUsuarios().getSizeTarefasConcluidas(tarefas.get(i).getProprietario());\n";
+                else
+                    carregarVariaveisTarefa += "tNumTarConc = metricaUsuarios.getSizeTarefasConcluidas(tarefas.get(i).getProprietario());\n";
+              }
+              break;
+            case tPoderUser:
+              tarefaExpressao += "tPoderUser";
+              if(!declararVariaveisTarefa.contains("tPoderUser")){
+                declararVariaveisTarefa += "double tPoderUser = metricaUsuarios.getPoderComputacional(tarefas.get(0).getProprietario());\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tPoderUser")){
+                carregarVariaveisTarefa += "tPoderUser = metricaUsuarios.getPoderComputacional(tarefas.get(i).getProprietario());\n";
+              }
+              break;
+            default:
+              tarefaExpressao += "VAR";
+            }
+        }
+        
+        public void addExpressaoRecurso(int tipoToken){
+            switch (tipoToken) {
+            case add:
+              recursoExpressao += " + ";
+              break;
+            case sub:
+              recursoExpressao += " - ";
+              break;
+            case div:
+              recursoExpressao += " / ";
+              break;
+            case mult:
+              recursoExpressao += " * ";
+              break;
+            case lparen:
+              recursoExpressao += " ( ";
+              break;
+            case rparen:
+              recursoExpressao += " ) ";
+              break;
+            case rPodeProc:
+              recursoExpressao += "rPodeProc";
+              if(!declararVariaveisRecurso.contains("rPodeProc")){
+                declararVariaveisRecurso += "double rPodeProc = escravos.get(0).getPoderComputacional();\n";
+              }
+              if(!carregarVariaveisRecurso.contains("rPodeProc")){
+                carregarVariaveisRecurso += "rPodeProc = escravos.get(i).getPoderComputacional();\n";
+              }
+              break;
+            case rLinkComu:
+              recursoExpressao += "rLinkComu";
+              if(!declararVariaveisRecurso.contains("rLinkComu")){
+                declararVariaveisRecurso += "double rLinkComu = calcularBandaLink(escravos.get(0));\n";
+              }
+              if(!carregarVariaveisRecurso.contains("rLinkComu")){
+                carregarVariaveisRecurso += "rLinkComu = calcularBandaLink(escravos.get(i));\n";
+              }
+              if(!metodosPrivate.contains("private double calcularBandaLink(CS_Processamento get)")){
+                metodosPrivate += "private double calcularBandaLink(CS_Processamento get) {\n"
+                                 +"double total = 0;\n"
+                                 +"int conec = 0;\n"
+                                 +"for (CentroServico cs : escalonarRota(get)) {\n"
+                                 +"    if(cs instanceof CS_Comunicacao){\n"
+                                 +"         CS_Comunicacao comu = (CS_Comunicacao) cs;\n"
+                                 +"         total += comu.getLarguraBanda();\n"
+                                 +"         conec++;\n"
+                                 +"    }\n"
+                                 +"}\n"
+                                 +"return total / conec;\n"
+                                 +"}\n\n";
+              }
+              break;
+            case rtamCompTar:
+              recursoExpressao += "rtamCompTar";
+              if(!declararVariaveisRecurso.contains("rtamCompTar")){
+                declararVariaveisRecurso += "double rtamCompTar = tarefaSelecionada.getTamProcessamento();\n";
+              }
+              break;
+            case rtamComuTar:
+              recursoExpressao += "rtamComuTar";
+              if(!declararVariaveisRecurso.contains("rtamComuTar")){
+                declararVariaveisRecurso += "double rtamComuTar = tarefaSelecionada.getTamComunicacao();\n";
+              }
+              break;
+            case numTarExec:
+              recursoExpressao += "numTarExec";
+              if(!dinamico){
+                if(!variavel.contains("numTarExecRec")){
+                    variavel += "private List<Integer> numTarExecRec;\n";
+                }
+                if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
+                    metodosPrivate += "private void addTarefasEnviadas(){\n"
+                                     +"    if(tarefaSelecionada != null){\n"
+                                     +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                     +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\n"
+                                     +"    }\n"
+                                     +"}\n\n";
+                }
+                if(!escalonar.contains("addTarefasEnviadas();")){
+                    escalonar = "@Override\n"
+                               +"public void escalonar() {\n"
+                               +"    tarefaSelecionada = escalonarTarefa();\n"
+                               +"    if(tarefaSelecionada != null){\n"
+                               +"        CentroServico rec = escalonarRecurso();\n"
+                               +"        tarefaSelecionada.setLocalProcessamento(rec);\n"
+                               +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\n"
+                               +"        addTarefasEnviadas();\n"
+                               +"        mestre.enviarTarefa(tarefaSelecionada);\n"
+                               +"    }\n"
+                               +"}\n\n";
+                }
+                if(!imports.contains("import java.util.ArrayList;")){
+                    imports = "import java.util.ArrayList;\n" + imports;
+                }
+                if(!iniciar.contains("numTarExecRec")){
+                    iniciar = "@Override\n"
+                             +"public void iniciar() {\n"
+                             +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\n"
+                             +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                             +"        numTarExecRec.add(0);\n"
+                             +"    }\n"
+                             +"}\n\n";
+                }
+                if(!addTarefaConcluida.contains("numTarExecRec")){
+                    decAddTarefaConcluida = "@Override\n"
+                                           +"public void addTarefaConcluida(Tarefa tarefa) {\n"
+                                           +"    super.addTarefaConcluida(tarefa);\n";
+                    addTarefaConcluida +=   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\n"
+                                           +"    numTarExecRec.set(index,numTarExecRec.get(index)-1);\n";
+                    fimAddTarefaConcluida = "}\n\n";
+                }
+              }
+              if(!declararVariaveisRecurso.contains("numTarExec")){
+                if(dinamico)
+                    declararVariaveisRecurso += "int numTarExec = escravos.get(0).getInformacaoDinamicaFila().size();\n";
+                else
+                    declararVariaveisRecurso += "int numTarExec = numTarExecRec.get(0);\n";
+              }
+              if(!carregarVariaveisRecurso.contains("numTarExec")){
+                if(dinamico)
+                    carregarVariaveisRecurso += "numTarExec = escravos.get(i).getInformacaoDinamicaFila().size();\n";
+                else
+                    carregarVariaveisRecurso += "numTarExec = numTarExecRec.get(i);\n";
+              }
+              break;
+            case mflopProce:
+              recursoExpressao += "mflopProce";
+              if(!declararVariaveisRecurso.contains("mflopProce")){
+                if(dinamico)
+                    declararVariaveisRecurso += "\n";
+                else
+                    declararVariaveisRecurso += "\n";
+              }
+              if(!carregarVariaveisRecurso.contains("mflopProce")){
+                if(dinamico)
+                    carregarVariaveisRecurso += "\n";
+                else
+                    carregarVariaveisRecurso += "\n";
+              }
+              break;
+            default:
+              recursoExpressao += "VAR";
+            }
+        }
+        
+        public String getCodigo(){
+            if( !"".equals(recursoExpressao) ){
+                formulaRecurso("formula");
+            }
+            if( !"".equals(tarefaExpressao) ){
+                formulaTarefa("formula");
+            }
+            String txt = pacote
+                       + imports
+                       + declaracao
+                       + variavel + "\n"
+                       + construtor
+                       + caracteristica
+                       + iniciar
+                       + decTarefa
+                       + tarefa + "}\n\n"
+                       + decRecurso
+                       + recurso + "}\n\n"
+                       + escalonar
+                       + decAddTarefaConcluida
+                       + addTarefaConcluida
+                       + fimAddTarefaConcluida
+                       + getTempoAtualizar
+                       + metodosPrivate
+                       + rota + "}";
+            return txt;
+        }
+        
+        public void setTarefaCrescente(boolean valor){
+            tarefaCrescente = valor;
+        }
+        
+        public void setRecursoCrescente(boolean valor){
+            recursoCrescente = valor;
+        }
+        
+        public String getArquivoNome() {
+            return arquivoNome;
+        }
+        
 }
 PARSER_END(Interpretador)
 
@@ -85,7 +514,8 @@ TOKEN:	{
 	<TASK:       "TASK">       |
 	<ENTRY:      "ENTRY">      |
 	<OUTPUT:     "OUTPUT">     |
-	<TIME:	     "TIME">       |
+	<COMPLETED:  "COMPLETED">  |
+        <TIME:	     "TIME">       |
 	<INTERVAL:   "INTERVAL">   |
 	<RANDOM:     "RANDOM">     |
         <CRESCENT:   "CRESCENT">   |
@@ -105,7 +535,8 @@ TOKEN:	{
 	<rLinkComu:   "[LC]">   |
 	<rtamCompTar: "[TCT]">  |
 	<rtamComuTar: "[TCMT]"> |
-        <numTarExec:  "[NTE]">
+        <numTarExec:  "[NTE]">  |
+        <mflopProce:  "[MFP]">
 	}
 
 TOKEN:	{ 
@@ -189,10 +620,14 @@ void Parte():
 
 void Nome():
 {
-	Token t;
+    Token t;
 }
 {
-	<SCHEDULER> t=<nome> { printv("Reconheceu nome no escravo"); }
+    <SCHEDULER> t=<nome>
+    {
+        escreverNome(t.image);
+        printv("Reconheceu nome no escravo");
+    }
 }
 
 void Caracteristica():
@@ -200,7 +635,7 @@ void Caracteristica():
 
 }
 {
-	<STATIC>  |
+	<STATIC> { estatico(); } |
         <DYNAMIC> tipo_atualizacao()
 }
 
@@ -209,83 +644,169 @@ void tipo_atualizacao():
     Token t;
 }
 {
-    <TASK> ( <ENTRY> | <OUTPUT> ) |
-    <TIME> <INTERVAL> ( t=<real> | t=<inteiro> )
+    <TASK> ( <ENTRY> { dinamico("in"); }  |
+            <OUTPUT> { dinamico("out"); } |
+         <COMPLETED> { dinamico("end"); })|
+    <TIME> <INTERVAL> ( t=<real> | t=<inteiro> ) { dinamicoIntervalo(t.image); }
 }
 
 void EscalonadorTarefa():
 {
 }
 {
-    <TASK> <SCHEDULER> ":" formula()
+    <TASK> <SCHEDULER> ":" formula(true)
 }
 
 void EscalonadorRecurso():
 {
 }
 {
-    <RESOURCE> <SCHEDULER> ":" formula()
+    <RESOURCE> <SCHEDULER> ":" formula(false)
 }
 
-void formula():
+void formula(boolean tarefa):
 {
 }
 {
-    <RANDOM> |
-    <CRESCENT> <lparen> expressao() <rparen> |
-    <DECREASING> <lparen> expressao() <rparen>
-}
-
-void expressao():
-{
-}
-{
-    expressao2() ( ( <add> | <sub> ) expressao2() )*
-}
-
-void expressao2():
-{
-}
-{
-    expressao3() ( ( <div> | <mult> ) expressao3() )*
+    <RANDOM> { if(tarefa)
+                 formulaTarefa("random");
+               else
+                 formulaRecurso("random"); } |
+    <CRESCENT> { if(tarefa)
+                   setTarefaCrescente(true);
+                 else
+                   setRecursoCrescente(true); }
+         <lparen> expressao(tarefa) <rparen> |
+    <DECREASING> { if(tarefa)
+                 setTarefaCrescente(false);
+               else
+                 setRecursoCrescente(false); }
+          <lparen> expressao(tarefa) <rparen>
 }
 
-void expressao3():
+void expressao(boolean tarefa):
 {
 }
 {
-    [ <add> | <sub> ] expressao4()
-}
-
-void expressao4():
-{
-}
-{
-    variavel()  |
-    constante() |
-    <lparen> expressao() <rparen>
-}
-
-void variavel():
-{
-}
-{
-    <tTamComp>    |
-    <tTamComu>    |
-    <tNumTarSub>  |
-    <tNumTarConc> |
-    <tPoderUser>  |
-    <rPodeProc>   |
-    <rLinkComu>   |
-    <rtamCompTar> |
-    <rtamComuTar> |
-    <numTarExec>
+    expressao2(tarefa) ( 
+    ( <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); } | 
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); })
+      expressao2(tarefa) )*
 }
 
-void constante():
+void expressao2(boolean tarefa):
+{
+}
+{
+    expressao3(tarefa) ( 
+    ( <div> { if(tarefa)
+                addExpressaoTarefa(div);
+              else
+                addExpressaoRecurso(div); } |
+      <mult> { if(tarefa)
+                addExpressaoTarefa(mult);
+              else
+                addExpressaoRecurso(mult); } )
+      expressao3(tarefa) )*
+}
+
+void expressao3(boolean tarefa):
+{
+}
+{
+    [ <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); } |
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); } ]
+      expressao4(tarefa)
+}
+
+void expressao4(boolean tarefa):
+{
+}
+{
+    variavel(tarefa)  |
+    constante(tarefa) |
+    <lparen> { if(tarefa)
+                addExpressaoTarefa(lparen);
+              else
+                addExpressaoRecurso(lparen); }
+    expressao(tarefa)
+    <rparen> { if(tarefa)
+                addExpressaoTarefa(rparen);
+              else
+                addExpressaoRecurso(rparen); }
+}
+
+void variavel(boolean tarefa):
+{
+}
+{
+    <tTamComp> { if(tarefa)
+                   addExpressaoTarefa(tTamComp);
+                 else
+                   addExpressaoRecurso(tTamComp); } |
+    <tTamComu> { if(tarefa)
+                   addExpressaoTarefa(tTamComu);
+                 else
+                   addExpressaoRecurso(tTamComu); } |
+    <tNumTarSub> { if(tarefa)
+                     addExpressaoTarefa(tNumTarSub);
+                   else
+                     addExpressaoRecurso(tNumTarSub); } |
+    <tNumTarConc> { if(tarefa)
+                      addExpressaoTarefa(tNumTarConc);
+                    else
+                      addExpressaoRecurso(tNumTarConc); } |
+    <tPoderUser> { if(tarefa)
+                     addExpressaoTarefa(tPoderUser);
+                   else
+                     addExpressaoRecurso(tPoderUser); } |
+    <rPodeProc> { if(tarefa)
+                    addExpressaoTarefa(rPodeProc);
+                  else
+                    addExpressaoRecurso(rPodeProc); } |
+    <rLinkComu> { if(tarefa)
+                    addExpressaoTarefa(rLinkComu);
+                  else
+                    addExpressaoRecurso(rLinkComu); } |
+    <rtamCompTar> { if(tarefa)
+                      addExpressaoTarefa(rtamCompTar);
+                    else
+                      addExpressaoRecurso(rtamCompTar); } |
+    <rtamComuTar> { if(tarefa)
+                      addExpressaoTarefa(rtamComuTar);
+                    else
+                      addExpressaoRecurso(rtamComuTar); } |
+    <numTarExec> { if(tarefa)
+                     addExpressaoTarefa(numTarExec);
+                   else
+                     addExpressaoRecurso(numTarExec); }
+}
+
+void constante(boolean tarefa):
 {
     Token t;
 }
 {
-    "[" ( t=<inteiro> | t=<real> ) "]"
+    "[" ( 
+    t=<inteiro> { if(tarefa)
+                    addConstanteTarefa(t.image);
+                  else
+                    addConstanteRecurso(t.image); } |
+    t=<real> { if(tarefa)
+                 addConstanteTarefa(t.image);
+               else
+                 addConstanteRecurso(t.image); }
+    ) "]"
 }

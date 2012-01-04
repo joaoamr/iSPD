@@ -51,8 +51,16 @@ public class MetricasUsuarios {
                 this.tarefasSubmetidas.add(mtc.tarefasSubmetidas.get(i));
                 this.tarefasConcluidas.add(mtc.tarefasConcluidas.get(i));
             }else{
-                this.tarefasSubmetidas.get(index).addAll(mtc.tarefasSubmetidas.get(i));
-                this.tarefasConcluidas.get(index).addAll(mtc.tarefasConcluidas.get(i));
+                for(int j = 0; j < mtc.tarefasSubmetidas.get(i).size(); j++){
+                    if(!this.tarefasSubmetidas.get(index).contains(mtc.tarefasSubmetidas.get(i).get(j))){
+                        this.tarefasSubmetidas.get(index).add(mtc.tarefasSubmetidas.get(i).get(j));
+                    }
+                }
+                for(int j = 0; j < mtc.tarefasConcluidas.get(i).size(); j++){
+                    if(!this.tarefasConcluidas.get(index).contains(mtc.tarefasConcluidas.get(i).get(j))){
+                        this.tarefasConcluidas.get(index).add(mtc.tarefasConcluidas.get(i).get(j));
+                    }
+                }
             }
         }
     }
@@ -68,6 +76,41 @@ public class MetricasUsuarios {
         int index = this.usuarios.indexOf(tarefa.getProprietario());
         if(!this.tarefasConcluidas.get(index).contains(tarefa)){
             this.tarefasConcluidas.get(index).add(tarefa);
+        }
+    }
+
+    public int getSizeTarefasConcluidas(String user) {
+        int index = usuarios.indexOf(user);
+        if (index != -1) {
+            return tarefasConcluidas.get(index).size();
+        } else {
+            return -1;
+        }
+    }
+
+    public int getSizeTarefasSubmetidas(String user) {
+        int index = usuarios.indexOf(user);
+        if (index != -1) {
+            return tarefasSubmetidas.get(index).size();
+        } else {
+            return -1;
+        }
+    }
+
+    public List<List> getTarefasConcluidas() {
+        return tarefasConcluidas;
+    }
+
+    public List<List> getTarefasSubmetidas() {
+        return tarefasSubmetidas;
+    }
+
+    public double getPoderComputacional(String user) {
+        int index = usuarios.indexOf(user);
+        if (index != -1) {
+            return poderComputacional.get(index);
+        } else {
+            return -1;
         }
     }
     
