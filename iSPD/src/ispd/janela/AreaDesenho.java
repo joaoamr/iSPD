@@ -1803,6 +1803,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
         }
+        //cria as métricas de usuarios para cada mestre
         for (CS_Processamento mestre : mestres) {
             CS_Mestre mst = (CS_Mestre) mestre;
             MetricasUsuarios mu = new MetricasUsuarios();
@@ -1810,6 +1811,10 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             mst.getEscalonador().setMetricaUsuarios(mu);
         }
         RedeDeFilas rdf = new RedeDeFilas(mestres, maqs, links, nets);
+        //cria as métricas de usuarios globais da rede de filas
+        MetricasUsuarios mu = new MetricasUsuarios();
+        mu.addAllUsuarios(proprietarios, poderComp);
+        rdf.setMetricasUsuarios(mu);
         return rdf;
     }
 }

@@ -422,18 +422,32 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
             String[] ops = {"Edit java class", "Generator schedulers"};
             String result = (String) JOptionPane.showInputDialog(this, "Creating the scheduler with:", null, JOptionPane.INFORMATION_MESSAGE, null, ops, ops[0]);
             if (result != null) {
-                String result1 = JOptionPane.showInputDialog(this, "Enter the name of the scheduler");
-                boolean nomeOk = false;
-                if (result1 != null) {
-                    nomeOk = ValidaValores.validaNomeClasse(result1);
-                }
-                if (result.equals(ops[0]) && nomeOk) {
-                    //Carregar classe para esditar java
-                    abrirEdicao(result1, Escalonadores.getEscalonadorJava(result1));
-                    modificar();
-                } else if (result.equals(ops[1]) && nomeOk) {
+                if (result.equals(ops[0])) {
+                    String result1 = JOptionPane.showInputDialog(this, "Enter the name of the scheduler");
+                    boolean nomeOk = false;
+                    if (result1 != null) {
+                        nomeOk = ValidaValores.validaNomeClasse(result1);
+                    }
+                    if(nomeOk){
+                        //Carregar classe para esditar java
+                        abrirEdicao(result1, Escalonadores.getEscalonadorJava(result1));
+                        modificar();
+                    }
+                } else if (result.equals(ops[1])) {
                     //Carregar classe para construir escalonador automaticamente
-                    JOptionPane.showMessageDialog(this, "This function is in development");
+                    GerarEscalonador ge = new GerarEscalonador(this, true, escalonadores.getDiretorio().getAbsolutePath());
+                    ge.setLocationRelativeTo(this);
+                    ge.setVisible(true);
+                    if(ge.getParse() != null){
+                        escalonadores.escrever(ge.getParse().getNome(), ge.getParse().getCodigo());
+                        String erros = escalonadores.compilar(ge.getParse().getNome());
+                        if (erros != null) {
+                            JOptionPane.showMessageDialog(this, erros, "Erros encontrados", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Escalonador" + escalonadorAberto + "\nCompilador com sucesso");
+                        }
+                        atualizarEscalonadores(escalonadores.listar());
+                    }
                 }
             }
         }
@@ -633,6 +647,9 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
     private String escalonadorAberto;
     private ResourceBundle palavras;
 
+    public void atualizarEscalonadores(){
+        atualizarEscalonadores(escalonadores.listar());
+    }
     private void atualizarEscalonadores(ArrayList<String> escal) {
         this.jListEscalonadores.setListData(escal.toArray());
     }

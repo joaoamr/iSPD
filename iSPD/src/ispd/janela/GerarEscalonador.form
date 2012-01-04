@@ -90,7 +90,9 @@
         <Component class="javax.swing.JTextField" name="jTextFieldP1LocalArq">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="F:\Projetos\bibliotecas\iSPD\ispd\externo\escalonador\NovoEscalonador.java"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="this.caminho + &quot;NovoEscalonador.java&quot;" type="code"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparatorP1">
@@ -415,7 +417,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabelP4Formula" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextFieldP4Formula" pref="519" max="32767" attributes="0"/>
+                          <Component id="jTextFieldP4Formula" pref="529" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="1">
                           <Component id="jPanel2" max="32767" attributes="0"/>
@@ -619,16 +621,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButtonP4TComputacao" alignment="0" pref="261" max="32767" attributes="1"/>
-                          <Component id="jButtonP4TComunicacao" alignment="0" pref="261" max="32767" attributes="1"/>
-                          <Component id="jButtonP4NTAtendidas" alignment="0" pref="261" max="32767" attributes="1"/>
-                          <Component id="jButtonP4PComputUser" alignment="0" pref="261" max="32767" attributes="1"/>
-                          <Component id="jButtonP4NTSubmetidas" alignment="1" pref="261" max="32767" attributes="1"/>
-                          <Component id="jButtonP4NTConcluidas" alignment="1" pref="261" max="32767" attributes="1"/>
+                          <Component id="jButtonP4TComputacao" alignment="0" pref="271" max="32767" attributes="1"/>
+                          <Component id="jButtonP4TComunicacao" alignment="0" pref="271" max="32767" attributes="1"/>
+                          <Component id="jButtonP4NTSubmetidas" alignment="1" pref="271" max="32767" attributes="1"/>
+                          <Component id="jButtonP4PComputUser" alignment="0" pref="271" max="32767" attributes="1"/>
+                          <Component id="jButtonP4NTConcluidas" alignment="1" pref="271" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jButtonP4Const" min="-2" pref="184" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jFormattedTextP4DigitaConst" pref="71" max="32767" attributes="0"/>
+                              <Component id="jFormattedTextP4DigitaConst" pref="81" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -644,8 +645,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButtonP4NTSubmetidas" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButtonP4NTAtendidas" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButtonP4NTConcluidas" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButtonP4PComputUser" min="-2" max="-2" attributes="0"/>
@@ -654,7 +653,7 @@
                           <Component id="jButtonP4Const" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jFormattedTextP4DigitaConst" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
+                      <EmptySpace pref="47" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -685,15 +684,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP4NTSubmetidasActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="jButtonP4NTAtendidas">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Numero de Tarefas Atendidas - NTA"/>
-                <Property name="toolTipText" type="java.lang.String" value="N&#xfa;mero de tarefas atendidas do usu&#xe1;rio"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP4NTAtendidasActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP4NTConcluidas">
@@ -1667,6 +1657,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCancelarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
