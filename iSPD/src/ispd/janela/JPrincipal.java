@@ -1054,7 +1054,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerarActionPerformed
         // TODO add your handling code here:
-        GerarEscalonador ge = new GerarEscalonador(this, true, jFrameGerenciador.getEscalonadores().getDiretorio().getAbsolutePath() );
+        GerarEscalonador ge = new GerarEscalonador(this, true, jFrameGerenciador.getEscalonadores().getDiretorio().getAbsolutePath(), palavras);
         ge.setEscalonadores(jFrameGerenciador.getEscalonadores());
         ge.setLocationRelativeTo(this);
         ge.setVisible(true);

@@ -435,7 +435,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
                     }
                 } else if (result.equals(ops[1])) {
                     //Carregar classe para construir escalonador automaticamente
-                    GerarEscalonador ge = new GerarEscalonador(this, true, escalonadores.getDiretorio().getAbsolutePath());
+                    GerarEscalonador ge = new GerarEscalonador(this, true, escalonadores.getDiretorio().getAbsolutePath(), palavras);
                     ge.setLocationRelativeTo(this);
                     ge.setVisible(true);
                     if(ge.getParse() != null){
