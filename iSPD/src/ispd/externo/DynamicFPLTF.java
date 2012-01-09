@@ -117,6 +117,6 @@ public class DynamicFPLTF extends Escalonador {
     
     @Override
     public Double getTempoAtualizar(){
-        return 0.1;
+        return 0.5;
     }
 }

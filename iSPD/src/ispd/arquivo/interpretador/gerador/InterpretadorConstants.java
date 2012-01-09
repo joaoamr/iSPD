@@ -47,37 +47,39 @@ public interface InterpretadorConstants {
   /** RegularExpression Id. */
   int tPoderUser = 18;
   /** RegularExpression Id. */
-  int rPodeProc = 19;
+  int tTempSubm = 19;
   /** RegularExpression Id. */
-  int rLinkComu = 20;
+  int rPodeProc = 20;
   /** RegularExpression Id. */
-  int rtamCompTar = 21;
+  int rLinkComu = 21;
   /** RegularExpression Id. */
-  int rtamComuTar = 22;
+  int rtamCompTar = 22;
   /** RegularExpression Id. */
-  int numTarExec = 23;
+  int rtamComuTar = 23;
   /** RegularExpression Id. */
-  int mflopProce = 24;
+  int numTarExec = 24;
   /** RegularExpression Id. */
-  int mult = 25;
+  int mflopProce = 25;
   /** RegularExpression Id. */
-  int div = 26;
+  int mult = 26;
   /** RegularExpression Id. */
-  int sub = 27;
+  int div = 27;
   /** RegularExpression Id. */
-  int add = 28;
+  int sub = 28;
   /** RegularExpression Id. */
-  int lparen = 29;
+  int add = 29;
   /** RegularExpression Id. */
-  int rparen = 30;
+  int lparen = 30;
   /** RegularExpression Id. */
-  int inteiro = 31;
+  int rparen = 31;
   /** RegularExpression Id. */
-  int real = 32;
+  int inteiro = 32;
   /** RegularExpression Id. */
-  int nome = 33;
+  int real = 33;
   /** RegularExpression Id. */
-  int invalido = 45;
+  int nome = 34;
+  /** RegularExpression Id. */
+  int invalido = 46;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -107,6 +109,7 @@ public interface InterpretadorConstants {
     "\"[NTS]\"",
     "\"[NTC]\"",
     "\"[PCU]\"",
+    "\"[TS]\"",
     "\"[PP]\"",
     "\"[LC]\"",
     "\"[TCT]\"",
@@ -128,9 +131,9 @@ public interface InterpretadorConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"*/\"",
-    "<token of kind 40>",
     "<token of kind 41>",
     "<token of kind 42>",
+    "<token of kind 43>",
     "\"/*\"",
     "\"//\"",
     "<invalido>",

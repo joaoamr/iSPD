@@ -232,9 +232,8 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                 //atualiza metricas dos usuarios globais
                 simulacao.getRedeDeFilas().getMetricasUsuarios().addMetricasUsuarios(escalonador.getMetricaUsuarios());
                 //enviar resultados
-                /*int index = mestres.indexOf(cliente.getOrigem());
-                List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
-                Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.PONG);
+                List<CentroServico> caminho = new ArrayList<CentroServico>(CS_Maquina.getMenorCaminhoIndireto(this, (CS_Processamento) cliente.getOrigem()));
+                Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.RESULTADO_ATUALIZAR);
                 novoCliente.setCaminho(caminho);
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(),
@@ -242,7 +241,9 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                         novoCliente.getCaminho().remove(0),
                         novoCliente);
                 //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);*/
+                simulacao.getEventos().offer(evtFut);
+                } else if(cliente.getTipo() == Mensagem.RESULTADO_ATUALIZAR){
+                    //escalonador.resultadoAtualizar(cliente);
                 }
             }
         }

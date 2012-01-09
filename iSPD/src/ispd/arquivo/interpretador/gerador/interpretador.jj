@@ -45,19 +45,21 @@ class Interpretador{
         private String recursoExpressao = "";
         private String declararVariaveisRecurso = "";
         private String carregarVariaveisRecurso = "";
-        private String escalonar = "@Override\n"
-                                  +"public void escalonar() {\n"
-                                  +"    tarefaSelecionada = escalonarTarefa();\n"
-                                  +"    if(tarefaSelecionada != null){\n"
-                                  +"        CentroServico rec = escalonarRecurso();\n"
-                                  +"        tarefaSelecionada.setLocalProcessamento(rec);\n"
-                                  +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\n"
-                                  +"        mestre.enviarTarefa(tarefaSelecionada);\n"
-                                  +"    }\n"
-                                  +"}\n\n";
+        private String decEscalonar = "@Override\n"
+                                     +"public void escalonar() {\n";
+        private String escalonar =    "    tarefaSelecionada = escalonarTarefa();\n"
+                                     +"    if(tarefaSelecionada != null){\n";
+        private String ifEscalonar =  "        CentroServico rec = escalonarRecurso();\n"
+                                     +"        tarefaSelecionada.setLocalProcessamento(rec);\n"
+                                     +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\n"
+                                     +"        mestre.enviarTarefa(tarefaSelecionada);\n";
+        //private String decResultadoAtualizar = "";
+        //private String resultadoAtualizar = "";
+        //private String fimResultadoAtualizar = "";
         private String decAddTarefaConcluida = "";
         private String addTarefaConcluida = "";
         private String fimAddTarefaConcluida = "";
+        private String adicionarTarefa = "";
         private String getTempoAtualizar = "";
         private String rota = "@Override\n"
                              +"public List<CentroServico> escalonarRota(CentroServico destino) {\n"
@@ -116,10 +118,18 @@ class Interpretador{
         
         public void dinamico(String tipo){
             if(tipo.equals("in")){
-                caracteristica = "";
+                adicionarTarefa = "@Override\n"
+                                 +"public void adicionarTarefa(Tarefa tarefa){\n"
+                                 +"    super.adicionarTarefa(tarefa);\n"
+                                 +"    for(CS_Processamento maq : this.getEscravos()){\n"
+                                 +"        mestre.atualizar(maq);\n"
+                                 +"    }\n"
+                                 +"}\n\n";
             }
             if(tipo.equals("out")){
-                caracteristica = "";
+                ifEscalonar = "    for(CS_Processamento maq : this.getEscravos()){\n"
+                             +"        mestre.atualizar(maq);\n"
+                             +"    }\n";
             }
             if(tipo.equals("end")){
                 decAddTarefaConcluida =   "@Override\n"
@@ -248,6 +258,15 @@ class Interpretador{
                 carregarVariaveisTarefa += "tTamComu = tarefas.get(i).getTamComunicacao();\n";
               }
               break;
+            case tTempSubm:
+              tarefaExpressao += "tTempSubm";
+              if(!declararVariaveisTarefa.contains("tTempSubm")){
+                declararVariaveisTarefa += "double tTempSubm = tarefas.get(0).getTimeCriacao();\n";
+              }
+              if(!carregarVariaveisTarefa.contains("tTempSubm")){
+                carregarVariaveisTarefa += "tTempSubm = tarefas.get(i).getTimeCriacao();\n";
+              }
+              break;
             case tNumTarSub:
               tarefaExpressao += "tNumTarSub";
               if(!declararVariaveisTarefa.contains("tNumTarSub")){
@@ -358,61 +377,76 @@ class Interpretador{
               break;
             case numTarExec:
               recursoExpressao += "numTarExec";
-              if(!dinamico){
-                if(!variavel.contains("numTarExecRec")){
-                    variavel += "private List<Integer> numTarExecRec;\n";
-                }
-                if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
-                    metodosPrivate += "private void addTarefasEnviadas(){\n"
-                                     +"    if(tarefaSelecionada != null){\n"
-                                     +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
-                                     +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\n"
-                                     +"    }\n"
-                                     +"}\n\n";
-                }
-                if(!escalonar.contains("addTarefasEnviadas();")){
-                    escalonar = "@Override\n"
-                               +"public void escalonar() {\n"
-                               +"    tarefaSelecionada = escalonarTarefa();\n"
-                               +"    if(tarefaSelecionada != null){\n"
-                               +"        CentroServico rec = escalonarRecurso();\n"
-                               +"        tarefaSelecionada.setLocalProcessamento(rec);\n"
-                               +"        tarefaSelecionada.setCaminho(escalonarRota(rec));\n"
-                               +"        addTarefasEnviadas();\n"
-                               +"        mestre.enviarTarefa(tarefaSelecionada);\n"
-                               +"    }\n"
-                               +"}\n\n";
-                }
-                if(!imports.contains("import java.util.ArrayList;")){
-                    imports = "import java.util.ArrayList;\n" + imports;
-                }
-                if(!iniciar.contains("numTarExecRec")){
-                    iniciar = "@Override\n"
-                             +"public void iniciar() {\n"
-                             +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\n"
-                             +"    for (int i = 0; i < escravos.size(); i++) {\n"
-                             +"        numTarExecRec.add(0);\n"
-                             +"    }\n"
-                             +"}\n\n";
-                }
-                if(!addTarefaConcluida.contains("numTarExecRec")){
-                    decAddTarefaConcluida = "@Override\n"
-                                           +"public void addTarefaConcluida(Tarefa tarefa) {\n"
-                                           +"    super.addTarefaConcluida(tarefa);\n";
-                    addTarefaConcluida +=   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\n"
-                                           +"    numTarExecRec.set(index,numTarExecRec.get(index)-1);\n";
-                    fimAddTarefaConcluida = "}\n\n";
-                }
+              if(!variavel.contains("numTarExecRec")){
+                  variavel += "private List<Integer> numTarExecRec;\n";
+                  variavel += "private List<List> tarExecRec;\n";
               }
+              if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
+                  metodosPrivate += "private void addTarefasEnviadas(){\n"
+                                   +"    if(tarefaSelecionada != null){\n"
+                                   +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                   +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\n"
+                                   +"        tarExecRec.get(index).add(tarefaSelecionada);\n"
+                                   +"    }\n"
+                                   +"}\n\n";
+              }
+              if(!ifEscalonar.contains("addTarefasEnviadas();")){
+                  ifEscalonar += "addTarefasEnviadas();\n";
+              }
+              if(!imports.contains("import java.util.ArrayList;")){
+                  imports = "import java.util.ArrayList;\n" + imports;
+              }
+              if(!iniciar.contains("numTarExecRec")){
+                  iniciar = "@Override\n"
+                           +"public void iniciar() {\n"
+                           +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\n"
+                           +"    tarExecRec = new ArrayList<List>(escravos.size());\n"
+                           +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                           +"        numTarExecRec.add(0);\n"
+                           +"        tarExecRec.add(new ArrayList<Tarefa>());\n"
+                           +"    }\n"
+                           +"}\n\n";
+              }
+              if(!addTarefaConcluida.contains("numTarExecRec")){
+                  decAddTarefaConcluida = "@Override\n"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\n"
+                                         +"    super.addTarefaConcluida(tarefa);\n";
+                  addTarefaConcluida +=   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\n"
+                                         +"    if(index != -1){\n"
+                                         +"        numTarExecRec.set(index, numTarExecRec.get(index) - 1);\n"
+                                         +"    } else {\n"
+                                         +"        for(int i = 0; i < escravos.size(); i++){\n"
+                                         +"            if (tarExecRec.get(i).contains(tarefa)) {\n"
+                                         +"                numTarExecRec.set(i, numTarExecRec.get(i) - 1);\n"
+                                         +"                tarExecRec.get(i).remove(tarefa);\n"
+                                         +"            }\n"
+                                         +"        }\n"
+                                         +"    }\n";
+                  fimAddTarefaConcluida = "}\n\n";
+              }
+              /*if(dinamico){
+                  if(!resultadoAtualizar.contains("numTarExecRec")){
+                      decResultadoAtualizar = "@Override\n"
+                                             +"public void resultadoAtualizar(Mensagem mensagem){\n";
+                      resultadoAtualizar +=   "    int index = escravos.indexOf(mensagem.getOrigem());\n"
+                                             +"    if(index != -1){\n"
+                                             +"        numTarExecRec.set(index,0);\n"
+                                             +"    }\n";
+                      fimResultadoAtualizar = "}\n\n";
+                  }
+                  if(!imports.contains("import ispd.motor.filas.Mensagem;")){
+                      imports = "import ispd.motor.filas.Mensagem;\n" + imports;
+                  }
+              }*/
               if(!declararVariaveisRecurso.contains("numTarExec")){
                 if(dinamico)
-                    declararVariaveisRecurso += "int numTarExec = escravos.get(0).getInformacaoDinamicaFila().size();\n";
+                    declararVariaveisRecurso += "int numTarExec = numTarExecRec.get(0) + escravos.get(0).getInformacaoDinamicaFila().size();\n";
                 else
                     declararVariaveisRecurso += "int numTarExec = numTarExecRec.get(0);\n";
               }
               if(!carregarVariaveisRecurso.contains("numTarExec")){
                 if(dinamico)
-                    carregarVariaveisRecurso += "numTarExec = escravos.get(i).getInformacaoDinamicaFila().size();\n";
+                    carregarVariaveisRecurso += "numTarExec = numTarExecRec.get(i) + escravos.get(i).getInformacaoDinamicaFila().size();\n";
                 else
                     carregarVariaveisRecurso += "numTarExec = numTarExecRec.get(i);\n";
               }
@@ -455,10 +489,16 @@ class Interpretador{
                        + tarefa + "}\n\n"
                        + decRecurso
                        + recurso + "}\n\n"
+                       + decEscalonar
                        + escalonar
+                       + ifEscalonar + "    }\n}\n\n"
+                       //+ decResultadoAtualizar
+                       //+ resultadoAtualizar
+                       //+ fimResultadoAtualizar
                        + decAddTarefaConcluida
                        + addTarefaConcluida
                        + fimAddTarefaConcluida
+                       + adicionarTarefa
                        + getTempoAtualizar
                        + metodosPrivate
                        + rota + "}";
@@ -531,7 +571,8 @@ TOKEN:	{
 	<tNumTarSub:  "[NTS]">  |
 	<tNumTarConc: "[NTC]">  |
 	<tPoderUser:  "[PCU]">  |
-	<rPodeProc:   "[PP]">   |
+	<tTempSubm:  "[TS]">  |
+        <rPodeProc:   "[PP]">   |
 	<rLinkComu:   "[LC]">   |
 	<rtamCompTar: "[TCT]">  |
 	<rtamComuTar: "[TCMT]"> |

@@ -834,7 +834,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
         if (arquivoAberto == null) {
             jMenuItemSalvarComoActionPerformed(null);
-        } else if (aDesenho != null && modificado) {
+        } else if (aDesenho != null /*&& modificado*/) {
             //Implementar ações para salvar conteudo
             Document docxml = aDesenho.getDadosASalvar();
             ispd.arquivo.IconicoXML.escrever(docxml, arquivoAberto);

@@ -47,7 +47,7 @@ public class Workqueue extends Escalonador {
 
     @Override
     public CS_Processamento escalonarRecurso() {
-        if (!ultimaTarefaConcluida.isEmpty()) {
+        if (!ultimaTarefaConcluida.isEmpty() && !ultimaTarefaConcluida.getLast().isCopy()) {
             int index = tarefaEnviada.indexOf(ultimaTarefaConcluida.getLast());
             return this.escravos.get(index);
         } else {
@@ -82,7 +82,17 @@ public class Workqueue extends Escalonador {
             }
         }
     }
-
+    
+    @Override
+    public void adicionarTarefa(Tarefa tarefa){
+        super.adicionarTarefa(tarefa);
+        if(tarefaEnviada.contains(tarefa)){
+            int index = tarefaEnviada.indexOf(tarefa);
+            tarefaEnviada.set(index, null);
+            mestre.executarEscalonamento();
+        }
+    }
+    
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
         super.addTarefaConcluida(tarefa);

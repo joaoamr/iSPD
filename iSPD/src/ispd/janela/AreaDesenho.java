@@ -1803,6 +1803,13 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
         }
+        //verifica se há usuarios sem nenhum recurso
+        for (String user : this.usuarios) {
+            if (!proprietarios.contains(user)) {
+                proprietarios.add(user);
+                poderComp.add(0.0);
+            }
+        }
         //cria as métricas de usuarios para cada mestre
         for (CS_Processamento mestre : mestres) {
             CS_Mestre mst = (CS_Mestre) mestre;

@@ -141,8 +141,10 @@ public class Simulacao {
     }
 
     private boolean atualizarEscalonadores() {
+        System.out.println("Num mestres"+redeDeFilas.getMestres().size());
         for(CS_Processamento mst : redeDeFilas.getMestres()){
             CS_Mestre mestre = (CS_Mestre) mst;
+            System.out.println(mestre.getEscalonador().getClass()+" Tempo "+mestre.getEscalonador().getTempoAtualizar());
             if(mestre.getEscalonador().getTempoAtualizar() != null){
                 return true;
             }
@@ -191,6 +193,7 @@ public class Simulacao {
                 item[0] = mestre;
                 item[1] = mestre.getEscalonador().getTempoAtualizar();
                 item[2] = mestre.getEscalonador().getTempoAtualizar();
+                Arrayatualizar.add(item);
             }
         }
         while (!eventos.isEmpty()) {

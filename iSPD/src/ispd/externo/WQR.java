@@ -53,8 +53,12 @@ public class WQR extends Escalonador {
         }
         for(int i = cont; i < tarefaEnviada.size(); i++){
             if(tarefaEnviada.get(i) != null){
-                cont = i;
-                return mestre.criarCopia(tarefaEnviada.get(i));
+                    cont = i;
+                    if(!tarefaEnviada.get(i).getOrigem().equals(mestre)){
+                        cont++;
+                        return null;
+                    }
+                    return mestre.criarCopia(tarefaEnviada.get(i));
             }
         }
         return null;
@@ -105,12 +109,18 @@ public class WQR extends Escalonador {
             }
         }
         if(servidoresOcupados > 0 && servidoresOcupados < escravos.size() && tarefas.isEmpty()){
-            mestre.executarEscalonamento();
+            for (Tarefa tar : tarefaEnviada) {
+                if(tar != null && tar.getOrigem().equals(mestre)){
+                    mestre.executarEscalonamento();
+                    break;
+                }
+            }
         }
     }
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
+        super.addTarefaConcluida(tarefa);
         int index = tarefaEnviada.indexOf(tarefa);
         if (index != -1) {
             servidoresOcupados--;

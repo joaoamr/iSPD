@@ -25,7 +25,7 @@ public class CS_Maquina extends CS_Processamento {
     private int processadoresDisponiveis;
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
-    private Tarefa tarefaEmExecucao;
+    private List<Tarefa> tarefaEmExecucao;
     public int cont = 0;
     public int cancel = 0;
 
@@ -36,6 +36,7 @@ public class CS_Maquina extends CS_Processamento {
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
+        this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
     }
 
     public void addConexoesEntrada(CS_Link conexao) {
@@ -87,6 +88,7 @@ public class CS_Maquina extends CS_Processamento {
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
         cliente.finalizarEsperaProcessamento(simulacao.getTime());
         cliente.iniciarAtendimentoProcessamento(simulacao.getTime());
+        tarefaEmExecucao.add(cliente);
         //Gera evento para atender proximo cliente da lista
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime() + tempoProcessar(cliente.getTamProcessamento()),
@@ -107,6 +109,7 @@ public class CS_Maquina extends CS_Processamento {
         this.getMetrica().incSegundosDeProcessamento(tempoProc);
         //Incrementa o tempo de transmissão no pacote
         cliente.finalizarAtendimentoProcessamento(simulacao.getTime());
+        tarefaEmExecucao.remove(cliente);
         //eficiencia calculada apenas nas classes CS_Maquina
         cliente.calcEficiencia(this.getPoderComputacional());
         //Devolve tarefa para o mestre
@@ -220,13 +223,16 @@ public class CS_Maquina extends CS_Processamento {
             } else if (cliente.getTipo() == Mensagem.ATUALIZAR) {
                 //atualizar dados dinamicos
                 this.filaTarefasDinamica.clear();
+                for (Tarefa tarefa : tarefaEmExecucao) {
+                    this.filaTarefasDinamica.add(tarefa);
+                }
                 for (Tarefa tarefa : filaTarefas) {
                     this.filaTarefasDinamica.add(tarefa);
                 }
                 //enviar resultados
-                /*int index = mestres.indexOf(cliente.getOrigem());
+                int index = mestres.indexOf(cliente.getOrigem());
                 List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
-                Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.PONG);
+                Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.RESULTADO_ATUALIZAR);
                 novoCliente.setCaminho(caminho);
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(),
@@ -234,7 +240,7 @@ public class CS_Maquina extends CS_Processamento {
                         novoCliente.getCaminho().remove(0),
                         novoCliente);
                 //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);*/
+                simulacao.getEventos().offer(evtFut);
             }
         }
     }

@@ -76,7 +76,7 @@ public class CargaTaskNode extends GerarCarga {
                         gerador.twoStageUniform(minComunicacao, minComunicacao + (maxComunicacao - minComunicacao) / 2, maxComunicacao, 1),
                         0.0009765625 /*arquivo recebimento*/,
                         gerador.twoStageUniform(minComputacao, minComputacao + (maxComputacao - minComputacao) / 2, maxComputacao, 1),
-                        gerador.exponencial(0.05));
+                        gerador.exponencial(0.1));
                 tarefas.add(tarefa);
             }
         }

@@ -87,4 +87,6 @@ public abstract class Escalonador {
     public Double getTempoAtualizar(){
         return null;
     }
+
+    //public void resultadoAtualizar(Mensagem mensagem) {}
 }
