@@ -78,7 +78,15 @@ public class MetricasUsuarios {
             this.tarefasConcluidas.get(index).add(tarefa);
         }
     }
-
+    
+    public List<Tarefa> getTarefasConcluidas(String user){
+        int index = this.usuarios.indexOf(user);
+        if(index != -1){
+            return tarefasConcluidas.get(index);
+        }
+        return null;
+    }
+    
     public int getSizeTarefasConcluidas(String user) {
         int index = usuarios.indexOf(user);
         if (index != -1) {
@@ -112,6 +120,10 @@ public class MetricasUsuarios {
         } else {
             return -1;
         }
+    }
+
+    public List<String> getUsuarios() {
+        return usuarios;
     }
     
     @Override

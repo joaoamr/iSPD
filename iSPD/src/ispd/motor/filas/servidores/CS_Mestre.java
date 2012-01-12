@@ -68,6 +68,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
                     tarefasChegou++;
                 }
                 this.escalonador.addTarefaConcluida(cliente);
+                System.out.println("Tarefa: " + cliente.getIdentificador() + " Dono: " + cliente.getProprietario() + " Tempo " + simulacao.getTime());
                 if (tipoEscalonamento == QUANDO_RECEBE_RESULTADO || tipoEscalonamento == AMBOS) {
                     if (this.escalonador.getFilaTarefas().isEmpty()) {
                         this.escDisponivel = true;

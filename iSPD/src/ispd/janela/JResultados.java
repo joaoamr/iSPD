@@ -15,6 +15,7 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
+import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ public class JResultados extends javax.swing.JDialog {
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
         this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
+        setResultadosUsuario(rdf.getMetricasUsuarios());
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
     }
@@ -66,6 +68,8 @@ public class JResultados extends javax.swing.JDialog {
         jTextAreaGlobal = new javax.swing.JTextArea();
         jScrollPaneTarefa = new javax.swing.JScrollPane();
         jTextAreaTarefa = new javax.swing.JTextArea();
+        jScrollPaneUsuario = new javax.swing.JScrollPane();
+        jTextAreaUsuario = new javax.swing.JTextArea();
         jScrollPaneRecurso = new javax.swing.JScrollPane();
         Vector<String> colunas = new Vector<String>(Arrays.asList("Label", "Owner", "Processing performed", "Communication performed"));
         jTableRecurso = new javax.swing.JTable();
@@ -98,6 +102,14 @@ public class JResultados extends javax.swing.JDialog {
         jScrollPaneTarefa.setViewportView(jTextAreaTarefa);
 
         jTabbedPane1.addTab("Tasks", jScrollPaneTarefa);
+
+        jTextAreaUsuario.setColumns(20);
+        jTextAreaUsuario.setEditable(false);
+        jTextAreaUsuario.setFont(new java.awt.Font("Courier New", 0, 14)); // NOI18N
+        jTextAreaUsuario.setRows(5);
+        jScrollPaneUsuario.setViewportView(jTextAreaUsuario);
+
+        jTabbedPane1.addTab("User", jScrollPaneUsuario);
 
         jTableRecurso.setModel(new javax.swing.table.DefaultTableModel(tabelaRecurso,colunas));
         jScrollPaneRecurso.setViewportView(jTableRecurso);
@@ -231,10 +243,12 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPaneProcessamento;
     private javax.swing.JScrollPane jScrollPaneRecurso;
     private javax.swing.JScrollPane jScrollPaneTarefa;
+    private javax.swing.JScrollPane jScrollPaneUsuario;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableRecurso;
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
+    private javax.swing.JTextArea jTextAreaUsuario;
     private javax.swing.JToolBar jToolBarComunicacao;
     private javax.swing.JToolBar jToolBarProcessamento;
     // End of variables declaration//GEN-END:variables
@@ -471,5 +485,50 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 dadosGrafico, // Dados para o grafico
                 true, false, false);
         return jfc;
+    }
+
+    private void setResultadosUsuario(MetricasUsuarios metricasUsuarios) {
+        if(metricasUsuarios.getUsuarios().size() > 1 ){
+            String texto = "";
+            for(int i = 0; i < metricasUsuarios.getUsuarios().size(); i++){
+                String userName = metricasUsuarios.getUsuarios().get(i);
+                texto += "\n\n\t\tUser " + userName + "\n";
+                texto += "\nNumber of task: "+ metricasUsuarios.getTarefasConcluidas(userName).size() + "\n";
+                //Applications:
+                //Name: Number of task: Mflops:
+                double tempoMedioFilaComunicacao = 0;
+                double tempoMedioComunicacao = 0;
+                double tempoMedioSistemaComunicacao = 0;
+                double tempoMedioFilaProcessamento = 0;
+                double tempoMedioProcessamento = 0;
+                double tempoMedioSistemaProcessamento = 0;
+                int numTarefasCanceladas = 0;
+                int numTarefas = 0;
+                for (Tarefa no : metricasUsuarios.getTarefasConcluidas(userName)) {
+                    tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
+                    tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
+                    tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
+                    tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
+                    numTarefas++;
+                }
+                tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
+                tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;
+                tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
+                tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
+                tempoMedioSistemaComunicacao = tempoMedioFilaComunicacao + tempoMedioComunicacao;
+                tempoMedioSistemaProcessamento = tempoMedioFilaProcessamento + tempoMedioProcessamento;
+                texto += "\n Communication \n";
+                texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaComunicacao);
+                texto += String.format("    Communication average time: %g seconds.\n", tempoMedioComunicacao);
+                texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaComunicacao);
+                texto += "\n Processing \n";
+                texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaProcessamento);
+                texto += String.format("    Processing average time: %g seconds.\n", tempoMedioProcessamento);
+                texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaProcessamento);
+            }
+            jTextAreaUsuario.setText(texto);
+        }else{
+            jTabbedPane1.remove(jScrollPaneUsuario);
+        }
     }
 }

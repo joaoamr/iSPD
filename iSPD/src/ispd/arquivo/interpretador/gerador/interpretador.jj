@@ -15,7 +15,7 @@ class Interpretador{
 	private String erros = "Erros encontrados durante o parser do Gerador:";
         
         //booleanos para controle
-        private boolean dinamico = true;
+        private boolean dinamico = false;
         private boolean tarefaCrescente = true;
         private boolean recursoCrescente = true;
         
@@ -32,7 +32,8 @@ class Interpretador{
         private String variavel = "private Tarefa tarefaSelecionada = null;\n";
         private String construtor = "";
         private String caracteristica = "";
-        private String iniciar = "@Override\npublic void iniciar() {}\n\n";
+        private String decIniciar = "@Override\npublic void iniciar() {\n";
+        private String iniciar = "";
         private String decTarefa = "@Override\n"
                                   +"public Tarefa escalonarTarefa() {\n";
         private String tarefa = "";
@@ -379,6 +380,8 @@ class Interpretador{
               recursoExpressao += "numTarExec";
               if(!variavel.contains("numTarExecRec")){
                   variavel += "private List<Integer> numTarExecRec;\n";
+              }
+              if(!variavel.contains("tarExecRec")){
                   variavel += "private List<List> tarExecRec;\n";
               }
               if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
@@ -397,15 +400,16 @@ class Interpretador{
                   imports = "import java.util.ArrayList;\n" + imports;
               }
               if(!iniciar.contains("numTarExecRec")){
-                  iniciar = "@Override\n"
-                           +"public void iniciar() {\n"
-                           +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\n"
-                           +"    tarExecRec = new ArrayList<List>(escravos.size());\n"
-                           +"    for (int i = 0; i < escravos.size(); i++) {\n"
-                           +"        numTarExecRec.add(0);\n"
-                           +"        tarExecRec.add(new ArrayList<Tarefa>());\n"
-                           +"    }\n"
-                           +"}\n\n";
+                  iniciar += "    numTarExecRec = new ArrayList<Integer>(escravos.size());\n"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                            +"        numTarExecRec.add(0);\n"
+                            +"    }\n";
+              }
+              if(!iniciar.contains("tarExecRec")){
+                  iniciar += "    tarExecRec = new ArrayList<List>(escravos.size());\n"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                            +"        tarExecRec.add(new ArrayList<Tarefa>());\n"
+                            +"    }\n";
               }
               if(!addTarefaConcluida.contains("numTarExecRec")){
                   decAddTarefaConcluida = "@Override\n"
@@ -453,17 +457,65 @@ class Interpretador{
               break;
             case mflopProce:
               recursoExpressao += "mflopProce";
+              if(!variavel.contains("mflopProceRec")){
+                  variavel += "private List<Double> mflopProceRec;\n";
+              }
+              if(!variavel.contains("tarExecRec")){
+                  variavel += "private List<List> tarExecRec;\n";
+              }
+              if(!ifEscalonar.contains("addTarefasEnviadasMflop();")){
+                  ifEscalonar += "addTarefasEnviadasMflop();\n";
+              }
+              if(!iniciar.contains("mflopProceRec")){
+                  iniciar += "    mflopProceRec = new ArrayList<Double>(escravos.size());\n"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                            +"        mflopProceRec.add(0.0);\n"
+                            +"    }\n";
+              }
+              if(!iniciar.contains("tarExecRec")){
+                  iniciar += "    tarExecRec = new ArrayList<List>(escravos.size());\n"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                            +"        tarExecRec.add(new ArrayList<Tarefa>());\n"
+                            +"    }\n";
+              }
+              if(!metodosPrivate.contains("private void addTarefasEnviadasMflop(){")){
+                  metodosPrivate += "private void addTarefasEnviadasMflop(){\n"
+                                   +"    if(tarefaSelecionada != null){\n"
+                                   +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                   +"        mflopProceRec.set(index,mflopProceRec.get(index)+tarefaSelecionada.getTamProcessamento());\n"
+                                   +"        if (!tarExecRec.contains(tarefaSelecionada)) {"
+                                   +"             tarExecRec.get(index).add(tarefaSelecionada);\n"
+                                   +"        }\n"
+                                   +"    }\n"
+                                   +"}\n\n";
+              }
+              if(!addTarefaConcluida.contains("mflopProceRec")){
+                  decAddTarefaConcluida = "@Override\n"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\n"
+                                         +"    super.addTarefaConcluida(tarefa);\n";
+                  addTarefaConcluida +=   "    int index2 = escravos.indexOf(tarefa.getLocalProcessamento());\n"
+                                         +"    if(index2 != -1){\n"
+                                         +"        mflopProceRec.set(index2, mflopProceRec.get(index2) - tarefa.getTamProcessamento());\n"
+                                         +"    } else {\n"
+                                         +"        for(int i = 0; i < escravos.size(); i++){\n"
+                                         +"            if (tarExecRec.get(i).contains(tarefa)) {\n"
+                                         +"                mflopProceRec.set(i, mflopProceRec.get(i) - tarefa.getTamProcessamento());\n"
+                                         +"            }\n"
+                                         +"        }\n"
+                                         +"    }\n";
+                  fimAddTarefaConcluida = "}\n\n";
+              }
               if(!declararVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
                     declararVariaveisRecurso += "\n";
                 else
-                    declararVariaveisRecurso += "\n";
+                    declararVariaveisRecurso += "double mflopProce = mflopProceRec.get(0);\n";
               }
               if(!carregarVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
                     carregarVariaveisRecurso += "\n";
                 else
-                    carregarVariaveisRecurso += "\n";
+                    carregarVariaveisRecurso += "mflopProce = mflopProceRec.get(i);\n";
               }
               break;
             default:
@@ -484,7 +536,8 @@ class Interpretador{
                        + variavel + "\n"
                        + construtor
                        + caracteristica
-                       + iniciar
+                       + decIniciar
+                       + iniciar + "}\n\n"
                        + decTarefa
                        + tarefa + "}\n\n"
                        + decRecurso
@@ -547,7 +600,7 @@ public String getErros()
 
 //palavras reservadas
 
-TOKEN:	{ 
+TOKEN:	{
 	<SCHEDULER:  "SCHEDULER">  |
 	<STATIC:     "STATIC">     |
 	<DYNAMIC:    "DYNAMIC">    |
@@ -565,19 +618,19 @@ TOKEN:	{
 
 // Variaveis
 
-TOKEN:	{ 
+TOKEN:	{
 	<tTamComp:    "[TCP]">  |
 	<tTamComu:    "[TC]">   |
 	<tNumTarSub:  "[NTS]">  |
 	<tNumTarConc: "[NTC]">  |
 	<tPoderUser:  "[PCU]">  |
-	<tTempSubm:  "[TS]">  |
+	<tTempSubm:   "[TCR]">  |
         <rPodeProc:   "[PP]">   |
 	<rLinkComu:   "[LC]">   |
 	<rtamCompTar: "[TCT]">  |
 	<rtamComuTar: "[TCMT]"> |
         <numTarExec:  "[NTE]">  |
-        <mflopProce:  "[MFP]">
+        <mflopProce:  "[MFE]">
 	}
 
 TOKEN:	{ 
@@ -653,9 +706,9 @@ void Parte():
 
 }
 {
-    Nome() { printv("Reconheceu nome do escaonador"); } |
-    Caracteristica() { printv("Reconheceu caracteristicas"); } |
-    EscalonadorTarefa() { printv("Reconheceu politica de escalonamento das tarefas"); } |
+    Nome() { printv("Reconheceu nome do escaonador"); } 
+    Caracteristica() { printv("Reconheceu caracteristicas"); } 
+    EscalonadorTarefa() { printv("Reconheceu politica de escalonamento das tarefas"); } 
     EscalonadorRecurso() { printv("Reconheceu politica de escalonamento dos recursos"); }
 }
 
@@ -813,6 +866,10 @@ void variavel(boolean tarefa):
                      addExpressaoTarefa(tPoderUser);
                    else
                      addExpressaoRecurso(tPoderUser); } |
+    <tTempSubm> {if(tarefa)
+                    addExpressaoTarefa(tTempSubm);
+                  else
+                    addExpressaoRecurso(tTempSubm); } |
     <rPodeProc> { if(tarefa)
                     addExpressaoTarefa(rPodeProc);
                   else
@@ -832,7 +889,11 @@ void variavel(boolean tarefa):
     <numTarExec> { if(tarefa)
                      addExpressaoTarefa(numTarExec);
                    else
-                     addExpressaoRecurso(numTarExec); }
+                     addExpressaoRecurso(numTarExec); } |
+    <mflopProce> { if(tarefa)
+                     addExpressaoTarefa(mflopProce);
+                   else
+                     addExpressaoRecurso(mflopProce);}
 }
 
 void constante(boolean tarefa):

@@ -9,7 +9,7 @@ class Interpretador implements InterpretadorConstants {
         private String erros = "Erros encontrados durante o parser do Gerador:";
 
         //booleanos para controle
-        private boolean dinamico = true;
+        private boolean dinamico = false;
         private boolean tarefaCrescente = true;
         private boolean recursoCrescente = true;
 
@@ -26,7 +26,8 @@ class Interpretador implements InterpretadorConstants {
         private String variavel = "private Tarefa tarefaSelecionada = null;\u005cn";
         private String construtor = "";
         private String caracteristica = "";
-        private String iniciar = "@Override\u005cnpublic void iniciar() {}\u005cn\u005cn";
+        private String decIniciar = "@Override\u005cnpublic void iniciar() {\u005cn";
+        private String iniciar = "";
         private String decTarefa = "@Override\u005cn"
                                   +"public Tarefa escalonarTarefa() {\u005cn";
         private String tarefa = "";
@@ -373,6 +374,8 @@ class Interpretador implements InterpretadorConstants {
               recursoExpressao += "numTarExec";
               if(!variavel.contains("numTarExecRec")){
                   variavel += "private List<Integer> numTarExecRec;\u005cn";
+              }
+              if(!variavel.contains("tarExecRec")){
                   variavel += "private List<List> tarExecRec;\u005cn";
               }
               if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
@@ -391,15 +394,16 @@ class Interpretador implements InterpretadorConstants {
                   imports = "import java.util.ArrayList;\u005cn" + imports;
               }
               if(!iniciar.contains("numTarExecRec")){
-                  iniciar = "@Override\u005cn"
-                           +"public void iniciar() {\u005cn"
-                           +"    numTarExecRec = new ArrayList<Integer>(escravos.size());\u005cn"
-                           +"    tarExecRec = new ArrayList<List>(escravos.size());\u005cn"
-                           +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
-                           +"        numTarExecRec.add(0);\u005cn"
-                           +"        tarExecRec.add(new ArrayList<Tarefa>());\u005cn"
-                           +"    }\u005cn"
-                           +"}\u005cn\u005cn";
+                  iniciar += "    numTarExecRec = new ArrayList<Integer>(escravos.size());\u005cn"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
+                            +"        numTarExecRec.add(0);\u005cn"
+                            +"    }\u005cn";
+              }
+              if(!iniciar.contains("tarExecRec")){
+                  iniciar += "    tarExecRec = new ArrayList<List>(escravos.size());\u005cn"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
+                            +"        tarExecRec.add(new ArrayList<Tarefa>());\u005cn"
+                            +"    }\u005cn";
               }
               if(!addTarefaConcluida.contains("numTarExecRec")){
                   decAddTarefaConcluida = "@Override\u005cn"
@@ -447,17 +451,65 @@ class Interpretador implements InterpretadorConstants {
               break;
             case mflopProce:
               recursoExpressao += "mflopProce";
+              if(!variavel.contains("mflopProceRec")){
+                  variavel += "private List<Double> mflopProceRec;\u005cn";
+              }
+              if(!variavel.contains("tarExecRec")){
+                  variavel += "private List<List> tarExecRec;\u005cn";
+              }
+              if(!ifEscalonar.contains("addTarefasEnviadasMflop();")){
+                  ifEscalonar += "addTarefasEnviadasMflop();\u005cn";
+              }
+              if(!iniciar.contains("mflopProceRec")){
+                  iniciar += "    mflopProceRec = new ArrayList<Double>(escravos.size());\u005cn"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
+                            +"        mflopProceRec.add(0.0);\u005cn"
+                            +"    }\u005cn";
+              }
+              if(!iniciar.contains("tarExecRec")){
+                  iniciar += "    tarExecRec = new ArrayList<List>(escravos.size());\u005cn"
+                            +"    for (int i = 0; i < escravos.size(); i++) {\u005cn"
+                            +"        tarExecRec.add(new ArrayList<Tarefa>());\u005cn"
+                            +"    }\u005cn";
+              }
+              if(!metodosPrivate.contains("private void addTarefasEnviadasMflop(){")){
+                  metodosPrivate += "private void addTarefasEnviadasMflop(){\u005cn"
+                                   +"    if(tarefaSelecionada != null){\u005cn"
+                                   +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\u005cn"
+                                   +"        mflopProceRec.set(index,mflopProceRec.get(index)+tarefaSelecionada.getTamProcessamento());\u005cn"
+                                   +"        if (!tarExecRec.contains(tarefaSelecionada)) {"
+                                   +"             tarExecRec.get(index).add(tarefaSelecionada);\u005cn"
+                                   +"        }\u005cn"
+                                   +"    }\u005cn"
+                                   +"}\u005cn\u005cn";
+              }
+              if(!addTarefaConcluida.contains("mflopProceRec")){
+                  decAddTarefaConcluida = "@Override\u005cn"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\u005cn"
+                                         +"    super.addTarefaConcluida(tarefa);\u005cn";
+                  addTarefaConcluida +=   "    int index2 = escravos.indexOf(tarefa.getLocalProcessamento());\u005cn"
+                                         +"    if(index2 != -1){\u005cn"
+                                         +"        mflopProceRec.set(index2, mflopProceRec.get(index2) - tarefa.getTamProcessamento());\u005cn"
+                                         +"    } else {\u005cn"
+                                         +"        for(int i = 0; i < escravos.size(); i++){\u005cn"
+                                         +"            if (tarExecRec.get(i).contains(tarefa)) {\u005cn"
+                                         +"                mflopProceRec.set(i, mflopProceRec.get(i) - tarefa.getTamProcessamento());\u005cn"
+                                         +"            }\u005cn"
+                                         +"        }\u005cn"
+                                         +"    }\u005cn";
+                  fimAddTarefaConcluida = "}\u005cn\u005cn";
+              }
               if(!declararVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
                     declararVariaveisRecurso += "\u005cn";
                 else
-                    declararVariaveisRecurso += "\u005cn";
+                    declararVariaveisRecurso += "double mflopProce = mflopProceRec.get(0);\u005cn";
               }
               if(!carregarVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
                     carregarVariaveisRecurso += "\u005cn";
                 else
-                    carregarVariaveisRecurso += "\u005cn";
+                    carregarVariaveisRecurso += "mflopProce = mflopProceRec.get(i);\u005cn";
               }
               break;
             default:
@@ -478,7 +530,8 @@ class Interpretador implements InterpretadorConstants {
                        + variavel + "\u005cn"
                        + construtor
                        + caracteristica
-                       + iniciar
+                       + decIniciar
+                       + iniciar + "}\u005cn\u005cn"
                        + decTarefa
                        + tarefa + "}\u005cn\u005cn"
                        + decRecurso
@@ -534,10 +587,6 @@ class Interpretador implements InterpretadorConstants {
       Parte();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case SCHEDULER:
-      case STATIC:
-      case DYNAMIC:
-      case TASK:
-      case RESOURCE:
         ;
         break;
       default:
@@ -549,29 +598,14 @@ class Interpretador implements InterpretadorConstants {
   }
 
   final public void Parte() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case SCHEDULER:
-      Nome();
+    Nome();
              printv("Reconheceu nome do escaonador");
-      break;
-    case STATIC:
-    case DYNAMIC:
-      Caracteristica();
+    Caracteristica();
                        printv("Reconheceu caracteristicas");
-      break;
-    case TASK:
-      EscalonadorTarefa();
+    EscalonadorTarefa();
                           printv("Reconheceu politica de escalonamento das tarefas");
-      break;
-    case RESOURCE:
-      EscalonadorRecurso();
+    EscalonadorRecurso();
                            printv("Reconheceu politica de escalonamento dos recursos");
-      break;
-    default:
-      jj_la1[1] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
   }
 
   final public void Nome() throws ParseException {
@@ -593,7 +627,7 @@ class Interpretador implements InterpretadorConstants {
       tipo_atualizacao();
       break;
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[1] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -618,7 +652,7 @@ class Interpretador implements InterpretadorConstants {
                        dinamico("end");
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[2] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -634,14 +668,14 @@ class Interpretador implements InterpretadorConstants {
         t = jj_consume_token(inteiro);
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[3] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
                                                    dinamicoIntervalo(t.image);
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -691,7 +725,7 @@ class Interpretador implements InterpretadorConstants {
       jj_consume_token(rparen);
       break;
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -707,7 +741,7 @@ class Interpretador implements InterpretadorConstants {
         ;
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[6] = jj_gen;
         break label_2;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -726,7 +760,7 @@ class Interpretador implements InterpretadorConstants {
                 addExpressaoRecurso(sub);
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[7] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -744,7 +778,7 @@ class Interpretador implements InterpretadorConstants {
         ;
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[8] = jj_gen;
         break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -763,7 +797,7 @@ class Interpretador implements InterpretadorConstants {
                 addExpressaoRecurso(mult);
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -791,13 +825,13 @@ class Interpretador implements InterpretadorConstants {
                 addExpressaoRecurso(sub);
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[10] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
     expressao4(tarefa);
@@ -810,11 +844,13 @@ class Interpretador implements InterpretadorConstants {
     case tNumTarSub:
     case tNumTarConc:
     case tPoderUser:
+    case tTempSubm:
     case rPodeProc:
     case rLinkComu:
     case rtamCompTar:
     case rtamComuTar:
     case numTarExec:
+    case mflopProce:
       variavel(tarefa);
       break;
     case 48:
@@ -834,7 +870,7 @@ class Interpretador implements InterpretadorConstants {
                 addExpressaoRecurso(rparen);
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -877,6 +913,13 @@ class Interpretador implements InterpretadorConstants {
                    else
                      addExpressaoRecurso(tPoderUser);
       break;
+    case tTempSubm:
+      jj_consume_token(tTempSubm);
+                 if(tarefa)
+                    addExpressaoTarefa(tTempSubm);
+                  else
+                    addExpressaoRecurso(tTempSubm);
+      break;
     case rPodeProc:
       jj_consume_token(rPodeProc);
                   if(tarefa)
@@ -912,8 +955,15 @@ class Interpretador implements InterpretadorConstants {
                    else
                      addExpressaoRecurso(numTarExec);
       break;
+    case mflopProce:
+      jj_consume_token(mflopProce);
+                   if(tarefa)
+                     addExpressaoTarefa(mflopProce);
+                   else
+                     addExpressaoRecurso(mflopProce);
+      break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -938,7 +988,7 @@ class Interpretador implements InterpretadorConstants {
                  addConstanteRecurso(t.image);
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[14] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -954,7 +1004,7 @@ class Interpretador implements InterpretadorConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[16];
+  final private int[] jj_la1 = new int[15];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -962,10 +1012,10 @@ class Interpretador implements InterpretadorConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x201e,0x201e,0xc,0xe0,0x0,0x110,0x1c00,0x30000000,0x30000000,0xc000000,0xc000000,0x30000000,0x30000000,0x41f7c000,0x1f7c000,0x0,};
+      jj_la1_0 = new int[] {0x2,0xc,0xe0,0x0,0x110,0x1c00,0x30000000,0x30000000,0xc000000,0xc000000,0x30000000,0x30000000,0x43ffc000,0x3ffc000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x3,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x3,};
    }
 
   /** Constructor with InputStream. */
@@ -979,7 +1029,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -993,7 +1043,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1003,7 +1053,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1013,7 +1063,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1022,7 +1072,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1031,7 +1081,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1087,7 +1137,7 @@ class Interpretador implements InterpretadorConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 15; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
