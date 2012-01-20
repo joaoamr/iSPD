@@ -410,7 +410,9 @@
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder justification="2" title="Escalonadores"/>
+                    <TitledBorder justification="2" title="Scheduler">
+                      <ResourceString PropertyName="titleX" bundle="ispd/idioma/Idioma_en_US.properties" key="Scheduler" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+                    </TitledBorder>
                   </Border>
                 </Property>
                 <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">

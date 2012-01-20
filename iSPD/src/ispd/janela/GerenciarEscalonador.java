@@ -208,7 +208,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         });
         jToolBar1.add(jButtonCompilar);
 
-        jListEscalonadores.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Escalonadores", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        jListEscalonadores.setBorder(javax.swing.BorderFactory.createTitledBorder(null, palavras.getString("Scheduler"), javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION)); // NOI18N
         jListEscalonadores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jListEscalonadores.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
