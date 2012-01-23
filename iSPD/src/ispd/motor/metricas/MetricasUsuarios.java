@@ -104,6 +104,34 @@ public class MetricasUsuarios {
             return -1;
         }
     }
+    
+    public double getMflopsTarefasSubmetidas(String user) {
+        int index = usuarios.indexOf(user);
+        if (index != -1) {
+            double mflops = 0;
+            for(Object tar : tarefasSubmetidas.get(index)){
+                Tarefa tarefa = (Tarefa) tar;
+                mflops += tarefa.getTamProcessamento();
+            }
+            return mflops;
+        } else {
+            return -1;
+        }
+    }
+    
+    public double getMflopsTarefasConcluidas(String user) {
+        int index = usuarios.indexOf(user);
+        if (index != -1) {
+            double mflops = 0;
+            for(Object tar : tarefasConcluidas.get(index)){
+                Tarefa tarefa = (Tarefa) tar;
+                mflops += tarefa.getTamProcessamento();
+            }
+            return mflops;
+        } else {
+            return -1;
+        }
+    }
 
     public List<List> getTarefasConcluidas() {
         return tarefasConcluidas;

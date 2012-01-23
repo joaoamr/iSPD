@@ -31,55 +31,63 @@ public interface InterpretadorConstants {
   /** RegularExpression Id. */
   int RANDOM = 10;
   /** RegularExpression Id. */
-  int CRESCENT = 11;
+  int FIFO = 11;
   /** RegularExpression Id. */
-  int DECREASING = 12;
+  int CRESCENT = 12;
   /** RegularExpression Id. */
-  int RESOURCE = 13;
+  int DECREASING = 13;
   /** RegularExpression Id. */
-  int tTamComp = 14;
+  int RESOURCE = 14;
   /** RegularExpression Id. */
-  int tTamComu = 15;
+  int RESTRICT = 15;
   /** RegularExpression Id. */
-  int tNumTarSub = 16;
+  int PER = 16;
   /** RegularExpression Id. */
-  int tNumTarConc = 17;
+  int USER = 17;
   /** RegularExpression Id. */
-  int tPoderUser = 18;
+  int tTamComp = 18;
   /** RegularExpression Id. */
-  int tTempSubm = 19;
+  int tTamComu = 19;
   /** RegularExpression Id. */
-  int rPodeProc = 20;
+  int tNumTarSub = 20;
   /** RegularExpression Id. */
-  int rLinkComu = 21;
+  int tNumTarConc = 21;
   /** RegularExpression Id. */
-  int rtamCompTar = 22;
+  int tPoderUser = 22;
   /** RegularExpression Id. */
-  int rtamComuTar = 23;
+  int tTempSubm = 23;
   /** RegularExpression Id. */
-  int numTarExec = 24;
+  int rPodeProc = 24;
   /** RegularExpression Id. */
-  int mflopProce = 25;
+  int rLinkComu = 25;
   /** RegularExpression Id. */
-  int mult = 26;
+  int rtamCompTar = 26;
   /** RegularExpression Id. */
-  int div = 27;
+  int rtamComuTar = 27;
   /** RegularExpression Id. */
-  int sub = 28;
+  int numTarExec = 28;
   /** RegularExpression Id. */
-  int add = 29;
+  int mflopProce = 29;
   /** RegularExpression Id. */
-  int lparen = 30;
+  int mult = 30;
   /** RegularExpression Id. */
-  int rparen = 31;
+  int div = 31;
   /** RegularExpression Id. */
-  int inteiro = 32;
+  int sub = 32;
   /** RegularExpression Id. */
-  int real = 33;
+  int add = 33;
   /** RegularExpression Id. */
-  int nome = 34;
+  int lparen = 34;
   /** RegularExpression Id. */
-  int invalido = 46;
+  int rparen = 35;
+  /** RegularExpression Id. */
+  int inteiro = 36;
+  /** RegularExpression Id. */
+  int real = 37;
+  /** RegularExpression Id. */
+  int nome = 38;
+  /** RegularExpression Id. */
+  int invalido = 50;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -101,9 +109,13 @@ public interface InterpretadorConstants {
     "\"TIME\"",
     "\"INTERVAL\"",
     "\"RANDOM\"",
+    "\"FIFO\"",
     "\"CRESCENT\"",
     "\"DECREASING\"",
     "\"RESOURCE\"",
+    "\"RESTRICT\"",
+    "\"PER\"",
+    "\"USER\"",
     "\"[TCP]\"",
     "\"[TC]\"",
     "\"[NTS]\"",
@@ -131,9 +143,9 @@ public interface InterpretadorConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"*/\"",
-    "<token of kind 41>",
-    "<token of kind 42>",
-    "<token of kind 43>",
+    "<token of kind 45>",
+    "<token of kind 46>",
+    "<token of kind 47>",
     "\"/*\"",
     "\"//\"",
     "<invalido>",

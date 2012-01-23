@@ -150,6 +150,7 @@
                                       <Component id="jRadioButtonP2Tempo" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="jRadioButtonP2Chegada" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="jRadioButtonP2Saida" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jRadioButtonP2concluida" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -172,7 +173,7 @@
                           <Component id="jLabelP2Forma" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="42" max="32767" attributes="0"/>
+                  <EmptySpace pref="38" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -209,6 +210,8 @@
                   <Component id="jRadioButtonP2Chegada" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jRadioButtonP2Saida" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP2concluida" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -326,6 +329,17 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP2DistribuidaActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonP2concluida">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Task completed" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP2concluidaActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -711,10 +725,10 @@
             <Component class="javax.swing.JButton" name="jButtonP4TComputacao">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Computational Size" replaceFormat="palavras.getString(&quot;{key}&quot;) + &quot; - TCP&quot;"/>
+                  <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Computational size" replaceFormat="palavras.getString(&quot;{key}&quot;) + &quot; - TCP&quot;"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Computational Size" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Computational size" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -828,6 +842,7 @@
                           <Component id="jRadioButtonP4Crescente" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP4Decrescente" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP4Random" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jRadioButtonP4FIFO" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -842,7 +857,9 @@
                       <Component id="jRadioButtonP4Decrescente" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jRadioButtonP4Random" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="136" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jRadioButtonP4FIFO" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="113" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -886,6 +903,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP4RandomActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jRadioButtonP4FIFO">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="FIFO"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP4FIFOActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -1265,8 +1290,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="jButtonP5MflopExec">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Mflops em Execu&#xe7;&#xe3;o - MFE"/>
-                <Property name="toolTipText" type="java.lang.String" value="null"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Running Mflops" replaceFormat="palavras.getString(&quot;{key}&quot;) + &quot; - MFE&quot;"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonP5MflopExecActionPerformed"/>
@@ -1294,6 +1320,7 @@
                           <Component id="jRadioButtonP5Crescente" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP5Random" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jRadioButtonP5Decrescente" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jRadioButtonP5FIFO" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -1308,7 +1335,9 @@
                       <Component id="jRadioButtonP5Decrescente" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jRadioButtonP5Random" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="136" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jRadioButtonP5FIFO" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="113" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1354,6 +1383,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP5RandomActionPerformed"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JRadioButton" name="jRadioButtonP5FIFO">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="FIFO"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP5FIFOActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>
@@ -1381,6 +1419,7 @@
                   <Component id="jPanel8" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1389,8 +1428,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
                       <Component id="jPanel7" alignment="0" max="32767" attributes="0"/>
+                      <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -1417,7 +1456,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="292" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="280" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1440,7 +1479,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList2">
+                <Component class="javax.swing.JList" name="jListRecurso">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1449,14 +1488,10 @@
                         </TitledBorder>
                       </Border>
                     </Property>
-                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Round-Robin (Fila circular)"/>
-                        <StringItem index="1" value="Recurso de maior poder computacional  livre"/>
-                        <StringItem index="2" value="Recurso com menor carga de trabalho"/>
-                        <StringItem index="3" value="Recurso com melhor link de comunica&#xe7;&#xe3;o"/>
-                      </StringArray>
+                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="this.simplesRecurso()" type="code"/>
                     </Property>
+                    <Property name="selectionMode" type="int" value="0"/>
                     <Property name="selectedIndex" type="int" value="0"/>
                   </Properties>
                 </Component>
@@ -1483,7 +1518,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="309" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="297" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1506,7 +1541,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList1">
+                <Component class="javax.swing.JList" name="jListTarefa">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1515,16 +1550,10 @@
                         </TitledBorder>
                       </Border>
                     </Property>
-                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                      <StringArray count="6">
-                        <StringItem index="0" value="FIFO (First In, First Out)"/>
-                        <StringItem index="1" value="Maior Tarefa Primeiro (Custo de Processamento)"/>
-                        <StringItem index="2" value="Menor Tarefa Primeiro (Custo de Processamento)"/>
-                        <StringItem index="3" value="Maior Tarefa Primeiro (Custo de Comunica&#xe7;&#xe3;o)"/>
-                        <StringItem index="4" value="Menor Tarefa Primeiro (Custo de Comunica&#xe7;&#xe3;o)"/>
-                        <StringItem index="5" value="Usu&#xe1;rio com Menos Uso da Grade Primeiro"/>
-                      </StringArray>
+                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="simplesTarefa()" type="code"/>
                     </Property>
+                    <Property name="selectionMode" type="int" value="0"/>
                     <Property name="selectedIndex" type="int" value="0"/>
                   </Properties>
                 </Component>
@@ -1535,6 +1564,142 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanelPasso6">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Restrictions">
+              <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                <LineBorder/>
+              </Border>
+              <ResourceString PropertyName="titleX" bundle="ispd/idioma/Idioma_en_US.properties" key="Restrictions" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <Font PropertyName="font" name="Comic Sans MS" size="12" style="1"/>
+            </TitledBorder>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6SemRestricao" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="359" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6PorUsuario" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="219" max="32767" attributes="0"/>
+              </Group>
+              <Component id="jSeparatorP6" alignment="1" pref="460" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabelP6_1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jTextFieldP6Num" min="-2" pref="57" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabelP6_2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="62" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6PorRecurso" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="199" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6SemRestricao" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6PorRecurso" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonP6PorUsuario" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jSeparatorP6" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabelP6_1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextFieldP6Num" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabelP6_2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JSeparator" name="jSeparatorP6">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" red="0" type="rgb"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonP6SemRestricao">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="No restrictions" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP6SemRestricaoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonP6PorRecurso">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Limit the number of tasks submitted by resource" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP6PorRecursoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="jRadioButtonP6PorUsuario">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Limit the number of tasks submitted by user" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonP6PorUsuarioActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabelP6_1">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="The scheduler stop when there are more than" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="jTextFieldP6Num">
+          <Properties>
+            <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+              <Format subtype="1" type="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="1"/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Cursor padr&#xe3;o"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabelP6_2">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="tasks in all resources." replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanelPasso7">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1576,7 +1741,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextPane" name="jTextPaneP6Gramatica">
+            <Component class="javax.swing.JTextPane" name="jTextPaneP7Gramatica">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
@@ -1669,8 +1834,9 @@
                       <Component id="jLabelPasso2" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelPasso4" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelPasso5" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabelPasso6" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelPasso3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabelPasso6" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabelPasso7" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -1693,7 +1859,9 @@
                   <Component id="jLabelPasso5" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabelPasso6" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="282" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabelPasso7" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="262" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1751,7 +1919,15 @@
         <Component class="javax.swing.JLabel" name="jLabelPasso6">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Finish" replaceFormat="&quot;6 - &quot; + palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Restrictions" replaceFormat="&quot;6 - &quot; + palavras.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabelPasso7">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Finish" replaceFormat="&quot;7 - &quot; + palavras.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>

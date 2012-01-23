@@ -100,6 +100,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jTable1 = new javax.swing.JTable();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
+        jButtonAddTabela1 = new javax.swing.JButton();
         jPanelModo = new javax.swing.JPanel();
         jRadioButtonTraces = new javax.swing.JRadioButton();
         jRadioButtonForNode = new javax.swing.JRadioButton();
@@ -294,6 +295,13 @@ public class SelecionaCargas extends javax.swing.JDialog {
 
         jLabel16.setText(palavras.getString("Minimum")); // NOI18N
 
+        jButtonAddTabela1.setText(palavras.getString("Remove")); // NOI18N
+        jButtonAddTabela1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddTabela1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelForNodeLayout = new javax.swing.GroupLayout(jPanelForNode);
         jPanelForNode.setLayout(jPanelForNodeLayout);
         jPanelForNodeLayout.setHorizontalGroup(
@@ -311,16 +319,19 @@ public class SelecionaCargas extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jComboBoxEscalonadores, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel12))
-                                .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanelForNodeLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabelNumberOfTasks1))
-                                    .addGroup(jPanelForNodeLayout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addComponent(jSpinnerNumTarefasNo, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))))
-                            .addComponent(jButtonAddTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel12)))
+                            .addComponent(jButtonAddTabela, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
+                        .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanelForNodeLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabelNumberOfTasks1))
+                            .addGroup(jPanelForNodeLayout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(jSpinnerNumTarefasNo, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                            .addGroup(jPanelForNodeLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonAddTabela1, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanelForNodeLayout.createSequentialGroup()
                                 .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,7 +347,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                             .addComponent(jSpinnerMaxComuNo, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSpinnerMinComuNo, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
         jPanelForNodeLayout.setVerticalGroup(
             jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,12 +369,17 @@ public class SelecionaCargas extends javax.swing.JDialog {
                     .addComponent(jSpinnerMaxComuNo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel16)
-                        .addComponent(jSpinnerMinCompNo, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
-                        .addComponent(jSpinnerMinComuNo, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
-                    .addComponent(jButtonAddTabela))
-                .addGap(18, 18, 18)
+                    .addGroup(jPanelForNodeLayout.createSequentialGroup()
+                        .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel16)
+                            .addComponent(jSpinnerMinCompNo, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                            .addComponent(jSpinnerMinComuNo, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
+                        .addGap(18, 18, 18))
+                    .addGroup(jPanelForNodeLayout.createSequentialGroup()
+                        .addGroup(jPanelForNodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonAddTabela)
+                            .addComponent(jButtonAddTabela1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -575,8 +591,19 @@ public class SelecionaCargas extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.setVisible(false);
     }//GEN-LAST:event_jButtonCancelarActionPerformed
+
+    private void jButtonAddTabela1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddTabela1ActionPerformed
+        // TODO add your handling code here:
+        int linha = jTable1.getSelectedRow();
+        if(linha >= 0 || linha < tabelaLinha.size()){
+            tabelaLinha.remove(linha);
+        }
+        jScrollPaneTabela.setViewportView(jTable1);
+    }//GEN-LAST:event_jButtonAddTabela1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddTabela;
+    private javax.swing.JButton jButtonAddTabela1;
     private javax.swing.JButton jButtonAddUser;
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonOK1;

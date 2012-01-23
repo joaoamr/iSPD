@@ -406,6 +406,7 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                     dadosGrafico.setValue(valor, "vermelho", maq.getId());
                 } else {
                     dadosGrafico.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
+                    maqNomes.add(maq.getId());
                 }
             }
         }
@@ -458,6 +459,7 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                     dadosGrafico.setValue(maq.getId(), valor);
                 } else {
                     dadosGrafico.insertValue(0, maq.getId(), maq.getMetrica().getMFlopsProcessados());
+                    maqNomes.add(maq.getId());
                 }
             }
         }

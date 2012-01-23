@@ -156,11 +156,19 @@ class Interpretador{
                 if(!imports.contains("import java.util.Random;")){
                     imports = "import java.util.Random;\n" + imports;
                 }
-                if(!variavel.contains("Random sorteio = new Random();")){
-                    variavel += "Random sorteio = new Random();\n";
+                if(!variavel.contains("private Random sorteio = new Random();")){
+                    variavel += "private Random sorteio = new Random();\n";
                 }
-                tarefa = "  int tar = sorteio.nextInt(tarefas.size());\n"
-                        +"  return tarefas.remove(tar);\n";
+                tarefa = "  if (!tarefas.isEmpty()) {\n"
+                        +"      int tar = sorteio.nextInt(tarefas.size());\n"
+                        +"      return tarefas.remove(tar);\n"
+                        +"  }\n"
+                        +"  return null;\n";
+            }else if("fifo".equals(valor)){
+                tarefa = "  if (!tarefas.isEmpty()) {\n"
+                        +"      return tarefas.remove(0);\n"
+                        +"  }\n"
+                        +"  return null;\n";
             }else if("formula".equals(valor)){
                 String ordenac = " < ";
                 if(tarefaCrescente) ordenac = " > ";
@@ -187,11 +195,30 @@ class Interpretador{
                 if(!imports.contains("import java.util.Random;")){
                     imports = "import java.util.Random;\n" + imports;
                 }
-                if(!variavel.contains("Random sorteio = new Random();")){
+                if(!variavel.contains("private Random sorteio = new Random();")){
                     variavel += "Random sorteio = new Random();\n";
                 }
                 recurso = "  int rec = sorteio.nextInt(escravos.size());\n"
                          +"  return escravos.get(rec);\n";
+            }else if("fifo".equals(valor)){
+                if(!imports.contains("import java.util.ListIterator;")){
+                    imports = "import java.util.ListIterator;\n" + imports;
+                }
+                if(!variavel.contains("private ListIterator<CS_Processamento> recursos;")){
+                    variavel += "private ListIterator<CS_Processamento> recursos;\n";
+                }
+                if(!iniciar.contains("recursos = escravos.listIterator(0);")){
+                    iniciar += "    recursos = escravos.listIterator(0);\n";
+                }
+                recurso = "  if(!escravos.isEmpty()){\n"
+                         +"      if (recursos.hasNext()) {\n"
+                         +"          return recursos.next();\n"
+                         +"      }else{\n"
+                         +"          recursos = escravos.listIterator(0);\n"
+                         +"          return recursos.next();\n"
+                         +"      }\n"
+                         +"  }\n"
+                         +"  return null;\n";
             }else if("formula".equals(valor)){
                 String ordenac = " < ";
                 if(recursoCrescente) ordenac = " > ";
@@ -219,6 +246,75 @@ class Interpretador{
 
         public void addConstanteRecurso(String valor) {
             recursoExpressao += valor;
+        }
+
+        public void limite(String valorInteiro, boolean porRecurso){
+            if(porRecurso){
+                metodosPrivate += "private boolean condicoesEscalonamento() {\n"
+                                 +"    int cont = 1;\n"
+                                 +"    for (List tarefasNoRecurso : tarExecRec) {\n"
+                                 +"        if (tarefasNoRecurso.size() > 1) {\n"
+                                 +"            cont++;\n"
+                                 +"        }\n"
+                                 +"    }\n"
+                                 +"    if(cont >= tarExecRec.size()){\n"
+                                 +"        mestre.setTipoEscalonamento(mestre.QUANDO_RECEBE_RESULTADO);\n"
+                                 +"        return false;\n"
+                                 +"    }\n"
+                                 +"    mestre.setTipoEscalonamento(mestre.ENQUANTO_HOUVER_TAREFAS);\n"
+                                 +"    return true;\n"
+                                 +"}\n\n";
+                if(!variavel.contains("tarExecRec")){
+                    variavel += "private List<List> tarExecRec;\n";
+                }
+                if(!iniciar.contains("tarExecRec")){
+                    iniciar += "    tarExecRec = new ArrayList<List>(escravos.size());\n"
+                              +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                              +"        tarExecRec.add(new ArrayList<Tarefa>());\n"
+                              +"    }\n";
+                }
+                if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
+                      metodosPrivate += "private void addTarefasEnviadas(){\n"
+                                       +"    if(tarefaSelecionada != null){\n"
+                                       +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                       +"        tarExecRec.get(index).add(tarefaSelecionada);\n"
+                                       +"    }\n"
+                                       +"}\n\n";
+                }
+                if(!escalonar.contains("if (condicoesEscalonamento())")){
+                    escalonar = "tarefaSelecionada = null;\n"
+                               +"if (condicoesEscalonamento())\n"
+                               + escalonar;
+                }
+                if(!ifEscalonar.contains("addTarefasEnviadas();")){
+                    ifEscalonar += "addTarefasEnviadas();\n";
+                }
+                decAddTarefaConcluida =   "@Override\n"
+                                         +"public void addTarefaConcluida(Tarefa tarefa) {\n"
+                                         +"    super.addTarefaConcluida(tarefa);\n";
+                addTarefaConcluida =      addTarefaConcluida
+                                         +"    for (int i = 0; i < escravos.size(); i++) {\n"
+                                         +"        if (tarExecRec.get(i).contains(tarefa)) {\n"
+                                         +"            tarExecRec.get(i).remove(tarefa);\n"
+                                         +"        }\n"
+                                         +"    }\n";
+                fimAddTarefaConcluida =   "}\n\n";
+            } else {
+                metodosPrivate += "private boolean  condicoesEscalonamento() {\n"
+                                 +"    int cont = 1;\n"
+                                 +"    for (String usuario : metricaUsuarios.getUsuarios()) {\n"
+                                 +"        if( (metricaUsuarios.getSizeTarefasSubmetidas(usuario) - metricaUsuarios.getSizeTarefasConcluidas(usuario) ) > "+valorInteiro+"){\n"
+                                 +"            cont++;\n"
+                                 +"        }\n"
+                                 +"    }\n"
+                                 +"    if(cont >= metricaUsuarios.getUsuarios().size()){\n"
+                                 +"        mestre.setTipoEscalonamento(mestre.QUANDO_RECEBE_RESULTADO);\n"
+                                 +"        return false;\n"
+                                 +"    }\n"
+                                 +"    mestre.setTipoEscalonamento(mestre.ENQUANTO_HOUVER_TAREFAS);\n"
+                                 +"    return true;\n"
+                                 +"}\n\n";
+            }
         }
         
         public void addExpressaoTarefa(int tipoToken){
@@ -343,6 +439,9 @@ class Interpretador{
               break;
             case rLinkComu:
               recursoExpressao += "rLinkComu";
+              if(!imports.contains("import ispd.motor.filas.servidores.CS_Comunicacao;")){
+                imports = "import ispd.motor.filas.servidores.CS_Comunicacao;\n" + imports;
+              }
               if(!declararVariaveisRecurso.contains("rLinkComu")){
                 declararVariaveisRecurso += "double rLinkComu = calcularBandaLink(escravos.get(0));\n";
               }
@@ -384,14 +483,24 @@ class Interpretador{
               if(!variavel.contains("tarExecRec")){
                   variavel += "private List<List> tarExecRec;\n";
               }
+              if(!metodosPrivate.contains("private void addTarefasEnviadasNum(){")){
+                  metodosPrivate += "private void addTarefasEnviadasNum(){\n"
+                                   +"    if(tarefaSelecionada != null){\n"
+                                   +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                   +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\n"
+                                   +"    }\n"
+                                   +"}\n\n";
+              }
               if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
                   metodosPrivate += "private void addTarefasEnviadas(){\n"
                                    +"    if(tarefaSelecionada != null){\n"
                                    +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
-                                   +"        numTarExecRec.set(index,numTarExecRec.get(index)+1);\n"
                                    +"        tarExecRec.get(index).add(tarefaSelecionada);\n"
                                    +"    }\n"
                                    +"}\n\n";
+              }
+              if(!ifEscalonar.contains("addTarefasEnviadasNum();")){
+                  ifEscalonar += "addTarefasEnviadasNum();\n";
               }
               if(!ifEscalonar.contains("addTarefasEnviadas();")){
                   ifEscalonar += "addTarefasEnviadas();\n";
@@ -415,7 +524,7 @@ class Interpretador{
                   decAddTarefaConcluida = "@Override\n"
                                          +"public void addTarefaConcluida(Tarefa tarefa) {\n"
                                          +"    super.addTarefaConcluida(tarefa);\n";
-                  addTarefaConcluida +=   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\n"
+                  addTarefaConcluida =   "    int index = escravos.indexOf(tarefa.getLocalProcessamento());\n"
                                          +"    if(index != -1){\n"
                                          +"        numTarExecRec.set(index, numTarExecRec.get(index) - 1);\n"
                                          +"    } else {\n"
@@ -425,23 +534,9 @@ class Interpretador{
                                          +"                tarExecRec.get(i).remove(tarefa);\n"
                                          +"            }\n"
                                          +"        }\n"
-                                         +"    }\n";
+                                         +"    }\n" + addTarefaConcluida;
                   fimAddTarefaConcluida = "}\n\n";
               }
-              /*if(dinamico){
-                  if(!resultadoAtualizar.contains("numTarExecRec")){
-                      decResultadoAtualizar = "@Override\n"
-                                             +"public void resultadoAtualizar(Mensagem mensagem){\n";
-                      resultadoAtualizar +=   "    int index = escravos.indexOf(mensagem.getOrigem());\n"
-                                             +"    if(index != -1){\n"
-                                             +"        numTarExecRec.set(index,0);\n"
-                                             +"    }\n";
-                      fimResultadoAtualizar = "}\n\n";
-                  }
-                  if(!imports.contains("import ispd.motor.filas.Mensagem;")){
-                      imports = "import ispd.motor.filas.Mensagem;\n" + imports;
-                  }
-              }*/
               if(!declararVariaveisRecurso.contains("numTarExec")){
                 if(dinamico)
                     declararVariaveisRecurso += "int numTarExec = numTarExecRec.get(0) + escravos.get(0).getInformacaoDinamicaFila().size();\n";
@@ -466,6 +561,9 @@ class Interpretador{
               if(!ifEscalonar.contains("addTarefasEnviadasMflop();")){
                   ifEscalonar += "addTarefasEnviadasMflop();\n";
               }
+              if(!ifEscalonar.contains("addTarefasEnviadas();")){
+                  ifEscalonar += "addTarefasEnviadas();\n";
+              }
               if(!iniciar.contains("mflopProceRec")){
                   iniciar += "    mflopProceRec = new ArrayList<Double>(escravos.size());\n"
                             +"    for (int i = 0; i < escravos.size(); i++) {\n"
@@ -483,9 +581,14 @@ class Interpretador{
                                    +"    if(tarefaSelecionada != null){\n"
                                    +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
                                    +"        mflopProceRec.set(index,mflopProceRec.get(index)+tarefaSelecionada.getTamProcessamento());\n"
-                                   +"        if (!tarExecRec.contains(tarefaSelecionada)) {"
-                                   +"             tarExecRec.get(index).add(tarefaSelecionada);\n"
-                                   +"        }\n"
+                                   +"    }\n"
+                                   +"}\n\n";
+              }
+              if(!metodosPrivate.contains("private void addTarefasEnviadas(){")){
+                  metodosPrivate += "private void addTarefasEnviadas(){\n"
+                                   +"    if(tarefaSelecionada != null){\n"
+                                   +"        int index = escravos.indexOf(tarefaSelecionada.getLocalProcessamento());\n"
+                                   +"        tarExecRec.get(index).add(tarefaSelecionada);\n"
                                    +"    }\n"
                                    +"}\n\n";
               }
@@ -493,7 +596,7 @@ class Interpretador{
                   decAddTarefaConcluida = "@Override\n"
                                          +"public void addTarefaConcluida(Tarefa tarefa) {\n"
                                          +"    super.addTarefaConcluida(tarefa);\n";
-                  addTarefaConcluida +=   "    int index2 = escravos.indexOf(tarefa.getLocalProcessamento());\n"
+                  addTarefaConcluida  =   "    int index2 = escravos.indexOf(tarefa.getLocalProcessamento());\n"
                                          +"    if(index2 != -1){\n"
                                          +"        mflopProceRec.set(index2, mflopProceRec.get(index2) - tarefa.getTamProcessamento());\n"
                                          +"    } else {\n"
@@ -502,18 +605,28 @@ class Interpretador{
                                          +"                mflopProceRec.set(i, mflopProceRec.get(i) - tarefa.getTamProcessamento());\n"
                                          +"            }\n"
                                          +"        }\n"
-                                         +"    }\n";
+                                         +"    }\n" + addTarefaConcluida;
                   fimAddTarefaConcluida = "}\n\n";
+              }
+              if(dinamico && !metodosPrivate.contains("private Double mflopsNoRecIndex(int index)")){
+                    metodosPrivate += "private double mflopsNoRecIndex(int index) {\n"
+                                     +"    double mflops = 0;\n"
+                                     +"    for(Object tar : escravos.get(index).getInformacaoDinamicaFila()){\n"
+                                     +"        Tarefa tarefa = (Tarefa) tar;\n"
+                                     +"        mflops += tarefa.getTamProcessamento();\n"
+                                     +"    }\n"
+                                     +"    return mflops;\n"
+                                     +"}\n\n";
               }
               if(!declararVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
-                    declararVariaveisRecurso += "\n";
+                    declararVariaveisRecurso += "double mflopProce = mflopProceRec.get(0) + mflopsNoRecIndex(0);\n";
                 else
                     declararVariaveisRecurso += "double mflopProce = mflopProceRec.get(0);\n";
               }
               if(!carregarVariaveisRecurso.contains("mflopProce")){
                 if(dinamico)
-                    carregarVariaveisRecurso += "\n";
+                    carregarVariaveisRecurso += "mflopProce = mflopProceRec.get(i) + mflopsNoRecIndex(i);\n";
                 else
                     carregarVariaveisRecurso += "mflopProce = mflopProceRec.get(i);\n";
               }
@@ -611,9 +724,13 @@ TOKEN:	{
         <TIME:	     "TIME">       |
 	<INTERVAL:   "INTERVAL">   |
 	<RANDOM:     "RANDOM">     |
+        <FIFO:       "FIFO">       |
         <CRESCENT:   "CRESCENT">   |
 	<DECREASING: "DECREASING"> |
-	<RESOURCE:   "RESOURCE">
+	<RESOURCE:   "RESOURCE">   |
+        <RESTRICT:   "RESTRICT">   |
+        <PER:        "PER">        |
+        <USER:       "USER">
 	}
 
 // Variaveis
@@ -729,8 +846,21 @@ void Caracteristica():
 
 }
 {
-	<STATIC> { estatico(); } |
-        <DYNAMIC> tipo_atualizacao()
+	[ limite_tarefas() ]
+        (
+            <STATIC> { estatico(); } |
+            <DYNAMIC> tipo_atualizacao()
+        )
+}
+
+void limite_tarefas():
+{
+    Token t;
+}
+{
+    <RESTRICT> t = <inteiro> <TASK> <PER>
+        ( <RESOURCE> { limite(t.image, true);  } |
+          <USER>     { limite(t.image, false); } )
 }
 
 void tipo_atualizacao():
@@ -766,6 +896,10 @@ void formula(boolean tarefa):
                  formulaTarefa("random");
                else
                  formulaRecurso("random"); } |
+    <FIFO> { if(tarefa)
+                 formulaTarefa("fifo");
+               else
+                 formulaRecurso("fifo"); } |
     <CRESCENT> { if(tarefa)
                    setTarefaCrescente(true);
                  else

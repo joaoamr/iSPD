@@ -26,9 +26,7 @@ public class CS_Maquina extends CS_Processamento {
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private List<Tarefa> tarefaEmExecucao;
-    public int cont = 0;
-    public int cancel = 0;
-
+    
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -101,7 +99,6 @@ public class CS_Maquina extends CS_Processamento {
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        cont++;
         //Incrementa o número de Mbits transmitido por este link
         this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento());
         //Incrementa o tempo de transmissão
@@ -202,7 +199,6 @@ public class CS_Maquina extends CS_Processamento {
                 }
                 switch (cliente.getTipo()) {
                     case Mensagem.CANCELAR:
-                        cancel++;
                         double inicioAtendimento = cliente.getTarefa().cancelar(simulacao.getTime());
                         double tempoProc = simulacao.getTime() - inicioAtendimento;
                         double mflopsProcessados = this.getMflopsProcessados(tempoProc);

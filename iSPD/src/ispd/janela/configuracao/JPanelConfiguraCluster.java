@@ -467,7 +467,7 @@ public class JPanelConfiguraCluster extends javax.swing.JPanel {
         jTableDouble.setValueAt(palavras.getString("Bandwidth:"), 1, 0);
         jTableDouble.setValueAt(palavras.getString("Latency:"), 2, 0);
         jTableMestre.setValueAt(palavras.getString("MASTER"), 0, 0);
-        jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
+        jTableComboBox.setValueAt(palavras.getString("Scheduler") + ":", 0, 0);
     }
 
     public void setUsuarios(HashSet<String> usuarios) {

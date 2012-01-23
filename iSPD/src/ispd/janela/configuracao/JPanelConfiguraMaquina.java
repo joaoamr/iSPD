@@ -474,7 +474,7 @@ public class JPanelConfiguraMaquina extends javax.swing.JPanel {
         jTableDouble.setValueAt(palavras.getString("Processing:"), 0, 0);
         jTableDouble.setValueAt(palavras.getString("Load Factor:"), 1, 0);
         jTableMestre.setValueAt(palavras.getString("MASTER"), 0, 0);
-        jTableComboBox.setValueAt(palavras.getString("Scheduler:"), 0, 0);
+        jTableComboBox.setValueAt(palavras.getString("Scheduler") + ":", 0, 0);
         jListEscravo.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Slave Nodes:")));
     }
 
