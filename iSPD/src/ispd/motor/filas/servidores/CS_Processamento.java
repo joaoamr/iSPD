@@ -4,6 +4,9 @@
  */
 package ispd.motor.filas.servidores;
 
+import ispd.motor.filas.servidores.implementacao.CS_Link;
+import ispd.motor.filas.servidores.implementacao.CS_Switch;
+import ispd.motor.filas.servidores.implementacao.CS_Internet;
 import ispd.escalonador.Mestre;
 import ispd.motor.metricas.MetricasProcessamento;
 import java.util.ArrayList;

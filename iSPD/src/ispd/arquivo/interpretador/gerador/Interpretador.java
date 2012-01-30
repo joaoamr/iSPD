@@ -398,7 +398,11 @@ class Interpretador implements InterpretadorConstants {
               }
               break;
             default:
-              tarefaExpressao += "VAR";
+              Token t = getToken(1);
+              addErro("Erro semantico encontrado na linha "+t.endLine+", coluna "+t.endColumn);
+              erroEncontrado = true;
+              consomeTokens();
+              resuladoParser();
             }
         }
 
@@ -626,7 +630,11 @@ class Interpretador implements InterpretadorConstants {
               }
               break;
             default:
-              recursoExpressao += "VAR";
+              Token t = getToken(1);
+              addErro("Erro semantico encontrado na linha "+t.endLine+", coluna "+t.endColumn);
+              erroEncontrado = true;
+              consomeTokens();
+              resuladoParser();
             }
         }
 
@@ -758,8 +766,7 @@ class Interpretador implements InterpretadorConstants {
     Token t;
     jj_consume_token(RESTRICT);
     t = jj_consume_token(inteiro);
-    jj_consume_token(TASK);
-    jj_consume_token(PER);
+    jj_consume_token(TASKPER);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case RESOURCE:
       jj_consume_token(RESOURCE);
@@ -786,9 +793,9 @@ class Interpretador implements InterpretadorConstants {
         jj_consume_token(ENTRY);
                        dinamico("in");
         break;
-      case OUTPUT:
-        jj_consume_token(OUTPUT);
-                       dinamico("out");
+      case DISPACTH:
+        jj_consume_token(DISPACTH);
+                         dinamico("out");
         break;
       case COMPLETED:
         jj_consume_token(COMPLETED);
@@ -882,10 +889,12 @@ class Interpretador implements InterpretadorConstants {
   }
 
   final public void expressao(boolean tarefa) throws ParseException {
-    expressao2(tarefa);
+    operando(tarefa);
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case mult:
+      case div:
       case sub:
       case add:
         ;
@@ -894,6 +903,78 @@ class Interpretador implements InterpretadorConstants {
         jj_la1[8] = jj_gen;
         break label_2;
       }
+      operador(tarefa);
+      operando(tarefa);
+    }
+  }
+
+/*void expressao(boolean tarefa):
+{
+}
+{
+    expressao2(tarefa) ( 
+    ( <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); } | 
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); })
+      expressao2(tarefa) )*
+}
+
+void expressao2(boolean tarefa):
+{
+}
+{
+    expressao3(tarefa) ( 
+    ( <div> { if(tarefa)
+                addExpressaoTarefa(div);
+              else
+                addExpressaoRecurso(div); } |
+      <mult> { if(tarefa)
+                addExpressaoTarefa(mult);
+              else
+                addExpressaoRecurso(mult); } )
+      expressao3(tarefa) )*
+}
+
+void expressao3(boolean tarefa):
+{
+}
+{
+    [ <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); } |
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); } ]
+      expressao4(tarefa)
+}
+
+void expressao4(boolean tarefa):
+{
+}
+{
+    variavel(tarefa)  |
+    constante(tarefa) |
+    <lparen> { if(tarefa)
+                addExpressaoTarefa(lparen);
+              else
+                addExpressaoRecurso(lparen); }
+    expressao(tarefa)
+    <rparen> { if(tarefa)
+                addExpressaoTarefa(rparen);
+              else
+                addExpressaoRecurso(rparen); }
+}*/
+  final public void operando(boolean tarefa) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case sub:
+    case add:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case add:
         jj_consume_token(add);
@@ -914,80 +995,11 @@ class Interpretador implements InterpretadorConstants {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      expressao2(tarefa);
-    }
-  }
-
-  final public void expressao2(boolean tarefa) throws ParseException {
-    expressao3(tarefa);
-    label_3:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case mult:
-      case div:
-        ;
-        break;
-      default:
-        jj_la1[10] = jj_gen;
-        break label_3;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case div:
-        jj_consume_token(div);
-              if(tarefa)
-                addExpressaoTarefa(div);
-              else
-                addExpressaoRecurso(div);
-        break;
-      case mult:
-        jj_consume_token(mult);
-               if(tarefa)
-                addExpressaoTarefa(mult);
-              else
-                addExpressaoRecurso(mult);
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-      expressao3(tarefa);
-    }
-  }
-
-  final public void expressao3(boolean tarefa) throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case sub:
-    case add:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case add:
-        jj_consume_token(add);
-              if(tarefa)
-                addExpressaoTarefa(add);
-              else
-                addExpressaoRecurso(add);
-        break;
-      case sub:
-        jj_consume_token(sub);
-              if(tarefa)
-                addExpressaoTarefa(sub);
-              else
-                addExpressaoRecurso(sub);
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[10] = jj_gen;
       ;
     }
-    expressao4(tarefa);
-  }
-
-  final public void expressao4(boolean tarefa) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case tTamComp:
     case tTamComu:
@@ -1020,7 +1032,44 @@ class Interpretador implements InterpretadorConstants {
                 addExpressaoRecurso(rparen);
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[11] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  final public void operador(boolean tarefa) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case div:
+      jj_consume_token(div);
+              if(tarefa)
+                addExpressaoTarefa(div);
+              else
+                addExpressaoRecurso(div);
+      break;
+    case mult:
+      jj_consume_token(mult);
+               if(tarefa)
+                addExpressaoTarefa(mult);
+              else
+                addExpressaoRecurso(mult);
+      break;
+    case add:
+      jj_consume_token(add);
+              if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add);
+      break;
+    case sub:
+      jj_consume_token(sub);
+              if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub);
+      break;
+    default:
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1113,7 +1162,7 @@ class Interpretador implements InterpretadorConstants {
                      addExpressaoRecurso(mflopProce);
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1138,7 +1187,7 @@ class Interpretador implements InterpretadorConstants {
                  addConstanteRecurso(t.image);
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[14] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1154,7 +1203,7 @@ class Interpretador implements InterpretadorConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[17];
+  final private int[] jj_la1 = new int[15];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -1162,10 +1211,10 @@ class Interpretador implements InterpretadorConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x2,0x8000,0xc,0x24000,0xe0,0x0,0x110,0x3c00,0x0,0x0,0xc0000000,0xc0000000,0x0,0x0,0x3ffc0000,0x3ffc0000,0x0,};
+      jj_la1_0 = new int[] {0x2,0x8000,0xc,0x24000,0xe0,0x0,0x110,0x3c00,0xc0000000,0x0,0x0,0x3ffc0000,0xc0000000,0x3ffc0000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x30,0x0,0x0,0x3,0x3,0x0,0x0,0x3,0x3,0x100004,0x0,0x30,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x30,0x0,0x0,0x3,0x3,0x3,0x100004,0x3,0x0,0x30,};
    }
 
   /** Constructor with InputStream. */
@@ -1179,7 +1228,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1193,7 +1242,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1203,7 +1252,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1213,7 +1262,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1222,7 +1271,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1231,7 +1280,7 @@ class Interpretador implements InterpretadorConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1287,7 +1336,7 @@ class Interpretador implements InterpretadorConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 15; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

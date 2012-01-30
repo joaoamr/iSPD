@@ -6,8 +6,8 @@
 package ispd.motor.filas;
 
 import ispd.motor.filas.servidores.CS_Comunicacao;
-import ispd.motor.filas.servidores.CS_Internet;
-import ispd.motor.filas.servidores.CS_Maquina;
+import ispd.motor.filas.servidores.implementacao.CS_Internet;
+import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasUsuarios;

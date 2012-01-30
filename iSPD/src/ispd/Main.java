@@ -4,9 +4,9 @@
  */
 package ispd;
 
-import ispd.janela.LogExceptions;
-import ispd.janela.SplashWindow;
-import ispd.janela.JPrincipal;
+import ispd.gui.LogExceptions;
+import ispd.gui.SplashWindow;
+import ispd.gui.JPrincipal;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -61,7 +61,7 @@ public class Main {
         }
         BufferedImage image = null;
         try {
-            image = ImageIO.read(Main.class.getResourceAsStream("janela/imagens/Splash.png"));
+            image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash.png"));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

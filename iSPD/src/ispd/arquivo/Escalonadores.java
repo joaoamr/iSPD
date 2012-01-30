@@ -4,6 +4,7 @@
  */
 package ispd.arquivo;
 
+import ispd.escalonador.ManipularArquivos;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,7 +36,7 @@ import javax.tools.ToolProvider;
  *
  * @author denison_usuario
  */
-public class Escalonadores {
+public class Escalonadores implements ManipularArquivos {
 
     private final String DIRETORIO = "ispd/externo";
     /**
@@ -219,6 +220,9 @@ public class Escalonadores {
         File test = new File(diretorio, escalonador + ".class");
         if (test.exists()) {
             inserirLista(escalonador);
+        }
+        if(errosStr.equals("")){
+            return null;
         }
         return errosStr;
     }

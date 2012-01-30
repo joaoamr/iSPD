@@ -21,7 +21,7 @@ public interface InterpretadorConstants {
   /** RegularExpression Id. */
   int ENTRY = 5;
   /** RegularExpression Id. */
-  int OUTPUT = 6;
+  int DISPACTH = 6;
   /** RegularExpression Id. */
   int COMPLETED = 7;
   /** RegularExpression Id. */
@@ -41,7 +41,7 @@ public interface InterpretadorConstants {
   /** RegularExpression Id. */
   int RESTRICT = 15;
   /** RegularExpression Id. */
-  int PER = 16;
+  int TASKPER = 16;
   /** RegularExpression Id. */
   int USER = 17;
   /** RegularExpression Id. */
@@ -104,7 +104,7 @@ public interface InterpretadorConstants {
     "\"DYNAMIC\"",
     "\"TASK\"",
     "\"ENTRY\"",
-    "\"OUTPUT\"",
+    "\"DISPACTH\"",
     "\"COMPLETED\"",
     "\"TIME\"",
     "\"INTERVAL\"",
@@ -114,7 +114,7 @@ public interface InterpretadorConstants {
     "\"DECREASING\"",
     "\"RESOURCE\"",
     "\"RESTRICT\"",
-    "\"PER\"",
+    "\"TASKPER\"",
     "\"USER\"",
     "\"[TCP]\"",
     "\"[TC]\"",

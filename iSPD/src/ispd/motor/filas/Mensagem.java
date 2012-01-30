@@ -75,4 +75,8 @@ public class Mensagem implements Cliente {
     public Tarefa getTarefa(){
         return tarefa;
     }
+
+    public double getTimeCriacao() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

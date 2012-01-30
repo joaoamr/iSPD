@@ -5,12 +5,12 @@
 package ispd.motor;
 
 import ispd.escalonador.Mestre;
-import ispd.janela.JSimulacao;
+import ispd.gui.JSimulacao;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
-import ispd.motor.filas.servidores.CS_Maquina;
-import ispd.motor.filas.servidores.CS_Mestre;
+import ispd.motor.filas.servidores.implementacao.CS_Maquina;
+import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.Color;

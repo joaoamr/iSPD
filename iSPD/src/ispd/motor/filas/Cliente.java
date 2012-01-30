@@ -14,6 +14,7 @@ import java.util.List;
 public interface Cliente {
     public double getTamComunicacao();
     public double getTamProcessamento();
+    public double getTimeCriacao();
     public CentroServico getOrigem();
     public List<CentroServico> getCaminho();
     public void setCaminho(List<CentroServico> caminho);

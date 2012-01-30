@@ -404,7 +404,11 @@ class Interpretador{
               }
               break;
             default:
-              tarefaExpressao += "VAR";
+              Token t = getToken(1);
+              addErro("Erro semantico encontrado na linha "+t.endLine+", coluna "+t.endColumn);
+	      erroEncontrado = true;
+	      consomeTokens();
+	      resuladoParser();
             }
         }
         
@@ -632,7 +636,11 @@ class Interpretador{
               }
               break;
             default:
-              recursoExpressao += "VAR";
+              Token t = getToken(1);
+	      addErro("Erro semantico encontrado na linha "+t.endLine+", coluna "+t.endColumn);
+	      erroEncontrado = true;
+	      consomeTokens();
+	      resuladoParser();
             }
         }
         
@@ -719,7 +727,7 @@ TOKEN:	{
 	<DYNAMIC:    "DYNAMIC">    |
 	<TASK:       "TASK">       |
 	<ENTRY:      "ENTRY">      |
-	<OUTPUT:     "OUTPUT">     |
+	<DISPACTH:     "DISPACTH">     |
 	<COMPLETED:  "COMPLETED">  |
         <TIME:	     "TIME">       |
 	<INTERVAL:   "INTERVAL">   |
@@ -729,7 +737,7 @@ TOKEN:	{
 	<DECREASING: "DECREASING"> |
 	<RESOURCE:   "RESOURCE">   |
         <RESTRICT:   "RESTRICT">   |
-        <PER:        "PER">        |
+        <TASKPER:        "TASKPER">        |
         <USER:       "USER">
 	}
 
@@ -858,7 +866,7 @@ void limite_tarefas():
     Token t;
 }
 {
-    <RESTRICT> t = <inteiro> <TASK> <PER>
+    <RESTRICT> t = <inteiro> <TASKPER>
         ( <RESOURCE> { limite(t.image, true);  } |
           <USER>     { limite(t.image, false); } )
 }
@@ -869,7 +877,7 @@ void tipo_atualizacao():
 }
 {
     <TASK> ( <ENTRY> { dinamico("in"); }  |
-            <OUTPUT> { dinamico("out"); } |
+            <DISPACTH> { dinamico("out"); } |
          <COMPLETED> { dinamico("end"); })|
     <TIME> <INTERVAL> ( t=<real> | t=<inteiro> ) { dinamicoIntervalo(t.image); }
 }
@@ -913,6 +921,13 @@ void formula(boolean tarefa):
 }
 
 void expressao(boolean tarefa):
+{
+}
+{
+    operando(tarefa) ( operador(tarefa) operando(tarefa) )*
+}
+
+/*void expressao(boolean tarefa):
 {
 }
 {
@@ -974,6 +989,55 @@ void expressao4(boolean tarefa):
                 addExpressaoTarefa(rparen);
               else
                 addExpressaoRecurso(rparen); }
+}*/
+
+void operando(boolean tarefa):
+{
+}
+{
+    [ <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); } |
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); } ]
+    (
+    variavel(tarefa) |
+    constante(tarefa)|
+    <lparen> { if(tarefa)
+                addExpressaoTarefa(lparen);
+              else
+                addExpressaoRecurso(lparen); }
+    expressao(tarefa)
+    <rparen> { if(tarefa)
+                addExpressaoTarefa(rparen);
+              else
+                addExpressaoRecurso(rparen); }
+    )
+}
+
+void operador(boolean tarefa):
+{
+}
+{
+      <div> { if(tarefa)
+                addExpressaoTarefa(div);
+              else
+                addExpressaoRecurso(div); }  |
+      <mult> { if(tarefa)
+                addExpressaoTarefa(mult);
+              else
+                addExpressaoRecurso(mult); } |
+      <add> { if(tarefa)
+                addExpressaoTarefa(add);
+              else
+                addExpressaoRecurso(add); }  | 
+      <sub> { if(tarefa)
+                addExpressaoTarefa(sub);
+              else
+                addExpressaoRecurso(sub); }
 }
 
 void variavel(boolean tarefa):
