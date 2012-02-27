@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -248,7 +249,15 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             Simulacao sim = new Simulacao(this, redeDeFilas, tarefas);//[10%] --> 55 %
             //Realiza asimulação
             this.println("Simulating.");
+            //recebe instante de tempo em milissegundos ao iniciar a simulação
+            double t1 = System.currentTimeMillis();
+            
             sim.simular();//[30%] --> 85%
+            
+            //Recebe instnte de tempo em milissegundos ao fim da execução da simulação
+            double t2 = System.currentTimeMillis();
+            //Calcula tempo de simulação em segundos
+            double tempototal = (t2-t1)/1000;
             //Obter Resultados
             //[5%] --> 90%
             //Apresentar resultados
@@ -257,6 +266,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             JResultados janelaResultados = new JResultados(null, redeDeFilas, tarefas);
             incProgresso(10);//[10%] --> 100%
             this.println("OK", Color.green);
+            this.println("Simulation Execution Time = " + tempototal + "seconds"); 
             janelaResultados.setLocationRelativeTo(this);
             janelaResultados.setVisible(true);
         }catch(IllegalArgumentException erro){
