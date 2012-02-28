@@ -55,6 +55,9 @@ public class Tarefa implements Cliente {
     private double inicioEspera;
     private MetricasTarefa metricas;
     private double tempoCriacao;
+    //Criando o tempo em que a tarefa acabou.
+    private double tempoFinal;
+
     private int estado;
     private double tamComunicacao;
 
@@ -170,6 +173,7 @@ public class Tarefa implements Cliente {
     public void finalizarAtendimentoProcessamento(double tempo) {
         this.estado = CONCLUIDO;
         this.metricas.incTempoProcessamento(tempo - inicioEspera);
+        this.tempoFinal = tempo;
         this.tamComunicacao = arquivoRecebimento;
     }
     
@@ -177,6 +181,7 @@ public class Tarefa implements Cliente {
         if(estado == PARADO || estado == PROCESSANDO){
             this.estado = CANCELADO;
             this.metricas.incTempoProcessamento(tempo - inicioEspera);
+            this.tempoFinal = tempo;
             return inicioEspera;
         }else{
             this.estado = CANCELADO;
