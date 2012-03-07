@@ -57,6 +57,8 @@ public class Tarefa implements Cliente {
     private double tempoCriacao;
     //Criando o tempo em que a tarefa acabou.
     private double tempoFinal;
+    //Criando o tempo em que a tarefa começou a ser executada.
+    private double tempoInicial;
 
     private int estado;
     private double tamComunicacao;
@@ -75,6 +77,8 @@ public class Tarefa implements Cliente {
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
         this.porcentagemProcessado = 0;
+        this.tempoInicial = 0;
+        this.tempoFinal = 0;
     }
     
     public Tarefa(String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
@@ -91,6 +95,8 @@ public class Tarefa implements Cliente {
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
         this.porcentagemProcessado = 0;
+        this.tempoInicial = 0;
+        this.tempoFinal = 0;
     }
     
     public Tarefa(Tarefa tarefa){
@@ -107,6 +113,8 @@ public class Tarefa implements Cliente {
         this.tempoCriacao = tarefa.getTimeCriacao();
         this.estado = PARADO;
         this.porcentagemProcessado = 0;
+        this.tempoInicial = 0;
+        this.tempoFinal = 0;
     }
     
     public double getTamComunicacao() {
@@ -196,7 +204,15 @@ public class Tarefa implements Cliente {
     public double getTimeCriacao() {
         return tempoCriacao;
     }
-
+    
+    public double getTempoInicial(){
+        return tempoInicial;
+    }
+    
+    public double getTempoFinal(){
+        return tempoFinal;
+    }
+    
     public MetricasTarefa getMetricas() {
         return metricas;
     }
@@ -232,4 +248,5 @@ public class Tarefa implements Cliente {
         this.porcentagemProcessado = porcentagemProcessado;
     }
     
+   
 }

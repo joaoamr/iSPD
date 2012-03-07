@@ -83,13 +83,14 @@ public class JResultados extends javax.swing.JDialog {
         jButtonCBarra = new javax.swing.JButton();
         jButtonCPizza = new javax.swing.JButton();
         jScrollPaneComunicacao = new javax.swing.JScrollPane();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulation Results");
 
         jTextAreaGlobal.setColumns(20);
         jTextAreaGlobal.setEditable(false);
-        jTextAreaGlobal.setFont(new java.awt.Font("Courier New", 1, 14));
+        jTextAreaGlobal.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
         jTextAreaGlobal.setRows(5);
         jScrollPaneGobal.setViewportView(jTextAreaGlobal);
 
@@ -97,7 +98,7 @@ public class JResultados extends javax.swing.JDialog {
 
         jTextAreaTarefa.setColumns(20);
         jTextAreaTarefa.setEditable(false);
-        jTextAreaTarefa.setFont(new java.awt.Font("Courier New", 0, 14));
+        jTextAreaTarefa.setFont(new java.awt.Font("Courier New", 0, 14)); // NOI18N
         jTextAreaTarefa.setRows(5);
         jScrollPaneTarefa.setViewportView(jTextAreaTarefa);
 
@@ -144,7 +145,7 @@ public class JResultados extends javax.swing.JDialog {
         jPanelProcessamento.setLayout(jPanelProcessamentoLayout);
         jPanelProcessamentoLayout.setHorizontalGroup(
             jPanelProcessamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
             .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
         );
         jPanelProcessamentoLayout.setVerticalGroup(
@@ -152,7 +153,7 @@ public class JResultados extends javax.swing.JDialog {
             .addGroup(jPanelProcessamentoLayout.createSequentialGroup()
                 .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE))
+                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Chart of the processing", jPanelProcessamento);
@@ -185,7 +186,7 @@ public class JResultados extends javax.swing.JDialog {
         jPanelComunicacao.setLayout(jPanelComunicacaoLayout);
         jPanelComunicacaoLayout.setHorizontalGroup(
             jPanelComunicacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
             .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
         );
         jPanelComunicacaoLayout.setVerticalGroup(
@@ -193,10 +194,11 @@ public class JResultados extends javax.swing.JDialog {
             .addGroup(jPanelComunicacaoLayout.createSequentialGroup()
                 .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE))
+                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Chart of the communication", jPanelComunicacao);
+        jTabbedPane1.addTab("Chart of computing power", jTabbedPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -245,6 +247,7 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPaneTarefa;
     private javax.swing.JScrollPane jScrollPaneUsuario;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTableRecurso;
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
@@ -283,9 +286,14 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         double tempoMedioFilaProcessamento = 0;
         double tempoMedioProcessamento = 0;
         double tempoMedioSistemaProcessamento = 0;
+        
+        ArrayList TarefasUsuarios = new ArrayList();
+        
+        
         int numTarefasCanceladas = 0;
         double MflopsDesperdicio = 0;
         int numTarefas = 0;
+        int contador = 0;
         for (Tarefa no : tarefas) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
                 tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
@@ -293,10 +301,24 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
                 tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
                 numTarefas++;
+                
             } else if (no.getEstado() == Tarefa.CANCELADO) {
                 MflopsDesperdicio += no.getTamProcessamento() * no.getPorcentagemProcessado();
                 numTarefasCanceladas++;
             }
+            ArrayList Elementos = new ArrayList();
+            Elementos.add(no.getTempoInicial());
+            Elementos.add(no.getTempoFinal());
+            Elementos.add(no.getLocalProcessamento());
+            if(contador==0){
+                TarefasUsuarios.add(0,Elementos);
+            }
+            else{
+                for(Object tarefa : TarefasUsuarios){
+                    
+                }
+            }
+            contador++;
         }
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
         tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;

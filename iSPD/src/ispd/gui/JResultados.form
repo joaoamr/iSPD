@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -153,7 +153,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jToolBarProcessamento" alignment="0" pref="606" max="32767" attributes="0"/>
+                  <Component id="jToolBarProcessamento" alignment="0" pref="603" max="32767" attributes="0"/>
                   <Component id="jScrollPaneProcessamento" alignment="0" pref="606" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -162,7 +162,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jToolBarProcessamento" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneProcessamento" pref="303" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneProcessamento" pref="265" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -217,7 +217,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jToolBarComunicacao" alignment="0" pref="606" max="32767" attributes="0"/>
+                  <Component id="jToolBarComunicacao" alignment="0" pref="603" max="32767" attributes="0"/>
                   <Component id="jScrollPaneComunicacao" alignment="0" pref="606" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -226,7 +226,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jToolBarComunicacao" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneComunicacao" pref="303" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneComunicacao" pref="265" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -268,6 +268,17 @@
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
             </Container>
           </SubComponents>
+        </Container>
+        <Container class="javax.swing.JTabbedPane" name="jTabbedPane2">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Chart of computing power">
+                <Property name="tabTitle" type="java.lang.String" value="Chart of computing power"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
         </Container>
       </SubComponents>
     </Container>
