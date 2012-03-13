@@ -642,7 +642,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 + "                Paulo Henrique Maestrello Assad Oliveira\n"
                 + "                Tiago Polizelli Brait\n"
                 + "                Vanessa Gomes de Oliveira\n"
-                + "                Victor Aoqui\n";
+                + "                Victor Aoqui\n"
+                + "                Denison Menezes\n"
+                + "                Diogo Tavares da Silva\n"
+                + "                Gabriel Covello Furlanetto\n"
+                + "                Rafael Stabile ";
         JOptionPane.showOptionDialog(this, sobre, palavras.getString("About") + " \"" + palavras.getString("nomePrograma") + "\"", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, icone, null, null);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
