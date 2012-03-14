@@ -23,12 +23,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" pref="611" max="32767" attributes="0"/>
+          <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" pref="362" max="32767" attributes="0"/>
+          <Component id="jTabbedPane1" alignment="0" pref="386" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -153,8 +153,8 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jToolBarProcessamento" alignment="0" pref="603" max="32767" attributes="0"/>
-                  <Component id="jScrollPaneProcessamento" alignment="0" pref="606" max="32767" attributes="0"/>
+                  <Component id="jToolBarProcessamento" alignment="0" pref="627" max="32767" attributes="0"/>
+                  <Component id="jScrollPaneProcessamento" alignment="0" pref="627" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -162,7 +162,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jToolBarProcessamento" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneProcessamento" pref="265" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneProcessamento" pref="289" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -217,8 +217,8 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jToolBarComunicacao" alignment="0" pref="603" max="32767" attributes="0"/>
-                  <Component id="jScrollPaneComunicacao" alignment="0" pref="606" max="32767" attributes="0"/>
+                  <Component id="jToolBarComunicacao" alignment="0" pref="627" max="32767" attributes="0"/>
+                  <Component id="jScrollPaneComunicacao" alignment="0" pref="627" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -226,7 +226,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jToolBarComunicacao" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneComunicacao" pref="265" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneComunicacao" pref="289" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -269,16 +269,33 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JTabbedPane" name="jTabbedPane2">
+        <Container class="javax.swing.JPanel" name="jPanelProcessamentoTempo">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Chart of computing power">
-                <Property name="tabTitle" type="java.lang.String" value="Chart of computing power"/>
+              <JTabbedPaneConstraints tabName="Chart of Computing Power">
+                <Property name="tabTitle" type="java.lang.String" value="Chart of Computing Power"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
 
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPaneProcessamentoTempo" alignment="0" pref="627" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPaneProcessamentoTempo" alignment="0" pref="320" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JScrollPane" name="jScrollPaneProcessamentoTempo">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+            </Container>
+          </SubComponents>
         </Container>
       </SubComponents>
     </Container>

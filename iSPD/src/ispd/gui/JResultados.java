@@ -27,7 +27,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-
+import ispd.gui.ParesOrdenadosUso;
+import java.util.LinkedList;
 /**
  *
  * @author denison_usuario
@@ -37,6 +38,10 @@ public class JResultados extends javax.swing.JDialog {
     /** Creates new form JResultados */
     public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List tarefas) {
         super(parent, true);
+        initComponents();
+        this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
+        this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
+        setResultadosUsuario(rdf.getMetricasUsuarios());
         graficoBarraProcessamento = new ChartPanel(criarGraficoProcessamento(rdf));
         graficoBarraProcessamento.setPreferredSize(new Dimension(600, 300));
         graficoBarraComunicacao = new ChartPanel(criarGraficoComunicacao(rdf));
@@ -45,13 +50,13 @@ public class JResultados extends javax.swing.JDialog {
         graficoPizzaProcessamento.setPreferredSize(new Dimension(600, 300));
         graficoPizzaComunicacao = new ChartPanel(criarGraficoPizzaComunicacao(rdf));
         graficoPizzaComunicacao.setPreferredSize(new Dimension(600, 300));
+        graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
+        graficoProcessamentoTempo.setPreferredSize(new Dimension(600,300));
         tabelaRecurso = setTabelaRecurso(rdf);
-        initComponents();
-        this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
-        this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
-        setResultadosUsuario(rdf.getMetricasUsuarios());
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
+        this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
+        
     }
 
     /** This method is called from within the constructor to
@@ -83,7 +88,8 @@ public class JResultados extends javax.swing.JDialog {
         jButtonCBarra = new javax.swing.JButton();
         jButtonCPizza = new javax.swing.JButton();
         jScrollPaneComunicacao = new javax.swing.JScrollPane();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jPanelProcessamentoTempo = new javax.swing.JPanel();
+        jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulation Results");
@@ -145,15 +151,15 @@ public class JResultados extends javax.swing.JDialog {
         jPanelProcessamento.setLayout(jPanelProcessamentoLayout);
         jPanelProcessamentoLayout.setHorizontalGroup(
             jPanelProcessamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-            .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
         );
         jPanelProcessamentoLayout.setVerticalGroup(
             jPanelProcessamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelProcessamentoLayout.createSequentialGroup()
                 .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Chart of the processing", jPanelProcessamento);
@@ -186,53 +192,66 @@ public class JResultados extends javax.swing.JDialog {
         jPanelComunicacao.setLayout(jPanelComunicacaoLayout);
         jPanelComunicacaoLayout.setHorizontalGroup(
             jPanelComunicacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-            .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
         );
         jPanelComunicacaoLayout.setVerticalGroup(
             jPanelComunicacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelComunicacaoLayout.createSequentialGroup()
                 .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Chart of the communication", jPanelComunicacao);
-        jTabbedPane1.addTab("Chart of computing power", jTabbedPane2);
+
+        javax.swing.GroupLayout jPanelProcessamentoTempoLayout = new javax.swing.GroupLayout(jPanelProcessamentoTempo);
+        jPanelProcessamentoTempo.setLayout(jPanelProcessamentoTempoLayout);
+        jPanelProcessamentoTempoLayout.setHorizontalGroup(
+            jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+        );
+        jPanelProcessamentoTempoLayout.setVerticalGroup(
+            jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Chart of Computing Power", jPanelProcessamentoTempo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void jButtonPBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPBarraActionPerformed
-    // TODO add your handling code here:
-    this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
-}//GEN-LAST:event_jButtonPBarraActionPerformed
+    private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCPizzaActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneComunicacao.setViewportView(this.graficoPizzaComunicacao);
+    }//GEN-LAST:event_jButtonCPizzaActionPerformed
 
-private void jButtonPPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPPizzaActionPerformed
-    // TODO add your handling code here:
-    this.jScrollPaneProcessamento.setViewportView(this.graficoPizzaProcessamento);
-}//GEN-LAST:event_jButtonPPizzaActionPerformed
+    private void jButtonCBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCBarraActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
+    }//GEN-LAST:event_jButtonCBarraActionPerformed
 
-private void jButtonCBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCBarraActionPerformed
-    // TODO add your handling code here:
-    this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
-}//GEN-LAST:event_jButtonCBarraActionPerformed
+    private void jButtonPPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPPizzaActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneProcessamento.setViewportView(this.graficoPizzaProcessamento);
+    }//GEN-LAST:event_jButtonPPizzaActionPerformed
 
-private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCPizzaActionPerformed
-    // TODO add your handling code here:
-    this.jScrollPaneComunicacao.setViewportView(this.graficoPizzaComunicacao);
-}//GEN-LAST:event_jButtonCPizzaActionPerformed
+    private void jButtonPBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPBarraActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
+    }//GEN-LAST:event_jButtonPBarraActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
@@ -240,14 +259,15 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JButton jButtonPPizza;
     private javax.swing.JPanel jPanelComunicacao;
     private javax.swing.JPanel jPanelProcessamento;
+    private javax.swing.JPanel jPanelProcessamentoTempo;
     private javax.swing.JScrollPane jScrollPaneComunicacao;
     private javax.swing.JScrollPane jScrollPaneGobal;
     private javax.swing.JScrollPane jScrollPaneProcessamento;
+    private javax.swing.JScrollPane jScrollPaneProcessamentoTempo;
     private javax.swing.JScrollPane jScrollPaneRecurso;
     private javax.swing.JScrollPane jScrollPaneTarefa;
     private javax.swing.JScrollPane jScrollPaneUsuario;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTableRecurso;
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
@@ -260,6 +280,7 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private ChartPanel graficoBarraComunicacao;
     private ChartPanel graficoPizzaProcessamento;
     private ChartPanel graficoPizzaComunicacao;
+    private ChartPanel graficoProcessamentoTempo;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -287,13 +308,13 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         double tempoMedioProcessamento = 0;
         double tempoMedioSistemaProcessamento = 0;
         
-        ArrayList TarefasUsuarios = new ArrayList();
-        
         
         int numTarefasCanceladas = 0;
         double MflopsDesperdicio = 0;
         int numTarefas = 0;
-        int contador = 0;
+        
+        
+
         for (Tarefa no : tarefas) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
                 tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
@@ -306,20 +327,12 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 MflopsDesperdicio += no.getTamProcessamento() * no.getPorcentagemProcessado();
                 numTarefasCanceladas++;
             }
-            ArrayList Elementos = new ArrayList();
-            Elementos.add(no.getTempoInicial());
-            Elementos.add(no.getTempoFinal());
-            Elementos.add(no.getLocalProcessamento());
-            if(contador==0){
-                TarefasUsuarios.add(0,Elementos);
-            }
-            else{
-                for(Object tarefa : TarefasUsuarios){
-                    
-                }
-            }
-            contador++;
+            
+            CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
+            temp.setTempoProcessamento(no.getTempoInicial(), no.getTempoFinal());
+                               
         }
+              
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
         tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;
         tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
@@ -442,6 +455,66 @@ private void jButtonCPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         return jfc;
     }
 
+    private JFreeChart criarGraficoProcessamentoTempo(RedeDeFilas rdf) {
+        DefaultCategoryDataset dadosGrafico = new DefaultCategoryDataset();
+        List<String> maqNomes = new ArrayList<String>();
+       
+        if (rdf.getMaquinas() != null) {
+            for (CS_Processamento maq : rdf.getMaquinas()) {
+                
+                LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
+                
+                
+                if(!lista.isEmpty()){
+                    dadosGrafico.addValue(0, maq.getId(), "0");
+                    dadosGrafico.addValue(0, maq.getId(), lista.get(0).getInicio());
+                    int i;
+                    for (i=0;i<lista.size(); i++){
+                        //System.out.println(lista.get(i));
+                        Double uso = 100-(maq.getOcupacao());
+
+                        dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getInicio());
+                        dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
+                        if(!lista.get(i).equals(lista.getLast()) && lista.get(i).getFim() != lista.get(i+1).getInicio()){
+                            uso = 0.0;
+                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
+                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i+1).getInicio());
+                        }else{
+                            uso = 0.0;
+                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
+                        }
+                    }
+                }
+                        /*
+                if (maqNomes.contains(maq.getId())) {
+                    Double valor = (Double) dadosGrafico.getValue("vermelho", maq.getId());
+                    valor += maq.getMetrica().getMFlopsProcessados();
+                    dadosGrafico.setValue(valor, "vermelho", maq.getId());
+                } else {
+                    dadosGrafico.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
+                    maqNomes.add(maq.getId());
+                } */
+            }
+            
+        }
+       /*
+        dadosGrafico.addValue(1.5,"nome1", "1");
+        dadosGrafico.addValue(2.5,"nome1", "2");
+        dadosGrafico.addValue(3.5,"nome1", "3");
+        dadosGrafico.addValue(7.7,"nome2", "5");
+        dadosGrafico.addValue(8.9,"nome2", "7");
+        * 
+        */
+        JFreeChart jfc = ChartFactory.createLineChart(
+                "Machine for processing time", //Titulo
+                "Time", // Eixo X
+                "Use of processing power", //Eixo Y
+                dadosGrafico, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                true, false, false); // exibir: legendas, tooltips, url
+        return jfc;
+    }
+    
     private JFreeChart criarGraficoComunicacao(RedeDeFilas rdf) {
         DefaultCategoryDataset dadosGrafico = new DefaultCategoryDataset();
         if (rdf.getLinks() != null) {

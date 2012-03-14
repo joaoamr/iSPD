@@ -176,6 +176,7 @@ public class Tarefa implements Cliente {
     public void iniciarAtendimentoProcessamento(double tempo) {
         this.estado = PROCESSANDO;
         this.inicioEspera = tempo;
+        this.tempoInicial = tempo;
     }
 
     public void finalizarAtendimentoProcessamento(double tempo) {

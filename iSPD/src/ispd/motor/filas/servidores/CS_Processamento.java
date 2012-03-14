@@ -11,6 +11,8 @@ import ispd.escalonador.Mestre;
 import ispd.motor.metricas.MetricasProcessamento;
 import java.util.ArrayList;
 import java.util.List;
+import ispd.gui.ParesOrdenadosUso;
+import java.util.LinkedList;
 
 /**
  * Classe abstrata que representa os servidores de processamento do modelo de fila,
@@ -30,6 +32,7 @@ public abstract class CS_Processamento extends CentroServico {
     private double Ocupacao;
     private double PoderComputacionalDisponivelPorProcessador;
     private MetricasProcessamento metrica;
+    private LinkedList<ParesOrdenadosUso> lista_pares = new LinkedList<ParesOrdenadosUso>();
 
     public CS_Processamento(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         this.id = id;
@@ -54,7 +57,8 @@ public abstract class CS_Processamento extends CentroServico {
     public String getId() {
         return id;
     }
-
+    
+   
     public String getProprietario() {
         return proprietario;
     }
@@ -318,4 +322,21 @@ public abstract class CS_Processamento extends CentroServico {
         }
         return null;
     }
+    
+     public void setTempoProcessamento(double inicio, double fim){
+        ParesOrdenadosUso par = new ParesOrdenadosUso(inicio,fim);
+        int i=0;
+        for(i=0;i<this.lista_pares.size();i++){
+            if(lista_pares.get(i).getInicio()>=inicio){
+                break;
+            }
+        }
+        lista_pares.add(i,par);
+            
+    }
+     
+    public LinkedList getListaProcessamento(){
+        return (this.lista_pares);
+    }
+
 }
