@@ -29,6 +29,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import ispd.gui.ParesOrdenadosUso;
 import java.util.LinkedList;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 /**
  *
  * @author denison_usuario
@@ -456,34 +458,48 @@ public class JResultados extends javax.swing.JDialog {
     }
 
     private JFreeChart criarGraficoProcessamentoTempo(RedeDeFilas rdf) {
-        DefaultCategoryDataset dadosGrafico = new DefaultCategoryDataset();
+        XYSeriesCollection dadosGrafico = new XYSeriesCollection(); 
         List<String> maqNomes = new ArrayList<String>();
+        
        
         if (rdf.getMaquinas() != null) {
             for (CS_Processamento maq : rdf.getMaquinas()) {
                 
                 LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
-                
-                
                 if(!lista.isEmpty()){
-                    dadosGrafico.addValue(0, maq.getId(), "0");
-                    dadosGrafico.addValue(0, maq.getId(), lista.get(0).getInicio());
+                    XYSeries tmp_series;
+                    tmp_series = new XYSeries(maq.getId());
+                    System.out.println(maq.getId());
+              
+                    //dadosGrafico.addValue(0, maq.getId(), "0");
+                    //dadosGrafico.addValue(0, maq.getId(), lista.get(0).getInicio());
                     int i;
                     for (i=0;i<lista.size(); i++){
+                        
+                        
                         //System.out.println(lista.get(i));
                         Double uso = 100-(maq.getOcupacao());
-
-                        dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getInicio());
-                        dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
+                        tmp_series.add(lista.get(i).getInicio(),uso);
+                        tmp_series.add(lista.get(i).getFim(),uso);
+                        
+                             
+                       /*
                         if(!lista.get(i).equals(lista.getLast()) && lista.get(i).getFim() != lista.get(i+1).getInicio()){
                             uso = 0.0;
-                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
-                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i+1).getInicio());
+                            
+                            
+                            tmp_series.add(lista.get(i).getInicio(),uso);
+                            tmp_series.add(lista.get(i+1).getFim(),uso);
                         }else{
                             uso = 0.0;
-                            dadosGrafico.addValue(uso, maq.getId(), lista.get(i).getFim());
+                           
+                            tmp_series.add(lista.get(i).getFim(),uso);
                         }
+                   
+                        */
+                        
                     }
+                    dadosGrafico.addSeries(tmp_series);
                 }
                         /*
                 if (maqNomes.contains(maq.getId())) {
@@ -505,13 +521,13 @@ public class JResultados extends javax.swing.JDialog {
         dadosGrafico.addValue(8.9,"nome2", "7");
         * 
         */
-        JFreeChart jfc = ChartFactory.createLineChart(
+        JFreeChart jfc = ChartFactory.createXYAreaChart(
                 "Machine for processing time", //Titulo
-                "Time", // Eixo X
-                "Use of processing power", //Eixo Y
+                "Time (s)", // Eixo X
+                "Use of processing power (%)", //Eixo Y
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
-                true, false, false); // exibir: legendas, tooltips, url
+                true, true, false); // exibir: legendas, tooltips, url
         return jfc;
     }
     
