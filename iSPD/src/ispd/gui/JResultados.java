@@ -218,7 +218,7 @@ public class JResultados extends javax.swing.JDialog {
             .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Chart of Computing Power", jPanelProcessamentoTempo);
+        jTabbedPane1.addTab("Use of computing power through time", jPanelProcessamentoTempo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -456,75 +456,56 @@ public class JResultados extends javax.swing.JDialog {
                 false, false, false); // exibir: legendas, tooltips, url
         return jfc;
     }
-
+    //Cria o gráfico que demonstra o uso de cada recurso do sistema através do tempo. 
+    //Ele recebe como parâmetro a lista com as maquinas que processaram durante a simulação.
     private JFreeChart criarGraficoProcessamentoTempo(RedeDeFilas rdf) {
         XYSeriesCollection dadosGrafico = new XYSeriesCollection(); 
-        List<String> maqNomes = new ArrayList<String>();
         
-       
+        
+        //Se tiver alguma máquina na lista.
         if (rdf.getMaquinas() != null) {
+            //Laço foreach que percorre as máquinas.
             for (CS_Processamento maq : rdf.getMaquinas()) {
-                
+                //Lista que recebe os pares de intervalo de tempo em que a máquina executou.
                 LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
+           
+                //Se a máquina tiver intervalos.
                 if(!lista.isEmpty()){
+                    //Cria o objeto do tipo XYSeries.
                     XYSeries tmp_series;
-                    tmp_series = new XYSeries(maq.getId());
-                    System.out.println(maq.getId());
-              
-                    //dadosGrafico.addValue(0, maq.getId(), "0");
-                    //dadosGrafico.addValue(0, maq.getId(), lista.get(0).getInicio());
+                    //Se o atributo numeroMaquina for 0, ou seja, não for um nó de um cluster.
+                    if(maq.getnumeroMaquina() == 0)
+                        //Estancia com o nome puro.
+                        tmp_series = new XYSeries(maq.getId());
+                    //Se for 1 ou mais, ou seja, é um nó de cluster.
+                    else
+                        //Estancia tmp_series com o nome concatenado com a palavra node e seu numero.
+                        tmp_series = new XYSeries(maq.getId()+" node "+maq.getnumeroMaquina());
+                    
                     int i;
+                    //Laço que vai adicionando os pontos para a criação do gráfico.
                     for (i=0;i<lista.size(); i++){
-                        
-                        
-                        //System.out.println(lista.get(i));
+                        //Calcula o uso, que é 100% - taxa de ocupação inicial.
                         Double uso = 100-(maq.getOcupacao());
+                        //Adiciona ponto inicial.
                         tmp_series.add(lista.get(i).getInicio(),uso);
+                        //Adiciona ponto final.
                         tmp_series.add(lista.get(i).getFim(),uso);
                         
-                             
-                       /*
-                        if(!lista.get(i).equals(lista.getLast()) && lista.get(i).getFim() != lista.get(i+1).getInicio()){
-                            uso = 0.0;
-                            
-                            
-                            tmp_series.add(lista.get(i).getInicio(),uso);
-                            tmp_series.add(lista.get(i+1).getFim(),uso);
-                        }else{
-                            uso = 0.0;
-                           
-                            tmp_series.add(lista.get(i).getFim(),uso);
-                        }
-                   
-                        */
-                        
+                    
                     }
+                    //Add no gráfico.
                     dadosGrafico.addSeries(tmp_series);
                 }
-                        /*
-                if (maqNomes.contains(maq.getId())) {
-                    Double valor = (Double) dadosGrafico.getValue("vermelho", maq.getId());
-                    valor += maq.getMetrica().getMFlopsProcessados();
-                    dadosGrafico.setValue(valor, "vermelho", maq.getId());
-                } else {
-                    dadosGrafico.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
-                    maqNomes.add(maq.getId());
-                } */
+                        
             }
             
         }
-       /*
-        dadosGrafico.addValue(1.5,"nome1", "1");
-        dadosGrafico.addValue(2.5,"nome1", "2");
-        dadosGrafico.addValue(3.5,"nome1", "3");
-        dadosGrafico.addValue(7.7,"nome2", "5");
-        dadosGrafico.addValue(8.9,"nome2", "7");
-        * 
-        */
+       
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-                "Machine for processing time", //Titulo
-                "Time (s)", // Eixo X
-                "Use of processing power (%)", //Eixo Y
+                "Use of computing power through time", //Titulo
+                "Time (seconds)", // Eixo X
+                "Rate of use of computing power (%)", //Eixo Y
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url

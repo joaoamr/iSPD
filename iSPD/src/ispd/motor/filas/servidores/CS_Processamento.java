@@ -33,8 +33,8 @@ public abstract class CS_Processamento extends CentroServico {
     private double PoderComputacionalDisponivelPorProcessador;
     private MetricasProcessamento metrica;
     private LinkedList<ParesOrdenadosUso> lista_pares = new LinkedList<ParesOrdenadosUso>();
-
-    public CS_Processamento(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
+    private int numeroMaquina;
+    public CS_Processamento(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
         this.id = id;
         this.proprietario = proprietario;
         this.poderComputacional = PoderComputacional;
@@ -44,6 +44,11 @@ public abstract class CS_Processamento extends CentroServico {
         this.PoderComputacionalDisponivelPorProcessador =
                 (this.poderComputacional - (this.poderComputacional * this.Ocupacao))
                 / this.numeroProcessadores;
+        this.numeroMaquina = numeroMaquina;
+    }
+    
+    public int getnumeroMaquina(){
+        return this.numeroMaquina;
     }
 
     public double getOcupacao() {

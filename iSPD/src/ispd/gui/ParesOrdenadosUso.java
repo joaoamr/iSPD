@@ -8,9 +8,10 @@ package ispd.gui;
  *
  * @author dancosta
  */
+//Classe que possui apenas doubles que indicam intervalos de tempos onde a máquina executou.
 public class ParesOrdenadosUso {
     Double inicio, fim;
-
+    //Construtor. Recebe o intervalo.
     public ParesOrdenadosUso(double inicio, double fim) {
         this.inicio = inicio;
         this.fim = fim;

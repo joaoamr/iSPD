@@ -29,20 +29,35 @@ public class CS_Maquina extends CS_Processamento {
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private List<Tarefa> tarefaEmExecucao;
+
     
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
-        super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao);
+        super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        
     }
-
+    
+    public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
+        super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, numeroMaquina);
+        this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
+        this.conexoesSaida = new ArrayList<CS_Comunicacao>();
+        this.filaTarefas = new ArrayList<Tarefa>();
+        this.mestres = new ArrayList<CS_Processamento>();
+        this.processadoresDisponiveis = numeroProcessadores;
+        this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        
+    }
+    
     public void addConexoesEntrada(CS_Link conexao) {
         this.conexoesEntrada.add(conexao);
     }
+    
+    
 
     public void addConexoesSaida(CS_Link conexao) {
         this.conexoesSaida.add(conexao);

@@ -1758,7 +1758,8 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                             icone.getProprietario(),
                             icone.getPoderComputacional(),
                             1/*numero de processadores*/,
-                            icone.getTaxaOcupacao());
+                            icone.getTaxaOcupacao(),
+                            i+1);
                     maq.addConexoesSaida(Switch);
                     maq.addConexoesEntrada(Switch);
                     Switch.addConexoesEntrada(maq);

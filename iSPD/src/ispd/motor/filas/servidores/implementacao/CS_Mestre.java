@@ -39,7 +39,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre {
     private Simulacao simulacao;
 
     public CS_Mestre(String id, String proprietario, double PoderComputacional, double Ocupacao, String Escalonador) {
-        super(id, proprietario, PoderComputacional, 1, Ocupacao);
+        super(id, proprietario, PoderComputacional, 1, Ocupacao, 0);
         this.escalonador = Carregar.getNewEscalonador(Escalonador);
         escalonador.setMestre(this);
         this.filaProcessamento = new ArrayList<Tarefa>();
