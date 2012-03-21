@@ -5,6 +5,7 @@
 
 package ispd.motor.filas;
 
+import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.metricas.MetricasTarefa;
 import java.util.List;
@@ -137,6 +138,10 @@ public class Tarefa implements Cliente {
         return localProcessamento;
     }
     
+    public CS_Processamento getCSLProcessamento() {
+        return (CS_Processamento) localProcessamento;
+    }
+    
     public List<CentroServico> getCaminho() {
         return caminho;
     }
@@ -248,6 +253,9 @@ public class Tarefa implements Cliente {
     public void setPorcentagemProcessado(double porcentagemProcessado) {
         this.porcentagemProcessado = porcentagemProcessado;
     }
-    
+
+    public static void setContador(int contador) {
+        Tarefa.contador = contador;
+    }
    
 }

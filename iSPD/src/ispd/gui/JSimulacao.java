@@ -37,6 +37,8 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         this.palavras = palavras;
         initComponents();
         this.aDesenho = area;
+        this.tarefas = null;
+        this.redeDeFilas = null;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
 
             @Override
@@ -242,6 +244,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             //criar tarefas
             this.print("Creating tasks.");
             this.print(" -> ");
+            Tarefa.setContador(0);
             this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas.getMestres());
             incProgresso(10);//[10%] --> 45%
             this.println("OK", Color.green);

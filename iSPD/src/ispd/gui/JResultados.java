@@ -54,6 +54,10 @@ public class JResultados extends javax.swing.JDialog {
         graficoPizzaComunicacao.setPreferredSize(new Dimension(600, 300));
         graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
         graficoProcessamentoTempo.setPreferredSize(new Dimension(600,300));
+        
+        graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
+        graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600,300));
+        
         tabelaRecurso = setTabelaRecurso(rdf);
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -91,6 +95,9 @@ public class JResultados extends javax.swing.JDialog {
         jButtonCPizza = new javax.swing.JButton();
         jScrollPaneComunicacao = new javax.swing.JScrollPane();
         jPanelProcessamentoTempo = new javax.swing.JPanel();
+        jToolBarProcessamentoTempo = new javax.swing.JToolBar();
+        jButtonProcessamentoMaquina = new javax.swing.JButton();
+        jButtonProcessamentoTarefa = new javax.swing.JButton();
         jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -207,15 +214,43 @@ public class JResultados extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Chart of the communication", jPanelComunicacao);
 
+        jToolBarProcessamentoTempo.setRollover(true);
+
+        jButtonProcessamentoMaquina.setText("Per machine");
+        jButtonProcessamentoMaquina.setFocusable(false);
+        jButtonProcessamentoMaquina.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonProcessamentoMaquina.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonProcessamentoMaquina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcessamentoMaquinaActionPerformed(evt);
+            }
+        });
+        jToolBarProcessamentoTempo.add(jButtonProcessamentoMaquina);
+
+        jButtonProcessamentoTarefa.setText("Per task");
+        jButtonProcessamentoTarefa.setFocusable(false);
+        jButtonProcessamentoTarefa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonProcessamentoTarefa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonProcessamentoTarefa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcessamentoTarefaActionPerformed(evt);
+            }
+        });
+        jToolBarProcessamentoTempo.add(jButtonProcessamentoTarefa);
+
         javax.swing.GroupLayout jPanelProcessamentoTempoLayout = new javax.swing.GroupLayout(jPanelProcessamentoTempo);
         jPanelProcessamentoTempo.setLayout(jPanelProcessamentoTempoLayout);
         jPanelProcessamentoTempoLayout.setHorizontalGroup(
             jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jToolBarProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jScrollPaneProcessamentoTempo)
         );
         jPanelProcessamentoTempoLayout.setVerticalGroup(
             jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+            .addGroup(jPanelProcessamentoTempoLayout.createSequentialGroup()
+                .addComponent(jToolBarProcessamentoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Use of computing power through time", jPanelProcessamentoTempo);
@@ -254,11 +289,21 @@ public class JResultados extends javax.swing.JDialog {
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
     }//GEN-LAST:event_jButtonPBarraActionPerformed
 
+    private void jButtonProcessamentoMaquinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoMaquinaActionPerformed
+        this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
+    }//GEN-LAST:event_jButtonProcessamentoMaquinaActionPerformed
+
+    private void jButtonProcessamentoTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoTarefaActionPerformed
+        this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoTarefa);
+    }//GEN-LAST:event_jButtonProcessamentoTarefaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
     private javax.swing.JButton jButtonPBarra;
     private javax.swing.JButton jButtonPPizza;
+    private javax.swing.JButton jButtonProcessamentoMaquina;
+    private javax.swing.JButton jButtonProcessamentoTarefa;
     private javax.swing.JPanel jPanelComunicacao;
     private javax.swing.JPanel jPanelProcessamento;
     private javax.swing.JPanel jPanelProcessamentoTempo;
@@ -276,6 +321,7 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JTextArea jTextAreaUsuario;
     private javax.swing.JToolBar jToolBarComunicacao;
     private javax.swing.JToolBar jToolBarProcessamento;
+    private javax.swing.JToolBar jToolBarProcessamentoTempo;
     // End of variables declaration//GEN-END:variables
     private Vector<Vector> tabelaRecurso;
     private ChartPanel graficoBarraProcessamento;
@@ -283,6 +329,7 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoPizzaProcessamento;
     private ChartPanel graficoPizzaComunicacao;
     private ChartPanel graficoProcessamentoTempo;
+    private ChartPanel graficoProcessamentoTempoTarefa;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -456,6 +503,36 @@ public class JResultados extends javax.swing.JDialog {
                 false, false, false); // exibir: legendas, tooltips, url
         return jfc;
     }
+    
+    private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas){
+        
+        XYSeriesCollection dadosGrafico = new XYSeriesCollection();
+        if(tarefas.size() != 0){
+            int i=0;
+            for(Tarefa task : tarefas){
+                
+                XYSeries tmp_series;
+                tmp_series = new XYSeries(tarefas.get(i).getIdentificador());
+                
+                Double uso = 100 - tarefas.get(i).getCSLProcessamento().getOcupacao();
+                        
+                tmp_series.add(tarefas.get(i).getTempoInicial(),uso);
+                tmp_series.add(tarefas.get(i).getTempoFinal(),uso);
+                i++;
+                dadosGrafico.addSeries(tmp_series);
+            }
+            
+        }
+        JFreeChart jfc = ChartFactory.createXYAreaChart(
+            "Use of computing power through time", //Titulo
+            "Time (seconds)", // Eixo X
+            "Rate of use of computing power (%)", //Eixo Y
+            dadosGrafico, // Dados para o grafico
+            PlotOrientation.VERTICAL, //Orientacao do grafico
+            true, true, false); // exibir: legendas, tooltips, url
+        return jfc;
+    }
+    
     //Cria o gráfico que demonstra o uso de cada recurso do sistema através do tempo. 
     //Ele recebe como parâmetro a lista com as maquinas que processaram durante a simulação.
     private JFreeChart criarGraficoProcessamentoTempo(RedeDeFilas rdf) {
