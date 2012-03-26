@@ -514,15 +514,27 @@ public class JResultados extends javax.swing.JDialog {
                 XYSeries tmp_series;
                 tmp_series = new XYSeries(tarefas.get(i).getIdentificador());
                 
-                Double uso = 100 - tarefas.get(i).getCSLProcessamento().getOcupacao();
-                        
+                Double uso = 100 - tarefas.get(i).getCSLProcessamento().getOcupacao()*100;
+                System.out.println("tarefa tam"+task.getMetricas().getTempoProcessamento());
+                System.out.println("tarefa ini"+task.getTempoInicial());
+                System.out.println("tarefa fim"+task.getTempoFinal());
                 tmp_series.add(tarefas.get(i).getTempoInicial(),uso);
+                
                 tmp_series.add(tarefas.get(i).getTempoFinal(),uso);
                 i++;
                 dadosGrafico.addSeries(tmp_series);
             }
             
+           
         }
+        /*
+         *  DefaultCategoryDataset tmp_dataset;
+            tmp_dataset = new DefaultCategoryDataset();
+            tmp_dataset.addValue(1, "tarefa1","maq1");
+            tmp_dataset.addValue(1, "tarefa2", "maq2");
+            tmp_dataset.addValue(2,"tarefa3","maq1");
+            tmp_dataset.addValue(3,"tarefa1","maq1");
+         */
         JFreeChart jfc = ChartFactory.createXYAreaChart(
             "Use of computing power through time", //Titulo
             "Time (seconds)", // Eixo X
@@ -563,11 +575,24 @@ public class JResultados extends javax.swing.JDialog {
                     //Laço que vai adicionando os pontos para a criação do gráfico.
                     for (i=0;i<lista.size(); i++){
                         //Calcula o uso, que é 100% - taxa de ocupação inicial.
-                        Double uso = 100-(maq.getOcupacao());
+                        Double uso = 100-(maq.getOcupacao()*100);
                         //Adiciona ponto inicial.
                         tmp_series.add(lista.get(i).getInicio(),uso);
+                        
+                        //System.out.println(lista.get(i).getInicio()+" uso-> "+uso);
                         //Adiciona ponto final.
                         tmp_series.add(lista.get(i).getFim(),uso);
+                        
+                        //System.out.println(lista.get(i).getFim()+" uso-> "+uso);
+                        
+                        if(i+1 != lista.size()){
+                            uso = 0.0000;
+                            tmp_series.add(lista.get(i).getFim(),uso);
+                            
+                            //System.out.println(lista.get(i).getFim()+" uso-> "+uso);
+                            tmp_series.add(lista.get(i+1).getInicio(),uso);
+                            //System.out.println(lista.get(i+1).getInicio()+" uso-> "+uso);
+                        }
                         
                     
                     }
