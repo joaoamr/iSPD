@@ -50,7 +50,8 @@ public abstract class CS_Processamento extends CentroServico {
     public int getnumeroMaquina(){
         return this.numeroMaquina;
     }
-
+    
+    
     public double getOcupacao() {
         return Ocupacao;
     }

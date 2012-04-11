@@ -10,6 +10,7 @@
  */
 package ispd.gui;
 
+import Simulacao.ListaEventosFuturos;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -31,6 +32,9 @@ import ispd.gui.ParesOrdenadosUso;
 import java.util.LinkedList;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import ispd.gui.poderComputacionalTotal;
+import ispd.gui.usoUsuarios;
+
 /**
  *
  * @author denison_usuario
@@ -58,10 +62,15 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
         graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600,300));
         
+       graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(this.listaUsoUsuarios));
+       graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600,300));
+        
         tabelaRecurso = setTabelaRecurso(rdf);
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
+        
+        this.rdf = rdf;
         
     }
 
@@ -98,6 +107,7 @@ public class JResultados extends javax.swing.JDialog {
         jToolBarProcessamentoTempo = new javax.swing.JToolBar();
         jButtonProcessamentoMaquina = new javax.swing.JButton();
         jButtonProcessamentoTarefa = new javax.swing.JButton();
+        jButtonProcessamentoUser = new javax.swing.JButton();
         jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -238,6 +248,17 @@ public class JResultados extends javax.swing.JDialog {
         });
         jToolBarProcessamentoTempo.add(jButtonProcessamentoTarefa);
 
+        jButtonProcessamentoUser.setText("Per user");
+        jButtonProcessamentoUser.setFocusable(false);
+        jButtonProcessamentoUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonProcessamentoUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonProcessamentoUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcessamentoUserActionPerformed(evt);
+            }
+        });
+        jToolBarProcessamentoTempo.add(jButtonProcessamentoUser);
+
         javax.swing.GroupLayout jPanelProcessamentoTempoLayout = new javax.swing.GroupLayout(jPanelProcessamentoTempo);
         jPanelProcessamentoTempo.setLayout(jPanelProcessamentoTempoLayout);
         jPanelProcessamentoTempoLayout.setHorizontalGroup(
@@ -297,6 +318,10 @@ public class JResultados extends javax.swing.JDialog {
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoTarefa);
     }//GEN-LAST:event_jButtonProcessamentoTarefaActionPerformed
 
+    private void jButtonProcessamentoUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoUserActionPerformed
+        this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser);
+    }//GEN-LAST:event_jButtonProcessamentoUserActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
@@ -304,6 +329,7 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JButton jButtonPPizza;
     private javax.swing.JButton jButtonProcessamentoMaquina;
     private javax.swing.JButton jButtonProcessamentoTarefa;
+    private javax.swing.JButton jButtonProcessamentoUser;
     private javax.swing.JPanel jPanelComunicacao;
     private javax.swing.JPanel jPanelProcessamento;
     private javax.swing.JPanel jPanelProcessamentoTempo;
@@ -330,6 +356,14 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoPizzaComunicacao;
     private ChartPanel graficoProcessamentoTempo;
     private ChartPanel graficoProcessamentoTempoTarefa;
+    private ChartPanel graficoProcessamentoTempoUser;
+    
+    poderComputacionalTotal soma_poder = new poderComputacionalTotal();
+    RedeDeFilas rdf;
+    
+    private LinkedList<usoUsuarios> listaUsoUsuarios = new LinkedList();
+    
+    
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -357,7 +391,6 @@ public class JResultados extends javax.swing.JDialog {
         double tempoMedioProcessamento = 0;
         double tempoMedioSistemaProcessamento = 0;
         
-        
         int numTarefasCanceladas = 0;
         double MflopsDesperdicio = 0;
         int numTarefas = 0;
@@ -377,9 +410,36 @@ public class JResultados extends javax.swing.JDialog {
                 numTarefasCanceladas++;
             }
             
+            
+            
+           
             CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
             temp.setTempoProcessamento(no.getTempoInicial(), no.getTempoFinal());
-                               
+            /*
+            Boolean marca=true;
+           
+            for(usoUsuarios users : this.listaUsoUsuarios)
+            {
+                if(users.getNome().equals(no.getProprietario()))
+                {
+                    users.insere_periodos(no.getTempoInicial(), no.getTempoFinal());
+                    users.inserePoderLocalProcessamento(temp.getPoderComputacional());
+                    marca = false;
+                    break;
+                }
+            }
+            
+            if(marca)
+            {
+                usoUsuarios user = new usoUsuarios(no.getProprietario());
+                
+                user.insere_periodos(no.getTempoInicial(), no.getTempoFinal());
+                user.inserePoderLocalProcessamento(temp.getPoderComputacional());
+                this.listaUsoUsuarios.add(user);
+            } 
+            * 
+            */
+         
         }
               
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
@@ -504,6 +564,49 @@ public class JResultados extends javax.swing.JDialog {
         return jfc;
     }
     
+    private JFreeChart criarGraficoProcessamentoTempoUser(LinkedList<usoUsuarios> listaUsers){
+      
+        XYSeriesCollection dadosGrafico = new XYSeriesCollection();
+        if(listaUsers.size() != 0){
+            
+            for(usoUsuarios user : listaUsers){
+                
+                XYSeries tmp_series;
+                tmp_series = new XYSeries(user.getNome());
+               
+                
+                Double uso = (user.getPoderProcessamento()/this.soma_poder.getSoma())*100;
+                System.out.println("nome_usuario: "+user.getNome()+" uso: "+uso);
+                
+                /*
+                LinkedList pares = user.getPares();
+                for(ParesOrdenadosUso par : pares)
+                {
+                    tmp_series.add(par.getInicio(),uso);
+                    tmp_series.add(par.getFim(),uso);
+                }
+                * /*
+                */
+              
+              
+                dadosGrafico.addSeries(tmp_series);
+            }
+            
+           
+        }
+        
+      
+        JFreeChart jfc = ChartFactory.createXYAreaChart(
+            "Use of computing power through time by User", //Titulo
+            "Time (seconds)", // Eixo X
+            "Rate of total use of computing power (%)", //Eixo Y
+            dadosGrafico, // Dados para o grafico
+            PlotOrientation.VERTICAL, //Orientacao do grafico
+            true, true, false); // exibir: legendas, tooltips, url
+        return jfc;
+    }
+    
+    
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas){
         
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
@@ -512,12 +615,12 @@ public class JResultados extends javax.swing.JDialog {
             for(Tarefa task : tarefas){
                 
                 XYSeries tmp_series;
-                tmp_series = new XYSeries(tarefas.get(i).getIdentificador());
+                tmp_series = new XYSeries("task "+tarefas.get(i).getIdentificador());
+                CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
                 
-                Double uso = 100 - tarefas.get(i).getCSLProcessamento().getOcupacao()*100;
-                System.out.println("tarefa tam"+task.getMetricas().getTempoProcessamento());
-                System.out.println("tarefa ini"+task.getTempoInicial());
-                System.out.println("tarefa fim"+task.getTempoFinal());
+                Double uso = (temp.getPoderComputacional()/this.soma_poder.getSoma())*100;
+                System.out.println("tamanho_tarefas = "+tarefas.get(i).getTamProcessamento());
+                System.out.println("soma = "+this.soma_poder.getSoma());
                 tmp_series.add(tarefas.get(i).getTempoInicial(),uso);
                 
                 tmp_series.add(tarefas.get(i).getTempoFinal(),uso);
@@ -527,18 +630,11 @@ public class JResultados extends javax.swing.JDialog {
             
            
         }
-        /*
-         *  DefaultCategoryDataset tmp_dataset;
-            tmp_dataset = new DefaultCategoryDataset();
-            tmp_dataset.addValue(1, "tarefa1","maq1");
-            tmp_dataset.addValue(1, "tarefa2", "maq2");
-            tmp_dataset.addValue(2,"tarefa3","maq1");
-            tmp_dataset.addValue(3,"tarefa1","maq1");
-         */
+      
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-            "Use of computing power through time", //Titulo
+            "Use of total computing power through time by Task", //Titulo
             "Time (seconds)", // Eixo X
-            "Rate of use of computing power (%)", //Eixo Y
+            "Rate of total use of computing power (%)", //Eixo Y
             dadosGrafico, // Dados para o grafico
             PlotOrientation.VERTICAL, //Orientacao do grafico
             true, true, false); // exibir: legendas, tooltips, url
@@ -557,7 +653,8 @@ public class JResultados extends javax.swing.JDialog {
             for (CS_Processamento maq : rdf.getMaquinas()) {
                 //Lista que recebe os pares de intervalo de tempo em que a máquina executou.
                 LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
-           
+                
+                soma_poder.adiciona_maq_poder(maq.getPoderComputacional()-(maq.getOcupacao()*maq.getPoderComputacional()));
                 //Se a máquina tiver intervalos.
                 if(!lista.isEmpty()){
                     //Cria o objeto do tipo XYSeries.
@@ -601,13 +698,14 @@ public class JResultados extends javax.swing.JDialog {
                 }
                         
             }
+           
             
         }
        
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-                "Use of computing power through time", //Titulo
+                "Use of computing power through time by Machine", //Titulo
                 "Time (seconds)", // Eixo X
-                "Rate of use of computing power (%)", //Eixo Y
+                "Rate of use of computing power for each node (%)", //Eixo Y
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url
