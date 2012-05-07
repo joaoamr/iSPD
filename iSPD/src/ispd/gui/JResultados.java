@@ -33,7 +33,9 @@ import java.util.LinkedList;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import ispd.gui.poderComputacionalTotal;
-import ispd.gui.usoUsuarios;
+import java.util.*;
+import ispd.gui.tempo_uso_usuario;
+
 
 /**
  *
@@ -62,7 +64,7 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
         graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600,300));
         
-       graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(this.listaUsoUsuarios));
+       graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(tarefas,rdf));
        graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600,300));
         
         tabelaRecurso = setTabelaRecurso(rdf);
@@ -361,7 +363,7 @@ public class JResultados extends javax.swing.JDialog {
     poderComputacionalTotal soma_poder = new poderComputacionalTotal();
     RedeDeFilas rdf;
     
-    private LinkedList<usoUsuarios> listaUsoUsuarios = new LinkedList();
+
     
     
 
@@ -415,30 +417,7 @@ public class JResultados extends javax.swing.JDialog {
            
             CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
             temp.setTempoProcessamento(no.getTempoInicial(), no.getTempoFinal());
-            /*
-            Boolean marca=true;
-           
-            for(usoUsuarios users : this.listaUsoUsuarios)
-            {
-                if(users.getNome().equals(no.getProprietario()))
-                {
-                    users.insere_periodos(no.getTempoInicial(), no.getTempoFinal());
-                    users.inserePoderLocalProcessamento(temp.getPoderComputacional());
-                    marca = false;
-                    break;
-                }
-            }
             
-            if(marca)
-            {
-                usoUsuarios user = new usoUsuarios(no.getProprietario());
-                
-                user.insere_periodos(no.getTempoInicial(), no.getTempoFinal());
-                user.inserePoderLocalProcessamento(temp.getPoderComputacional());
-                this.listaUsoUsuarios.add(user);
-            } 
-            * 
-            */
          
         }
               
@@ -563,48 +542,110 @@ public class JResultados extends javax.swing.JDialog {
                 false, false, false); // exibir: legendas, tooltips, url
         return jfc;
     }
-    
-    private JFreeChart criarGraficoProcessamentoTempoUser(LinkedList<usoUsuarios> listaUsers){
-      
-        XYSeriesCollection dadosGrafico = new XYSeriesCollection();
-        if(listaUsers.size() != 0){
-            
-            for(usoUsuarios user : listaUsers){
-                
-                XYSeries tmp_series;
-                tmp_series = new XYSeries(user.getNome());
+
+   private JFreeChart criarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf)
+   {
+       
+      List<List> lista = new LinkedList<List>();
+      XYSeriesCollection dadosGrafico = new XYSeriesCollection();
+      Double acumulado=0.0000;
+      int k, aux;
+      int i=0, j=0;
+   
+      if(!tarefas.isEmpty())
+      {  
                
-                
-                Double uso = (user.getPoderProcessamento()/this.soma_poder.getSoma())*100;
-                System.out.println("nome_usuario: "+user.getNome()+" uso: "+uso);
-                
-                /*
-                LinkedList pares = user.getPares();
-                for(ParesOrdenadosUso par : pares)
-                {
-                    tmp_series.add(par.getInicio(),uso);
-                    tmp_series.add(par.getFim(),uso);
-                }
-                * /*
-                */
-              
-              
-                dadosGrafico.addSeries(tmp_series);
-            }
+        for(i=0;i<rdf.getMetricasUsuarios().getUsuarios().size();i++)
+        {
+                          
+            List<tempo_uso_usuario> temp = new LinkedList<tempo_uso_usuario>();
             
-           
+      
+            for(Tarefa task : tarefas)
+            {
+                if(task.getProprietario().equals(rdf.getMetricasUsuarios().getUsuarios().get(i)))
+                {
+                    
+                    CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();        
+                    Double uso = (local.getPoderComputacional()/this.soma_poder.getSoma())*100;
+                    
+                    //tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(),true,uso);
+                    //tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(),false,uso);
+                    
+                   
+                     
+                    for(k=0;k<temp.size();k++){
+                        if(temp.get(k).get_tempo()>=task.getTempoInicial()){
+                            break;
+                        }
+                       
+                    }
+                    tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(),true,uso);
+                 
+                    temp.add(k,provisorio1);
+                    
+                    for(k=0;k<temp.size();k++){
+                        if(temp.get(k).get_tempo()>=task.getTempoFinal()){
+                            break;
+                        }
+                    }
+                    tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(),false,uso);
+                    temp.add(k,provisorio2);
+                    
+                }
+            }
+            lista.add(temp);
+
         }
-        
+      
+      }
+       
+      
+     
+   
+      for(i=0;i<lista.size();i++)
+      {
+          XYSeries tmp_series = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
+          for(j=0;j<lista.get(i).size();j++)
+          {
+              tempo_uso_usuario temp = (tempo_uso_usuario) lista.get(i).get(j);
+              if(j==0)
+              {
+                  acumulado = temp.get_uso_no();
+                  tmp_series.add(temp.get_tempo(),acumulado);
+              }
+              else
+              {
+                  tmp_series.add(temp.get_tempo(),acumulado);
+                  if(temp.get_tipo())
+                      acumulado += temp.get_uso_no();
+                  
+                  else
+                      acumulado -= temp.get_uso_no();
+                  
+                  tmp_series.add(temp.get_tempo(),acumulado);
+              }
+             
+              
+               
+              //System.out.println(rdf.getMetricasUsuarios().getUsuarios().get(i)+temp.tempo+","+temp.uso_no);
+          }
+          dadosGrafico.addSeries(tmp_series);
+      }
+      
       
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-            "Use of computing power through time by User", //Titulo
-            "Time (seconds)", // Eixo X
-            "Rate of total use of computing power (%)", //Eixo Y
-            dadosGrafico, // Dados para o grafico
-            PlotOrientation.VERTICAL, //Orientacao do grafico
-            true, true, false); // exibir: legendas, tooltips, url
+        "Use of total computing power through time" + 
+                "\nUsers", //Titulo
+        "Time (seconds)", // Eixo X
+        "Rate of total use of computing power (%)", //Eixo Y
+        dadosGrafico, // Dados para o grafico
+        PlotOrientation.VERTICAL, //Orientacao do grafico
+        true, true, false); // exibir: legendas, tooltips, url
         return jfc;
+  
     }
+    
     
     
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas){
@@ -619,8 +660,8 @@ public class JResultados extends javax.swing.JDialog {
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
                 
                 Double uso = (temp.getPoderComputacional()/this.soma_poder.getSoma())*100;
-                System.out.println("tamanho_tarefas = "+tarefas.get(i).getTamProcessamento());
-                System.out.println("soma = "+this.soma_poder.getSoma());
+                //System.out.println("tamanho_tarefas = "+tarefas.get(i).getTamProcessamento());
+                //System.out.println("soma = "+this.soma_poder.getSoma());
                 tmp_series.add(tarefas.get(i).getTempoInicial(),uso);
                 
                 tmp_series.add(tarefas.get(i).getTempoFinal(),uso);
@@ -632,7 +673,8 @@ public class JResultados extends javax.swing.JDialog {
         }
       
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-            "Use of total computing power through time by Task", //Titulo
+            "Use of total computing power through time "
+                + "\nTasks", //Titulo
             "Time (seconds)", // Eixo X
             "Rate of total use of computing power (%)", //Eixo Y
             dadosGrafico, // Dados para o grafico
@@ -703,7 +745,8 @@ public class JResultados extends javax.swing.JDialog {
         }
        
         JFreeChart jfc = ChartFactory.createXYAreaChart(
-                "Use of computing power through time by Machine", //Titulo
+                "Use of computing power through time "
+                + "\nMachines", //Titulo
                 "Time (seconds)", // Eixo X
                 "Rate of use of computing power for each node (%)", //Eixo Y
                 dadosGrafico, // Dados para o grafico
