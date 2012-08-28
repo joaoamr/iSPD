@@ -5,6 +5,7 @@
 package ispd.motor.filas.servidores.implementacao;
 
 import ispd.motor.EventoFuturo;
+import ispd.motor.Mensagens;
 import ispd.motor.Simulacao;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
@@ -18,7 +19,7 @@ import java.util.List;
  * 
  * @author denison_usuario
  */
-public class CS_Maquina extends CS_Processamento {
+public class CS_Maquina extends CS_Processamento implements Mensagens {
 
     private List<CS_Comunicacao> conexoesEntrada;
     private List<CS_Comunicacao> conexoesSaida;
@@ -30,7 +31,6 @@ public class CS_Maquina extends CS_Processamento {
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private List<Tarefa> tarefaEmExecucao;
 
-    
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -39,9 +39,9 @@ public class CS_Maquina extends CS_Processamento {
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
-        
+
     }
-    
+
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, numeroMaquina);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -50,14 +50,12 @@ public class CS_Maquina extends CS_Processamento {
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
-        
+
     }
-    
+
     public void addConexoesEntrada(CS_Link conexao) {
         this.conexoesEntrada.add(conexao);
     }
-    
-    
 
     public void addConexoesSaida(CS_Link conexao) {
         this.conexoesSaida.add(conexao);
@@ -173,88 +171,25 @@ public class CS_Maquina extends CS_Processamento {
     }
 
     @Override
-    public void requisicao(Simulacao simulacao, Mensagem cliente, int tipo) {
-        if (cliente != null) {
-            if (cliente.getTarefa() != null && cliente.getTarefa().getLocalProcessamento().equals(this)) {
-                if (cliente.getTarefa().getEstado() == Tarefa.PARADO && cliente.getTipo() != Mensagem.PARAR) {
-                    boolean remover = filaTarefas.remove(cliente.getTarefa());
-                    if (remover && (cliente.getTipo() == Mensagem.DEVOLVER || cliente.getTipo() == Mensagem.DEVOLVER_COM_PREEMPCAO)) {
-                        EventoFuturo evtFut = new EventoFuturo(
-                                simulacao.getTime(),
-                                EventoFuturo.CHEGADA,
-                                cliente.getTarefa().getOrigem(),
-                                cliente.getTarefa());
-                        //Event adicionado a lista de evntos futuros
-                        simulacao.getEventos().offer(evtFut);
-                    }
-                } else if (cliente.getTarefa().getEstado() == Tarefa.PROCESSANDO && cliente.getTipo() != Mensagem.DEVOLVER) {
-                    //remover evento de saida do cliente do servidor
-                    java.util.Iterator<EventoFuturo> interator = simulacao.getEventos().iterator();
-                    boolean achou = false;
-                    while (!achou && interator.hasNext()) {
-                        EventoFuturo ev = interator.next();
-                        if (ev.getCliente().equals(cliente.getTarefa())
-                                && ev.getServidor().equals(this)
-                                && ev.getTipo() == EventoFuturo.SAÍDA) {
-                            achou = true;
-                            simulacao.getEventos().remove(ev);
-                        }
-                    }
-                    //gerar evento para atender proximo cliente
-                    if (filaTarefas.isEmpty()) {
-                        //Indica que está livre
-                        this.processadoresDisponiveis++;
-                    } else {
-                        //Gera evento para atender proximo cliente da lista
-                        Tarefa proxCliente = filaTarefas.remove(0);
-                        EventoFuturo evtFut = new EventoFuturo(
-                                simulacao.getTime(),
-                                EventoFuturo.ATENDIMENTO,
-                                this, proxCliente);
-                        //Event adicionado a lista de evntos futuros
-                        simulacao.getEventos().offer(evtFut);
-                    }
-                }
-                switch (cliente.getTipo()) {
-                    case Mensagem.CANCELAR:
-                        double inicioAtendimento = cliente.getTarefa().cancelar(simulacao.getTime());
-                        double tempoProc = simulacao.getTime() - inicioAtendimento;
-                        double mflopsProcessados = this.getMflopsProcessados(tempoProc);
-                        //Incrementa o número de Mflops processados por este recurso
-                        this.getMetrica().incMflopsProcessados(mflopsProcessados);
-                        //Incrementa o tempo de processamento
-                        this.getMetrica().incSegundosDeProcessamento(tempoProc);
-                        //Incrementa procentagem da tarefa processada
-                        cliente.getTarefa().setPorcentagemProcessado(mflopsProcessados * 100 / cliente.getTarefa().getTamProcessamento());
+    public void requisicao(Simulacao simulacao, Mensagem mensagem, int tipo) {
+        if (mensagem != null) {
+            if (mensagem.getTipo() == Mensagens.ATUALIZAR) {
+                atenderAtualizacao(simulacao, mensagem);
+            } else if (mensagem.getTarefa() != null && mensagem.getTarefa().getLocalProcessamento().equals(this)) {
+                switch (mensagem.getTipo()) {
+                    case Mensagens.PARAR:
+                        atenderParada(simulacao, mensagem);
                         break;
-                    case Mensagem.DEVOLVER_COM_PREEMPCAO:
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    //break;
-                    case Mensagem.PARAR:
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    //break;
+                    case Mensagens.CANCELAR:
+                        atenderCancelamento(simulacao, mensagem);
+                        break;
+                    case Mensagens.DEVOLVER:
+                        atenderDevolucao(simulacao, mensagem);
+                        break;
+                    case Mensagens.DEVOLVER_COM_PREEMPCAO:
+                        atenderDevolucaoPreemptiva(simulacao, mensagem);
+                        break;
                 }
-            } else if (cliente.getTipo() == Mensagem.ATUALIZAR) {
-                //atualizar dados dinamicos
-                this.filaTarefasDinamica.clear();
-                for (Tarefa tarefa : tarefaEmExecucao) {
-                    this.filaTarefasDinamica.add(tarefa);
-                }
-                for (Tarefa tarefa : filaTarefas) {
-                    this.filaTarefasDinamica.add(tarefa);
-                }
-                //enviar resultados
-                int index = mestres.indexOf(cliente.getOrigem());
-                List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
-                Mensagem novoCliente = new Mensagem(this, cliente.getTamComunicacao(), Mensagem.RESULTADO_ATUALIZAR);
-                novoCliente.setCaminho(caminho);
-                EventoFuturo evtFut = new EventoFuturo(
-                        simulacao.getTime(),
-                        EventoFuturo.MENSAGEM,
-                        novoCliente.getCaminho().remove(0),
-                        novoCliente);
-                //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);
             }
         }
     }
@@ -277,5 +212,139 @@ public class CS_Maquina extends CS_Processamento {
 
     public List<Tarefa> getInformacaoDinamicaFila() {
         return filaTarefasDinamica;
+    }
+
+    @Override
+    public void atenderCancelamento(Simulacao simulacao, Mensagem mensagem) {
+        boolean remover = false;
+        if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            //remover evento de saida do cliente do servidor
+            java.util.Iterator<EventoFuturo> interator = simulacao.getEventos().iterator();
+            remover = false;
+            while (!remover && interator.hasNext()) {
+                EventoFuturo ev = interator.next();
+                if (ev.getCliente().equals(mensagem.getTarefa())
+                        && ev.getServidor().equals(this)
+                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                    remover = true;
+                    simulacao.getEventos().remove(ev);
+                }
+            }
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.getEventos().offer(evtFut);
+            }
+        }
+        double inicioAtendimento = mensagem.getTarefa().cancelar(simulacao.getTime());
+        double tempoProc = simulacao.getTime() - inicioAtendimento;
+        double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+        //Incrementa o número de Mflops processados por este recurso
+        this.getMetrica().incMflopsProcessados(mflopsProcessados);
+        //Incrementa o tempo de processamento
+        this.getMetrica().incSegundosDeProcessamento(tempoProc);
+        //Incrementa porcentagem da tarefa processada
+        mensagem.getTarefa().setPorcentagemProcessado(mflopsProcessados * 100 / mensagem.getTarefa().getTamProcessamento());
+    }
+
+    @Override
+    public void atenderParada(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void atenderDevolucao(Simulacao simulacao, Mensagem mensagem) {
+        boolean remover = filaTarefas.remove(mensagem.getTarefa());
+        if (remover) {
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(),
+                    EventoFuturo.CHEGADA,
+                    mensagem.getTarefa().getOrigem(),
+                    mensagem.getTarefa());
+            //Event adicionado a lista de evntos futuros
+            simulacao.getEventos().offer(evtFut);
+        }
+    }
+
+    @Override
+    public void atenderDevolucaoPreemptiva(Simulacao simulacao, Mensagem mensagem) {
+        boolean remover = false;
+        if (mensagem.getTarefa().getEstado() == Tarefa.PARADO) {
+            remover = filaTarefas.remove(mensagem.getTarefa());
+        } else if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            //remover evento de saida do cliente do servidor
+            java.util.Iterator<EventoFuturo> interator = simulacao.getEventos().iterator();
+            remover = false;
+            while (!remover && interator.hasNext()) {
+                EventoFuturo ev = interator.next();
+                if (ev.getCliente().equals(mensagem.getTarefa())
+                        && ev.getServidor().equals(this)
+                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                    remover = true;
+                    simulacao.getEventos().remove(ev);
+                }
+            }
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.getEventos().offer(evtFut);
+            }
+        }
+        if (remover) {
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(),
+                    EventoFuturo.CHEGADA,
+                    mensagem.getTarefa().getOrigem(),
+                    mensagem.getTarefa());
+            //Event adicionado a lista de evntos futuros
+            simulacao.getEventos().offer(evtFut);
+        }
+    }
+
+    @Override
+    public void atenderAtualizacao(Simulacao simulacao, Mensagem mensagem) {
+        //atualizar dados dinamicos
+        this.filaTarefasDinamica.clear();
+        for (Tarefa tarefa : tarefaEmExecucao) {
+            this.filaTarefasDinamica.add(tarefa);
+        }
+        for (Tarefa tarefa : filaTarefas) {
+            this.filaTarefasDinamica.add(tarefa);
+        }
+        //enviar resultados
+        int index = mestres.indexOf(mensagem.getOrigem());
+        List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
+        Mensagem novaMensagem = new Mensagem(this, mensagem.getTamComunicacao(), Mensagens.RESULTADO_ATUALIZAR);
+        novaMensagem.setCaminho(caminho);
+        EventoFuturo evtFut = new EventoFuturo(
+                simulacao.getTime(),
+                EventoFuturo.MENSAGEM,
+                novaMensagem.getCaminho().remove(0),
+                novaMensagem);
+        //Event adicionado a lista de evntos futuros
+        simulacao.getEventos().offer(evtFut);
+    }
+
+    @Override
+    public void atenderRetornoAtualizacao(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

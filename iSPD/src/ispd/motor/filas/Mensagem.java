@@ -14,15 +14,6 @@ import java.util.List;
  */
 public class Mensagem implements Cliente {
     
-    public static final int CANCELAR = 1;
-    public static final int PARAR = 2;
-    public static final int DEVOLVER = 3;
-    public static final int DEVOLVER_COM_PREEMPCAO = 4;
-    public static final int ATUALIZAR = 5;
-    public static final int RESULTADO_ATUALIZAR = 6;
-    public static final int PING = 7;
-    public static final int PONG = 8;
-    
     private int tipo;
     private Tarefa tarefa;
     private CentroServico origem;
