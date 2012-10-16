@@ -30,7 +30,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private List<Tarefa> tarefaEmExecucao;
-
+    private List<Tarefa> filaProcessadorDinamica;
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -105,7 +105,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
         tarefaEmExecucao.add(cliente);
         //Gera evento para atender proximo cliente da lista
         EventoFuturo evtFut = new EventoFuturo(
-                simulacao.getTime() + tempoProcessar(cliente.getTamProcessamento()),
+                simulacao.getTime() + tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado()),
                 EventoFuturo.SAÍDA,
                 this, cliente);
         //Event adicionado a lista de evntos futuros
@@ -116,9 +116,9 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
         //Incrementa o número de Mbits transmitido por este link
-        this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento());
-        //Incrementa o tempo de transmissão
-        double tempoProc = this.tempoProcessar(cliente.getTamComunicacao());
+        this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
+        //Incrementa o tempo de processamento
+        double tempoProc = this.tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
         this.getMetrica().incSegundosDeProcessamento(tempoProc);
         //Incrementa o tempo de transmissão no pacote
         cliente.finalizarAtendimentoProcessamento(simulacao.getTime());
@@ -210,8 +210,13 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
         }
     }
 
+    @Override
     public List<Tarefa> getInformacaoDinamicaFila() {
         return filaTarefasDinamica;
+    }
+
+    public List<Tarefa> getInformacaoDinamicaProcessador() {
+        return filaProcessadorDinamica;
     }
 
     @Override
@@ -253,12 +258,50 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
         //Incrementa o tempo de processamento
         this.getMetrica().incSegundosDeProcessamento(tempoProc);
         //Incrementa porcentagem da tarefa processada
-        mensagem.getTarefa().setPorcentagemProcessado(mflopsProcessados * 100 / mensagem.getTarefa().getTamProcessamento());
+        mensagem.getTarefa().setMflopsProcessado(mflopsProcessados);
     }
 
     @Override
     public void atenderParada(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            //remover evento de saida do cliente do servidor
+            java.util.Iterator<EventoFuturo> interator = simulacao.getEventos().iterator();
+            boolean remover = false;
+            while (!remover && interator.hasNext()) {
+                EventoFuturo ev = interator.next();
+                if (ev.getCliente().equals(mensagem.getTarefa())
+                        && ev.getServidor().equals(this)
+                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                    remover = true;
+                    simulacao.getEventos().remove(ev);
+                }
+            }
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.getEventos().offer(evtFut);
+            }
+            double inicioAtendimento = mensagem.getTarefa().parar(simulacao.getTime());
+            double tempoProc = simulacao.getTime() - inicioAtendimento;
+            double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+            //Incrementa o número de Mflops processados por este recurso
+            this.getMetrica().incMflopsProcessados(mflopsProcessados);
+            //Incrementa o tempo de processamento
+            this.getMetrica().incSegundosDeProcessamento(tempoProc);
+            //Incrementa procentagem da tarefa processada
+            mensagem.getTarefa().setMflopsProcessado(mflopsProcessados);
+            tarefaEmExecucao.remove(mensagem.getTarefa());
+            filaTarefas.add(mensagem.getTarefa());
+        }
     }
 
     @Override
@@ -307,6 +350,16 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
                 //Event adicionado a lista de evntos futuros
                 simulacao.getEventos().offer(evtFut);
             }
+            double inicioAtendimento = mensagem.getTarefa().parar(simulacao.getTime());
+            double tempoProc = simulacao.getTime() - inicioAtendimento;
+            double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+            //Incrementa o número de Mflops processados por este recurso
+            this.getMetrica().incMflopsProcessados(mflopsProcessados);
+            //Incrementa o tempo de processamento
+            this.getMetrica().incSegundosDeProcessamento(tempoProc);
+            //Incrementa procentagem da tarefa processada
+            int numCP = (int) (mflopsProcessados / mensagem.getTarefa().getCheckPoint());
+            mensagem.getTarefa().setMflopsProcessado(numCP * mensagem.getTarefa().getCheckPoint());
         }
         if (remover) {
             EventoFuturo evtFut = new EventoFuturo(
@@ -322,6 +375,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
     @Override
     public void atenderAtualizacao(Simulacao simulacao, Mensagem mensagem) {
         //atualizar dados dinamicos
+        this.filaProcessadorDinamica = this.tarefaEmExecucao;
         this.filaTarefasDinamica.clear();
         for (Tarefa tarefa : tarefaEmExecucao) {
             this.filaTarefasDinamica.add(tarefa);

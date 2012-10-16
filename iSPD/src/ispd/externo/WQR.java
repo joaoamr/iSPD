@@ -5,7 +5,7 @@
 package ispd.externo;
 
 import ispd.escalonador.Escalonador;
-import ispd.motor.filas.Mensagem;
+import ispd.motor.Mensagens;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
@@ -97,7 +97,7 @@ public class WQR extends Escalonador {
             Tarefa trf = escalonarTarefa();
             if(trf != null){
                 if(tarefaEnviada.get(escravos.indexOf(rec)) != null){
-                    mestre.enviarMensagem(tarefaEnviada.get(escravos.indexOf(rec)), rec, Mensagem.CANCELAR);
+                    mestre.enviarMensagem(tarefaEnviada.get(escravos.indexOf(rec)), rec, Mensagens.CANCELAR);
                 }else{
                     servidoresOcupados++;
                 }
@@ -128,7 +128,7 @@ public class WQR extends Escalonador {
         }
         for(int i = 0; i < tarefaEnviada.size(); i++){
             if(tarefaEnviada.get(i) != null && tarefaEnviada.get(i).isCopyOf(tarefa)){
-                mestre.enviarMensagem(tarefaEnviada.get(i), escravos.get(i), Mensagem.CANCELAR);
+                mestre.enviarMensagem(tarefaEnviada.get(i), escravos.get(i), Mensagens.CANCELAR);
                 servidoresOcupados--;
                 tarefaEnviada.set(i,null);
             }

@@ -4,10 +4,11 @@
  */
 /**
  *
- * @author denison_usuario
+ * @author denison
  */
 package ispd.escalonador;
 
+import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
@@ -84,9 +85,14 @@ public abstract class Escalonador {
         return caminhoEscravo;
     }
     
+    /**
+     * Indica o intervalo de tempo utilizado pelo escalonador para realizar atualização dos dados dos escravos
+     * Retornar null para escalonadores estáticos, nos dinâmicos o método deve ser reescrito
+     * @return Intervalo em segundos para atualização
+     */
     public Double getTempoAtualizar(){
         return null;
     }
 
-    //public void resultadoAtualizar(Mensagem mensagem) {}
+    public void resultadoAtualizar(Mensagem mensagem) {}
 }

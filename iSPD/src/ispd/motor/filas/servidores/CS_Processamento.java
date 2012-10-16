@@ -92,6 +92,7 @@ public abstract class CS_Processamento extends CentroServico {
     public abstract void determinarCaminhos() throws LinkageError;
     //dados dinamicos do recursos de processamento
     public abstract List getInformacaoDinamicaFila();
+    public abstract List getInformacaoDinamicaProcessador();
     /**
      * Método que determina todas as conexões entre dois recursos
      * podendo haver conexões indiretas, passando por diverssos elementos de comunicação

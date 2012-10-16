@@ -5,7 +5,7 @@
 package ispd.externo;
 
 import ispd.escalonador.Escalonador;
-import ispd.motor.filas.Mensagem;
+import ispd.motor.Mensagens;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
@@ -108,7 +108,7 @@ public class DynamicFPLTF extends Escalonador {
                     if (tempoTornaDisponivel.get(i) - custo > 0) {
                         tempoTornaDisponivel.set(i, tempoTornaDisponivel.get(i) - custo);
                     }
-                    mestre.enviarMensagem(trf, escravo, Mensagem.DEVOLVER);
+                    mestre.enviarMensagem(trf, escravo, Mensagens.DEVOLVER);
                 }
                 escravo.getInformacaoDinamicaFila().clear();
             }

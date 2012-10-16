@@ -408,7 +408,7 @@ public class JResultados extends javax.swing.JDialog {
                 numTarefas++;
                 
             } else if (no.getEstado() == Tarefa.CANCELADO) {
-                MflopsDesperdicio += no.getTamProcessamento() * no.getPorcentagemProcessado();
+                MflopsDesperdicio += no.getTamProcessamento() * no.getMflopsProcessado();
                 numTarefasCanceladas++;
             }
             

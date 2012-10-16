@@ -27,7 +27,10 @@ public class Tarefa implements Cliente {
     private String aplicacao;
     private int identificador;
     private boolean copia;
-    private double porcentagemProcessado;
+    /**
+     * Indica a quantidade de mflops já processados no momento de um bloqueio
+     */
+    private double mflopsProcessado;
     /**
      * Tamanho do arquivo em Mbits que será enviado para o escravo
      */
@@ -77,7 +80,7 @@ public class Tarefa implements Cliente {
         this.metricas = new MetricasTarefa();
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
-        this.porcentagemProcessado = 0;
+        this.mflopsProcessado = 0;
         this.tempoInicial = 0;
         this.tempoFinal = 0;
     }
@@ -95,7 +98,7 @@ public class Tarefa implements Cliente {
         this.metricas = new MetricasTarefa();
         this.tempoCriacao = tempoCriacao;
         this.estado = PARADO;
-        this.porcentagemProcessado = 0;
+        this.mflopsProcessado = 0;
         this.tempoInicial = 0;
         this.tempoFinal = 0;
     }
@@ -113,7 +116,7 @@ public class Tarefa implements Cliente {
         this.metricas = new MetricasTarefa();
         this.tempoCriacao = tarefa.getTimeCriacao();
         this.estado = PARADO;
-        this.porcentagemProcessado = 0;
+        this.mflopsProcessado = 0;
         this.tempoInicial = 0;
         this.tempoFinal = 0;
     }
@@ -202,6 +205,17 @@ public class Tarefa implements Cliente {
             return tempo;
         }
     }
+
+    public double parar(double tempo) {
+        if(estado == PROCESSANDO){
+            this.estado = PARADO;
+            this.metricas.incTempoProcessamento(tempo - inicioEspera);
+            this.tempoFinal = tempo;
+            return inicioEspera;
+        }else{
+            return tempo;
+        }
+    }
     
     public void calcEficiencia(double capacidadeRecebida){
         this.metricas.calcEficiencia(capacidadeRecebida, tamProcessamento);
@@ -246,16 +260,20 @@ public class Tarefa implements Cliente {
         }
     }
 
-    public double getPorcentagemProcessado() {
-        return porcentagemProcessado;
+    public double getMflopsProcessado() {
+        return mflopsProcessado;
     }
 
-    public void setPorcentagemProcessado(double porcentagemProcessado) {
-        this.porcentagemProcessado = porcentagemProcessado;
+    public void setMflopsProcessado(double mflopsProcessado) {
+        this.mflopsProcessado = mflopsProcessado;
     }
 
     public static void setContador(int contador) {
         Tarefa.contador = contador;
+    }
+
+    public double getCheckPoint() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
    
 }
