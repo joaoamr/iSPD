@@ -5,6 +5,7 @@
 package ispd.motor.carga;
 
 import NumerosAleatorios.GeracaoNumAleatorios;
+import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
@@ -58,12 +59,12 @@ public class CargaRandom extends GerarCarga {
     }
 
     @Override
-    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+    public List<Tarefa> toTarefaList(RedeDeFilas rdf) {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
-        int quantidadePorMestre = this.getNumeroTarefas() / mestres.size();
-        int resto = this.getNumeroTarefas() % mestres.size();
+        int quantidadePorMestre = this.getNumeroTarefas() / rdf.getMestres().size();
+        int resto = this.getNumeroTarefas() % rdf.getMestres().size();
         GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
-        for (CS_Processamento mestre : mestres) {
+        for (CS_Processamento mestre : rdf.getMestres()) {
             for (int i = 0; i < quantidadePorMestre; i++) {
                 Tarefa tarefa = new Tarefa(
                         mestre.getProprietario(),
@@ -78,9 +79,9 @@ public class CargaRandom extends GerarCarga {
         }
         for (int i = 0; i < resto; i++) {
             Tarefa tarefa = new Tarefa(
-                        mestres.get(0).getProprietario(),
+                        rdf.getMestres().get(0).getProprietario(),
                         "application1",
-                        mestres.get(0),
+                        rdf.getMestres().get(0),
                         gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
                         0.0009765625 /*arquivo recebimento 1 kbit*/,
                         gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),

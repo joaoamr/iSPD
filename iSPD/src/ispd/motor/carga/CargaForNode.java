@@ -5,6 +5,7 @@
 
 package ispd.motor.carga;
 
+import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
@@ -48,10 +49,10 @@ public class CargaForNode extends GerarCarga{
     }
 
     @Override
-    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+    public List<Tarefa> toTarefaList(RedeDeFilas rdf) {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
         for(CargaTaskNode carga : this.configuracaoNo){
-            tarefas.addAll(carga.toTarefaList(mestres));
+            tarefas.addAll(carga.toTarefaList(rdf));
         }
         return tarefas;
     }

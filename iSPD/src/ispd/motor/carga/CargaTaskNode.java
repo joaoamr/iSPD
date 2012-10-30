@@ -5,6 +5,7 @@
 package ispd.motor.carga;
 
 import NumerosAleatorios.GeracaoNumAleatorios;
+import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
@@ -52,15 +53,15 @@ public class CargaTaskNode extends GerarCarga {
     }
 
     @Override
-    public List<Tarefa> toTarefaList(List<CS_Processamento> mestres) {
+    public List<Tarefa> toTarefaList(RedeDeFilas rdf) {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
         CS_Processamento mestre = null;
         int i = 0;
         boolean encontrou = false;
-        while (!encontrou && i < mestres.size()) {
-            if (mestres.get(i).getId().equals(this.escalonador)) {
+        while (!encontrou && i < rdf.getMestres().size()) {
+            if (rdf.getMestres().get(i).getId().equals(this.escalonador)) {
                 encontrou = true;
-                mestre = mestres.get(i);
+                mestre = rdf.getMestres().get(i);
             }
             i++;
         }

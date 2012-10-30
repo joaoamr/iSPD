@@ -245,7 +245,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             this.print("Creating tasks.");
             this.print(" -> ");
             Tarefa.setContador(0);
-            this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas.getMestres());
+            this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas);
             incProgresso(10);//[10%] --> 45%
             this.println("OK", Color.green);
             //Verifica recursos do modelo e define roteamento
