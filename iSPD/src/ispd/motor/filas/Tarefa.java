@@ -275,5 +275,9 @@ public class Tarefa implements Cliente {
     public double getCheckPoint() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
+    public double getArquivoEnvio() {
+        return arquivoEnvio;
+    }
    
 }
