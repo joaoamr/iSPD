@@ -63,7 +63,10 @@ and open the template in the editor.
 <!ATTLIST link load CDATA "0.0">
 <!ATTLIST link latency CDATA "0.0">
 
-<!ELEMENT load (random|node+)>
+<!ELEMENT load (file|random|node+)>
+
+<!ELEMENT trace EMPTY>
+<!ATTLIST trace file_path CDATA #REQUIRED>
 
 <!ELEMENT random (size,size)>
 <!ATTLIST random owner CDATA "user1">
