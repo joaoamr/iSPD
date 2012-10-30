@@ -10,9 +10,14 @@
  */
 package ispd.gui;
 
+import ispd.arquivo.interpretador.cargas.Interpretador;
+import ispd.arquivo.interpretador.cargas.InterpretadorWMS;
+import ispd.gui.componenteauxiliar.FiltroDeArquivos;
 import ispd.motor.carga.CargaForNode;
 import ispd.motor.carga.CargaRandom;
 import ispd.motor.carga.CargaTaskNode;
+import ispd.motor.carga.CargaTrace;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -21,15 +26,24 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import ispd.motor.carga.GerarCarga;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author denison_usuario
  */
 public class SelecionaCargas extends javax.swing.JDialog {
+
+    private FiltroDeArquivos filtro2;
+    private File file;
 
     /** Creates new form SelecionaCargas */
     public SelecionaCargas(java.awt.Frame parent, boolean modal, Vector<String> users, Vector<String> masters, GerarCarga gerarcarga, ResourceBundle palavras) {
@@ -47,8 +61,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
         this.tabelaColuna.add(palavras.getString("Minimum computing"));
         this.tabelaColuna.add(palavras.getString("Maximum communication"));
         this.tabelaColuna.add(palavras.getString("Minimum communication"));
+        filtro = new FiltroDeArquivos("Workload Model of Sumulation", "wmsx", true);
+        String[] extenc = {"swf", "gwf"};
+        filtro2 = new FiltroDeArquivos("External Trace Files", extenc, true);
         initComponents();
         this.setValores(gerarcarga);
+
     }
 
     /** This method is called from within the constructor to
@@ -101,6 +119,30 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jButtonAddTabela1 = new javax.swing.JButton();
+        jPanelTrace = new javax.swing.JPanel();
+        jRadioButtonwmsx = new javax.swing.JRadioButton();
+        jRadioButtonConvTrace = new javax.swing.JRadioButton();
+        jLabel19 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jPanelConvertTrace = new javax.swing.JPanel();
+        jLabel18 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jTextFieldCaminhoTrace = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextNotifTrace = new javax.swing.JTextArea();
+        jButton5 = new javax.swing.JButton();
+        jOpenTrace = new javax.swing.JFileChooser();
+        jPanelSelecionaTrace = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextNotification = new javax.swing.JTextArea();
+        jButton3 = new javax.swing.JButton();
+        jButtonOpenWMSX = new javax.swing.JButton();
+        jTextFieldCaminhoWMS = new javax.swing.JTextField();
+        jFileExternalTrace = new javax.swing.JFileChooser();
         jPanelModo = new javax.swing.JPanel();
         jRadioButtonTraces = new javax.swing.JRadioButton();
         jRadioButtonForNode = new javax.swing.JRadioButton();
@@ -108,6 +150,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jButtonCancelar = new javax.swing.JButton();
         jButtonAddUser = new javax.swing.JButton();
         jScrollPaneSelecionado = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
         jButtonOK1 = new javax.swing.JButton();
 
         jPanelRandom.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -196,7 +239,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                             .addComponent(jLabel9)
                             .addComponent(jLabel10)))
                     .addComponent(jLabel11))
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
         jPanelRandomLayout.setVerticalGroup(
             jPanelRandomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,16 +313,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jLabel14.setText(palavras.getString("Communication")); // NOI18N
 
         jSpinnerMaxCompNo.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jSpinnerMaxCompNo.setBorder(null);
 
         jSpinnerMinCompNo.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jSpinnerMinCompNo.setBorder(null);
 
         jSpinnerMinComuNo.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jSpinnerMinComuNo.setBorder(null);
 
         jSpinnerMaxComuNo.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jSpinnerMaxComuNo.setBorder(null);
 
         jButtonAddTabela.setText(palavras.getString("Add")); // NOI18N
         jButtonAddTabela.addActionListener(new java.awt.event.ActionListener() {
@@ -384,126 +423,362 @@ public class SelecionaCargas extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(palavras.getString("Random Workloads")); // NOI18N
-        setMinimumSize(new java.awt.Dimension(550, 450));
-        setResizable(false);
+        jPanelTrace.setPreferredSize(new java.awt.Dimension(500, 300));
 
-        jPanelModo.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Insertion mode for the workloads"))); // NOI18N
-        jPanelModo.setMaximumSize(new java.awt.Dimension(500, 60));
-        jPanelModo.setMinimumSize(new java.awt.Dimension(500, 60));
-        jPanelModo.setPreferredSize(new java.awt.Dimension(500, 60));
-
-        jRadioButtonTraces.setText(palavras.getString("Traces")); // NOI18N
-        jRadioButtonTraces.setEnabled(false);
-        jRadioButtonTraces.addActionListener(new java.awt.event.ActionListener() {
+        jRadioButtonwmsx.setSelected(true);
+        jRadioButtonwmsx.setText("Open a Existent iSPD trace file");
+        jRadioButtonwmsx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonTracesActionPerformed(evt);
+                jRadioButtonwmsxActionPerformed(evt);
             }
         });
 
-        jRadioButtonForNode.setText(palavras.getString("For each node")); // NOI18N
-        jRadioButtonForNode.addActionListener(new java.awt.event.ActionListener() {
+        jRadioButtonConvTrace.setText("Convert a external trace file to iSPD trace format");
+        jRadioButtonConvTrace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonForNodeActionPerformed(evt);
+                jRadioButtonConvTraceActionPerformed(evt);
             }
         });
 
-        jRadioButtonRandom.setSelected(true);
-        jRadioButtonRandom.setText(palavras.getString("Random")); // NOI18N
-        jRadioButtonRandom.addActionListener(new java.awt.event.ActionListener() {
+        jLabel19.setText("Select the desired option:");
+
+        jButton2.setText("Next >");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonRandomActionPerformed(evt);
+                jButton2ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanelModoLayout = new javax.swing.GroupLayout(jPanelModo);
-        jPanelModo.setLayout(jPanelModoLayout);
-        jPanelModoLayout.setHorizontalGroup(
-            jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelModoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jRadioButtonRandom)
-                .addGap(18, 18, 18)
-                .addComponent(jRadioButtonForNode)
-                .addGap(18, 18, 18)
-                .addComponent(jRadioButtonTraces)
-                .addContainerGap(231, Short.MAX_VALUE))
-        );
-        jPanelModoLayout.setVerticalGroup(
-            jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelModoLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jRadioButtonRandom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRadioButtonForNode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRadioButtonTraces))
+        javax.swing.GroupLayout jPanelTraceLayout = new javax.swing.GroupLayout(jPanelTrace);
+        jPanelTrace.setLayout(jPanelTraceLayout);
+        jPanelTraceLayout.setHorizontalGroup(
+            jPanelTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTraceLayout.createSequentialGroup()
+                .addGroup(jPanelTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelTraceLayout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel19))
+                    .addGroup(jPanelTraceLayout.createSequentialGroup()
+                        .addGap(61, 61, 61)
+                        .addGroup(jPanelTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButtonConvTrace)
+                            .addComponent(jRadioButtonwmsx))))
+                .addContainerGap(178, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTraceLayout.createSequentialGroup()
+                .addContainerGap(423, Short.MAX_VALUE)
+                .addComponent(jButton2)
                 .addContainerGap())
         );
+        jPanelTraceLayout.setVerticalGroup(
+            jPanelTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTraceLayout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jLabel19)
+                .addGap(62, 62, 62)
+                .addComponent(jRadioButtonwmsx)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioButtonConvTrace)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(44, 44, 44))
+        );
 
-        jButtonCancelar.setText(palavras.getString("Cancel")); // NOI18N
-        jButtonCancelar.setMaximumSize(new java.awt.Dimension(80, 30));
-        jButtonCancelar.setMinimumSize(new java.awt.Dimension(80, 30));
-        jButtonCancelar.setPreferredSize(new java.awt.Dimension(80, 30));
-        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
+        jPanelConvertTrace.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanelConvertTrace.setPreferredSize(new java.awt.Dimension(500, 300));
+
+        jLabel18.setText("Select a external format trace file to convert:");
+
+        jButton1.setText("Open");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCancelarActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        jButtonAddUser.setText(palavras.getString("Add user")); // NOI18N
-        jButtonAddUser.setPreferredSize(new java.awt.Dimension(80, 30));
-        jButtonAddUser.addActionListener(new java.awt.event.ActionListener() {
+        jLabel17.setText("Notifications:");
+
+        jButton4.setText("Convert!");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAddUserActionPerformed(evt);
+                jButton4ActionPerformed(evt);
             }
         });
 
-        jScrollPaneSelecionado.setPreferredSize(new java.awt.Dimension(500, 300));
-
-        jButtonOK1.setText(palavras.getString("OK")); // NOI18N
-        jButtonOK1.setPreferredSize(new java.awt.Dimension(80, 30));
-        jButtonOK1.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldCaminhoTrace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonOK1ActionPerformed(evt);
+                jTextFieldCaminhoTraceActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jTextNotifTrace.setColumns(20);
+        jTextNotifTrace.setRows(5);
+        jTextNotifTrace.setPreferredSize(new java.awt.Dimension(164, 74));
+        jScrollPane2.setViewportView(jTextNotifTrace);
+
+        jButton5.setText("< Prev");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelConvertTraceLayout = new javax.swing.GroupLayout(jPanelConvertTrace);
+        jPanelConvertTrace.setLayout(jPanelConvertTraceLayout);
+        jPanelConvertTraceLayout.setHorizontalGroup(
+            jPanelConvertTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelConvertTraceLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanelConvertTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addComponent(jLabel18)
+                    .addComponent(jLabel17)
+                    .addGroup(jPanelConvertTraceLayout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonAddUser, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFieldCaminhoTrace, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonOK1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
-                    .addComponent(jPanelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton4))
+                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        jPanelConvertTraceLayout.setVerticalGroup(
+            jPanelConvertTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelConvertTraceLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonAddUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonOK1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17))
+                .addGroup(jPanelConvertTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jTextFieldCaminhoTrace, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton5)
+                .addGap(65, 65, 65))
         );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+        jOpenTrace.setAcceptAllFileFilterUsed(false);
+        jOpenTrace.setFileFilter(filtro);
+        jOpenTrace.setFileView(new javax.swing.filechooser.FileView() {@Override
+            public Icon getIcon(File f) {
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("wmsx")) {
+                        java.net.URL imgURL = JPrincipal.class.getResource("imagens/Logo_GSPD_25.png");
+                        if (imgURL != null) {
+                            return new ImageIcon(imgURL);
+                        }
+                    }
+                }
+                return null;
+            }});
+
+            jPanelSelecionaTrace.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+            jPanelSelecionaTrace.setPreferredSize(new java.awt.Dimension(500, 300));
+
+            jLabel20.setText("Select an iSPD trace file to open:");
+
+            jLabel21.setText("Notifications:");
+
+            jTextNotification.setColumns(20);
+            jTextNotification.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+            jTextNotification.setRows(5);
+            jTextNotification.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            jScrollPane1.setViewportView(jTextNotification);
+
+            jButton3.setText("< Prev");
+            jButton3.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButton3ActionPerformed(evt);
+                }
+            });
+
+            jButtonOpenWMSX.setText("Open");
+            jButtonOpenWMSX.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonOpenWMSXActionPerformed(evt);
+                }
+            });
+
+            javax.swing.GroupLayout jPanelSelecionaTraceLayout = new javax.swing.GroupLayout(jPanelSelecionaTrace);
+            jPanelSelecionaTrace.setLayout(jPanelSelecionaTraceLayout);
+            jPanelSelecionaTraceLayout.setHorizontalGroup(
+                jPanelSelecionaTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelSelecionaTraceLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanelSelecionaTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel20)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel21)
+                        .addGroup(jPanelSelecionaTraceLayout.createSequentialGroup()
+                            .addComponent(jButtonOpenWMSX, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jTextFieldCaminhoWMS, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)))
+                    .addContainerGap())
+            );
+            jPanelSelecionaTraceLayout.setVerticalGroup(
+                jPanelSelecionaTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelSelecionaTraceLayout.createSequentialGroup()
+                    .addGap(12, 12, 12)
+                    .addComponent(jLabel20)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanelSelecionaTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonOpenWMSX)
+                        .addComponent(jTextFieldCaminhoWMS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel21)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButton3)
+                    .addContainerGap(38, Short.MAX_VALUE))
+            );
+
+            jFileExternalTrace.setAcceptAllFileFilterUsed(false);
+            jFileExternalTrace.setFileFilter(filtro2);
+
+            setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+            setTitle(palavras.getString("Random Workloads")); // NOI18N
+            setMinimumSize(new java.awt.Dimension(550, 450));
+            setResizable(false);
+
+            jPanelModo.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Insertion mode for the workloads"))); // NOI18N
+            jPanelModo.setMaximumSize(new java.awt.Dimension(500, 60));
+            jPanelModo.setMinimumSize(new java.awt.Dimension(500, 60));
+            jPanelModo.setPreferredSize(new java.awt.Dimension(500, 60));
+
+            jRadioButtonTraces.setText(palavras.getString("Traces")); // NOI18N
+            jRadioButtonTraces.setOpaque(false);
+            jRadioButtonTraces.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jRadioButtonTracesActionPerformed(evt);
+                }
+            });
+
+            jRadioButtonForNode.setText(palavras.getString("For each node")); // NOI18N
+            jRadioButtonForNode.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jRadioButtonForNodeActionPerformed(evt);
+                }
+            });
+
+            jRadioButtonRandom.setSelected(true);
+            jRadioButtonRandom.setText(palavras.getString("Random")); // NOI18N
+            jRadioButtonRandom.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jRadioButtonRandomActionPerformed(evt);
+                }
+            });
+
+            javax.swing.GroupLayout jPanelModoLayout = new javax.swing.GroupLayout(jPanelModo);
+            jPanelModo.setLayout(jPanelModoLayout);
+            jPanelModoLayout.setHorizontalGroup(
+                jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelModoLayout.createSequentialGroup()
+                    .addGap(56, 56, 56)
+                    .addComponent(jRadioButtonRandom)
+                    .addGap(71, 71, 71)
+                    .addComponent(jRadioButtonForNode)
+                    .addGap(64, 64, 64)
+                    .addComponent(jRadioButtonTraces)
+                    .addContainerGap(82, Short.MAX_VALUE))
+            );
+            jPanelModoLayout.setVerticalGroup(
+                jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelModoLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jRadioButtonRandom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jRadioButtonTraces, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addComponent(jRadioButtonForNode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGap(9, 9, 9))
+            );
+
+            jButtonCancelar.setText(palavras.getString("Cancel")); // NOI18N
+            jButtonCancelar.setMaximumSize(new java.awt.Dimension(80, 30));
+            jButtonCancelar.setMinimumSize(new java.awt.Dimension(80, 30));
+            jButtonCancelar.setPreferredSize(new java.awt.Dimension(80, 30));
+            jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonCancelarActionPerformed(evt);
+                }
+            });
+
+            jButtonAddUser.setText(palavras.getString("Add user")); // NOI18N
+            jButtonAddUser.setPreferredSize(new java.awt.Dimension(80, 30));
+            jButtonAddUser.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonAddUserActionPerformed(evt);
+                }
+            });
+
+            jScrollPaneSelecionado.setPreferredSize(new java.awt.Dimension(500, 300));
+
+            javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+            jPanel1.setLayout(jPanel1Layout);
+            jPanel1Layout.setHorizontalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 498, Short.MAX_VALUE)
+            );
+            jPanel1Layout.setVerticalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 309, Short.MAX_VALUE)
+            );
+
+            jScrollPaneSelecionado.setViewportView(jPanel1);
+
+            jButtonOK1.setText(palavras.getString("OK")); // NOI18N
+            jButtonOK1.setPreferredSize(new java.awt.Dimension(80, 30));
+            jButtonOK1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonOK1ActionPerformed(evt);
+                }
+            });
+
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(37, 37, 37)
+                            .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(28, 28, 28)
+                            .addComponent(jButtonAddUser, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(32, 32, 32)
+                            .addComponent(jButtonOK1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                        .addComponent(jPanelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonAddUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonOK1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
+            );
+
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void jRadioButtonRandomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonRandomActionPerformed
         // TODO add your handling code here:
@@ -581,8 +856,10 @@ public class SelecionaCargas extends javax.swing.JDialog {
             } catch (Exception ex) {
                 Logger.getLogger(SelecionaCargas.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            throw new UnsupportedOperationException("Not yet implemented");
+        } else if (jRadioButtonTraces.isSelected()) {
+            //configura a carga apartir do arquivo aberto..
+            this.carga = new CargaTrace(file);
+
         }
         this.setVisible(false);
     }//GEN-LAST:event_jButtonOK1ActionPerformed
@@ -595,20 +872,127 @@ public class SelecionaCargas extends javax.swing.JDialog {
     private void jButtonAddTabela1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddTabela1ActionPerformed
         // TODO add your handling code here:
         int linha = jTable1.getSelectedRow();
-        if(linha >= 0 || linha < tabelaLinha.size()){
+        if (linha >= 0 || linha < tabelaLinha.size()) {
             tabelaLinha.remove(linha);
         }
         jScrollPaneTabela.setViewportView(jTable1);
     }//GEN-LAST:event_jButtonAddTabela1ActionPerformed
 
+private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+// TODO add your handling code here:
+    try {
+        Interpretador interpret = new Interpretador(jTextFieldCaminhoTrace.getText());
+        try {//inicia a conversão do arquivo
+            interpret.convert();
+            file = new File(interpret.getSaida());
+        } catch (Exception e) {
+            jTextNotifTrace.setText("Arquivo mal formatado");
+        }
+        jTextNotifTrace.setText(interpret.toString());
+    } catch (Exception e) {
+        jTextNotifTrace.setText("Não há nenhum arquivo selecionado");
+    };
+}//GEN-LAST:event_jButton4ActionPerformed
+
+private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldCaminhoTraceActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_jTextFieldCaminhoTraceActionPerformed
+
+    private void jRadioButtonwmsxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonwmsxActionPerformed
+        // TODO add your handling code here:
+        if (jRadioButtonwmsx.isSelected()) {
+            jRadioButtonwmsx.setSelected(true);
+            jRadioButtonConvTrace.setSelected(false);
+            file = null;
+            jTextFieldCaminhoTrace.setText("");
+            jTextNotifTrace.setText("");
+
+        } else if (jRadioButtonConvTrace.isSelected()) {
+            jRadioButtonConvTrace.setSelected(true);
+            jRadioButtonwmsx.setSelected(false);
+        }
+    }//GEN-LAST:event_jRadioButtonwmsxActionPerformed
+
+    private void jRadioButtonConvTraceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonConvTraceActionPerformed
+        // TODO add your handling code here:
+        if (jRadioButtonConvTrace.isSelected()) {
+            jRadioButtonwmsx.setSelected(false);
+            jRadioButtonConvTrace.setSelected(true);
+            file = null;
+            jTextFieldCaminhoWMS.setText("");
+            jTextNotification.setText("");
+        } else {
+            jRadioButtonConvTrace.setSelected(false);
+            jRadioButtonwmsx.setSelected(true);
+        }
+    }//GEN-LAST:event_jRadioButtonConvTraceActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        if (jRadioButtonwmsx.isSelected()) {
+            jScrollPaneSelecionado.setViewportView(jPanelSelecionaTrace);
+        } else {
+            jScrollPaneSelecionado.setViewportView(jPanelConvertTrace);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        jScrollPaneSelecionado.setViewportView(jPanelTrace);
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        jScrollPaneSelecionado.setViewportView(jPanelTrace);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButtonOpenWMSXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenWMSXActionPerformed
+        // TODO add your handling code here:
+        filtro.setDescricao(palavras.getString("Workload Model of Simulation"));
+        String ext = ".wmsx";
+        filtro.setExtensao(ext);
+        jOpenTrace.setAcceptAllFileFilterUsed(false);
+        int returnVal = jOpenTrace.showOpenDialog(this);
+        if (returnVal == jOpenTrace.APPROVE_OPTION) {
+            file = jOpenTrace.getSelectedFile();
+            jTextFieldCaminhoWMS.setText(file.getAbsolutePath());
+            Interpretador interpret = new Interpretador(file.getAbsolutePath());
+            jTextNotification.setText(interpret.LerCargaWMS());
+            //This is where a real application would open the file.
+            //Abrir arquivo.
+
+        }
+    }//GEN-LAST:event_jButtonOpenWMSXActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        filtro2.setDescricao(palavras.getString("External Trace File"));
+        String[] exts = {".swf", ".gwf"};
+        filtro2.setExtensao(exts);
+        jFileExternalTrace.setAcceptAllFileFilterUsed(false);
+        int returnVal = jFileExternalTrace.showOpenDialog(this);
+        if (returnVal == jFileExternalTrace.APPROVE_OPTION) {
+            file = jFileExternalTrace.getSelectedFile();
+            jTextFieldCaminhoTrace.setText(file.getAbsolutePath());
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButtonAddTabela;
     private javax.swing.JButton jButtonAddTabela1;
     private javax.swing.JButton jButtonAddUser;
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonOK1;
+    private javax.swing.JButton jButtonOpenWMSX;
     private javax.swing.JComboBox jComboBoxEscalonadores;
     private javax.swing.JComboBox jComboBoxUsers;
+    private javax.swing.JFileChooser jFileExternalTrace;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -617,7 +1001,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -627,12 +1016,21 @@ public class SelecionaCargas extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelNumberOfTasks;
     private javax.swing.JLabel jLabelNumberOfTasks1;
+    private javax.swing.JFileChooser jOpenTrace;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelConvertTrace;
     private javax.swing.JPanel jPanelForNode;
     private javax.swing.JPanel jPanelModo;
     private javax.swing.JPanel jPanelRandom;
+    private javax.swing.JPanel jPanelSelecionaTrace;
+    private javax.swing.JPanel jPanelTrace;
+    private javax.swing.JRadioButton jRadioButtonConvTrace;
     private javax.swing.JRadioButton jRadioButtonForNode;
     private javax.swing.JRadioButton jRadioButtonRandom;
     private javax.swing.JRadioButton jRadioButtonTraces;
+    private javax.swing.JRadioButton jRadioButtonwmsx;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPaneSelecionado;
     private javax.swing.JScrollPane jScrollPaneTabela;
     private javax.swing.JSpinner jSpinnerAverageComputacao;
@@ -651,7 +1049,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
     private javax.swing.JSpinner jSpinnerProbabilityComunicacao;
     private javax.swing.JSpinner jSpinnerTimeOfArrival;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextFieldCaminhoTrace;
+    private javax.swing.JTextField jTextFieldCaminhoWMS;
+    private javax.swing.JTextArea jTextNotifTrace;
+    private javax.swing.JTextArea jTextNotification;
     // End of variables declaration//GEN-END:variables
+    private FiltroDeArquivos filtro;
     private GerarCarga carga;
     private Vector<String> usuarios;
     private Vector<String> escalonadores;
@@ -663,6 +1066,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
     GerarCarga getCargasConfiguracao() {
         return carga;
     }
+
     /**
      * Carrega os valores do gerador de cargas nos componentes da janela
      * @param gerarcarga
@@ -693,7 +1097,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                     throw new UnsupportedOperationException("Not yet implemented");
                 //break;
             }
-        }else{
+        } else {
             setTipo(GerarCarga.RANDOM);
         }
     }
@@ -701,30 +1105,31 @@ public class SelecionaCargas extends javax.swing.JDialog {
     public HashSet<String> getUsuarios() {
         return new HashSet<String>(usuarios);
     }
+
     /**
      * Apresenta na janela jPanel e seta valores dos jRadioButton de acordo com tipo informado
      * @param tipo jRadioButton selecionado
      */
     private void setTipo(int tipo) {
         switch (tipo) {
-                case GerarCarga.RANDOM:
-                    jRadioButtonForNode.setSelected(false);
-                    jRadioButtonTraces.setSelected(false);
-                    jRadioButtonRandom.setSelected(true);
-                    jScrollPaneSelecionado.setViewportView(jPanelRandom);
+            case GerarCarga.RANDOM:
+                jRadioButtonForNode.setSelected(false);
+                jRadioButtonTraces.setSelected(false);
+                jRadioButtonRandom.setSelected(true);
+                jScrollPaneSelecionado.setViewportView(jPanelRandom);
                 break;
-                case GerarCarga.FORNODE:
-                    jRadioButtonForNode.setSelected(true);
-                    jRadioButtonTraces.setSelected(false);
-                    jRadioButtonRandom.setSelected(false);
-                    jScrollPaneSelecionado.setViewportView(jPanelForNode);
+            case GerarCarga.FORNODE:
+                jRadioButtonForNode.setSelected(true);
+                jRadioButtonTraces.setSelected(false);
+                jRadioButtonRandom.setSelected(false);
+                jScrollPaneSelecionado.setViewportView(jPanelForNode);
                 break;
-                case GerarCarga.TRACE:
-                    jRadioButtonForNode.setSelected(false);
-                    jRadioButtonTraces.setSelected(true);
-                    jRadioButtonRandom.setSelected(false);
-                    jScrollPaneSelecionado.setViewportView(null);
+            case GerarCarga.TRACE:
+                jRadioButtonForNode.setSelected(false);
+                jRadioButtonTraces.setSelected(true);
+                jRadioButtonRandom.setSelected(false);
+                jScrollPaneSelecionado.setViewportView(jPanelTrace);
                 break;
-            }
+        }
     }
 }
