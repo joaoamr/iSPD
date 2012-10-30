@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- TODO define your own vocabulary/syntax. Example follows:  -->
-<!ELEMENT load (trace|random|node+)>
+<!ELEMENT system (trace|random|node+)>
 
 <!ELEMENT random (size,size)>
 <!ATTLIST random owner CDATA "user1">
@@ -23,7 +23,7 @@
 
 <!ELEMENT trace (format,task+)>
 <!ELEMENT format EMPTY>
-<!ATTLIST format kind ("SWF"|"GWF") #REQUIRED>
+<!ATTLIST format kind CDATA "iSPD" >
 <!ELEMENT task EMPTY>
 <!ATTLIST task id CDATA "task1">
 <!ATTLIST task arr CDATA "0.0">
