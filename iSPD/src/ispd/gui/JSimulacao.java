@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -139,6 +140,10 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         this.tarefas = tarefas;
     }
 
+    public List<Tarefa> getTarefas() {
+        return tarefas;
+    }
+    
     public void iniciarSimulacao() {
         threadSim = new Thread(this);
         threadSim.start();
