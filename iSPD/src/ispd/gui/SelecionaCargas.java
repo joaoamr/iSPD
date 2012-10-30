@@ -11,31 +11,26 @@
 package ispd.gui;
 
 import ispd.arquivo.interpretador.cargas.Interpretador;
-import ispd.arquivo.interpretador.cargas.InterpretadorWMS;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
 import ispd.motor.carga.CargaForNode;
 import ispd.motor.carga.CargaRandom;
 import ispd.motor.carga.CargaTaskNode;
 import ispd.motor.carga.CargaTrace;
-import java.io.IOException;
+import ispd.motor.carga.GerarCarga;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import ispd.motor.carga.GerarCarga;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author denison_usuario
@@ -954,7 +949,7 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
         filtro.setExtensao(ext);
         jOpenTrace.setAcceptAllFileFilterUsed(false);
         int returnVal = jOpenTrace.showOpenDialog(this);
-        if (returnVal == jOpenTrace.APPROVE_OPTION) {
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = jOpenTrace.getSelectedFile();
             jTextFieldCaminhoWMS.setText(file.getAbsolutePath());
             Interpretador interpret = new Interpretador(file.getAbsolutePath());
@@ -972,7 +967,7 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
         filtro2.setExtensao(exts);
         jFileExternalTrace.setAcceptAllFileFilterUsed(false);
         int returnVal = jFileExternalTrace.showOpenDialog(this);
-        if (returnVal == jFileExternalTrace.APPROVE_OPTION) {
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = jFileExternalTrace.getSelectedFile();
             jTextFieldCaminhoTrace.setText(file.getAbsolutePath());
         }
