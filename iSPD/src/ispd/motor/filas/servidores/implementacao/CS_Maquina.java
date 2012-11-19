@@ -30,7 +30,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
     //Dados dinamicos
     private List<Tarefa> filaTarefasDinamica = new ArrayList<Tarefa>();
     private List<Tarefa> tarefaEmExecucao;
-    private List<Tarefa> filaProcessadorDinamica;
+    private List<Tarefa> filaProcessadorDinamica = new ArrayList<Tarefa>();
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -215,6 +215,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
         return filaTarefasDinamica;
     }
 
+    @Override
     public List<Tarefa> getInformacaoDinamicaProcessador() {
         return filaProcessadorDinamica;
     }
@@ -375,10 +376,10 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
     @Override
     public void atenderAtualizacao(Simulacao simulacao, Mensagem mensagem) {
         //atualizar dados dinamicos
-        this.filaProcessadorDinamica = this.tarefaEmExecucao;
+        this.filaProcessadorDinamica.clear();
         this.filaTarefasDinamica.clear();
         for (Tarefa tarefa : tarefaEmExecucao) {
-            this.filaTarefasDinamica.add(tarefa);
+            this.filaProcessadorDinamica.add(tarefa);
         }
         for (Tarefa tarefa : filaTarefas) {
             this.filaTarefasDinamica.add(tarefa);
