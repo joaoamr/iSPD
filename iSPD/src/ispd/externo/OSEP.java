@@ -6,6 +6,7 @@ package ispd.externo;
 
 import ispd.escalonador.Escalonador;
 import ispd.escalonador.Mestre;
+import ispd.motor.Mensagens;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
@@ -76,6 +77,7 @@ public class OSEP extends Escalonador {
             return selec;
         } else {
             //modificar...
+            //mestre.enviarMensagem(tarefa em execução, escravo selecionado, Mensagens.DEVOLVER_COM_PREEMPCAO);
             return null;
         }
 
