@@ -8,7 +8,6 @@ import ispd.escalonador.Escalonador;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
-import ispd.motor.metricas.MetricasUsuarios;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +64,7 @@ public class OSEP extends Escalonador {
                     selec = tarefas.get(i);
                 }
             }
+            tarefas.remove(selec);
             return selec;
         }else{
             //modificar...
@@ -83,7 +83,7 @@ public class OSEP extends Escalonador {
             //Buscando recurso livre
             CS_Processamento selec = null;
             for(i = 1; i < escravos.size(); i++){
-                if(escravos.get(i).getInformacaoDinamicaProcessador() != null){
+                if(escravos.get(i).getInformacaoDinamicaProcessador().get(0) == null){
                     if(selec == null){
                         selec = escravos.get(i);
                     }else if(
