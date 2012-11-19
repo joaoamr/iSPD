@@ -39,7 +39,13 @@ public class OSEP extends Escalonador {
             creditos.get(indexOwner).AtualizaDoado(tarefa.getTamProcessamento());
         }
         maq.getInformacaoDinamicaProcessador().remove(tarefa);
-        System.out.println("Tarefa " + tarefa.getIdentificador() + " concluida");
+        System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" concluida "+mestre.getSimulacao().getTime());
+    }
+
+    @Override
+    public void adicionarTarefa(Tarefa tarefa){
+        super.adicionarTarefa(tarefa);
+        System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" chegou "+mestre.getSimulacao().getTime());
     }
 
     @Override
@@ -122,14 +128,11 @@ public class OSEP extends Escalonador {
 
     @Override
     public void escalonar() {
-        System.out.println("Tarefas para escalonar "+tarefas.size());
         Tarefa trf = escalonarTarefa();
         tarefaSelec = trf;
         if (trf != null) {
-            System.out.println("selecionado tarefa " + trf.getIdentificador());
             CS_Processamento rec = escalonarRecurso();
             if (rec != null) {
-                System.out.println("sera enviado para " + rec.getId());
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
                 mestre.enviarTarefa(trf);
@@ -149,7 +152,6 @@ public class OSEP extends Escalonador {
         } else {
             for (int i = 1; i < escravos.size(); i++) {
                  if (escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()) {
-                    System.out.println("Escravo "+escravos.get(i).getId()+" livre");
                     return true;
                 }
             }
