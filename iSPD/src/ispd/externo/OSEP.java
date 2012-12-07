@@ -10,6 +10,7 @@ import ispd.motor.Mensagens;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.metricas.MetricasUsuarios;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class OSEP extends Escalonador {
 
     int contadorEscravos;
     Tarefa tarefaSelec;
-    List<CreditosUser> creditos;
+    List<StatusUser> status;
 
     public OSEP() {
         this.tarefas = new ArrayList<Tarefa>();
@@ -32,14 +33,16 @@ public class OSEP extends Escalonador {
     public void addTarefaConcluida(Tarefa tarefa) {
         super.addTarefaConcluida(tarefa);
         CS_Processamento maq = (CS_Processamento) tarefa.getLocalProcessamento();
-        if (!tarefa.getProprietario().equals(maq.getProprietario())) {
+       /* if (!tarefa.getProprietario().equals(maq.getProprietario())) {//Tarefas 
             int indexUser, indexOwner;
             indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
             indexOwner = metricaUsuarios.getUsuarios().indexOf(maq.getProprietario());
             creditos.get(indexUser).AtualizaUsado(tarefa.getTamProcessamento());
             creditos.get(indexOwner).AtualizaDoado(tarefa.getTamProcessamento());
             creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
-        }
+        } */
+        int indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
+        status.get(indexUser).AtualizaUso(1);
         maq.getInformacaoDinamicaProcessador().remove(tarefa);
         System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" concluida "+mestre.getSimulacao().getTime());
     }
@@ -52,24 +55,33 @@ public class OSEP extends Escalonador {
         int indexUser;
         if(tarefa.getLocalProcessamento() == null){
             indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
-            creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
+            //creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
+            status.get(indexUser).AtualizaUso(1);
         }
     }
 
     @Override
     public void iniciar() {
+        int maq;
         this.mestre.setTipoEscalonamento(Mestre.AMBOS);
         contadorEscravos = 0;
-        creditos = new ArrayList<CreditosUser>();
-        for (String user : metricaUsuarios.getUsuarios()) {
-            creditos.add(new CreditosUser(user));
+        status = new ArrayList<StatusUser>();
+        for (int i = 0;i < metricaUsuarios.getUsuarios().size();i++) {
+            maq = 0; 
+            for(int j = 0;j < escravos.size();j++){
+                if(metricaUsuarios.getUsuarios().get(i) == escravos.get(j).getProprietario()){
+                    maq++;
+                } 
+            }
+            status.add(new StatusUser(metricaUsuarios.getUsuarios().get(i),maq));
         }
     }
 
     @Override
     public Tarefa escalonarTarefa() {
         int i = 0;
-        if (escravoLivre()) {
+        return tarefas.remove(0);
+        /*if (escravoLivre()) {
             Tarefa selec = tarefas.get(0);
             for (i = 1; i < tarefas.size(); i++) {
                 int indexSelec = metricaUsuarios.getUsuarios().indexOf(selec.getProprietario());
@@ -138,7 +150,7 @@ public class OSEP extends Escalonador {
             }
             //mestre.enviarMensagem(tarefa em execução, escravo selecionado, Mensagens.DEVOLVER_COM_PREEMPCAO);
             return null;
-        }
+        }*/
 
     }
     
@@ -165,7 +177,7 @@ public class OSEP extends Escalonador {
                 return selec;
             }
             //Buscando tarefa com menor prioridade
-            Double creditoTar = creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).GetCredito();
+            /*Double creditoTar = creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).GetCredito();
         for (i = 1; i < escravos.size(); i++){
                 Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
                 int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
@@ -177,8 +189,33 @@ public class OSEP extends Escalonador {
                         selec = escravos.get(i);
                     }
                 }
+            }*/
+            int escolhido = -1;
+            int penalidade = 0;
+            for(i = 0; i<escravos.size() ; i++){
+                Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
+                int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
+                int cota = status.get(indexEscravo).GetCota();
+                int uso = status.get(indexEscravo).Maq_Uso;
+                if(uso > cota){
+                    escolhido = i;
+                    i = escravos.size();
+                }
+                /*if(uso > cota){
+                    if(penalidade > uso - cota){
+                    escolhido = i;
+                    penalidade = uso - cota;
+                    }
+                }*/
             }
-            return selec;
+            if(escolhido != -1){
+                mestre.enviarMensagem( (Tarefa) escravos.get(escolhido).getInformacaoDinamicaProcessador().get(0),escravos.get(escolhido), Mensagens.DEVOLVER_COM_PREEMPCAO);
+                escravos.get(escolhido).getInformacaoDinamicaProcessador().remove(0);
+                return escravos.get(escolhido);
+            }
+            else{
+                return null;
+            }
      }
     }
 
@@ -190,18 +227,16 @@ public class OSEP extends Escalonador {
 
     @Override
     public void escalonar() {
-        Tarefa trf = escalonarTarefa();
-        tarefaSelec = trf;
-        if (trf != null) {
-            CS_Processamento rec = escalonarRecurso();
-            
-            if (rec != null) {
+        CS_Processamento rec = escalonarRecurso();
+        if (rec != null) {
+            Tarefa trf = escalonarTarefa();
+            if (trf != null) {
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
                 mestre.enviarTarefa(trf);
                 contadorEscravos++;
-                creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).AdidcionaAtual(rec.getPoderComputacional());                
-
+                //creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).AdidcionaAtual(rec.getPoderComputacional());                
+                status.get(metricaUsuarios.getUsuarios().indexOf(trf.getProprietario())).AtualizaUso(1);
             }
         }
     }
@@ -223,8 +258,32 @@ public class OSEP extends Escalonador {
         }
         return false;
     }
+    //penalidade =  (poderEmUso - recurso) - cota , poderEmuso > cota 
+    private class StatusUser {
+        private String usuario;
+        private int Maq_Uso;
+        private int Cota;
+        
+        public StatusUser(String usuario,int cota){
+            this.usuario = usuario;
+            this.Maq_Uso = 0;
+            this.Cota = cota;
+        }
+        
+        public void AtualizaUso(int diferenca){
+            this.Maq_Uso += diferenca;
+        }
+        
+        public int GetCota(){
+            return this.Cota;
+        }
+        
+        public int GetUso(){
+            return this.Maq_Uso;
+        }
+    }
 
-    private class CreditosUser {
+    /*private class CreditosUser {
             
         private String usuario;
         private Double RecursoUsado;
@@ -266,5 +325,5 @@ public class OSEP extends Escalonador {
         public Double GetAtual(){
             return this.PoderEmUso;
         }
-    }
+    }*/
 }
