@@ -43,7 +43,7 @@ public class Escalonadores implements ManipularArquivos {
      * guarda a lista de escalonadores implementados no iSPD,
      * e que já estão disponiveis para o usuario por padrão
      */
-    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF"};
+    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF","M_OSEP","OSEP"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
