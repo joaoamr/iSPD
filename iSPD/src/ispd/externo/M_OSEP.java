@@ -186,6 +186,7 @@ public class M_OSEP extends Escalonador {
             }*/
             int escolhido = -1;
             Double penalidade = 0.0;
+            i = 0;
             for(i = 0; i<escravos.size() ; i++){
                 if(escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()){
                     return escravos.get(i);
@@ -195,11 +196,15 @@ public class M_OSEP extends Escalonador {
                 Double cota = status.get(indexEscravo).GetCota();
                 Double uso = status.get(indexEscravo).GetUso();
                 if(uso > cota){
-                    System.out.println("Ponto y");
-                    if(penalidade < (uso - escravos.get(i).getPoderComputacional() - cota) /*&& (uso - escravos.get(i).getPoderComputacional() - cota) > 0)*/){
-                        System.out.println("Ponto x");
-                        escolhido = i;
-                        penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
+                    if(penalidade == 0.0){
+                         escolhido = i;
+                         penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
+                    }
+                    else{
+                        if(penalidade < (uso - escravos.get(i).getPoderComputacional() - cota) /*&& (uso - escravos.get(i).getPoderComputacional() - cota) > 0)*/){
+                          escolhido = i;
+                          penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
+                       }
                     }
                 }
             }
