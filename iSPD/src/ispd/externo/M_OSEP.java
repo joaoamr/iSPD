@@ -196,7 +196,7 @@ public class M_OSEP extends Escalonador {
                 Double uso = status.get(indexEscravo).GetUso();
                 if(uso > cota){
                     System.out.println("Ponto y");
-                    if(penalidade < (uso - escravos.get(i).getPoderComputacional() - cota) && (uso - escravos.get(i).getPoderComputacional() - cota) > 0){
+                    if(penalidade < (uso - escravos.get(i).getPoderComputacional() - cota) /*&& (uso - escravos.get(i).getPoderComputacional() - cota) > 0)*/){
                         System.out.println("Ponto x");
                         escolhido = i;
                         penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
