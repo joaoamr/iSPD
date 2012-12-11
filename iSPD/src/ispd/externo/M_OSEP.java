@@ -53,10 +53,11 @@ public class M_OSEP extends Escalonador {
         System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" chegou "+mestre.getSimulacao().getTime());
         CS_Processamento maq = (CS_Processamento) tarefa.getLocalProcessamento();
         int indexUser;
-        if(tarefa.getLocalProcessamento() == null){
+        if(tarefa.getLocalProcessamento() != null){
+            System.out.printf("Tarefa %d do usuário %s sofreu preempção\n",tarefa.getIdentificador(),tarefa.getProprietario());
             indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
             //creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
-            status.get(indexUser).AtualizaUso(maq.getPoderComputacional());
+            status.get(indexUser).AtualizaUso(-maq.getPoderComputacional());
         }
     }
 
@@ -160,8 +161,8 @@ public class M_OSEP extends Escalonador {
                 if (escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()) {
                     if (selec == null) {
                         selec = escravos.get(i);
-                    } else if (Math.abs(escravos.get(i).getPoderComputacional() - tarefaSelec.getTamProcessamento())
-                            < Math.abs(selec.getPoderComputacional() - tarefaSelec.getTamProcessamento())) {
+                    } else if (Math.abs(escravos.get(i).getPoderComputacional() - tarefas.get(0).getTamProcessamento())
+                            < Math.abs(selec.getPoderComputacional() - tarefas.get(0).getTamProcessamento())) {
                         selec = escravos.get(i);
                     }
                 }
@@ -186,12 +187,17 @@ public class M_OSEP extends Escalonador {
             int escolhido = -1;
             Double penalidade = 0.0;
             for(i = 0; i<escravos.size() ; i++){
+                if(escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()){
+                    return escravos.get(i);
+                }
                 Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
                 int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
                 Double cota = status.get(indexEscravo).GetCota();
-                Double uso = status.get(indexEscravo).PoderEmUso;
+                Double uso = status.get(indexEscravo).GetUso();
                 if(uso > cota){
-                    if(penalidade > (uso - escravos.get(i).getPoderComputacional() - cota) && (uso - escravos.get(i).getPoderComputacional() - cota) > 0){
+                    System.out.println("Ponto y");
+                    if(penalidade < (uso - escravos.get(i).getPoderComputacional() - cota) && (uso - escravos.get(i).getPoderComputacional() - cota) > 0){
+                        System.out.println("Ponto x");
                         escolhido = i;
                         penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
                     }
@@ -222,6 +228,7 @@ public class M_OSEP extends Escalonador {
             if (trf != null) {
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
+                System.out.println("Tarefa " + trf.getIdentificador() + " do user "+trf.getProprietario()+" foi escalonado"+mestre.getSimulacao().getTime());
                 mestre.enviarTarefa(trf);
                 contadorEscravos++;
                 //creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).AdidcionaAtual(rec.getPoderComputacional());                
