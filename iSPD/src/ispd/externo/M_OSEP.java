@@ -31,8 +31,10 @@ public class M_OSEP extends Escalonador {
 
     @Override
     public void addTarefaConcluida(Tarefa tarefa) {
-        super.addTarefaConcluida(tarefa);
         CS_Processamento maq = (CS_Processamento) tarefa.getLocalProcessamento();
+        int indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
+        status.get(indexUser).AtualizaUso(maq.getPoderComputacional(),0);
+        super.addTarefaConcluida(tarefa);
        /* if (!tarefa.getProprietario().equals(maq.getProprietario())) {//Tarefas 
             int indexUser, indexOwner;
             indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
@@ -41,10 +43,8 @@ public class M_OSEP extends Escalonador {
             creditos.get(indexOwner).AtualizaDoado(tarefa.getTamProcessamento());
             creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
         } */
-        int indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
-        status.get(indexUser).AtualizaUso(-maq.getPoderComputacional());
         maq.getInformacaoDinamicaProcessador().remove(tarefa);
-        System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" concluida "+mestre.getSimulacao().getTime());
+        System.out.println("Tarefa " + tarefa.getIdentificador() + " do user "+tarefa.getProprietario()+" concluida "+mestre.getSimulacao().getTime()+" O usuário perdeu "+ maq.getPoderComputacional()+" MFLOPS");
     }
 
     @Override
@@ -57,7 +57,8 @@ public class M_OSEP extends Escalonador {
             System.out.printf("Tarefa %d do usuário %s sofreu preempção\n",tarefa.getIdentificador(),tarefa.getProprietario());
             indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
             //creditos.get(indexUser).RemoveAtual(maq.getPoderComputacional());
-            status.get(indexUser).AtualizaUso(-maq.getPoderComputacional());
+            ((CS_Processamento) tarefa.getLocalProcessamento()).getInformacaoDinamicaProcessador().remove(tarefa);
+            status.get(indexUser).AtualizaUso(maq.getPoderComputacional(),0);
         }
     }
 
@@ -209,6 +210,7 @@ public class M_OSEP extends Escalonador {
                 }
             }
             if(escolhido != -1){
+                System.out.println("Teste1"+escravos.get(escolhido).getId() + " " +escravos.get(escolhido).getInformacaoDinamicaProcessador().size()+" "+escravos.get(escolhido).getListaProcessamento().size());
                 mestre.enviarMensagem( (Tarefa) escravos.get(escolhido).getInformacaoDinamicaProcessador().get(0),escravos.get(escolhido), Mensagens.DEVOLVER_COM_PREEMPCAO);
                 escravos.get(escolhido).getInformacaoDinamicaProcessador().remove(0);
                 return escravos.get(escolhido);
@@ -231,13 +233,19 @@ public class M_OSEP extends Escalonador {
         if (rec != null) {
             Tarefa trf = escalonarTarefa();
             if (trf != null) {
+                
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
                 System.out.println("Tarefa " + trf.getIdentificador() + " do user "+trf.getProprietario()+" foi escalonado"+mestre.getSimulacao().getTime());
+                
                 mestre.enviarTarefa(trf);
+                rec.getInformacaoDinamicaProcessador().add(trf);
                 contadorEscravos++;
                 //creditos.get(metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario())).AdidcionaAtual(rec.getPoderComputacional());                
-                status.get(metricaUsuarios.getUsuarios().indexOf(trf.getProprietario())).AtualizaUso(rec.getPoderComputacional());
+                status.get(metricaUsuarios.getUsuarios().indexOf(trf.getProprietario())).AtualizaUso(rec.getPoderComputacional(),1);
+                for(int i = 0;i<status.size();i++){
+                   System.out.printf("Usuário %s : %f de %f\n",status.get(i).usuario,status.get(i).GetUso(),status.get(i).GetCota());
+                }
             }
         }
     }
@@ -271,8 +279,12 @@ public class M_OSEP extends Escalonador {
             this.Cota =  poder;
         }
         
-        public void AtualizaUso(Double poder){
-            this.PoderEmUso += poder;
+        public void AtualizaUso(Double poder,int opc){
+            if(opc == 1)
+                this.PoderEmUso = this.PoderEmUso + poder;
+            else{
+                this.PoderEmUso = this.PoderEmUso - poder;
+            }
         }
         
         public Double GetCota(){
