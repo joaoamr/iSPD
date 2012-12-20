@@ -95,7 +95,7 @@ public class M_OSEP extends Escalonador {
                 selec.getInformacaoDinamicaProcessador().remove(selec.getInformacaoDinamicaProcessador().get(0));
                 return selec;
             }
-           /*else{
+            else{
                if(tarefas.size() > 0 && contador > 0){
                    contador--;
                    mestre.executarEscalonamento();
@@ -103,7 +103,7 @@ public class M_OSEP extends Escalonador {
                else{
                    contador = tarefas.size();
                }
-           }*/
+            }
            
         }
 
@@ -139,11 +139,6 @@ public class M_OSEP extends Escalonador {
             }
             
         }
-        for (int i = 0; i < escravos.size(); i++) {
-            if (escravos.get(i).getInformacaoDinamicaProcessador().isEmpty() && tarefas.size() > 0) {
-                mestre.executarEscalonamento(); 
-            }
-        }
         for (int i = 0; i < status.size(); i++) {
               System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
         }
@@ -157,8 +152,7 @@ public class M_OSEP extends Escalonador {
         status.get(indexUser).AtualizaUso(maq.getPoderComputacional(), 0);
         maq.getInformacaoDinamicaProcessador().remove(tarefa);
         System.out.println("Tarefa " + tarefa.getIdentificador() + " do user " + tarefa.getProprietario() + " concluida " + mestre.getSimulacao().getTime() + " O usuário perdeu " + maq.getPoderComputacional() + " MFLOPS");
-        
-    }
+   }
 
     @Override
     public void adicionarTarefa(Tarefa tarefa) {
