@@ -21,7 +21,9 @@ public class M_OSEP extends Escalonador {
 
     Tarefa tarefaSelec;
     List<StatusUser> status;
-    int contador;
+    int contador = 0;
+    int flag = 1;
+    double poderTotal = 0.0;
 
     public M_OSEP() {
         this.tarefas = new ArrayList<Tarefa>();
@@ -45,68 +47,119 @@ public class M_OSEP extends Escalonador {
 
     @Override
     public CS_Processamento escalonarRecurso() {
+        if(contador == 0){
+            flag = 1;
+        }
         //Buscando recurso livre
         CS_Processamento selec = null;
         for (int i = 0; i < escravos.size(); i++) {
-            if (escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()) {
+            if (escravos.get(i).getInformacaoDinamicaFila().isEmpty() && escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()){
                 if (selec == null) {
                     selec = escravos.get(i);
                 } else if (Math.abs(escravos.get(i).getPoderComputacional() - tarefaSelec.getTamProcessamento())
                         < Math.abs(selec.getPoderComputacional() - tarefaSelec.getTamProcessamento())) {
                     selec = escravos.get(i);
-                
-                
-                }
+               }
             }
         }
         if (selec != null) {
+            for(int i = 0; i < escravos.size();i++){
+                if(escravos.get(i).getInformacaoDinamicaProcessador().size() > 1){
+                    int j = escravos.get(i).getInformacaoDinamicaProcessador().size() - 1;
+                    while(j > 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
+            for(int i = 0; i < escravos.size();i++){
+               if(escravos.get(i).getInformacaoDinamicaFila().size() > 0){
+                    int j = escravos.get(i).getInformacaoDinamicaFila().size() - 1;
+                    while(j >= 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaFila().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
             return selec;
         }
         //Buscando recurso para sofrer preempção
         Double penalidade = null;
         for (int i = 0; i < escravos.size(); i++) {
-            Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
-            int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
-            Double cota = status.get(indexEscravo).GetCota();
-            Double uso = status.get(indexEscravo).GetUso();
-            if (uso > cota ) {
-                if (penalidade == null) {
-                    penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
-                    selec = escravos.get(i);
-                } else {
-                    if (penalidade < (uso - escravos.get(i).getPoderComputacional() - cota)) {
-                        penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
-                        selec = escravos.get(i);
+            if(!(escravos.get(i).getInformacaoDinamicaProcessador().isEmpty())){
+                if(escravos.get(i).getInformacaoDinamicaFila().isEmpty()){
+                    Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
+                    int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
+                    Double cota = status.get(indexEscravo).GetCota();
+                    Double uso = status.get(indexEscravo).GetUso();
+                    if (uso > cota ) {
+                        if (penalidade == null) {
+                            penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
+                            selec = escravos.get(i);
+                        } else {
+                            if (penalidade < (uso - escravos.get(i).getPoderComputacional() - cota)) {
+                                penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
+                                selec = escravos.get(i);
+                            }
+                        }
+                        if(flag == 1){
+                            contador++;
+                        }
                     }
                 }
             }
         }
         //Fazer a preempção
         if (selec != null) {
+            for(int i = 0; i < escravos.size();i++){
+                if(escravos.get(i).getInformacaoDinamicaProcessador().size() > 1){
+                    int j = escravos.get(i).getInformacaoDinamicaProcessador().size() - 1;
+                    while(j > 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
+            for(int i = 0; i < escravos.size();i++){
+               if(escravos.get(i).getInformacaoDinamicaFila().size() > 0){
+                    int j = escravos.get(i).getInformacaoDinamicaFila().size() - 1;
+                    while(j >= 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaFila().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
             //Verifica se vale apena fazer preempção
             Tarefa tar = (Tarefa) selec.getInformacaoDinamicaProcessador().get(0);
             int indexUserEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
             int indexUserEspera = metricaUsuarios.getUsuarios().indexOf(tarefaSelec.getProprietario());
             Double penalidaUserEscravo = status.get(indexUserEscravo).GetUso() - selec.getPoderComputacional() - status.get(indexUserEscravo).GetCota();
-            Double penalidaUserEspera = status.get(indexUserEspera).GetUso() + /*selec.getPoderComputacional()*/ - status.get(indexUserEspera).GetCota();
-           if (penalidaUserEscravo < penalidaUserEspera && !((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario().equals(tarefaSelec.getProprietario())) {
+            Double penalidaUserEspera = status.get(indexUserEspera).GetUso() + selec.getPoderComputacional() - status.get(indexUserEspera).GetCota();
+            if (penalidaUserEscravo < penalidaUserEspera && !((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario().equals(tarefaSelec.getProprietario()) && selec.getInformacaoDinamicaFila().isEmpty() && selec.getInformacaoDinamicaProcessador().size() == 1) {
                 System.out.println("Preempção: Tarefa " + ((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getIdentificador() + " do user " + ((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario() + " <=> " + tarefaSelec.getIdentificador() + " do user " + tarefaSelec.getProprietario());
                 mestre.enviarMensagem((Tarefa) selec.getInformacaoDinamicaProcessador().get(0), selec, Mensagens.DEVOLVER_COM_PREEMPCAO);
                 selec.getInformacaoDinamicaProcessador().remove(selec.getInformacaoDinamicaProcessador().get(0));
                 return selec;
-            }
-            else{
-               if(tarefas.size() > 0 && contador > 0){
-                   contador--;
-                   mestre.executarEscalonamento();
-               }
-               else{
-                   contador = tarefas.size();
-               }
-            }
-           
+             }
         }
-
+        for(int i = 0; i < escravos.size();i++){
+                if(escravos.get(i).getInformacaoDinamicaProcessador().size() > 1){
+                    int j = escravos.get(i).getInformacaoDinamicaProcessador().size() - 1;
+                    while(j > 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
+            for(int i = 0; i < escravos.size();i++){
+               if(escravos.get(i).getInformacaoDinamicaFila().size() > 0){
+                    int j = escravos.get(i).getInformacaoDinamicaFila().size() - 1;
+                    while(j >= 0){
+                        mestre.enviarMensagem((Tarefa) escravos.get(i).getInformacaoDinamicaFila().get(j), escravos.get(i), Mensagens.DEVOLVER);
+                        j--;
+                    }
+                }
+            }
         return null;
     }
 
@@ -123,7 +176,7 @@ public class M_OSEP extends Escalonador {
         if (trf != null) {
             CS_Processamento rec = escalonarRecurso();
             if (rec != null) {
-               
+        
                     trf.setLocalProcessamento(rec);
                     trf.setCaminho(escalonarRota(rec));
                     mestre.enviarTarefa(trf);
@@ -131,17 +184,21 @@ public class M_OSEP extends Escalonador {
                     status.get(metricaUsuarios.getUsuarios().indexOf(trf.getProprietario())).AtualizaUso(rec.getPoderComputacional(), 1);
                     System.out.println("Tarefa " + trf.getIdentificador() + " do user " + trf.getProprietario() + " foi escalonado" + mestre.getSimulacao().getTime());
                     System.out.printf("Escravo %s executando %d\n", rec.getId(), rec.getInformacaoDinamicaProcessador().size());
-                    
+                    if(rec.getInformacaoDinamicaProcessador().size() > 1){
+                        System.out.println("PROBLEMA1");
+                    }
                        
             }else {
                 tarefas.add(trf);
                 tarefaSelec = null;
             }
-            
         }
-        for (int i = 0; i < status.size(); i++) {
-              System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
-        }
+        /*if(tarefas.size() > 0 && contador > 0){
+            contador--;
+            flag = 0;
+            mestre.executarEscalonamento();
+        }*/
+        
     }
 
     @Override
@@ -186,6 +243,7 @@ public class M_OSEP extends Escalonador {
             this.usuario = usuario;
             this.PoderEmUso = 0.0;
             this.Cota = poder;
+            poderTotal+=poder;
         }
 
         public void AtualizaUso(Double poder, int opc) {
