@@ -42,6 +42,9 @@
               <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="File" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuArquivoActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemNovo">
               <Properties>

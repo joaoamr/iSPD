@@ -13,6 +13,7 @@ package ispd.gui;
 import CarregaArqTexto.CarregaArqTexto;
 import DescreveSistema.DescreveSistema;
 import InterpretadorExterno.SimGrid.InterpretadorSimGrid;
+import ispd.arquivo.interpretador.cargas.Interpretador;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
 import ispd.gui.componenteauxiliar.Corner;
 import ispd.gui.componenteauxiliar.Rule;
@@ -59,7 +60,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         //Utiliza o idioma do sistema como padrão
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
-        String[] exts = {".ims", ".imsx"};
+        String[] exts = {".ims", ".imsx", ".wmsx"};
         filtro = new FiltroDeArquivos(palavras.getString("Iconic Model of Simulation"), exts, true);
         initComponents();
         // permite que o frame processe os eventos de teclado
@@ -297,6 +298,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             jScrollPaneProperties.setViewportView(jPanelPropriedades);
 
             jMenuArquivo.setText(palavras.getString("File")); // NOI18N
+            jMenuArquivo.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuArquivoActionPerformed(evt);
+                }
+            });
 
             jMenuItemNovo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
             jMenuItemNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/insert-object_1.png"))); // NOI18N
@@ -751,6 +757,24 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         janelaSimulacao.iniciarSimulacao();
         janelaSimulacao.setLocationRelativeTo(this);
         janelaSimulacao.setVisible(true);
+        int jOptionEscolha;
+        jOptionEscolha = JOptionPane.showConfirmDialog(this, "Do you want to save a trace file of simulaton?", "Save Trace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (jOptionEscolha == JOptionPane.YES_OPTION) {
+            filtro.setDescricao(palavras.getString("Workload Model of Simulation"));
+            filtro.setExtensao(".wmsx");
+            jFileChooser.setAcceptAllFileFilterUsed(false);
+            int returnVal = jFileChooser.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = jFileChooser.getSelectedFile();
+                if (!file.getName().endsWith(".wmsx")) {
+                    File temp = new File(file.toString() + ".wmsx");
+                    file = temp;
+                }
+                Interpretador interpret= new Interpretador(file.getAbsolutePath());
+                interpret.geraTraceSim(janelaSimulacao.getTarefas());
+                appendNotificacao(interpret.toString());
+            }
+        }
         appendNotificacao(palavras.getString("Simulate button added."));
     }//GEN-LAST:event_jButtonSimularActionPerformed
 
@@ -1062,7 +1086,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         ge.setEscalonadores(jFrameGerenciador.getEscalonadores());
         ge.setLocationRelativeTo(this);
         ge.setVisible(true);
-        if(ge.getParse() != null){
+        if (ge.getParse() != null) {
             jFrameGerenciador.atualizarEscalonadores();
         }
     }//GEN-LAST:event_jMenuItemGerarActionPerformed
@@ -1144,6 +1168,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             System.exit(0);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void jMenuArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuArquivoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuArquivoActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
