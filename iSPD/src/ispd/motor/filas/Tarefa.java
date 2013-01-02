@@ -103,6 +103,25 @@ public class Tarefa implements Cliente {
         this.tempoFinal = 0;
     }
     
+        public Tarefa(int id,String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao){
+        this.identificador=id;
+        this.proprietario = proprietario;
+        this.aplicacao = aplicacao;
+        this.identificador = Tarefa.contador;Tarefa.contador++;//hashCode();
+        this.copia = false;
+        this.origem = origem;
+        this.tamComunicacao = arquivoEnvio;
+        this.arquivoEnvio = arquivoEnvio;
+        this.arquivoRecebimento = arquivoRecebimento;
+        this.tamProcessamento = tamProcessamento;
+        this.metricas = new MetricasTarefa();
+        this.tempoCriacao = tempoCriacao;
+        this.estado = PARADO;
+        this.mflopsProcessado = 0;
+        this.tempoInicial = 0;
+        this.tempoFinal = 0;
+    }
+        
     public Tarefa(Tarefa tarefa){
         this.proprietario = tarefa.proprietario;
         this.aplicacao = tarefa.getAplicacao();
