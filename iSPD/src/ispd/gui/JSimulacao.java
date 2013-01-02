@@ -277,7 +277,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             this.println("Simulation Execution Time = " + tempototal + "seconds"); 
             janelaResultados.setLocationRelativeTo(this);
             janelaResultados.setVisible(true);
-        }catch(IllegalArgumentException erro){
+            }catch(IllegalArgumentException erro){
             Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, erro);
             this.println(erro.getMessage(), Color.red);
             this.print("Simulation Aborted", Color.red);
