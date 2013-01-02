@@ -229,9 +229,9 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
             remover = false;
             while (!remover && interator.hasNext()) {
                 EventoFuturo ev = interator.next();
-                if (ev.getCliente().equals(mensagem.getTarefa())
+                if (ev.getTipo() == EventoFuturo.SAÍDA
                         && ev.getServidor().equals(this)
-                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                        && ev.getCliente().equals(mensagem.getTarefa())) {
                     remover = true;
                     simulacao.getEventos().remove(ev);
                 }
@@ -270,9 +270,9 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
             boolean remover = false;
             while (!remover && interator.hasNext()) {
                 EventoFuturo ev = interator.next();
-                if (ev.getCliente().equals(mensagem.getTarefa())
+                if (ev.getTipo() == EventoFuturo.SAÍDA
                         && ev.getServidor().equals(this)
-                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                        && ev.getCliente().equals(mensagem.getTarefa())) {
                     remover = true;
                     simulacao.getEventos().remove(ev);
                 }
@@ -330,9 +330,9 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
             remover = false;
             while (!remover && interator.hasNext()) {
                 EventoFuturo ev = interator.next();
-                if (ev.getCliente().equals(mensagem.getTarefa())
+                if (ev.getTipo() == EventoFuturo.SAÍDA
                         && ev.getServidor().equals(this)
-                        && ev.getTipo() == EventoFuturo.SAÍDA) {
+                        && ev.getCliente().equals(mensagem.getTarefa())) {
                     remover = true;
                     simulacao.getEventos().remove(ev);
                 }
@@ -361,6 +361,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens {
             //Incrementa procentagem da tarefa processada
             int numCP = (int) (mflopsProcessados / mensagem.getTarefa().getCheckPoint());
             mensagem.getTarefa().setMflopsProcessado(numCP * mensagem.getTarefa().getCheckPoint());
+            tarefaEmExecucao.remove(mensagem.getTarefa());
         }
         if (remover) {
             EventoFuturo evtFut = new EventoFuturo(
