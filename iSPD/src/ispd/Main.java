@@ -61,7 +61,7 @@ public class Main {
         }
         BufferedImage image = null;
         try {
-            image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash.png"));
+            image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash2.png"));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
