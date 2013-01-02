@@ -567,7 +567,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="178" max="32767" attributes="0"/>
+                  <EmptySpace pref="172" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace pref="423" max="32767" attributes="0"/>
@@ -596,7 +596,7 @@
         <Component class="javax.swing.JRadioButton" name="jRadioButtonwmsx">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Open a Existent iSPD trace file"/>
+            <Property name="text" type="java.lang.String" value="Open an existing iSPD trace file"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonwmsxActionPerformed"/>
@@ -604,7 +604,7 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="jRadioButtonConvTrace">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Convert a external trace file to iSPD trace format"/>
+            <Property name="text" type="java.lang.String" value="Convert an external trace file to iSPD trace format"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonConvTraceActionPerformed"/>

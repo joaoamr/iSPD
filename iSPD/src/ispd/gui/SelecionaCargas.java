@@ -421,14 +421,14 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jPanelTrace.setPreferredSize(new java.awt.Dimension(500, 300));
 
         jRadioButtonwmsx.setSelected(true);
-        jRadioButtonwmsx.setText("Open a Existent iSPD trace file");
+        jRadioButtonwmsx.setText("Open an existing iSPD trace file");
         jRadioButtonwmsx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonwmsxActionPerformed(evt);
             }
         });
 
-        jRadioButtonConvTrace.setText("Convert a external trace file to iSPD trace format");
+        jRadioButtonConvTrace.setText("Convert an external trace file to iSPD trace format");
         jRadioButtonConvTrace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonConvTraceActionPerformed(evt);
@@ -458,7 +458,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                         .addGroup(jPanelTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jRadioButtonConvTrace)
                             .addComponent(jRadioButtonwmsx))))
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addContainerGap(172, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTraceLayout.createSequentialGroup()
                 .addContainerGap(423, Short.MAX_VALUE)
                 .addComponent(jButton2)
@@ -584,7 +584,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
             jLabel21.setText("Notifications:");
 
             jTextNotification.setColumns(20);
-            jTextNotification.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+            jTextNotification.setFont(new java.awt.Font("Tahoma", 0, 11));
             jTextNotification.setRows(5);
             jTextNotification.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             jScrollPane1.setViewportView(jTextNotification);
@@ -853,7 +853,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
             }
         } else if (jRadioButtonTraces.isSelected()) {
             //configura a carga apartir do arquivo aberto..
-            this.carga = new CargaTrace(file);
+            this.carga = new CargaTrace(file, NumTaskTrace, TipoTrace);
 
         }
         this.setVisible(false);
@@ -878,8 +878,13 @@ private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     try {
         Interpretador interpret = new Interpretador(jTextFieldCaminhoTrace.getText());
         try {//inicia a conversão do arquivo
+            double t1 = System.currentTimeMillis();
             interpret.convert();
+            double t2 = System.currentTimeMillis();
+            System.out.println((t2-t1)/1000);
             file = new File(interpret.getSaida());
+            NumTaskTrace = interpret.getNum_Tasks();
+            TipoTrace = interpret.getTipo();
         } catch (Exception e) {
             jTextNotifTrace.setText("Arquivo mal formatado");
         }
@@ -901,6 +906,7 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
             file = null;
             jTextFieldCaminhoTrace.setText("");
             jTextNotifTrace.setText("");
+            NumTaskTrace = 0;
 
         } else if (jRadioButtonConvTrace.isSelected()) {
             jRadioButtonConvTrace.setSelected(true);
@@ -916,6 +922,7 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
             file = null;
             jTextFieldCaminhoWMS.setText("");
             jTextNotification.setText("");
+            NumTaskTrace = 0;
         } else {
             jRadioButtonConvTrace.setSelected(false);
             jRadioButtonwmsx.setSelected(true);
@@ -954,6 +961,9 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
             jTextFieldCaminhoWMS.setText(file.getAbsolutePath());
             Interpretador interpret = new Interpretador(file.getAbsolutePath());
             jTextNotification.setText(interpret.LerCargaWMS());
+            NumTaskTrace = interpret.getNum_Tasks();
+            TipoTrace = interpret.getTipo();
+
             //This is where a real application would open the file.
             //Abrir arquivo.
 
@@ -1057,6 +1067,8 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
     private Vector<String> tabelaColuna = new Vector<String>(7);
     private int tabelaIndex = 0;
     private ResourceBundle palavras;
+    private int NumTaskTrace = 0;
+    private String TipoTrace = "";
 
     GerarCarga getCargasConfiguracao() {
         return carga;
@@ -1089,7 +1101,9 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
                     setTipo(GerarCarga.FORNODE);
                     break;
                 case GerarCarga.TRACE:
-                    throw new UnsupportedOperationException("Not yet implemented");
+                    setTipo(GerarCarga.TRACE);
+                    jScrollPaneSelecionado.setViewportView(jPanelSelecionaTrace);
+                    
                 //break;
             }
         } else {
