@@ -27,7 +27,7 @@ public class M_OSEP extends Escalonador {
     int aux;
     List<Tarefa> espera;
     int contadorEscravos = 0;
-    boolean atualizado = false;
+    int conta_esca = 0;
     
 
     public M_OSEP() {
@@ -52,13 +52,45 @@ public class M_OSEP extends Escalonador {
 
     @Override
     public Tarefa escalonarTarefa() {
-        //Escalona tarefa com política FIFO
-        if(tarefas.size() > 0){
-            return tarefas.remove(0);
-        }
-        else{
-            return null;
-        }
+                         
+           double difUsuarioMinimo = -1.0; 
+           int indexUsuarioMinimo = -1;
+           
+           //Encontrar o usuário que está mais abaixo da sua propriedade 
+           for(int i = 0; i < metricaUsuarios.getUsuarios().size(); i++){
+               if(status.get(i).GetUso() < status.get(i).GetCota() && status.get(i).GetUso() > 0.0){
+                   if(difUsuarioMinimo == -1.0){
+                       difUsuarioMinimo = status.get(i).GetCota() - status.get(i).GetUso();
+                       indexUsuarioMinimo = i;
+                   }
+                   else{
+                       if(difUsuarioMinimo > status.get(i).GetCota() - status.get(i).GetUso()){
+                           difUsuarioMinimo = status.get(i).GetCota() - status.get(i).GetUso();
+                           indexUsuarioMinimo = i;
+                       }
+                   }
+               }
+           }
+           
+           if(indexUsuarioMinimo != -1){
+               int i = 0;
+               while(i < tarefas.size()){
+                   if(tarefas.get(i).getProprietario().equals(metricaUsuarios.getUsuarios().get(indexUsuarioMinimo))){
+                       return tarefas.remove(i); 
+                   }
+                   i++;
+               }
+           }
+           else{
+                if(tarefas.size() > 0){
+                    return tarefas.remove(0);
+                }
+                else{
+                    return null;
+                }
+           }
+        
+        return null;
     }
 
     @Override
@@ -67,7 +99,7 @@ public class M_OSEP extends Escalonador {
         //Buscando recurso livre
         CS_Processamento selec = null;
         for (int i = 0; i < escravos.size(); i++) {
-            if (/*escravos.get(i).getInformacaoDinamicaFila().isEmpty() && escravos.get(i).getInformacaoDinamicaProcessador().isEmpty() &&*/ contadores_escravos.get(i).GetContador() == 0){//Garantir que o escravo está de fato livre e que não há nenhuma tarefa em trânsito para o escravo
+            if (escravos.get(i).getInformacaoDinamicaFila().isEmpty() && escravos.get(i).getInformacaoDinamicaProcessador().isEmpty() && contadores_escravos.get(i).GetContador() == 0){//Garantir que o escravo está de fato livre e que não há nenhuma tarefa em trânsito para o escravo
                 if (selec == null) {
                     selec = escravos.get(i);
                 } else if (Math.abs(escravos.get(i).getPoderComputacional() - tarefaSelec.getTamProcessamento()) < Math.abs(selec.getPoderComputacional() - tarefaSelec.getTamProcessamento())) {//Best Fit
@@ -77,18 +109,18 @@ public class M_OSEP extends Escalonador {
         }
         if (selec != null) {
            contadores_escravos.get(escravos.indexOf(selec)).SetOcupado();//Inidcar que uma tarefa será enviada e que , portanto , este escravo deve ser considerado ocupado
-           atualizado = false;
            return selec;
         }
         //Buscando recurso para sofrer preempção
         Double penalidade = null;
         for (int i = 0; i < escravos.size(); i++) {
-            if(/*escravos.get(i).getInformacaoDinamicaProcessador().size() == 1 &&*/contadores_escravos.get(i).getAtualizado() && contadores_escravos.get(i).GetContador() == 1 /*&& escravos.get(i).getInformacaoDinamicaFila().isEmpty()*/){//Garante que está executando apenas uma tarefa está sendo executada e que não hpa tarefa eem trânsito para este escravo
+            if(escravos.get(i).getInformacaoDinamicaProcessador().size() == 1 && contadores_escravos.get(i).GetContador() == 1 && escravos.get(i).getInformacaoDinamicaFila().isEmpty()){//Garante que está executando apenas uma tarefa está sendo executada e que não há tarefa em trânsito para este escravo
                     Tarefa tar = (Tarefa) escravos.get(i).getInformacaoDinamicaProcessador().get(0);
                     int indexEscravo = metricaUsuarios.getUsuarios().indexOf(tar.getProprietario());
                     Double cota = status.get(indexEscravo).GetCota();//Cota do usuário dono da tarefa em execução
                     Double uso = status.get(indexEscravo).GetUso();//Uso do usuário da tarefa em execução
                     if (uso > cota) {//Se este usuário está extrapolando sua cota
+                        System.out.println("Possível Preempção : " + escravos.get(i).getPoderComputacional()+" MFLOPS");
                         if (penalidade == null) {
                             //Calcula a penalidade e seleciona esse escravo
                             penalidade = uso - escravos.get(i).getPoderComputacional() - cota;
@@ -101,7 +133,7 @@ public class M_OSEP extends Escalonador {
                             }
                         }
                         aux++;//Incrementa o número de escravos que executam tarefas de usuários extrapoladores
-                    }
+                   }
             }
         }
         //Fazer a preempção
@@ -115,7 +147,7 @@ public class M_OSEP extends Escalonador {
             //Penalidade do usuário dono da tarefa slecionada para ser posta em execução, caso a preempção seja feita
             Double penalidaUserEspera = status.get(indexUserEspera).GetUso() + selec.getPoderComputacional() - status.get(indexUserEspera).GetCota();
             //Caso o usuário em espera apresente menor penalidade e os donos das tarefas em execução e em espera não sejam a mesma pessoa , e , ainda, o escravo esteja executando apenas uma tarefa
-            if (penalidaUserEscravo < penalidaUserEspera && !((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario().equals(tarefaSelec.getProprietario())/* && selec.getInformacaoDinamicaFila().isEmpty() && selec.getInformacaoDinamicaProcessador().size() == 1*/) {
+            if ((penalidaUserEscravo < penalidaUserEspera && !((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario().equals(tarefaSelec.getProprietario())) || (penalidaUserEscravo > 0 && penalidaUserEspera < 0 && !((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario().equals(tarefaSelec.getProprietario()))) {
                 System.out.println("Preempção: Tarefa " + ((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getIdentificador() + " do user " + ((Tarefa) selec.getInformacaoDinamicaProcessador().get(0)).getProprietario() + " <=> " + tarefaSelec.getIdentificador() + " do user " + tarefaSelec.getProprietario());
                 contadores_escravos.get(escravos.indexOf(selec)).SetPreemp();
                 mestre.enviarMensagem((Tarefa) selec.getInformacaoDinamicaProcessador().get(0), selec, Mensagens.DEVOLVER_COM_PREEMPCAO);
@@ -137,7 +169,6 @@ public class M_OSEP extends Escalonador {
         contadorEscravos++;
         boolean ocupados = true;
         if(contadorEscravos == escravos.size()){
-            //Realiza preempções 
             for(int i = 0;i < escravos.size(); i++){
                  if(escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()){
                      ocupados = false;
@@ -147,11 +178,14 @@ public class M_OSEP extends Escalonador {
                 for(int i = 0; i < escravos.size(); i++){
                     if(escravos.get(i).getInformacaoDinamicaProcessador().size() == 1){
                        contadores_escravos.get(i).SetOcupado();
-                       contadores_escravos.get(i).setAtualizado();
                     }
                     else if(escravos.get(i).getInformacaoDinamicaProcessador().isEmpty()){
                         contadores_escravos.get(i).ResetContador();
                     }
+                }
+                System.out.println("Tempo :"+ mestre.getSimulacao().getTime());
+                for (int i = 0; i < status.size(); i++) {
+                    System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
                 }
                 
             }
@@ -161,6 +195,8 @@ public class M_OSEP extends Escalonador {
     
     @Override
     public void escalonar() {
+        System.out.println("Escalonamento "+ conta_esca);
+        conta_esca++;
         Tarefa trf = escalonarTarefa();
         tarefaSelec = trf;
         if (trf != null) {
@@ -177,11 +213,11 @@ public class M_OSEP extends Escalonador {
                     System.out.printf("Escravo %s executando %d\n", rec.getId(), rec.getInformacaoDinamicaProcessador().size());
                     for(int i = 0;i < escravos.size(); i++){
                         if(escravos.get(i).getInformacaoDinamicaProcessador().size() > 1){
-                            if(escravos.get(i).getInformacaoDinamicaFila().size() > 0){
-                                System.out.println("Tem Fila");
-                            }
                             System.out.printf("Escravo %s executando %d\n", escravos.get(i).getId(), escravos.get(i).getInformacaoDinamicaProcessador().size());
                             System.out.println("PROBLEMA1");
+                        }
+                        if(escravos.get(i).getInformacaoDinamicaFila().size() > 0){
+                                System.out.println("Tem Fila");
                         }
                     }
                 }
@@ -194,15 +230,19 @@ public class M_OSEP extends Escalonador {
                 tarefaSelec = null;
             }
         }
+        System.out.println("Tempo :"+ mestre.getSimulacao().getTime());
+        for (int i = 0; i < status.size(); i++) {
+              System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
+        }
         //Recursão. O escalonador é chamado para tentar todas as possibilidades de preempção
-        /*if(tarefas.size() > 0 && contador > 0){
+        if(tarefas.size() > 0 && contador > 0){
             contador--;
             aux = 0;
             mestre.executarEscalonamento();
         }
         else{
             contador = aux;
-        }*/
+        }
     }
 
     @Override
@@ -227,24 +267,21 @@ public class M_OSEP extends Escalonador {
                 if(espera.get(i).getLocalProcessamento().equals(tarefa.getLocalProcessamento())){
                     mestre.enviarTarefa(espera.get(i));
                     contadores_escravos.get(escravos.indexOf(maq)).SetOcupado();
-                    espera.remove(i);
                     System.out.printf("Tarefa %d do usuário %s sofreu preempção\n", tarefa.getIdentificador(), tarefa.getProprietario());
                     indexUser = metricaUsuarios.getUsuarios().indexOf(tarefa.getProprietario());
                     status.get(indexUser).AtualizaUso(maq.getPoderComputacional(), 0);
+                    indexUser = metricaUsuarios.getUsuarios().indexOf(espera.get(i).getProprietario());
+                    status.get(indexUser).AtualizaUso(((CS_Processamento) tarefa.getLocalProcessamento()).getPoderComputacional(), 1);
+                    espera.remove(i);
                     i = espera.size();
                }
             }
-            //int i = 0;
-            //Esperar que a tarefa chegue ao escravo para alterar seu estado de preempção para ocupado
-            /*while(maq.getInformacaoDinamicaProcessador().isEmpty()){
-                i++;
-            }*/
-            //contadores_escravos.get(escravos.indexOf(maq)).SetOcupado();
+            System.out.println("Tempo :"+ mestre.getSimulacao().getTime());
+            for (int i = 0; i < status.size(); i++) {
+                  System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
+            }
         } else {
             System.out.println("Tarefa " + tarefa.getIdentificador() + " do user " + tarefa.getProprietario() + " chegou " + mestre.getSimulacao().getTime());
-        }
-        for (int i = 0; i < status.size(); i++) {
-              System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
         }
     }
 
@@ -285,37 +322,26 @@ public class M_OSEP extends Escalonador {
     private class ControleEscravos{
         
         private int contador;
-        private boolean atualizado;
+       
         
         public ControleEscravos(){
             this.contador = 0;
-            this.atualizado = true;
         }
         
         public int GetContador(){
             return this.contador;
         }
         
-        public boolean getAtualizado(){
-            return this.atualizado;
-        }
-        
         public void SetOcupado(){
             this.contador = 1;
-            this.atualizado = false;
         }
         
         public void ResetContador(){
             this.contador = 0;
-            this.atualizado = false;
         }
-        public void setAtualizado(){
-            this.atualizado = true;
-        }
-        
+       
         public void SetPreemp(){
             this.contador = -1;
-            this.atualizado = false;
         }
     }
 }
