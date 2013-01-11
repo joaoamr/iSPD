@@ -473,8 +473,8 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens {
             //Incrementa o tempo de processamento
             this.getMetrica().incSegundosDeProcessamento(tempoProc);
             //Incrementa procentagem da tarefa processada
-            int numCP = (int) (mflopsProcessados / 2);//mensagem.getTarefa().getCP();
-            mensagem.getTarefa().setMflopsProcessado(numCP * 2);//mensagem.getTarefa().getCP());
+            int numCP = (int) (mflopsProcessados / mensagem.getTarefa().getCheckPoint());
+            mensagem.getTarefa().setMflopsProcessado(numCP * mensagem.getTarefa().getCheckPoint());
         }
         if (temp1 || temp2) {
             EventoFuturo evtFut = new EventoFuturo(
