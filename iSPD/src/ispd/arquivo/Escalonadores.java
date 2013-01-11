@@ -43,7 +43,7 @@ public class Escalonadores implements ManipularArquivos {
      * guarda a lista de escalonadores implementados no iSPD,
      * e que já estão disponiveis para o usuario por padrão
      */
-    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF","M_OSEP","OSEP"};
+    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
@@ -302,7 +302,7 @@ public class Escalonadores implements ManipularArquivos {
 
     /**
      * @param escalonador
-     * @return conteudo de básico para criar uma classe que implemente um escalonador
+     * @return conteudo básico para criar uma classe que implemente um escalonador
      */
     public static String getEscalonadorJava(String escalonador) {
         String saida =
@@ -314,15 +314,10 @@ public class Escalonadores implements ManipularArquivos {
        + "\n" + "import java.util.ArrayList;"
        + "\n" + "import java.util.List;"
        + "\n"
-       + "\n" + "public class DynamicFPLTF extends Escalonador{"
+       + "\n" + "public class "+escalonador+" extends Escalonador{"
        + "\n"
        + "\n" + "    @Override"
        + "\n" + "    public void iniciar() {"
-       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
-       + "\n" + "    }"
-       + "\n"
-       + "\n" + "    @Override"
-       + "\n" + "    public void atualizar() {"
        + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
        + "\n" + "    }"
        + "\n"
@@ -343,16 +338,6 @@ public class Escalonadores implements ManipularArquivos {
        + "\n"
        + "\n" + "    @Override"
        + "\n" + "    public void escalonar() {"
-       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
-       + "\n" + "    }"
-       + "\n"
-       + "\n" + "    @Override"
-       + "\n" + "    public void adicionarTarefa(Tarefa tarefa) {"
-       + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
-       + "\n" + "    }"
-       + "\n"
-       + "\n" + "    @Override"
-       + "\n" + "    public void adicionarFilaTarefa(ArrayList<Tarefa> tarefa) {"
        + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
        + "\n" + "    }"
        + "\n"
