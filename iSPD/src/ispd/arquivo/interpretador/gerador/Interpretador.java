@@ -141,7 +141,7 @@ class Interpretador implements InterpretadorConstants {
         public void dinamicoIntervalo(String text){
             getTempoAtualizar = "@Override\u005cn"
                                +"public Double getTempoAtualizar(){\u005cn"
-                               +"    return "+text+";\u005cn"
+                               +"    return (double) "+text+";\u005cn"
                                +"}\u005cn\u005cn";
         }
 

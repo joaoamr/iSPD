@@ -147,7 +147,7 @@ class Interpretador{
         public void dinamicoIntervalo(String text){
             getTempoAtualizar = "@Override\n"
                                +"public Double getTempoAtualizar(){\n"
-                               +"    return "+text+";\n"
+                               +"    return (double) "+text+";\n"
                                +"}\n\n";
         }
 
