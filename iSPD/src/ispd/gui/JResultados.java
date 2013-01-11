@@ -10,7 +10,6 @@
  */
 package ispd.gui;
 
-import Simulacao.ListaEventosFuturos;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -18,9 +17,6 @@ import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -28,13 +24,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import ispd.gui.ParesOrdenadosUso;
-import java.util.LinkedList;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import ispd.gui.poderComputacionalTotal;
 import java.util.*;
-import ispd.gui.tempo_uso_usuario;
 
 
 /**
@@ -46,6 +38,7 @@ public class JResultados extends javax.swing.JDialog {
     /** Creates new form JResultados */
     public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List tarefas) {
         super(parent, true);
+        tabelaRecurso = setTabelaRecurso(rdf);
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
         this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
@@ -64,10 +57,9 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
         graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600,300));
         
-       graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(tarefas,rdf));
-       graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600,300));
+        graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(tarefas,rdf));
+        graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600,300));
         
-        tabelaRecurso = setTabelaRecurso(rdf);
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
