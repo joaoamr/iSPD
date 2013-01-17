@@ -300,6 +300,7 @@ public void escalonar() {
                 if(!controleEscravos.get(escravos.indexOf(rec)).Preemp()){
                     numEscravosLivres--;
                     status.get(metricaUsuarios.getUsuarios().indexOf(trf.getProprietario())).AtualizaUso(rec.getPoderComputacional(), 1);
+                    controleEscravos.get(escravos.indexOf(rec)).SetBloqueado();
                 }
                 else{
                     numEscravosPreemp--;
