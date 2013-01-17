@@ -278,9 +278,9 @@ public class M_OSEP extends Escalonador {
                 System.out.printf("Usuário %s : %f de %f\n", status.get(i).usuario, status.get(i).GetUso(), status.get(i).GetCota());
             }
             
-            if( tarefas.size() > 0 ){
+            /*if( tarefas.size() > 0 ){
                 mestre.executarEscalonamento();
-            }    
+            }*/    
             contadorEscravos = 0;
         }
     }
