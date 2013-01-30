@@ -345,7 +345,7 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoProcessamentoTempo;
     private ChartPanel graficoProcessamentoTempoTarefa;
     private ChartPanel graficoProcessamentoTempoUser;
-    private poderComputacionalTotal soma_poder = new poderComputacionalTotal();
+    private double poderComputacionalTotal = 0;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -515,7 +515,7 @@ public class JResultados extends javax.swing.JDialog {
                     if (task.getProprietario().equals(rdf.getMetricasUsuarios().getUsuarios().get(i))) {
 
                         CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
-                        Double uso = (local.getPoderComputacional() / this.soma_poder.getSoma()) * 100;
+                        Double uso = (local.getPoderComputacional() / this.poderComputacionalTotal) * 100;
 
                         //tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(),true,uso);
                         //tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(),false,uso);
@@ -631,7 +631,7 @@ public class JResultados extends javax.swing.JDialog {
                 tmp_series = new XYSeries("task " + tarefas.get(i).getIdentificador());
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
 
-                Double uso = (temp.getPoderComputacional() / this.soma_poder.getSoma()) * 100;
+                Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
                 //System.out.println("tamanho_tarefas = "+tarefas.get(i).getTamProcessamento());
                 //System.out.println("soma = "+this.soma_poder.getSoma());
                 tmp_series.add(tarefas.get(i).getTempoInicial(), uso);
@@ -668,7 +668,7 @@ public class JResultados extends javax.swing.JDialog {
                 //Lista que recebe os pares de intervalo de tempo em que a máquina executou.
                 LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
 
-                soma_poder.adiciona_maq_poder(maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
+                poderComputacionalTotal += (maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
                 //Se a máquina tiver intervalos.
                 if (!lista.isEmpty()) {
                     //Cria o objeto do tipo XYSeries.
@@ -923,5 +923,30 @@ public class JResultados extends javax.swing.JDialog {
         graficoPizzaProcessamento = new ChartPanel(jfc);
         graficoPizzaProcessamento.setPreferredSize(new Dimension(600, 300));
 
+    }
+
+    private class tempo_uso_usuario {
+
+        private Double tempo, uso_no;
+        private Boolean tipo;
+
+        public tempo_uso_usuario(Double tempo, Boolean tipo, Double uso) {
+
+            this.tempo = tempo;
+            this.uso_no = uso;
+            this.tipo = tipo;
+        }
+
+        public Double get_tempo() {
+            return this.tempo;
+        }
+
+        public Boolean get_tipo() {
+            return this.tipo;
+        }
+
+        public Double get_uso_no() {
+            return this.uso_no;
+        }
     }
 }
