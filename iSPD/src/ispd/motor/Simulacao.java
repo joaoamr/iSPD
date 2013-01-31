@@ -9,9 +9,11 @@ import ispd.gui.JSimulacao;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.servidores.CS_Comunicacao;
+import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.implementacao.CS_Link;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
-import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -28,9 +30,9 @@ public class Simulacao {
     private RedeDeFilas redeDeFilas;
     private List<Tarefa> tarefas;
     private PriorityQueue<EventoFuturo> eventos;
-    private JSimulacao janela;
+    private ProgressoSimulacao janela;
 
-    public Simulacao(JSimulacao janela, RedeDeFilas redeDeFilas, List<Tarefa> tarefas) throws IllegalArgumentException {
+    public Simulacao(ProgressoSimulacao janela, RedeDeFilas redeDeFilas, List<Tarefa> tarefas) throws IllegalArgumentException {
         this.time = 0;
         this.eventos = new PriorityQueue<EventoFuturo>();
         this.janela = janela;
@@ -68,8 +70,8 @@ public class Simulacao {
         }
         janela.incProgresso(5);
     }
-
-    public void simular() {
+    int eventofuturo=0;
+    public void simular() {    
         //inicia os escalonadores
         iniciarEscalonadores();
         //adiciona chegada das tarefas na lista de eventos futuros
@@ -78,7 +80,7 @@ public class Simulacao {
             realizarSimulacaoAtualizaTime();
         }else{
             realizarSimulacao();
-        }
+        }      
         janela.incProgresso(30);
         janela.println("Simulation completed.", Color.green);
         janela.print("Getting Results.");
@@ -129,10 +131,8 @@ public class Simulacao {
     }
 
     private boolean atualizarEscalonadores() {
-        System.out.println("Num mestres"+redeDeFilas.getMestres().size());
         for(CS_Processamento mst : redeDeFilas.getMestres()){
             CS_Mestre mestre = (CS_Mestre) mst;
-            System.out.println(mestre.getEscalonador().getClass()+" Tempo "+mestre.getEscalonador().getTempoAtualizar());
             if(mestre.getEscalonador().getTempoAtualizar() != null){
                 return true;
             }
@@ -142,6 +142,7 @@ public class Simulacao {
 
     private void realizarSimulacao() {
         while (!eventos.isEmpty()) {
+            eventofuturo++;
             //recupera o próximo evento e o executa.
             //executa estes eventos de acordo com sua ordem de chegada
             //de forma a evitar a execução de um evento antes de outro
