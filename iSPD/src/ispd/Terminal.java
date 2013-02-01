@@ -14,6 +14,7 @@ import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_Link;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
+import ispd.motor.metricas.MetricasGlobais;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,12 @@ public class Terminal {
     private int opcao;
     private int numExecucoes;
     private ProgressoSimulacao progrSim;
+    //Resultados
+    private double tempoSimulacao = 0;
+    private double satisfacaoMedia = 0;
+    private double ociosidadeCompuacao = 0;
+    private double ociosidadeComunicacao = 0;
+    private double eficiencia = 0;
 
     public Terminal(String[] args) {
         if (args[0].equals("help") || args[0].equals("-help")) {
@@ -39,7 +46,7 @@ public class Terminal {
             int nomeA = 0;
             numExecucoes = 1;
             if (args[0].equals("-n")) {
-                numExecucoes = Integer.getInteger(args[1]);
+                numExecucoes = Integer.parseInt(args[1]);
                 nomeA = 2;
             }
             opcao = 1;
@@ -108,7 +115,7 @@ public class Terminal {
             this.modelo(redeDeFilas);
             //criar tarefas
             for (int i = 1; i <= numExecucoes; i++) {
-                progrSim.println("* Simulation 1");
+                progrSim.println("* Simulation "+i);
                 progrSim.print("  Creating tasks.");
                 progrSim.print(" -> ");
                 Tarefa.setContador(0);
@@ -117,7 +124,7 @@ public class Terminal {
                 //Verifica recursos do modelo e define roteamento
                 Simulacao sim = new Simulacao(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
                 //Realiza asimulação
-                progrSim.println("  Simulating.\n  ");
+                progrSim.println("  Simulating.");
                 //recebe instante de tempo em milissegundos ao iniciar a simulação
                 double t1 = System.currentTimeMillis();
                 sim.simular();//[30%] --> 85%
@@ -126,19 +133,40 @@ public class Terminal {
                 //Calcula tempo de simulação em segundos
                 double tempototal = (t2 - t1) / 1000;
                 progrSim.println("  Simulation Execution Time = " + tempototal + "seconds");
+                this.addResultadosGlobais(redeDeFilas.getMetricasGlobais());
             }
             progrSim.print("Results:");
-            progrSim.print(" -> ");
-            //JResultados janelaResultados = new JResultados(null, redeDeFilas, tarefas);
-            progrSim.println("OK", Color.green);
-            
-            //janelaResultados.setLocationRelativeTo(this);
-            //janelaResultados.setVisible(true);
+            progrSim.println(this.getResultadosGlobais());
         } catch (IllegalArgumentException erro) {
             progrSim.println(erro.getMessage(), Color.red);
             progrSim.print("Simulation Aborted", Color.red);
             progrSim.println("!", Color.red);
         }
+    }
+    
+    private void addResultadosGlobais(MetricasGlobais globais) {
+        this.tempoSimulacao += globais.getTempoSimulacao();
+        this.satisfacaoMedia += globais.getSatisfacaoMedia();
+        this.ociosidadeCompuacao += globais.getOciosidadeCompuacao();
+        this.ociosidadeComunicacao += globais.getOciosidadeComunicacao();
+        this.eficiencia += globais.getEficiencia();
+    }
+    
+    private String getResultadosGlobais() {
+        String texto = "\t\tSimulation Results\n\n";
+        texto += String.format("\tTotal Simulated Time = %g \n", tempoSimulacao / numExecucoes);
+        texto += String.format("\tSatisfaction = %g %%\n", satisfacaoMedia / numExecucoes);
+        texto += String.format("\tIdleness of processing resources = %g %%\n", ociosidadeCompuacao / numExecucoes);
+        texto += String.format("\tIdleness of communication resources = %g %%\n", ociosidadeComunicacao / numExecucoes);
+        texto += String.format("\tEfficiency = %g %%\n", eficiencia / numExecucoes);
+        if (eficiencia / numExecucoes > 70.0) {
+            texto += "\tEfficiency GOOD\n ";
+        } else if (eficiencia / numExecucoes > 40.0) {
+            texto += "\tEfficiency MEDIA\n ";
+        } else {
+            texto += "\tEfficiency BAD\n ";
+        }
+        return texto;
     }
 
     private void modelo(RedeDeFilas redeDeFilas) {
