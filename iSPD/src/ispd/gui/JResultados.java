@@ -24,7 +24,10 @@ import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.xy.XYSeries;
@@ -51,9 +54,15 @@ public class JResultados extends javax.swing.JDialog {
 
         graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
         graficoProcessamentoTempo.setPreferredSize(new Dimension(600, 300));
-
-        graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
-        graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600, 300));
+        if (rdf.getMaquinas().size() > 20) {
+            this.jButtonProcessamentoMaquina.setVisible(false);
+        }
+        if (tarefas.size() < 50) {
+            graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
+            graficoProcessamentoTempoTarefa.setPreferredSize(new Dimension(600, 300));
+        } else {
+            this.jButtonProcessamentoTarefa.setVisible(false);
+        }
 
         graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(tarefas, rdf));
         graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600, 300));
@@ -94,9 +103,9 @@ public class JResultados extends javax.swing.JDialog {
         jScrollPaneComunicacao = new javax.swing.JScrollPane();
         jPanelProcessamentoTempo = new javax.swing.JPanel();
         jToolBarProcessamentoTempo = new javax.swing.JToolBar();
+        jButtonProcessamentoUser = new javax.swing.JButton();
         jButtonProcessamentoMaquina = new javax.swing.JButton();
         jButtonProcessamentoTarefa = new javax.swing.JButton();
-        jButtonProcessamentoUser = new javax.swing.JButton();
         jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -215,6 +224,17 @@ public class JResultados extends javax.swing.JDialog {
 
         jToolBarProcessamentoTempo.setRollover(true);
 
+        jButtonProcessamentoUser.setText("Per user");
+        jButtonProcessamentoUser.setFocusable(false);
+        jButtonProcessamentoUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonProcessamentoUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonProcessamentoUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcessamentoUserActionPerformed(evt);
+            }
+        });
+        jToolBarProcessamentoTempo.add(jButtonProcessamentoUser);
+
         jButtonProcessamentoMaquina.setText("Per machine");
         jButtonProcessamentoMaquina.setFocusable(false);
         jButtonProcessamentoMaquina.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -236,17 +256,6 @@ public class JResultados extends javax.swing.JDialog {
             }
         });
         jToolBarProcessamentoTempo.add(jButtonProcessamentoTarefa);
-
-        jButtonProcessamentoUser.setText("Per user");
-        jButtonProcessamentoUser.setFocusable(false);
-        jButtonProcessamentoUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonProcessamentoUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonProcessamentoUser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonProcessamentoUserActionPerformed(evt);
-            }
-        });
-        jToolBarProcessamentoTempo.add(jButtonProcessamentoUser);
 
         javax.swing.GroupLayout jPanelProcessamentoTempoLayout = new javax.swing.GroupLayout(jPanelProcessamentoTempo);
         jPanelProcessamentoTempo.setLayout(jPanelProcessamentoTempoLayout);
@@ -431,25 +440,6 @@ public class JResultados extends javax.swing.JDialog {
         String prop;
         Double proc;
         Double comu;
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                nome = net.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = net.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-            }
-        }
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                nome = link.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = link.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                recurso.add(link.getId());
-            }
-        }
         if (rdf.getMestres() != null) {
             for (CS_Processamento mestre : rdf.getMestres()) {
                 if (recurso.contains(mestre.getId())) {
@@ -457,8 +447,7 @@ public class JResultados extends javax.swing.JDialog {
                     while (!tabela.get(i)[0].equals(mestre.getId())) {
                         i++;
                     }
-                    tabela.get(i)[1] = mestre.getProprietario();
-                    tabela.get(i)[2] = mestre.getMetrica().getSegundosDeProcessamento();
+                    tabela.get(i)[2] = (Double) tabela.get(i)[2] + mestre.getMetrica().getSegundosDeProcessamento();
                 } else {
                     nome = mestre.getId();
                     prop = mestre.getProprietario();
@@ -487,6 +476,25 @@ public class JResultados extends javax.swing.JDialog {
                     tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
                     recurso.add(maq.getId());
                 }
+            }
+        }
+        if (rdf.getInternets() != null) {
+            for (CS_Comunicacao net : rdf.getInternets()) {
+                nome = net.getId();
+                prop = "---";
+                proc = 0.0;
+                comu = net.getMetrica().getSegundosDeTransmissao();
+                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+            }
+        }
+        if (rdf.getLinks() != null) {
+            for (CS_Comunicacao link : rdf.getLinks()) {
+                nome = link.getId();
+                prop = "---";
+                proc = 0.0;
+                comu = link.getMetrica().getSegundosDeTransmissao();
+                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                recurso.add(link.getId());
             }
         }
         Object[][] temp = new Object[tabela.size()][4];
@@ -576,17 +584,20 @@ public class JResultados extends javax.swing.JDialog {
             dadosGrafico.addSeries(tmp_series);
         }
 
-
-        JFreeChart jfc = ChartFactory.createXYAreaChart(
+        JFreeChart jfreechart = ChartFactory.createXYLineChart(
                 "Use of total computing power through time"
-                + "\nUsers", //Titulo
+                + "\nUsers", //Titulo,
                 "Time (seconds)", // Eixo X
                 "Rate of total use of computing power (%)", //Eixo Y
-                dadosGrafico, // Dados para o grafico
-                PlotOrientation.VERTICAL, //Orientacao do grafico
-                true, true, false); // exibir: legendas, tooltips, url
-        return jfc;
-
+                dadosGrafico, PlotOrientation.VERTICAL, true, true, false);
+        XYPlot xyplot = (XYPlot) jfreechart.getPlot();
+        xyplot.setDomainPannable(true);
+        XYStepAreaRenderer xysteparearenderer = new XYStepAreaRenderer(2);
+        xysteparearenderer.setDataBoundsIncludesVisibleSeriesOnly(false);
+        xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        xysteparearenderer.setDefaultEntityRadius(6);
+        xyplot.setRenderer(xysteparearenderer);
+        return jfreechart;
     }
 
     private JFreeChart criarGraficoProcessamento(RedeDeFilas rdf) {
