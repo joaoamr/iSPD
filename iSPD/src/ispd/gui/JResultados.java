@@ -38,6 +38,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author denison_usuario
  */
 public class JResultados extends javax.swing.JDialog {
+    private int cont = 0;
 
     /**
      * Creates new form JResultados
@@ -317,7 +318,12 @@ public class JResultados extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonProcessamentoTarefaActionPerformed
 
     private void jButtonProcessamentoUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoUserActionPerformed
-        this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser);
+        if (cont % 2 == 0) {
+            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser);
+        } else {
+            this.jScrollPaneProcessamentoTempo.setViewportView(this.tempjfc);
+        }
+        cont++;
     }//GEN-LAST:event_jButtonProcessamentoUserActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
@@ -355,6 +361,7 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoProcessamentoTempoTarefa;
     private ChartPanel graficoProcessamentoTempoUser;
     private double poderComputacionalTotal = 0;
+    private ChartPanel tempjfc;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -597,6 +604,18 @@ public class JResultados extends javax.swing.JDialog {
         xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         xysteparearenderer.setDefaultEntityRadius(6);
         xyplot.setRenderer(xysteparearenderer);
+
+        JFreeChart jfc = ChartFactory.createXYStepChart(
+                "Use of total computing power through time"
+                + "\nUsers", //Titulo
+                "Time (seconds)", // Eixo X
+                "Rate of total use of computing power (%)", //Eixo Y
+                dadosGrafico, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                true, true, false); // exibir: legendas, tooltips, url
+        tempjfc = new ChartPanel(jfc);
+        tempjfc.setPreferredSize(new Dimension(600, 300));
+
         return jfreechart;
     }
 
