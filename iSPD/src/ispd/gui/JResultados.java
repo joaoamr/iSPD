@@ -19,8 +19,11 @@ import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -38,7 +41,6 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author denison_usuario
  */
 public class JResultados extends javax.swing.JDialog {
-    private int cont = 0;
 
     /**
      * Creates new form JResultados
@@ -53,10 +55,14 @@ public class JResultados extends javax.swing.JDialog {
         this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
         setResultadosUsuario(rdf.getMetricasUsuarios());
 
-        graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
-        graficoProcessamentoTempo.setPreferredSize(new Dimension(600, 300));
-        if (rdf.getMaquinas().size() > 20) {
+        if (rdf.getMaquinas().size() < 21) {
+            graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
+            graficoProcessamentoTempo.setPreferredSize(new Dimension(600, 300));
+        } else {
             this.jButtonProcessamentoMaquina.setVisible(false);
+            for (CS_Processamento maq : rdf.getMaquinas()) {
+                poderComputacionalTotal += (maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
+            }
         }
         if (tarefas.size() < 50) {
             graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
@@ -65,8 +71,7 @@ public class JResultados extends javax.swing.JDialog {
             this.jButtonProcessamentoTarefa.setVisible(false);
         }
 
-        graficoProcessamentoTempoUser = new ChartPanel(criarGraficoProcessamentoTempoUser(tarefas, rdf));
-        graficoProcessamentoTempoUser.setPreferredSize(new Dimension(600, 300));
+        gerarGraficoProcessamentoTempoUser(tarefas, rdf);
 
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -318,12 +323,11 @@ public class JResultados extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonProcessamentoTarefaActionPerformed
 
     private void jButtonProcessamentoUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoUserActionPerformed
-        if (cont % 2 == 0) {
-            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser);
+        if (this.jScrollPaneProcessamentoTempo.getViewport().getView().equals(this.graficoProcessamentoTempoUser1)) {
+            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser2);
         } else {
-            this.jScrollPaneProcessamentoTempo.setViewportView(this.tempjfc);
+            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser1);
         }
-        cont++;
     }//GEN-LAST:event_jButtonProcessamentoUserActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
@@ -359,9 +363,9 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoPizzaComunicacao;
     private ChartPanel graficoProcessamentoTempo;
     private ChartPanel graficoProcessamentoTempoTarefa;
-    private ChartPanel graficoProcessamentoTempoUser;
+    private ChartPanel graficoProcessamentoTempoUser1;
+    private ChartPanel graficoProcessamentoTempoUser2;
     private double poderComputacionalTotal = 0;
-    private ChartPanel tempjfc;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -511,101 +515,74 @@ public class JResultados extends javax.swing.JDialog {
         return temp;
     }
 
-    private JFreeChart criarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf) {
-
-        List<List> lista = new LinkedList<List>();
+    private void gerarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf) {
+        ArrayList<tempo_uso_usuario> lista = new ArrayList<tempo_uso_usuario>();
+        int numberUsers = rdf.getMetricasUsuarios().getUsuarios().size();
+        Map<String, Integer> users = new HashMap<String, Integer>();
+        XYSeries tmp_series[] = new XYSeries[numberUsers];
+        XYSeries tmp_series1[] = new XYSeries[numberUsers];
+        Double utilizacaoUser[] = new Double[numberUsers];
+        Double utilizacaoUser1[] = new Double[numberUsers];
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
-        Double acumulado = 0.0000;
-        int k, aux;
-        int i, j;
-
+        XYSeriesCollection dadosGrafico1 = new XYSeriesCollection();
+        for (int i = 0; i < numberUsers; i++) {
+            users.put(rdf.getMetricasUsuarios().getUsuarios().get(i), i);
+            utilizacaoUser[i] = 0.0;
+            tmp_series[i] = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
+            utilizacaoUser1[i] = 0.0;
+            tmp_series1[i] = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
+        }
         if (!tarefas.isEmpty()) {
-
-            for (i = 0; i < rdf.getMetricasUsuarios().getUsuarios().size(); i++) {
-
-                List<tempo_uso_usuario> temp = new LinkedList<tempo_uso_usuario>();
-
-
-                for (Tarefa task : tarefas) {
-                    if (task.getProprietario().equals(rdf.getMetricasUsuarios().getUsuarios().get(i))) {
-
-                        CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
-                        Double uso = (local.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-
-                        //tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(),true,uso);
-                        //tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(),false,uso);
-
-
-
-                        for (k = 0; k < temp.size(); k++) {
-                            if (temp.get(k).get_tempo() >= task.getTempoInicial()) {
-                                break;
-                            }
-
-                        }
-                        tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(), true, uso);
-
-                        temp.add(k, provisorio1);
-
-                        for (k = 0; k < temp.size(); k++) {
-                            if (temp.get(k).get_tempo() >= task.getTempoFinal()) {
-                                break;
-                            }
-                        }
-                        tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(), false, uso);
-                        temp.add(k, provisorio2);
-
-                    }
-                }
-                lista.add(temp);
-
+            //Insere cada tarefa como dois pontos na lista
+            for (Tarefa task : tarefas) {
+                CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
+                Double uso = (local.getPoderComputacional() / this.poderComputacionalTotal) * 100;
+                tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(), true, uso, users.get(task.getProprietario()));
+                lista.add(provisorio1);
+                tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(), false, uso, users.get(task.getProprietario()));
+                lista.add(provisorio2);
             }
-
+            //Ordena lista
+            Collections.sort(lista);
         }
-
-
-
-
-        for (i = 0; i < lista.size(); i++) {
-            XYSeries tmp_series = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
-            for (j = 0; j < lista.get(i).size(); j++) {
-                tempo_uso_usuario temp = (tempo_uso_usuario) lista.get(i).get(j);
-                if (j == 0) {
-                    acumulado = temp.get_uso_no();
-                    tmp_series.add(temp.get_tempo(), acumulado);
+        for (int i = 0; i < lista.size(); i++) {
+            tempo_uso_usuario temp = (tempo_uso_usuario) lista.get(i);
+            int usuario = temp.get_user();
+            //Altera os valores do usuario atual e todos acima dele
+            for (int j = usuario; j < numberUsers; j++) {
+                //Salva valores anteriores
+                tmp_series[j].add(temp.get_tempo(), utilizacaoUser[j]);
+                if (temp.get_tipo()) {
+                    utilizacaoUser[j] += temp.get_uso_no();
                 } else {
-                    tmp_series.add(temp.get_tempo(), acumulado);
-                    if (temp.get_tipo()) {
-                        acumulado += temp.get_uso_no();
-                    } else {
-                        acumulado -= temp.get_uso_no();
-                    }
-
-                    tmp_series.add(temp.get_tempo(), acumulado);
+                    utilizacaoUser[j] -= temp.get_uso_no();
                 }
-
-
-
-                //System.out.println(rdf.getMetricasUsuarios().getUsuarios().get(i)+temp.tempo+","+temp.uso_no);
+                //Novo valor
+                tmp_series[j].add(temp.get_tempo(), utilizacaoUser[j]);
             }
-            dadosGrafico.addSeries(tmp_series);
+            //Grafico1
+            tmp_series1[usuario].add(temp.get_tempo(), utilizacaoUser1[usuario]);
+            if (temp.get_tipo()) {
+                utilizacaoUser1[usuario] += temp.get_uso_no();
+            } else {
+                utilizacaoUser1[usuario] -= temp.get_uso_no();
+            }
+            tmp_series1[usuario].add(temp.get_tempo(), utilizacaoUser1[usuario]);
         }
-
-        JFreeChart jfreechart = ChartFactory.createXYLineChart(
+        for (int i = 0; i < numberUsers; i++) {
+            dadosGrafico.addSeries(tmp_series[i]);
+            dadosGrafico1.addSeries(tmp_series1[i]);
+        }
+        JFreeChart jfc1 = ChartFactory.createXYAreaChart(
                 "Use of total computing power through time"
-                + "\nUsers", //Titulo,
+                + "\nUsers", //Titulo
                 "Time (seconds)", // Eixo X
                 "Rate of total use of computing power (%)", //Eixo Y
-                dadosGrafico, PlotOrientation.VERTICAL, true, true, false);
-        XYPlot xyplot = (XYPlot) jfreechart.getPlot();
-        xyplot.setDomainPannable(true);
-        XYStepAreaRenderer xysteparearenderer = new XYStepAreaRenderer(2);
-        xysteparearenderer.setDataBoundsIncludesVisibleSeriesOnly(false);
-        xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        xysteparearenderer.setDefaultEntityRadius(6);
-        xyplot.setRenderer(xysteparearenderer);
+                dadosGrafico1, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                true, true, false); // exibir: legendas, tooltips, url
 
-        JFreeChart jfc = ChartFactory.createXYStepChart(
+        JFreeChart jfc2 = ChartFactory.createXYLineChart(
                 "Use of total computing power through time"
                 + "\nUsers", //Titulo
                 "Time (seconds)", // Eixo X
@@ -613,41 +590,18 @@ public class JResultados extends javax.swing.JDialog {
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url
-        tempjfc = new ChartPanel(jfc);
-        tempjfc.setPreferredSize(new Dimension(600, 300));
+        XYPlot xyplot = (XYPlot) jfc2.getPlot();
+        xyplot.setDomainPannable(true);
+        XYStepAreaRenderer xysteparearenderer = new XYStepAreaRenderer(2);
+        xysteparearenderer.setDataBoundsIncludesVisibleSeriesOnly(false);
+        xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        xysteparearenderer.setDefaultEntityRadius(6);
+        xyplot.setRenderer(xysteparearenderer);
 
-        return jfreechart;
-    }
-
-    private JFreeChart criarGraficoProcessamento(RedeDeFilas rdf) {
-        DefaultCategoryDataset dadosGrafico = new DefaultCategoryDataset();
-        List<String> maqNomes = new ArrayList<String>();
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mst : rdf.getMestres()) {
-                dadosGrafico.addValue(mst.getMetrica().getMFlopsProcessados(), "vermelho", mst.getId());
-                maqNomes.add(mst.getId());
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (maqNomes.contains(maq.getId())) {
-                    Double valor = (Double) dadosGrafico.getValue("vermelho", maq.getId());
-                    valor += maq.getMetrica().getMFlopsProcessados();
-                    dadosGrafico.setValue(valor, "vermelho", maq.getId());
-                } else {
-                    dadosGrafico.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
-                    maqNomes.add(maq.getId());
-                }
-            }
-        }
-        JFreeChart jfc = ChartFactory.createBarChart(
-                "Total processed on each resource", //Titulo
-                "Resource", // Eixo X
-                "Mflops", //Eixo Y
-                dadosGrafico, // Dados para o grafico
-                PlotOrientation.VERTICAL, //Orientacao do grafico
-                false, false, false); // exibir: legendas, tooltips, url
-        return jfc;
+        graficoProcessamentoTempoUser1 = new ChartPanel(jfc1);
+        graficoProcessamentoTempoUser1.setPreferredSize(new Dimension(600, 300));
+        graficoProcessamentoTempoUser2 = new ChartPanel(jfc2);
+        graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
     }
 
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas) {
@@ -755,75 +709,6 @@ public class JResultados extends javax.swing.JDialog {
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url
-        return jfc;
-    }
-
-    private JFreeChart criarGraficoComunicacao(RedeDeFilas rdf) {
-        DefaultCategoryDataset dadosGrafico = new DefaultCategoryDataset();
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                dadosGrafico.addValue(link.getMetrica().getMbitsTransmitidos(), "vermelho", link.getId());
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                dadosGrafico.addValue(net.getMetrica().getMbitsTransmitidos(), "vermelho", net.getId());
-            }
-        }
-        JFreeChart jfc = ChartFactory.createBarChart(
-                "Total communication in each resource", //Titulo
-                "Resource", // Eixo X
-                "Mbits", //Eixo Y
-                dadosGrafico, // Dados para o grafico
-                PlotOrientation.VERTICAL, //Orientacao do grafico
-                false, false, false); // exibir: legendas, tooltips, url
-        return jfc;
-    }
-
-    private JFreeChart criarGraficoPizzaProcessamento(RedeDeFilas rdf) {
-        DefaultPieDataset dadosGrafico = new DefaultPieDataset();
-        List<String> maqNomes = new ArrayList<String>();
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mst : rdf.getMestres()) {
-                dadosGrafico.insertValue(0, mst.getId(), mst.getMetrica().getMFlopsProcessados());
-                maqNomes.add(mst.getId());
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (maqNomes.contains(maq.getId())) {
-                    Double valor = (Double) dadosGrafico.getValue(maq.getId());
-                    valor += maq.getMetrica().getMFlopsProcessados();
-                    dadosGrafico.setValue(maq.getId(), valor);
-                } else {
-                    dadosGrafico.insertValue(0, maq.getId(), maq.getMetrica().getMFlopsProcessados());
-                    maqNomes.add(maq.getId());
-                }
-            }
-        }
-        JFreeChart jfc = ChartFactory.createPieChart(
-                "Total processed on each resource", //Titulo
-                dadosGrafico, // Dados para o grafico
-                true, false, false);
-        return jfc;
-    }
-
-    private JFreeChart criarGraficoPizzaComunicacao(RedeDeFilas rdf) {
-        DefaultPieDataset dadosGrafico = new DefaultPieDataset();
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                dadosGrafico.insertValue(0, link.getId(), link.getMetrica().getMbitsTransmitidos());
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                dadosGrafico.insertValue(0, net.getId(), net.getMetrica().getMbitsTransmitidos());
-            }
-        }
-        JFreeChart jfc = ChartFactory.createPieChart(
-                "Total communication in each resource", //Titulo
-                dadosGrafico, // Dados para o grafico
-                true, false, false);
         return jfc;
     }
 
@@ -955,13 +840,15 @@ public class JResultados extends javax.swing.JDialog {
 
     }
 
-    private class tempo_uso_usuario {
+    private class tempo_uso_usuario implements Comparable<tempo_uso_usuario> {
 
-        private Double tempo, uso_no;
+        private Double tempo;
+        private Double uso_no;
         private Boolean tipo;
+        private Integer user;
 
-        public tempo_uso_usuario(Double tempo, Boolean tipo, Double uso) {
-
+        private tempo_uso_usuario(double tempo, boolean tipo, Double uso, Integer user) {
+            this.user = user;
             this.tempo = tempo;
             this.uso_no = uso;
             this.tipo = tipo;
@@ -971,12 +858,21 @@ public class JResultados extends javax.swing.JDialog {
             return this.tempo;
         }
 
+        public Integer get_user() {
+            return this.user;
+        }
+
         public Boolean get_tipo() {
             return this.tipo;
         }
 
         public Double get_uso_no() {
             return this.uso_no;
+        }
+
+        @Override
+        public int compareTo(tempo_uso_usuario o) {
+            return tempo.compareTo(o.tempo);
         }
     }
 }
