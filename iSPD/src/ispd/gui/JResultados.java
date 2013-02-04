@@ -323,10 +323,10 @@ public class JResultados extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonProcessamentoTarefaActionPerformed
 
     private void jButtonProcessamentoUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcessamentoUserActionPerformed
-        if (this.jScrollPaneProcessamentoTempo.getViewport().getView().equals(this.graficoProcessamentoTempoUser1)) {
-            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser2);
-        } else {
+        if (this.jScrollPaneProcessamentoTempo.getViewport().getView() != this.graficoProcessamentoTempoUser1) {
             this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser1);
+        } else {
+            this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser2);
         }
     }//GEN-LAST:event_jButtonProcessamentoUserActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
