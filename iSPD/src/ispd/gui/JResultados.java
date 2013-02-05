@@ -10,6 +10,7 @@
  */
 package ispd.gui;
 
+import ispd.gui.componenteauxiliar.SalvarResultadosHTML;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -17,13 +18,18 @@ import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -43,15 +49,39 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class JResultados extends javax.swing.JDialog {
 
     /**
+     * Cria no JResultado sem carregar parte gráfica para utilizar no modo terminal
+     */
+    public JResultados(RedeDeFilas rdf, List tarefas) {
+        html.setMetricasGlobais(rdf.getMetricasGlobais());
+        html.setTabelaRecurso(rdf);
+        getResultadosTarefas(tarefas);
+        gerarGraficosProcessamento(rdf);
+        gerarGraficosComunicacao(rdf);
+        if (rdf.getMaquinas().size() < 21) {
+            graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
+        } else {
+            for (CS_Processamento maq : rdf.getMaquinas()) {
+                poderComputacionalTotal += (maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
+            }
+        }
+        if (tarefas.size() < 50) {
+            graficoProcessamentoTempoTarefa = new ChartPanel(criarGraficoProcessamentoTempoTarefa(tarefas));
+        }
+        JFreeChart temp[] = gerarGraficoProcessamentoTempoUser(tarefas, rdf);
+        graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
+        graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
+    }
+    /**
      * Creates new form JResultados
      */
     public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List tarefas) {
         super(parent, true);
         gerarGraficosProcessamento(rdf);
         gerarGraficosComunicacao(rdf);
-        tabelaRecurso = setTabelaRecurso(rdf);
+        tabelaRecurso = html.setTabelaRecurso(rdf);
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
+        html.setMetricasGlobais(rdf.getMetricasGlobais());
         this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
         setResultadosUsuario(rdf.getMetricasUsuarios());
 
@@ -71,7 +101,11 @@ public class JResultados extends javax.swing.JDialog {
             this.jButtonProcessamentoTarefa.setVisible(false);
         }
 
-        gerarGraficoProcessamentoTempoUser(tarefas, rdf);
+        JFreeChart temp[] = gerarGraficoProcessamentoTempoUser(tarefas, rdf);
+        graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
+        graficoProcessamentoTempoUser1.setPreferredSize(new Dimension(600, 300));
+        graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
+        graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
 
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -88,6 +122,9 @@ public class JResultados extends javax.swing.JDialog {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanelGlobal = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+        jButtonSalvar = new javax.swing.JButton();
         jScrollPaneGobal = new javax.swing.JScrollPane();
         jTextAreaGlobal = new javax.swing.JTextArea();
         jScrollPaneTarefa = new javax.swing.JScrollPane();
@@ -117,13 +154,50 @@ public class JResultados extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulation Results");
 
+        jToolBar1.setRollover(true);
+
+        jButtonSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/document-save_1.png"))); // NOI18N
+        jButtonSalvar.setToolTipText("Save results as HTML");
+        jButtonSalvar.setFocusable(false);
+        jButtonSalvar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonSalvar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalvarActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButtonSalvar);
+
         jTextAreaGlobal.setEditable(false);
         jTextAreaGlobal.setColumns(20);
         jTextAreaGlobal.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
         jTextAreaGlobal.setRows(5);
         jScrollPaneGobal.setViewportView(jTextAreaGlobal);
 
-        jTabbedPane1.addTab("Global", jScrollPaneGobal);
+        javax.swing.GroupLayout jPanelGlobalLayout = new javax.swing.GroupLayout(jPanelGlobal);
+        jPanelGlobal.setLayout(jPanelGlobalLayout);
+        jPanelGlobalLayout.setHorizontalGroup(
+            jPanelGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addGroup(jPanelGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGlobalLayout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneGobal, javax.swing.GroupLayout.PREFERRED_SIZE, 627, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+        jPanelGlobalLayout.setVerticalGroup(
+            jPanelGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelGlobalLayout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 316, Short.MAX_VALUE))
+            .addGroup(jPanelGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGlobalLayout.createSequentialGroup()
+                    .addContainerGap(31, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneGobal, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        jTabbedPane1.addTab("Global", jPanelGlobal);
 
         jTextAreaTarefa.setColumns(20);
         jTextAreaTarefa.setEditable(false);
@@ -174,8 +248,8 @@ public class JResultados extends javax.swing.JDialog {
         jPanelProcessamento.setLayout(jPanelProcessamentoLayout);
         jPanelProcessamentoLayout.setHorizontalGroup(
             jPanelProcessamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
-            .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
         );
         jPanelProcessamentoLayout.setVerticalGroup(
             jPanelProcessamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,8 +289,8 @@ public class JResultados extends javax.swing.JDialog {
         jPanelComunicacao.setLayout(jPanelComunicacaoLayout);
         jPanelComunicacaoLayout.setHorizontalGroup(
             jPanelComunicacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
-            .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
         );
         jPanelComunicacaoLayout.setVerticalGroup(
             jPanelComunicacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,8 +341,8 @@ public class JResultados extends javax.swing.JDialog {
         jPanelProcessamentoTempo.setLayout(jPanelProcessamentoTempoLayout);
         jPanelProcessamentoTempoLayout.setHorizontalGroup(
             jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBarProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
-            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(jToolBarProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
         );
         jPanelProcessamentoTempoLayout.setVerticalGroup(
             jPanelProcessamentoTempoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,6 +403,16 @@ public class JResultados extends javax.swing.JDialog {
             this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempoUser2);
         }
     }//GEN-LAST:event_jButtonProcessamentoUserActionPerformed
+
+    private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = jFileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            salvarHTML(file);
+        }
+    }//GEN-LAST:event_jButtonSalvarActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
@@ -337,7 +421,9 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JButton jButtonProcessamentoMaquina;
     private javax.swing.JButton jButtonProcessamentoTarefa;
     private javax.swing.JButton jButtonProcessamentoUser;
+    private javax.swing.JButton jButtonSalvar;
     private javax.swing.JPanel jPanelComunicacao;
+    private javax.swing.JPanel jPanelGlobal;
     private javax.swing.JPanel jPanelProcessamento;
     private javax.swing.JPanel jPanelProcessamentoTempo;
     private javax.swing.JScrollPane jScrollPaneComunicacao;
@@ -352,6 +438,7 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
     private javax.swing.JTextArea jTextAreaUsuario;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBarComunicacao;
     private javax.swing.JToolBar jToolBarProcessamento;
     private javax.swing.JToolBar jToolBarProcessamentoTempo;
@@ -366,6 +453,7 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoProcessamentoTempoUser1;
     private ChartPanel graficoProcessamentoTempoUser2;
     private double poderComputacionalTotal = 0;
+    private SalvarResultadosHTML html = new SalvarResultadosHTML();
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
@@ -397,8 +485,6 @@ public class JResultados extends javax.swing.JDialog {
         double MflopsDesperdicio = 0;
         int numTarefas = 0;
 
-
-
         for (Tarefa no : tarefas) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
                 tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
@@ -406,19 +492,12 @@ public class JResultados extends javax.swing.JDialog {
                 tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
                 tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
                 numTarefas++;
-
             } else if (no.getEstado() == Tarefa.CANCELADO) {
                 MflopsDesperdicio += no.getTamProcessamento() * no.getMflopsProcessado();
                 numTarefasCanceladas++;
             }
-
-
-
-
             CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
             temp.setTempoProcessamento(no.getTempoInicial(), no.getTempoFinal());
-
-
         }
 
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
@@ -440,82 +519,11 @@ public class JResultados extends javax.swing.JDialog {
             texto += String.format("    Number: %d \n", numTarefasCanceladas);
             texto += String.format("    Wasted Processing: %g Mflops", MflopsDesperdicio);
         }
+        html.setMetricasTarefas(tempoMedioFilaComunicacao, tempoMedioComunicacao, tempoMedioSistemaComunicacao, tempoMedioFilaProcessamento, tempoMedioProcessamento, tempoMedioSistemaProcessamento);
         return texto;
     }
 
-    private Object[][] setTabelaRecurso(RedeDeFilas rdf) {
-        List<String> recurso = new ArrayList<String>();
-        List<Object[]> tabela = new ArrayList<Object[]>();
-        //linha [Nome] [Proprietario] [Processamento] [comunicacao]
-        String nome;
-        String prop;
-        Double proc;
-        Double comu;
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mestre : rdf.getMestres()) {
-                if (recurso.contains(mestre.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(mestre.getId())) {
-                        i++;
-                    }
-                    tabela.get(i)[2] = (Double) tabela.get(i)[2] + mestre.getMetrica().getSegundosDeProcessamento();
-                } else {
-                    nome = mestre.getId();
-                    prop = mestre.getProprietario();
-                    proc = mestre.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(mestre.getId());
-                }
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (recurso.contains(maq.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(maq.getId())) {
-                        i++;
-                    }
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    proc += Double.valueOf(tabela.get(i)[2].toString());
-                    tabela.get(i)[2] = proc;
-                } else {
-                    nome = maq.getId();
-                    prop = maq.getProprietario();
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(maq.getId());
-                }
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                nome = net.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = net.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-            }
-        }
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                nome = link.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = link.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                recurso.add(link.getId());
-            }
-        }
-        Object[][] temp = new Object[tabela.size()][4];
-        for (int i = 0; i < tabela.size(); i++) {
-            temp[i] = tabela.get(i);
-        }
-        return temp;
-    }
-
-    private void gerarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf) {
+    private JFreeChart[] gerarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf) {
         ArrayList<tempo_uso_usuario> lista = new ArrayList<tempo_uso_usuario>();
         int numberUsers = rdf.getMetricasUsuarios().getUsuarios().size();
         Map<String, Integer> users = new HashMap<String, Integer>();
@@ -536,7 +544,7 @@ public class JResultados extends javax.swing.JDialog {
             //Insere cada tarefa como dois pontos na lista
             for (Tarefa task : tarefas) {
                 CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
-                Double uso = (local.getPoderComputacional() / this.poderComputacionalTotal) * 100;
+                Double uso = (local.getPoderComputacional() / poderComputacionalTotal) * 100;
                 tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(), true, uso, users.get(task.getProprietario()));
                 lista.add(provisorio1);
                 tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(), false, uso, users.get(task.getProprietario()));
@@ -573,7 +581,8 @@ public class JResultados extends javax.swing.JDialog {
             dadosGrafico.addSeries(tmp_series[i]);
             dadosGrafico1.addSeries(tmp_series1[i]);
         }
-        JFreeChart jfc1 = ChartFactory.createXYAreaChart(
+        JFreeChart saida[] = new JFreeChart[2];
+        saida[0] = ChartFactory.createXYAreaChart(
                 "Use of total computing power through time"
                 + "\nUsers", //Titulo
                 "Time (seconds)", // Eixo X
@@ -582,7 +591,7 @@ public class JResultados extends javax.swing.JDialog {
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url
 
-        JFreeChart jfc2 = ChartFactory.createXYLineChart(
+        saida[1] = ChartFactory.createXYLineChart(
                 "Use of total computing power through time"
                 + "\nUsers", //Titulo
                 "Time (seconds)", // Eixo X
@@ -590,18 +599,54 @@ public class JResultados extends javax.swing.JDialog {
                 dadosGrafico, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 true, true, false); // exibir: legendas, tooltips, url
-        XYPlot xyplot = (XYPlot) jfc2.getPlot();
+        XYPlot xyplot = (XYPlot) saida[1].getPlot();
         xyplot.setDomainPannable(true);
         XYStepAreaRenderer xysteparearenderer = new XYStepAreaRenderer(2);
         xysteparearenderer.setDataBoundsIncludesVisibleSeriesOnly(false);
         xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         xysteparearenderer.setDefaultEntityRadius(6);
         xyplot.setRenderer(xysteparearenderer);
-
-        graficoProcessamentoTempoUser1 = new ChartPanel(jfc1);
-        graficoProcessamentoTempoUser1.setPreferredSize(new Dimension(600, 300));
-        graficoProcessamentoTempoUser2 = new ChartPanel(jfc2);
-        graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
+        
+        return saida;
+    }
+    
+    /**
+     * Salva resultados obtidos em um arquivo html
+     * @param file diretório destino
+     */
+    public void salvarHTML(File file){
+        //Gerar resultados:
+            BufferedImage[] charts = new BufferedImage[8];
+            if (this.graficoBarraProcessamento != null) {
+                charts[0] = this.graficoBarraProcessamento.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoPizzaProcessamento != null) {
+                charts[1] = this.graficoPizzaProcessamento.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoBarraComunicacao != null) {
+                charts[2] = this.graficoBarraComunicacao.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoPizzaComunicacao != null) {
+                charts[3] = this.graficoPizzaComunicacao.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoProcessamentoTempo != null) {
+                charts[4] = this.graficoProcessamentoTempo.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoProcessamentoTempoTarefa != null) {
+                charts[5] = this.graficoProcessamentoTempoTarefa.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoProcessamentoTempoUser1 != null) {
+                charts[6] = this.graficoProcessamentoTempoUser1.getChart().createBufferedImage(1200, 600);
+            }
+            if (this.graficoProcessamentoTempoUser2 != null) {
+                charts[7] = this.graficoProcessamentoTempoUser2.getChart().createBufferedImage(1200, 600);
+            }
+            html.setCharts(charts);
+            try {
+                html.gerarHTML(file);
+            } catch (IOException ex) {
+                Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas) {
@@ -616,15 +661,12 @@ public class JResultados extends javax.swing.JDialog {
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
 
                 Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-                //System.out.println("tamanho_tarefas = "+tarefas.get(i).getTamProcessamento());
-                //System.out.println("soma = "+this.soma_poder.getSoma());
                 tmp_series.add(tarefas.get(i).getTempoInicial(), uso);
 
                 tmp_series.add(tarefas.get(i).getTempoFinal(), uso);
                 i++;
                 dadosGrafico.addSeries(tmp_series);
             }
-
 
         }
 
@@ -643,15 +685,12 @@ public class JResultados extends javax.swing.JDialog {
     //Ele recebe como parâmetro a lista com as maquinas que processaram durante a simulação.
     private JFreeChart criarGraficoProcessamentoTempo(RedeDeFilas rdf) {
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
-
-
         //Se tiver alguma máquina na lista.
         if (rdf.getMaquinas() != null) {
             //Laço foreach que percorre as máquinas.
             for (CS_Processamento maq : rdf.getMaquinas()) {
                 //Lista que recebe os pares de intervalo de tempo em que a máquina executou.
                 LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
-
                 poderComputacionalTotal += (maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
                 //Se a máquina tiver intervalos.
                 if (!lista.isEmpty()) {
@@ -666,7 +705,6 @@ public class JResultados extends javax.swing.JDialog {
                     {
                         tmp_series = new XYSeries(maq.getId() + " node " + maq.getnumeroMaquina());
                     }
-
                     int i;
                     //Laço que vai adicionando os pontos para a criação do gráfico.
                     for (i = 0; i < lista.size(); i++) {
@@ -674,31 +712,18 @@ public class JResultados extends javax.swing.JDialog {
                         Double uso = 100 - (maq.getOcupacao() * 100);
                         //Adiciona ponto inicial.
                         tmp_series.add(lista.get(i).getInicio(), uso);
-
-                        //System.out.println(lista.get(i).getInicio()+" uso-> "+uso);
                         //Adiciona ponto final.
                         tmp_series.add(lista.get(i).getFim(), uso);
-
-                        //System.out.println(lista.get(i).getFim()+" uso-> "+uso);
-
                         if (i + 1 != lista.size()) {
                             uso = 0.0000;
                             tmp_series.add(lista.get(i).getFim(), uso);
-
-                            //System.out.println(lista.get(i).getFim()+" uso-> "+uso);
                             tmp_series.add(lista.get(i + 1).getInicio(), uso);
-                            //System.out.println(lista.get(i+1).getInicio()+" uso-> "+uso);
                         }
-
-
                     }
                     //Add no gráfico.
                     dadosGrafico.addSeries(tmp_series);
                 }
-
             }
-
-
         }
 
         JFreeChart jfc = ChartFactory.createXYAreaChart(
@@ -840,7 +865,7 @@ public class JResultados extends javax.swing.JDialog {
 
     }
 
-    private class tempo_uso_usuario implements Comparable<tempo_uso_usuario> {
+    protected class tempo_uso_usuario implements Comparable<tempo_uso_usuario> {
 
         private Double tempo;
         private Double uso_no;

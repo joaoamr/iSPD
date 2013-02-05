@@ -5,6 +5,7 @@
 package ispd;
 
 import ispd.gui.AreaDesenho;
+import ispd.gui.JResultados;
 import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
 import ispd.motor.filas.RedeDeFilas;
@@ -28,7 +29,8 @@ import org.xml.sax.SAXException;
  */
 public class Terminal {
 
-    private File arquivo;
+    private File arquivoIn;
+    private File arquivoOut = null;
     private int opcao;
     private int numExecucoes;
     private ProgressoSimulacao progrSim;
@@ -48,13 +50,22 @@ public class Terminal {
             if (args[0].equals("-n")) {
                 numExecucoes = Integer.parseInt(args[1]);
                 nomeA = 2;
+            } else if (args[0].equals("-o")) {
+                nomeA = 1;
+                String dirSaida = args[nomeA];
+                while (args[nomeA].charAt(args[nomeA].length() - 1) == '\\') {
+                    nomeA++;
+                    dirSaida += " " + args[nomeA];
+                }
+                arquivoOut = new File(dirSaida);
+                nomeA++;
             }
             opcao = 1;
             String nomeArquivo = args[nomeA];
             for (int i = nomeA + 1; i < args.length; i++) {
                 nomeArquivo = nomeArquivo + " " + args[i];
             }
-            arquivo = new File(nomeArquivo);
+            arquivoIn = new File(nomeArquivo);
             progrSim = new ProgressoSimulacao() {
                 @Override
                 public void incProgresso(int n) {
@@ -73,15 +84,18 @@ public class Terminal {
             case 0:
                 System.out.println("Usage: java -jar iSPD.jar");
                 System.out.println("\t\t(to execute the graphical interface of the iSPD)");
-                System.out.println("\tjava -jar iSPD.jar [-n number] [model file.imsx]");
+                System.out.println("\tjava -jar iSPD.jar [option] [model file.imsx]");
                 System.out.println("\t\t(to execute a model in terminal)");
-                System.out.println("\t-n\tnumber of simulation");
+                System.out.println("where options include:");
+                System.out.println("\t-n <number>\tnumber of simulation");
+                System.out.println("\t-o <directory>\tdirectory to save html output");
+                System.out.println("\t-help\tprint this help message");
                 break;
             case 1:
-                if (arquivo.getName().endsWith(".imsx") && arquivo.exists()) {
+                if (arquivoIn.getName().endsWith(".imsx") && arquivoIn.exists()) {
                     AreaDesenho aDesenho = new ispd.gui.AreaDesenho(0, 0);
                     try {
-                        aDesenho.setDadosSalvos(ispd.arquivo.IconicoXML.ler(arquivo));
+                        aDesenho.setDadosSalvos(ispd.arquivo.IconicoXML.ler(arquivoIn));
                     } catch (ParserConfigurationException ex) {
                         System.out.println(ex.getMessage());
                     } catch (IOException ex) {
@@ -93,7 +107,7 @@ public class Terminal {
                     aDesenho.createImage();
                     this.simular(aDesenho);
                 } else {
-                    System.out.println("iSPD can not open the file: " + arquivo.getName());
+                    System.out.println("iSPD can not open the file: " + arquivoIn.getName());
                 }
                 break;
         }
@@ -106,20 +120,22 @@ public class Terminal {
             progrSim.validarInicioSimulacao(aDesenho);
             //Constrói e verifica modelos icônicos e simuláveis
             progrSim.AnalisarModelos(aDesenho.toString());
-            //criar grade
-            progrSim.print("Mounting network queue.");
-            progrSim.print(" -> ");
-            RedeDeFilas redeDeFilas = aDesenho.getRedeDeFilas();
-            progrSim.println("OK", Color.green);
             //Escrever Modelo
-            this.modelo(redeDeFilas);
+            //this.modelo(redeDeFilas);
             //criar tarefas
+            RedeDeFilas redeDeFilas = null;
+            List<Tarefa> tarefas = null;
             for (int i = 1; i <= numExecucoes; i++) {
-                progrSim.println("* Simulation "+i);
+                progrSim.println("* Simulation " + i);
+                //criar grade
+                progrSim.print("  Mounting network queue.");
+                progrSim.print(" -> ");
+                redeDeFilas = aDesenho.getRedeDeFilas();
+                progrSim.println("OK", Color.green);
                 progrSim.print("  Creating tasks.");
                 progrSim.print(" -> ");
                 Tarefa.setContador(0);
-                List<Tarefa> tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas);
+                tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas);
                 progrSim.print("OK\n  ", Color.green);
                 //Verifica recursos do modelo e define roteamento
                 Simulacao sim = new Simulacao(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
@@ -136,6 +152,10 @@ public class Terminal {
                 this.addResultadosGlobais(redeDeFilas.getMetricasGlobais());
             }
             progrSim.print("Results:");
+            if (arquivoOut != null && numExecucoes == 1) {
+                JResultados result = new JResultados(redeDeFilas, tarefas);
+                result.salvarHTML(arquivoOut);
+            }
             progrSim.println(this.getResultadosGlobais());
         } catch (IllegalArgumentException erro) {
             progrSim.println(erro.getMessage(), Color.red);
@@ -143,7 +163,7 @@ public class Terminal {
             progrSim.println("!", Color.red);
         }
     }
-    
+
     private void addResultadosGlobais(MetricasGlobais globais) {
         this.tempoSimulacao += globais.getTempoSimulacao();
         this.satisfacaoMedia += globais.getSatisfacaoMedia();
@@ -151,7 +171,7 @@ public class Terminal {
         this.ociosidadeComunicacao += globais.getOciosidadeComunicacao();
         this.eficiencia += globais.getEficiencia();
     }
-    
+
     private String getResultadosGlobais() {
         String texto = "\t\tSimulation Results\n\n";
         texto += String.format("\tTotal Simulated Time = %g \n", tempoSimulacao / numExecucoes);
@@ -171,26 +191,26 @@ public class Terminal {
 
     private void modelo(RedeDeFilas redeDeFilas) {
         int cs_maq = 0, cs_link = 0, cs_mestre = 0;
-        
+
         for (CS_Maquina maq : redeDeFilas.getMaquinas()) {
-            if(maq instanceof CS_Maquina){
+            if (maq instanceof CS_Maquina) {
                 cs_maq++;
             }
         }
         for (CS_Comunicacao link : redeDeFilas.getLinks()) {
-            if(link instanceof CS_Link){
+            if (link instanceof CS_Link) {
                 cs_link++;
             }
         }
         for (CS_Processamento mestre : redeDeFilas.getMestres()) {
-            if(mestre instanceof CS_Mestre){
+            if (mestre instanceof CS_Mestre) {
                 cs_mestre++;
             }
         }
         progrSim.println("* Grid:");
-        progrSim.println("  - Number of Masters: "+cs_mestre);
-        progrSim.println("  - Number of Slaves: "+cs_maq);
-        progrSim.println("  - Number of Links: "+cs_link);
+        progrSim.println("  - Number of Masters: " + cs_mestre);
+        progrSim.println("  - Number of Slaves: " + cs_maq);
+        progrSim.println("  - Number of Links: " + cs_link);
         //progrSim.println("  - Number of Tasks: "+task);
     }
 }
