@@ -10,6 +10,8 @@
  */
 package ispd.gui;
 
+import ispd.arquivo.interpretador.cargas.Interpretador;
+import ispd.gui.componenteauxiliar.FiltroDeArquivos;
 import ispd.gui.componenteauxiliar.SalvarResultadosHTML;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class JResultados extends javax.swing.JDialog {
 
     /**
-     * Cria no JResultado sem carregar parte gráfica para utilizar no modo terminal
+     * Cria no JResultado sem carregar parte gráfica para utilizar no modo
+     * terminal
      */
     public JResultados(RedeDeFilas rdf, List tarefas) {
         html.setMetricasGlobais(rdf.getMetricasGlobais());
@@ -71,11 +75,13 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
     }
+
     /**
      * Creates new form JResultados
      */
-    public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List tarefas) {
+    public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List<Tarefa> tarefas) {
         super(parent, true);
+        this.tarefas = tarefas;
         gerarGraficosProcessamento(rdf);
         gerarGraficosComunicacao(rdf);
         tabelaRecurso = html.setTabelaRecurso(rdf);
@@ -125,6 +131,7 @@ public class JResultados extends javax.swing.JDialog {
         jPanelGlobal = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         jButtonSalvar = new javax.swing.JButton();
+        jButtonSalvarTraces = new javax.swing.JButton();
         jScrollPaneGobal = new javax.swing.JScrollPane();
         jTextAreaGlobal = new javax.swing.JTextArea();
         jScrollPaneTarefa = new javax.swing.JScrollPane();
@@ -167,6 +174,18 @@ public class JResultados extends javax.swing.JDialog {
             }
         });
         jToolBar1.add(jButtonSalvar);
+
+        jButtonSalvarTraces.setText("Save traces");
+        jButtonSalvarTraces.setToolTipText("Save a trace file of simulaton");
+        jButtonSalvarTraces.setFocusable(false);
+        jButtonSalvarTraces.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonSalvarTraces.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonSalvarTraces.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalvarTracesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButtonSalvarTraces);
 
         jTextAreaGlobal.setEditable(false);
         jTextAreaGlobal.setColumns(20);
@@ -413,6 +432,22 @@ public class JResultados extends javax.swing.JDialog {
             salvarHTML(file);
         }
     }//GEN-LAST:event_jButtonSalvarActionPerformed
+
+    private void jButtonSalvarTracesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarTracesActionPerformed
+        FiltroDeArquivos filtro = new FiltroDeArquivos("Workload Model of Simulation", ".wmsx", true);
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileFilter(filtro);
+        int returnVal = jFileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            if (!file.getName().endsWith(".wmsx")) {
+                File temp = new File(file.toString() + ".wmsx");
+                file = temp;
+            }
+            Interpretador interpret = new Interpretador(file.getAbsolutePath());
+            interpret.geraTraceSim(tarefas);
+        }
+    }//GEN-LAST:event_jButtonSalvarTracesActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
@@ -422,6 +457,7 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JButton jButtonProcessamentoTarefa;
     private javax.swing.JButton jButtonProcessamentoUser;
     private javax.swing.JButton jButtonSalvar;
+    private javax.swing.JButton jButtonSalvarTraces;
     private javax.swing.JPanel jPanelComunicacao;
     private javax.swing.JPanel jPanelGlobal;
     private javax.swing.JPanel jPanelProcessamento;
@@ -443,6 +479,7 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JToolBar jToolBarProcessamento;
     private javax.swing.JToolBar jToolBarProcessamentoTempo;
     // End of variables declaration//GEN-END:variables
+    private List<Tarefa> tarefas;
     private Object[][] tabelaRecurso;
     private ChartPanel graficoBarraProcessamento;
     private ChartPanel graficoBarraComunicacao;
@@ -606,47 +643,48 @@ public class JResultados extends javax.swing.JDialog {
         xysteparearenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         xysteparearenderer.setDefaultEntityRadius(6);
         xyplot.setRenderer(xysteparearenderer);
-        
+
         return saida;
     }
-    
+
     /**
      * Salva resultados obtidos em um arquivo html
+     *
      * @param file diretório destino
      */
-    public void salvarHTML(File file){
+    public void salvarHTML(File file) {
         //Gerar resultados:
-            BufferedImage[] charts = new BufferedImage[8];
-            if (this.graficoBarraProcessamento != null) {
-                charts[0] = this.graficoBarraProcessamento.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoPizzaProcessamento != null) {
-                charts[1] = this.graficoPizzaProcessamento.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoBarraComunicacao != null) {
-                charts[2] = this.graficoBarraComunicacao.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoPizzaComunicacao != null) {
-                charts[3] = this.graficoPizzaComunicacao.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoProcessamentoTempo != null) {
-                charts[4] = this.graficoProcessamentoTempo.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoProcessamentoTempoTarefa != null) {
-                charts[5] = this.graficoProcessamentoTempoTarefa.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoProcessamentoTempoUser1 != null) {
-                charts[6] = this.graficoProcessamentoTempoUser1.getChart().createBufferedImage(1200, 600);
-            }
-            if (this.graficoProcessamentoTempoUser2 != null) {
-                charts[7] = this.graficoProcessamentoTempoUser2.getChart().createBufferedImage(1200, 600);
-            }
-            html.setCharts(charts);
-            try {
-                html.gerarHTML(file);
-            } catch (IOException ex) {
-                Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        BufferedImage[] charts = new BufferedImage[8];
+        if (this.graficoBarraProcessamento != null) {
+            charts[0] = this.graficoBarraProcessamento.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoPizzaProcessamento != null) {
+            charts[1] = this.graficoPizzaProcessamento.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoBarraComunicacao != null) {
+            charts[2] = this.graficoBarraComunicacao.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoPizzaComunicacao != null) {
+            charts[3] = this.graficoPizzaComunicacao.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoProcessamentoTempo != null) {
+            charts[4] = this.graficoProcessamentoTempo.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoProcessamentoTempoTarefa != null) {
+            charts[5] = this.graficoProcessamentoTempoTarefa.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoProcessamentoTempoUser1 != null) {
+            charts[6] = this.graficoProcessamentoTempoUser1.getChart().createBufferedImage(1200, 600);
+        }
+        if (this.graficoProcessamentoTempoUser2 != null) {
+            charts[7] = this.graficoProcessamentoTempoUser2.getChart().createBufferedImage(1200, 600);
+        }
+        html.setCharts(charts);
+        try {
+            html.gerarHTML(file);
+        } catch (IOException ex) {
+            Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas) {
@@ -743,7 +781,8 @@ public class JResultados extends javax.swing.JDialog {
             for (int i = 0; i < metricasUsuarios.getUsuarios().size(); i++) {
                 String userName = metricasUsuarios.getUsuarios().get(i);
                 texto += "\n\n\t\tUser " + userName + "\n";
-                texto += "\nNumber of task: " + metricasUsuarios.getTarefasConcluidas(userName).size() + "\n";
+                HashSet set = metricasUsuarios.getTarefasConcluidas(userName);
+                texto += "\nNumber of task: " + set.size() + "\n";
                 //Applications:
                 //Name: Number of task: Mflops:
                 double tempoMedioFilaComunicacao = 0;

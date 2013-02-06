@@ -130,7 +130,7 @@ public class SalvarResultadosHTML {
                 + "<li><strong>Idleness of communication resources</strong> = " + globais.getOciosidadeComunicacao() + " %</li>\n"
                 + "<li><strong>Efficiency</strong> = " + globais.getEficiencia() + " %</li>\n";
         if (globais.getEficiencia() > 70.0) {
-            this.globais += "<li><span style=\"color:##00ff00;\"><strong>Efficiency GOOD</strong></span></li>\n";
+            this.globais += "<li><span style=\"color:#00ff00;\"><strong>Efficiency GOOD</strong></span></li>\n";
         } else if (globais.getEficiencia() > 40.0) {
             this.globais += "<li><strong>Efficiency MEDIA</strong></li>\n ";
         } else {
