@@ -12,7 +12,7 @@ package ispd.gui;
 
 import ispd.arquivo.interpretador.cargas.Interpretador;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
-import ispd.gui.componenteauxiliar.SalvarResultadosHTML;
+import ispd.arquivo.SalvarResultadosHTML;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,7 +58,7 @@ public class JResultados extends javax.swing.JDialog {
      */
     public JResultados(RedeDeFilas rdf, List tarefas) {
         html.setMetricasGlobais(rdf.getMetricasGlobais());
-        html.setTabelaRecurso(rdf);
+        tabelaRecurso = setTabelaRecurso(rdf);
         getResultadosTarefas(tarefas);
         gerarGraficosProcessamento(rdf);
         gerarGraficosComunicacao(rdf);
@@ -84,7 +85,7 @@ public class JResultados extends javax.swing.JDialog {
         this.tarefas = tarefas;
         gerarGraficosProcessamento(rdf);
         gerarGraficosComunicacao(rdf);
-        tabelaRecurso = html.setTabelaRecurso(rdf);
+        tabelaRecurso = setTabelaRecurso(rdf);
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
         html.setMetricasGlobais(rdf.getMetricasGlobais());
@@ -654,6 +655,7 @@ public class JResultados extends javax.swing.JDialog {
      */
     public void salvarHTML(File file) {
         //Gerar resultados:
+        html.setTabela(tabelaRecurso);
         BufferedImage[] charts = new BufferedImage[8];
         if (this.graficoBarraProcessamento != null) {
             charts[0] = this.graficoBarraProcessamento.getChart().createBufferedImage(1200, 600);
@@ -902,6 +904,78 @@ public class JResultados extends javax.swing.JDialog {
         graficoPizzaProcessamento = new ChartPanel(jfc);
         graficoPizzaProcessamento.setPreferredSize(new Dimension(600, 300));
 
+    }
+
+    private Object[][] setTabelaRecurso(RedeDeFilas rdf) {
+        List<String> recurso = new ArrayList<String>();
+        List<Object[]> tabela = new ArrayList<Object[]>();
+        //linha [Nome] [Proprietario] [Processamento] [comunicacao]
+        String nome;
+        String prop;
+        Double proc;
+        Double comu;
+        if (rdf.getMestres() != null) {
+            for (CS_Processamento mestre : rdf.getMestres()) {
+                if (recurso.contains(mestre.getId())) {
+                    int i = 0;
+                    while (!tabela.get(i)[0].equals(mestre.getId())) {
+                        i++;
+                    }
+                    tabela.get(i)[2] = (Double) tabela.get(i)[2] + mestre.getMetrica().getSegundosDeProcessamento();
+                } else {
+                    nome = mestre.getId();
+                    prop = mestre.getProprietario();
+                    proc = mestre.getMetrica().getSegundosDeProcessamento();
+                    comu = 0.0;
+                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                    recurso.add(mestre.getId());
+                }
+            }
+        }
+        if (rdf.getMaquinas() != null) {
+            for (CS_Processamento maq : rdf.getMaquinas()) {
+                if (recurso.contains(maq.getId())) {
+                    int i = 0;
+                    while (!tabela.get(i)[0].equals(maq.getId())) {
+                        i++;
+                    }
+                    proc = maq.getMetrica().getSegundosDeProcessamento();
+                    proc += Double.valueOf(tabela.get(i)[2].toString());
+                    tabela.get(i)[2] = proc;
+                } else {
+                    nome = maq.getId();
+                    prop = maq.getProprietario();
+                    proc = maq.getMetrica().getSegundosDeProcessamento();
+                    comu = 0.0;
+                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                    recurso.add(maq.getId());
+                }
+            }
+        }
+        if (rdf.getInternets() != null) {
+            for (CS_Comunicacao net : rdf.getInternets()) {
+                nome = net.getId();
+                prop = "---";
+                proc = 0.0;
+                comu = net.getMetrica().getSegundosDeTransmissao();
+                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+            }
+        }
+        if (rdf.getLinks() != null) {
+            for (CS_Comunicacao link : rdf.getLinks()) {
+                nome = link.getId();
+                prop = "---";
+                proc = 0.0;
+                comu = link.getMetrica().getSegundosDeTransmissao();
+                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                recurso.add(link.getId());
+            }
+        }
+        Object[][] temp = new Object[tabela.size()][4];
+        for (int i = 0; i < tabela.size(); i++) {
+            temp[i] = tabela.get(i);
+        }
+        return temp;
     }
 
     protected class tempo_uso_usuario implements Comparable<tempo_uso_usuario> {

@@ -1,17 +1,12 @@
-package ispd.gui.componenteauxiliar;
+package ispd.arquivo;
 
-import ispd.motor.filas.RedeDeFilas;
-import ispd.motor.filas.servidores.CS_Comunicacao;
-import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
@@ -26,81 +21,12 @@ public class SalvarResultadosHTML {
     private String chartstxt;
     private BufferedImage charts[];
 
-    public Object[][] setTabelaRecurso(RedeDeFilas rdf) {
-        List<String> recurso = new ArrayList<String>();
-        List<Object[]> tabela = new ArrayList<Object[]>();
-        //linha [Nome] [Proprietario] [Processamento] [comunicacao]
-        String nome;
-        String prop;
-        Double proc;
-        Double comu;
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mestre : rdf.getMestres()) {
-                if (recurso.contains(mestre.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(mestre.getId())) {
-                        i++;
-                    }
-                    tabela.get(i)[2] = (Double) tabela.get(i)[2] + mestre.getMetrica().getSegundosDeProcessamento();
-                } else {
-                    nome = mestre.getId();
-                    prop = mestre.getProprietario();
-                    proc = mestre.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(mestre.getId());
-                }
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (recurso.contains(maq.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(maq.getId())) {
-                        i++;
-                    }
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    proc += Double.valueOf(tabela.get(i)[2].toString());
-                    tabela.get(i)[2] = proc;
-                } else {
-                    nome = maq.getId();
-                    prop = maq.getProprietario();
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(maq.getId());
-                }
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                nome = net.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = net.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-            }
-        }
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                nome = link.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = link.getMetrica().getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                recurso.add(link.getId());
-            }
-        }
-        Object[][] temp = new Object[tabela.size()][4];
-        for (int i = 0; i < tabela.size(); i++) {
-            temp[i] = tabela.get(i);
-        }
+    public void setTabela(Object tabela[][]) {
         //Adicionando resultados na tabela do html
         this.tabela = "";
-        for (Object[] item : temp) {
+        for (Object[] item : tabela) {
             this.tabela += "<tr><td>" + item[0] + "</td><td>" + item[1] + "</td><td>" + item[2] + "</td><td>" + item[3] + "</td></tr>\n";
         }
-        return temp;
     }
 
     public void setCharts(BufferedImage charts[]) {
@@ -116,7 +42,7 @@ public class SalvarResultadosHTML {
         for (BufferedImage item : charts) {
             if (item != null) {
                 this.charts[cont] = item;
-                this.chartstxt += "<img alt=\"\" src=\"chart"+cont+".png\" style=\"width: 600px; height: 300px;\" />\n";
+                this.chartstxt += "<img alt=\"\" src=\"chart" + cont + ".png\" style=\"width: 600px; height: 300px;\" />\n";
                 cont++;
             }
         }
@@ -162,14 +88,18 @@ public class SalvarResultadosHTML {
                 + "        <title>Simulation Results</title>\n"
                 + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
                 + "    </head>\n"
-                + "    <body background=\"logogspd.png\">\n"
+                + "    <body background=\"fundo_html.jpg\" style=\"background-position: top center; background-repeat: no-repeat;\">\n"
                 + "        <h1 id=\"topo\" style=\"text-align: center;\">\n"
-                + "            <span style=\"color:#8b4513;\">Simulation Results</span></h1>\n"
-                + "        <hr />\n"
+                + "            <span style=\"color:#8b4513;\">\n"
+                + "            <img alt=\"\" src=\"Logo_GSPD_232.jpg\" align=\"left\" style=\"width: 70px; height: 70px;\" />\n"
+                + "            Simulation Results</span>\n"
+                + "            <img alt=\"\" src=\"Logo_UNESP.jpg\" align=\"right\" style=\"width: 70px; height: 70px;\" />\n"
+                + "        </h1>\n"
+                + "        <hr /><br />\n"
                 + "        <div>\n"
-                + "            <a href=\"#global\">Global metrics</a> <br>\n"
-                + "            <a href=\"#table\">Table of Resource</a> <br>\n"
-                + "            <a href=\"#chart\">Charts</a> <br>\n"
+                + "            <a href=\"#global\">Global metrics</a> <br/>\n"
+                + "            <a href=\"#table\">Table of Resource</a> <br/>\n"
+                + "            <a href=\"#chart\">Charts</a> <br/>\n"
                 + "        </div>\n"
                 + "        <hr />\n"
                 + "        <h2 id=\"global\" style=\"text-align: center;\">\n"
@@ -233,8 +163,24 @@ public class SalvarResultadosHTML {
         saida.close();
         writer.close();
         for (int i = 0; i < charts.length; i++) {
-            arquivo = new  File(diretorio, "chart"+i+".png");
+            arquivo = new File(diretorio, "chart" + i + ".png");
             ImageIO.write(charts[i], "png", arquivo);
         }
+        arquivo = new File(diretorio, "fundo_html.jpg");
+        if (!arquivo.exists()) {
+            ImageIO.write(getImagem("fundo_html.jpg"), "jpg", arquivo);
+        }
+        arquivo = new File(diretorio, "Logo_GSPD_232.jpg");
+        if (!arquivo.exists()) {
+            ImageIO.write(getImagem("Logo_GSPD_232.jpg"), "jpg", arquivo);
+        }
+        arquivo = new File(diretorio, "Logo_UNESP.jpg");
+        if (!arquivo.exists()) {
+            ImageIO.write(getImagem("Logo_UNESP.jpg"), "jpg", arquivo);
+        }
+    }
+
+    private RenderedImage getImagem(String img) throws IOException {
+        return ImageIO.read(ispd.gui.JPrincipal.class.getResource("imagens/" + img));
     }
 }

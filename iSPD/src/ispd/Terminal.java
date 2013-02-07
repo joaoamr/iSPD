@@ -153,8 +153,13 @@ public class Terminal {
             }
             progrSim.print("Results:");
             if (arquivoOut != null && numExecucoes == 1) {
+                double t1 = System.currentTimeMillis();
                 JResultados result = new JResultados(redeDeFilas, tarefas);
                 result.salvarHTML(arquivoOut);
+                double t2 = System.currentTimeMillis();
+                //Calcula tempo de simulação em segundos
+                double tempototal = (t2 - t1) / 1000;
+                progrSim.println("  Time to create html = " + tempototal + "seconds");
             }
             progrSim.println(this.getResultadosGlobais());
         } catch (IllegalArgumentException erro) {
