@@ -17,6 +17,7 @@ public class SalvarResultadosHTML {
 
     private String tabela;
     private String globais;
+    private String satisfacao;
     private String tarefas;
     private String chartstxt;
     private BufferedImage charts[];
@@ -49,10 +50,22 @@ public class SalvarResultadosHTML {
 
     }
 
+    public void setSatisfacao(Object[][] satisfacao) {
+        this.satisfacao = "<ul>";
+        for (int i = 0; i < satisfacao.length; i++) {
+            this.satisfacao += "<li><strong>User" + satisfacao[i][0] + "</strong> = " + satisfacao[i][1] + " %</li>\n";
+        }
+        this.satisfacao += "</ul>";
+    }
+
     public void setMetricasGlobais(MetricasGlobais globais) {
-        this.globais = "<li><strong>Total Simulated Time </strong>= " + globais.getTempoSimulacao() + "</li>\n"
-                + "<li><strong>Satisfaction</strong> = " + globais.getSatisfacaoMedia() + " %</li>\n"
-                + "<li><strong>Idleness of processing resources</strong> = " + globais.getOciosidadeCompuacao() + " %</li>\n"
+        this.globais = "<li><strong>Total Simulated Time </strong>= " + globais.getTempoSimulacao() + "</li>\n";
+        if (satisfacao == null) {
+            this.globais += "<li><strong>Satisfaction</strong> = " + globais.getSatisfacaoMedia() + " %</li>\n";
+        } else {
+            this.globais += "<li><strong>Satisfaction</strong>" + satisfacao + "</li>\n";
+        }
+        this.globais += "<li><strong>Idleness of processing resources</strong> = " + globais.getOciosidadeCompuacao() + " %</li>\n"
                 + "<li><strong>Idleness of communication resources</strong> = " + globais.getOciosidadeComunicacao() + " %</li>\n"
                 + "<li><strong>Efficiency</strong> = " + globais.getEficiencia() + " %</li>\n";
         if (globais.getEficiencia() > 70.0) {
