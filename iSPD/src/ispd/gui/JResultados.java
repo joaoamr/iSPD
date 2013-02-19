@@ -10,16 +10,18 @@
  */
 package ispd.gui;
 
+import ispd.arquivo.SalvarResultadosHTML;
 import ispd.arquivo.interpretador.cargas.Interpretador;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
-import ispd.arquivo.SalvarResultadosHTML;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasUsuarios;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +35,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -161,6 +167,7 @@ public class JResultados extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulation Results");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
 
         jToolBar1.setRollover(true);
 
@@ -431,6 +438,7 @@ public class JResultados extends javax.swing.JDialog {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = jFileChooser.getSelectedFile();
             salvarHTML(file);
+            abrirHTML(file);
         }
     }//GEN-LAST:event_jButtonSalvarActionPerformed
 
@@ -684,6 +692,25 @@ public class JResultados extends javax.swing.JDialog {
         html.setCharts(charts);
         try {
             html.gerarHTML(file);
+        } catch (IOException ex) {
+            Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Apresenta uma janela com o HTML dos resultados
+     * @param file diretório do arquivo html
+     */
+    private void abrirHTML(File file) {
+        try {
+            JDialog frame = new JDialog(this,"Simulation Results",true);
+            Container con = frame.getContentPane();
+            JEditorPane jep = new JEditorPane("file://"+file.getAbsolutePath()+"/result.html");
+            JScrollPane jsp = new JScrollPane(jep);
+            con.add(jsp);
+            frame.setBounds(50, 50, 700, 500);
+            frame.setLocationRelativeTo(this);
+            frame.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
         }

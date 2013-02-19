@@ -29,6 +29,8 @@ options {
 
 PARSER_BEGIN(JavaParser)
 
+package ispd.arquivo.interpretador.gridsim;
+
 import java.io.*;
 import java.util.*;
 

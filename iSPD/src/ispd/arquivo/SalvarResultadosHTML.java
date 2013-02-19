@@ -51,11 +51,13 @@ public class SalvarResultadosHTML {
     }
 
     public void setSatisfacao(Object[][] satisfacao) {
-        this.satisfacao = "<ul>";
-        for (int i = 0; i < satisfacao.length; i++) {
-            this.satisfacao += "<li><strong>User" + satisfacao[i][0] + "</strong> = " + satisfacao[i][1] + " %</li>\n";
+        if (satisfacao.length > 1) {
+            this.satisfacao = "<ul>";
+            for (int i = 0; i < satisfacao.length; i++) {
+                this.satisfacao += "<li><strong>User" + satisfacao[i][0] + "</strong> = " + satisfacao[i][1] + " %</li>\n";
+            }
+            this.satisfacao += "</ul>";
         }
-        this.satisfacao += "</ul>";
     }
 
     public void setMetricasGlobais(MetricasGlobais globais) {
@@ -104,7 +106,7 @@ public class SalvarResultadosHTML {
                 + "    <body background=\"fundo_html.jpg\" style=\"background-position: top center; background-repeat: no-repeat;\">\n"
                 + "        <h1 id=\"topo\" style=\"text-align: center;\">\n"
                 + "            <span style=\"color:#8b4513;\">\n"
-                + "            <img alt=\"\" src=\"Logo_GSPD_232.jpg\" align=\"left\" style=\"width: 70px; height: 70px;\" />\n"
+                + "            <img alt=\"\" src=\"Logo_GSPD_100.jpg\" align=\"left\" style=\"width: 70px; height: 70px;\" />\n"
                 + "            Simulation Results</span>\n"
                 + "            <img alt=\"\" src=\"Logo_UNESP.jpg\" align=\"right\" style=\"width: 70px; height: 70px;\" />\n"
                 + "        </h1>\n"
@@ -183,9 +185,9 @@ public class SalvarResultadosHTML {
         if (!arquivo.exists()) {
             ImageIO.write(getImagem("fundo_html.jpg"), "jpg", arquivo);
         }
-        arquivo = new File(diretorio, "Logo_GSPD_232.jpg");
+        arquivo = new File(diretorio, "Logo_GSPD_100.jpg");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("Logo_GSPD_232.jpg"), "jpg", arquivo);
+            ImageIO.write(getImagem("Logo_GSPD_100.jpg"), "jpg", arquivo);
         }
         arquivo = new File(diretorio, "Logo_UNESP.jpg");
         if (!arquivo.exists()) {

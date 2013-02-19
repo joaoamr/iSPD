@@ -497,6 +497,10 @@ public class JavaParser implements JavaParserConstants {
                 }
         }
 
+    public void writefile() {
+        System.out.println("Deveria escrever modelo aqui :P");
+    }
+
         public class ResourceChar
         {
                 private String arch;
