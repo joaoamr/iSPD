@@ -27,18 +27,15 @@ public class InterpretadorGridSim {
         return fname;
     }
 
-    public void interpreta(File file1) {
+    public void interpreta(File file1) throws ParseException {
         FileInputStream fisfile = null;
         try {
             boolean error;
             fisfile = new FileInputStream(file1);
-            JavaParser parser = JavaParser.main(fisfile);
+            JavaParser parser = new JavaParser(fisfile);
+            parser.CompilationUnit();
             setFileName(file1);
-            error = parser.resultadoParser();
-            if (!error) {
-                parser.writefile();
-            }
-            parser.reset();
+            parser.writefile();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(InterpretadorGridSim.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
