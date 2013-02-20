@@ -11,7 +11,6 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
-import ispd.motor.metricas.MetricasUsuarios;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -97,6 +96,9 @@ public class CargaTrace extends GerarCarga {
                                 (double) (Double.parseDouble(campos[7]) * mediaCap),
                                 Double.parseDouble(campos[3])/*tempo de criação*/);
                         tarefas.add(tarefa);
+                        if(campos[6].contains("0")||campos[6].contains("5")){
+                        tarefa.cancelar(0);
+                        }
                     }
                 }
                 for (int i = 0; i < resto; i++) {
@@ -116,6 +118,9 @@ public class CargaTrace extends GerarCarga {
                             (double) (Double.parseDouble(campos[7]) * mediaCap),
                             Double.parseDouble(campos[3])/*tempo de criação*/);
                     tarefas.add(tarefa);
+                    if(campos[6].contains("0")||campos[6].contains("5")){
+                    tarefa.cancelar(0);
+                    }
                 }
                 for (CS_Processamento mestre : rdf.getMestres()) {
                     CS_Mestre mestreaux = (CS_Mestre) mestre;
