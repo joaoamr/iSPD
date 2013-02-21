@@ -74,7 +74,7 @@ public class CargaTrace extends GerarCarga {
             int j = 0;
             //escapa o cabeçalho
             while (in.ready() && j < 5) {
-                aux = in.readLine();
+                in.readLine();
                 j++;
             }
             if (tipo.equals("SWF") || tipo.equals("GWF")) {
@@ -96,8 +96,9 @@ public class CargaTrace extends GerarCarga {
                                 (double) (Double.parseDouble(campos[7]) * mediaCap),
                                 Double.parseDouble(campos[3])/*tempo de criação*/);
                         tarefas.add(tarefa);
-                        if(campos[6].contains("0")||campos[6].contains("5")){
-                        tarefa.cancelar(0);
+                        if (campos[5].contains("0") || campos[5].contains("5")) {
+                            tarefa.setLocalProcessamento(mestre);
+                            tarefa.cancelar(0);
                         }
                     }
                 }
@@ -118,8 +119,9 @@ public class CargaTrace extends GerarCarga {
                             (double) (Double.parseDouble(campos[7]) * mediaCap),
                             Double.parseDouble(campos[3])/*tempo de criação*/);
                     tarefas.add(tarefa);
-                    if(campos[6].contains("0")||campos[6].contains("5")){
-                    tarefa.cancelar(0);
+                    if (campos[5].contains("0") || campos[5].contains("5")) {
+                        tarefa.setLocalProcessamento(rdf.getMestres().get(0));
+                        tarefa.cancelar(0);
                     }
                 }
                 for (CS_Processamento mestre : rdf.getMestres()) {
