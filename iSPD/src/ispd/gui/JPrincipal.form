@@ -141,10 +141,10 @@
                 <MenuItem class="javax.swing.JMenuItem" name="jMenuItemGridSim">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="SimGrid model" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="GridSim model" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Open model from the specification files of Simgrid" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Open model from the specification files of GridSim" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>

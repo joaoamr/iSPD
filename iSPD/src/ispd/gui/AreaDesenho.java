@@ -17,12 +17,30 @@ import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.*;
 import ispd.motor.metricas.MetricasUsuarios;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
-import javax.swing.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.Vector;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -66,11 +84,17 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     private JSeparator jSeparator1;
     //Objetos advindo da classe JanelaPrincipal
     private JPrincipal janelaPrincipal;
+    //Objetos do cursor
+    private Cursor hourglassCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     //Objetos usados para desenhar a regua e as grades
     private int units;
     private boolean metric;
     private int INCH;
     private boolean gridOn;
+    //Objetos para desenhar Retângulo de seleção
+    private boolean retangulo = false;
+    private int retanguloX, retanguloY, retanguloLag, retanguloAlt;
     //Objetos para Selecionar texto na Area Lateral
     private boolean imprimeNosConectados;
     private boolean imprimeNosIndiretos;
@@ -87,13 +111,14 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     private int verticeFim;
     //Objeots usados para minipular os icones
     private Icone iconeAuxiliar;
+    private Icone iconeAuxiliarNovo;
     private int posicaoMouseX;
     private int posicaoMouseY;
     private Icone iconeAuxiliarMatchRede;
     private Icone iconeNulo;
     private boolean iconeSelecionado;
     //Objetos para remover um icone
-    private Icone iconeAuxiliaRemover;
+    private List<Icone> iconeAuxiliaRemover;
     //Obejtos para copiar um icone
     private Icone iconeCopiado;
     private boolean acaoColar;
@@ -129,7 +154,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         acaoColar = false;
         iconeNulo = new Icone(-100, -100, -1, 0, 0);
         iconeAuxiliarMatchRede = iconeNulo;
-
+        iconeAuxiliaRemover = new Vector<Icone>();
     }
 
     public void setPaineis(JPrincipal janelaPrincipal) {
@@ -145,7 +170,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
 
         botaoCopiar = new JMenuItem();
         botaoCopiar.addActionListener(new java.awt.event.ActionListener() {
-
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoCopiarActionPerformed(evt);
             }
@@ -155,7 +180,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         botaoInverter = new JMenuItem();
         //botaoInverter.setEnabled(false);
         botaoInverter.addActionListener(new java.awt.event.ActionListener() {
-
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoInverterActionPerformed(evt);
             }
@@ -166,7 +191,6 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
 
         botaoRemove = new JMenuItem();
         botaoRemove.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoRemoveActionPerformed(evt);
             }
@@ -176,7 +200,6 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         botaoColar = new JMenuItem();
         botaoColar.setEnabled(false);
         botaoColar.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoColarActionPerformed(evt);
             }
@@ -344,6 +367,25 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
             g2d.drawLine(posPrimeiroCliqueX, posPrimeiroCliqueY, posicaoMouseX, posicaoMouseY);
         }
 
+
+        // Desenha quadrado
+        if (retangulo) {
+            //g2d.setPaint(new GradientPaint(quadradoX,quadradoY,new Color(100, 100, 255),quadradoX+quadradoLag, quadradoY+quadradoAlt,new Color(200, 200, 255)));
+            //g2d.fillRect(quadradoX, quadradoY, quadradoLag, quadradoAlt);
+            //g.setColor(new Color(200, 200, 255));
+            //g.fillRect(quadradoX, quadradoY, quadradoLag, quadradoAlt);
+            g.setColor(Color.blue);
+            if (retanguloLag < 0 && retanguloAlt < 0) {
+                g.drawRect(retanguloX + retanguloLag, retanguloY + retanguloAlt, retanguloLag * -1, retanguloAlt * -1);
+            } else if (retanguloLag < 0) {
+                g.drawRect(retanguloX + retanguloLag, retanguloY, retanguloLag * -1, retanguloAlt);
+            } else if (retanguloAlt < 0) {
+                g.drawRect(retanguloX, retanguloY + retanguloAlt, retanguloLag, retanguloAlt * -1);
+            } else {
+                g.drawRect(retanguloX, retanguloY, retanguloLag, retanguloAlt);
+            }
+        }
+
         // Desenhamos todos os icones
         for (Icone I : icones) {
             if (I.getTipoIcone() == 2) {
@@ -355,9 +397,9 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 I.draw(g2d);
             }
         }
-
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
 
         if (botaoSelecaoIconeClicado) {
@@ -459,7 +501,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                         case MouseEvent.BUTTON2:
                             break;
                         case MouseEvent.BUTTON3:
-                            iconeAuxiliaRemover = I;
+                            iconeAuxiliarNovo = I;
                             this.montarBotoesPopupMenu(I.getTipoIcone());
                             popupMenu.show(e.getComponent(), e.getX(), e.getY());
                             break;
@@ -484,38 +526,64 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         repaint();
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         repaint();
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         repaint();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
+        if (retangulo) {
+            if (retanguloLag < 0) {
+                retanguloX += retanguloLag;
+                retanguloLag *= -1;
+            }
+            if (retanguloAlt < 0) {
+                retanguloY += retanguloAlt;
+                retanguloAlt *= -1;
+            }
+            for (Icone icone : icones) {
+                if (retanguloX < icone.getNumX()
+                        && icone.getNumX() < (retanguloX + retanguloLag)
+                        && retanguloY < icone.getNumY()
+                        && icone.getNumY() < (retanguloY + retanguloAlt)) {
+                    icone.setEstaAtivo(true);
+                }
+            }
+        }
         repaint();
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         posicaoMouseX = e.getX();
         posicaoMouseY = e.getY();
         if (botaoSelecaoIconeClicado) {
-            Cursor hourglassCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
             setCursor(hourglassCursor);
         } else {
-            Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
             setCursor(normalCursor);
         }
         repaint();
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         for (Icone I : icones) {
             I.setEstaAtivo(false);
         }
+        retangulo = false;
+        boolean selecionado = false;
         for (Icone I : icones) {
             boolean clicado = I.getRectEnvolvente(e.getX(), e.getY());
-            if (clicado && I.getTipoIcone() != 2) {
+            if (clicado) {
+                selecionado = true;
+            }
+            if (clicado && I.getTipoIcone() != Icone.NETWORK) {
                 iconeAuxiliar = I;
                 iconeSelecionado = true;
                 break;
@@ -523,9 +591,17 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 iconeSelecionado = false;
             }
         }
+        if (!selecionado) {
+            retangulo = true;
+            retanguloX = e.getX();
+            retanguloY = e.getY();
+            retanguloLag = 0;
+            retanguloAlt = 0;
+        }
         repaint();
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if (iconeSelecionado) {
             if (iconeAuxiliar.getTipoIcone() != 2) {
@@ -550,10 +626,16 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                 }
                 iconeAuxiliar.setPosition(posicaoMouseX, posicaoMouseY);
             }
+        } else {
+            if (retangulo) {
+                retanguloLag = e.getX() - retanguloX;
+                retanguloAlt = e.getY() - retanguloY;
+            }
         }
         repaint();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         for (Icone I : icones) {
             I.move();
@@ -667,20 +749,20 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                     }
 
                     /*HashSet<Integer> listaIndiretosEntrada = I1.getObjetoNosIndiretosEntrada();
-                    for(int temp1:listaIndiretosEntrada){
-                    for(Icone I2:icones){
-                    if(I2.getIdGlobal()==temp1){
-                    HashSet<Integer> listaDestino = I2.getObjetoNosIndiretos();
-                    HashSet<Integer> listaOrigem2 = I1.getObjetoNosIndiretos();
-                    for(int temp2:listaOrigem2){
-                    if(!listaDestino.contains(temp2) && temp2!=I2.getID()){
-                    listaDestino.add(temp2);
-                    }
-                    }
-                    I2.setObjetoNosIndiretos(listaDestino);
-                    }
-                    }
-                    }*/
+                     for(int temp1:listaIndiretosEntrada){
+                     for(Icone I2:icones){
+                     if(I2.getIdGlobal()==temp1){
+                     HashSet<Integer> listaDestino = I2.getObjetoNosIndiretos();
+                     HashSet<Integer> listaOrigem2 = I1.getObjetoNosIndiretos();
+                     for(int temp2:listaOrigem2){
+                     if(!listaDestino.contains(temp2) && temp2!=I2.getID()){
+                     listaDestino.add(temp2);
+                     }
+                     }
+                     I2.setObjetoNosIndiretos(listaDestino);
+                     }
+                     }
+                     }*/
                 }
             }
         }
@@ -724,65 +806,68 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     private void acaoRemove() {
         int opcao = JOptionPane.showConfirmDialog(null, palavras.getString("Remove this icon?"), palavras.getString("Remove"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcao == JOptionPane.YES_OPTION) {
-            if (iconeAuxiliaRemover.getTipoIcone() == 2) {
-                int j = 0;
-                for (Icone I1 : icones) {
-                    if (I1.getIdGlobal() == iconeAuxiliaRemover.getNoOrigem() && I1.getTipoIcone() != 2) {
-                        for (Icone I2 : icones) {
-                            if (I2.getIdGlobal() == iconeAuxiliaRemover.getNoDestino() && I2.getTipoIcone() != 2) {
-                                I1.removeConexaoSaida(I2.getIdGlobal());
-                                I2.removeConexaoEntrada(I1.getIdGlobal());
+            for (Icone iconeRemover : iconeAuxiliaRemover) {
+                if (iconeRemover.getTipoIcone() == 2) {
+                    int j = 0;
+                    for (Icone I1 : icones) {
+                        if (I1.getIdGlobal() == iconeRemover.getNoOrigem() && I1.getTipoIcone() != 2) {
+                            for (Icone I2 : icones) {
+                                if (I2.getIdGlobal() == iconeRemover.getNoDestino() && I2.getTipoIcone() != 2) {
+                                    I1.removeConexaoSaida(I2.getIdGlobal());
+                                    I2.removeConexaoEntrada(I1.getIdGlobal());
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    ValidaValores.removeNomeIcone(iconeRemover.getNome());
+                    removeIcone(iconeRemover);
+                    this.janelaPrincipal.modificar();
+                    atualizaNosIndiretos();
+                } else {
+                    int cont = 0;
+                    //Remover dados das conexoes q entram
+                    HashSet<Integer> listanos = iconeRemover.getObjetoConexaoEntrada();
+                    for (int i : listanos) {
+                        for (Icone I : icones) {
+                            if (i == I.getIdGlobal() && I.getTipoIcone() != 2) {
+                                I.removeConexaoSaida(iconeRemover.getIdGlobal());
                                 break;
                             }
                         }
-                        break;
                     }
-                }
-                ValidaValores.removeNomeIcone(iconeAuxiliaRemover.getNome());
-                removeIcone(iconeAuxiliaRemover);
-                this.janelaPrincipal.modificar();
-                atualizaNosIndiretos();
-            } else {
-                int cont = 0;
-                //Remover dados das conexoes q entram
-                HashSet<Integer> listanos = iconeAuxiliaRemover.getObjetoConexaoEntrada();
-                for (int i : listanos) {
-                    for (Icone I : icones) {
-                        if (i == I.getIdGlobal() && I.getTipoIcone() != 2) {
-                            I.removeConexaoSaida(iconeAuxiliaRemover.getIdGlobal());
-                            break;
+                    //Remover dados das conexoes q saem
+                    listanos = iconeRemover.getObjetoConexaoSaida();
+                    for (int i : listanos) {
+                        for (Icone I : icones) {
+                            if (i == I.getIdGlobal() && I.getTipoIcone() != 2) {
+                                I.removeConexaoEntrada(iconeRemover.getIdGlobal());
+                                break;
+                            }
                         }
                     }
-                }
-                //Remover dados das conexoes q saem
-                listanos = iconeAuxiliaRemover.getObjetoConexaoSaida();
-                for (int i : listanos) {
                     for (Icone I : icones) {
-                        if (i == I.getIdGlobal() && I.getTipoIcone() != 2) {
-                            I.removeConexaoEntrada(iconeAuxiliaRemover.getIdGlobal());
-                            break;
+                        if (I.getTipoIcone() == 2 && ((I.getNumX() == iconeRemover.getNumX() && I.getNumY() == iconeRemover.getNumY()) || (I.getNumPreX() == iconeRemover.getNumX() && I.getNumPreY() == iconeRemover.getNumY()))) {
+                            cont++;
                         }
                     }
-                }
-                for (Icone I : icones) {
-                    if (I.getTipoIcone() == 2 && ((I.getNumX() == iconeAuxiliaRemover.getNumX() && I.getNumY() == iconeAuxiliaRemover.getNumY()) || (I.getNumPreX() == iconeAuxiliaRemover.getNumX() && I.getNumPreY() == iconeAuxiliaRemover.getNumY()))) {
-                        cont++;
-                    }
-                }
-                for (int j = 0; j < cont; j++) {
-                    for (Icone I : icones) {
-                        if (I.getTipoIcone() == 2 && ((I.getNumX() == iconeAuxiliaRemover.getNumX() && I.getNumY() == iconeAuxiliaRemover.getNumY()) || (I.getNumPreX() == iconeAuxiliaRemover.getNumX() && I.getNumPreY() == iconeAuxiliaRemover.getNumY()))) {
-                            ValidaValores.removeNomeIcone(I.getNome());
-                            removeIcone(I);
-                            break;
+                    for (int j = 0; j < cont; j++) {
+                        for (Icone I : icones) {
+                            if (I.getTipoIcone() == 2 && ((I.getNumX() == iconeRemover.getNumX() && I.getNumY() == iconeRemover.getNumY()) || (I.getNumPreX() == iconeRemover.getNumX() && I.getNumPreY() == iconeRemover.getNumY()))) {
+                                ValidaValores.removeNomeIcone(I.getNome());
+                                removeIcone(I);
+                                break;
+                            }
                         }
                     }
+                    ValidaValores.removeNomeIcone(iconeRemover.getNome());
+                    removeIcone(iconeRemover);
+                    this.janelaPrincipal.modificar();
+                    atualizaNosIndiretos();
                 }
-                ValidaValores.removeNomeIcone(iconeAuxiliaRemover.getNome());
-                removeIcone(iconeAuxiliaRemover);
-                this.janelaPrincipal.modificar();
-                atualizaNosIndiretos();
             }
+            iconeAuxiliaRemover.clear();
             repaint();
         }
     }
@@ -792,20 +877,20 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         for (Icone I : icones) {
             if (I.getEstaAtivo() == true) {
                 iconeEncontrado = true;
-                iconeAuxiliaRemover = I;
-                acaoRemove();
-                break;
+                iconeAuxiliaRemover.add(I);
             }
         }
         if (!iconeEncontrado) {
             JOptionPane.showMessageDialog(null, palavras.getString("No icon selected."), palavras.getString("WARNING"), JOptionPane.WARNING_MESSAGE);
+        } else {
+            acaoRemove();
         }
     }
 
     private void botaoCopiarActionPerformed(java.awt.event.ActionEvent evt) {
         //Não copia conexão de rede
-        if (iconeAuxiliaRemover.getTipoIcone() != 2) {
-            iconeCopiado = iconeAuxiliaRemover;
+        if (iconeAuxiliarNovo.getTipoIcone() != 2) {
+            iconeCopiado = iconeAuxiliarNovo;
             acaoColar = true;
             botaoColar.setEnabled(true);
         }
@@ -853,28 +938,28 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void botaoInverterActionPerformed(java.awt.event.ActionEvent evt) {
-        if (iconeAuxiliaRemover.getTipoIcone() == 2) {
-            iconeAuxiliaRemover.setEstaAtivo(false);
-            Icone I = adicionaAresta(iconeAuxiliaRemover.getNumPreX(), iconeAuxiliaRemover.getNumPreY(), iconeAuxiliaRemover.getNumX(), iconeAuxiliaRemover.getNumY(), iconeAuxiliaRemover.getTipoIcone());
-            I.setNoOrigem(iconeAuxiliaRemover.getNoDestino());
-            I.setNoDestino(iconeAuxiliaRemover.getNoOrigem());
-            I.setPoderComputacional(iconeAuxiliaRemover.getPoderComputacional());
-            I.setTaxaOcupacao(iconeAuxiliaRemover.getTaxaOcupacao());
-            I.setLatencia(iconeAuxiliaRemover.getLatencia());
-            I.setBanda(iconeAuxiliaRemover.getBanda());
-            I.setAlgoritmo(iconeAuxiliaRemover.getAlgoritmo());
-            I.setNumeroEscravos(iconeAuxiliaRemover.getNumeroEscravos());
+        if (iconeAuxiliarNovo.getTipoIcone() == 2) {
+            iconeAuxiliarNovo.setEstaAtivo(false);
+            Icone I = adicionaAresta(iconeAuxiliarNovo.getNumPreX(), iconeAuxiliarNovo.getNumPreY(), iconeAuxiliarNovo.getNumX(), iconeAuxiliarNovo.getNumY(), iconeAuxiliarNovo.getTipoIcone());
+            I.setNoOrigem(iconeAuxiliarNovo.getNoDestino());
+            I.setNoDestino(iconeAuxiliarNovo.getNoOrigem());
+            I.setPoderComputacional(iconeAuxiliarNovo.getPoderComputacional());
+            I.setTaxaOcupacao(iconeAuxiliarNovo.getTaxaOcupacao());
+            I.setLatencia(iconeAuxiliarNovo.getLatencia());
+            I.setBanda(iconeAuxiliarNovo.getBanda());
+            I.setAlgoritmo(iconeAuxiliarNovo.getAlgoritmo());
+            I.setNumeroEscravos(iconeAuxiliarNovo.getNumeroEscravos());
             this.janelaPrincipal.modificar();
             //fors para adicionar numero do destino na origem e vice versa
             for (Icone Ico : icones) {
-                if (Ico.getIdGlobal() == iconeAuxiliaRemover.getNoDestino() && Ico.getTipoIcone() != 2) {
-                    Ico.addIdConexaoSaida(iconeAuxiliaRemover.getNoOrigem());
+                if (Ico.getIdGlobal() == iconeAuxiliarNovo.getNoDestino() && Ico.getTipoIcone() != 2) {
+                    Ico.addIdConexaoSaida(iconeAuxiliarNovo.getNoOrigem());
                     break;
                 }
             }
             for (Icone Ico : icones) {
-                if (Ico.getIdGlobal() == iconeAuxiliaRemover.getNoOrigem() && Ico.getTipoIcone() != 2) {
-                    Ico.addIdConexaoEntrada(iconeAuxiliaRemover.getNoDestino());
+                if (Ico.getIdGlobal() == iconeAuxiliarNovo.getNoOrigem() && Ico.getTipoIcone() != 2) {
+                    Ico.addIdConexaoEntrada(iconeAuxiliarNovo.getNoDestino());
                     break;
                 }
             }
@@ -1096,6 +1181,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
 
     /**
      * Transforma os icones da area de desenho em um Document xml dom
+     *
      * @param descricao
      */
     public Document getDadosASalvar() {
@@ -1223,7 +1309,9 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
     }
 
     /**
-     * Carrega a estrutura da arvore contida no Document para os icones da area de desenho
+     * Carrega a estrutura da arvore contida no Document para os icones da area
+     * de desenho
+     *
      * @param descricao carregado a partir de um arquivo .imsx
      */
     public void setDadosSalvos(Document descricao) {
@@ -1470,7 +1558,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
      */
     public void matchNetwork() {
         if (iconeAuxiliarMatchRede.getTipoIcone() == 2) {
-            double banda = 0.0, taxa = 0.0, latencia = 0.0;
+            double banda, taxa, latencia;
             int intMatch = iconeAuxiliarMatchRede.getIdGlobal();
             banda = iconeAuxiliarMatchRede.getBanda();
             taxa = iconeAuxiliarMatchRede.getTaxaOcupacao();
@@ -1557,27 +1645,27 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
         List<String> proprietarios = new ArrayList<String>();
         List<Double> poderComp = new ArrayList<Double>();
         for (Icone icone : getIcones()) {
-            if(icone.getTipoIcone() == Icone.MACHINE){
-                if(proprietarios.contains(icone.getProprietario())){
+            if (icone.getTipoIcone() == Icone.MACHINE) {
+                if (proprietarios.contains(icone.getProprietario())) {
                     int index = proprietarios.indexOf(icone.getProprietario());
                     poderComp.set(index, poderComp.get(index) + icone.getPoderComputacional());
-                }else{
+                } else {
                     proprietarios.add(icone.getProprietario());
                     poderComp.add(icone.getPoderComputacional());
                 }
-            }else if(icone.getTipoIcone() == Icone.CLUSTER && !icone.isMestre()){
-                if(proprietarios.contains(icone.getProprietario())){
+            } else if (icone.getTipoIcone() == Icone.CLUSTER && !icone.isMestre()) {
+                if (proprietarios.contains(icone.getProprietario())) {
                     int index = proprietarios.indexOf(icone.getProprietario());
                     poderComp.set(index, poderComp.get(index) + (icone.getPoderComputacional() * icone.getNumeroEscravos()));
-                }else{
+                } else {
                     proprietarios.add(icone.getProprietario());
                     poderComp.add(icone.getPoderComputacional() * icone.getNumeroEscravos());
                 }
-            }else if(icone.getTipoIcone() == Icone.CLUSTER && icone.isMestre()){
-                if(proprietarios.contains(icone.getProprietario())){
+            } else if (icone.getTipoIcone() == Icone.CLUSTER && icone.isMestre()) {
+                if (proprietarios.contains(icone.getProprietario())) {
                     int index = proprietarios.indexOf(icone.getProprietario());
                     poderComp.set(index, poderComp.get(index) + (icone.getPoderComputacional() * icone.getNumeroEscravos()) + icone.getPoderComputacional());
-                }else{
+                } else {
                     proprietarios.add(icone.getProprietario());
                     poderComp.add((icone.getPoderComputacional() * icone.getNumeroEscravos()) + icone.getPoderComputacional());
                 }
@@ -1737,7 +1825,7 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                             icone.getPoderComputacional(),
                             1/*numero de processadores*/,
                             icone.getTaxaOcupacao(),
-                            i+1);
+                            i + 1);
                     maq.addConexoesSaida(Switch);
                     maq.addConexoesEntrada(Switch);
                     Switch.addConexoesEntrada(maq);
@@ -1757,7 +1845,8 @@ public class AreaDesenho extends JPanel implements MouseListener, MouseMotionLis
                             icone.getProprietario(),
                             icone.getPoderComputacional(),
                             1/*numero de processadores*/,
-                            icone.getTaxaOcupacao());
+                            icone.getTaxaOcupacao(),
+                            i + 1);
                     maq.addConexoesSaida(Switch);
                     maq.addConexoesEntrada(Switch);
                     Switch.addConexoesEntrada(maq);

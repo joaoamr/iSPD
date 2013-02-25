@@ -363,8 +363,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             });
             jMenuImport.add(jMenuItemSimGrid);
 
-            jMenuItemGridSim.setText(palavras.getString("SimGrid model")); // NOI18N
-            jMenuItemGridSim.setToolTipText(palavras.getString("Open model from the specification files of Simgrid")); // NOI18N
+            jMenuItemGridSim.setText(palavras.getString("GridSim model")); // NOI18N
+            jMenuItemGridSim.setToolTipText(palavras.getString("Open model from the specification files of GridSim")); // NOI18N
             jMenuItemGridSim.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     jMenuItemGridSimActionPerformed(evt);

@@ -6,10 +6,10 @@ import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Vector;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 
 public class Icone implements Serializable {

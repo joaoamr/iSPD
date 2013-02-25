@@ -35,6 +35,14 @@ public class Main {
             tel.executar();
             System.exit(0);
         } else {
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash2.png"));
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            SplashWindow window = new SplashWindow(image);
+            window.setVisible(true);
             //Exibir e armazenar erros durante execução:
             LogExceptions logExceptions = new LogExceptions(null);
             Thread.setDefaultUncaughtExceptionHandler(logExceptions);
@@ -64,19 +72,11 @@ public class Main {
             } catch (UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-            BufferedImage image = null;
-            try {
-                image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash2.png"));
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            SplashWindow window = new SplashWindow(image);
-            window.setVisible(true);
             JPrincipal gui = new JPrincipal();
-            gui.setVisible(true);
             gui.setLocationRelativeTo(null);
             logExceptions.setParentComponent(gui);
             window.dispose();
+            gui.setVisible(true);
         }
     }
 }
