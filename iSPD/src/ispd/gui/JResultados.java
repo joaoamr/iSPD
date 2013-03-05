@@ -543,7 +543,11 @@ public class JResultados extends javax.swing.JDialog {
                 numTarefasCanceladas++;
             }
             CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
-            temp.setTempoProcessamento(no.getTempoInicial(), no.getTempoFinal());
+            if (temp != null) {
+                for (int i = 0; i < no.getTempoInicial().size(); i++) {
+                    temp.setTempoProcessamento(no.getTempoInicial().get(i), no.getTempoFinal().get(i));
+                }
+            }
         }
 
         tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
@@ -590,11 +594,15 @@ public class JResultados extends javax.swing.JDialog {
             //Insere cada tarefa como dois pontos na lista
             for (Tarefa task : tarefas) {
                 CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
-                Double uso = (local.getPoderComputacional() / poderComputacionalTotal) * 100;
-                tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial(), true, uso, users.get(task.getProprietario()));
-                lista.add(provisorio1);
-                tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal(), false, uso, users.get(task.getProprietario()));
-                lista.add(provisorio2);
+                if (local != null) {
+                    Double uso = (local.getPoderComputacional() / poderComputacionalTotal) * 100;
+                    for (int i = 0; i < task.getTempoInicial().size(); i++) {
+                        tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial().get(i), true, uso, users.get(task.getProprietario()));
+                        lista.add(provisorio1);
+                        tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal().get(i), false, uso, users.get(task.getProprietario()));
+                        lista.add(provisorio2);
+                    }
+                }
             }
             //Ordena lista
             Collections.sort(lista);
@@ -699,13 +707,14 @@ public class JResultados extends javax.swing.JDialog {
 
     /**
      * Apresenta uma janela com o HTML dos resultados
+     *
      * @param file diretório do arquivo html
      */
     private void abrirHTML(File file) {
         try {
-            JDialog frame = new JDialog(this,"Simulation Results",true);
+            JDialog frame = new JDialog(this, "Simulation Results", true);
             Container con = frame.getContentPane();
-            JEditorPane jep = new JEditorPane("file://"+file.getAbsolutePath()+"/result.html");
+            JEditorPane jep = new JEditorPane("file://" + file.getAbsolutePath() + "/result.html");
             JScrollPane jsp = new JScrollPane(jep);
             con.add(jsp);
             frame.setBounds(50, 50, 700, 500);
@@ -728,9 +737,10 @@ public class JResultados extends javax.swing.JDialog {
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
 
                 Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-                tmp_series.add(tarefas.get(i).getTempoInicial(), uso);
-
-                tmp_series.add(tarefas.get(i).getTempoFinal(), uso);
+                for (int j = 0; j < tarefas.get(i).getTempoInicial().get(i); i++) {
+                    tmp_series.add(tarefas.get(i).getTempoInicial().get(i), uso);
+                    tmp_series.add(tarefas.get(i).getTempoFinal().get(i), uso);
+                }
                 i++;
                 dadosGrafico.addSeries(tmp_series);
             }
