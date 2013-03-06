@@ -17,6 +17,7 @@ import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Container;
@@ -30,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -38,11 +38,11 @@ import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -113,12 +113,16 @@ public class JResultados extends javax.swing.JDialog {
         } else {
             this.jButtonProcessamentoTarefa.setVisible(false);
         }
-
         JFreeChart temp[] = gerarGraficoProcessamentoTempoUser(tarefas, rdf);
         graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
         graficoProcessamentoTempoUser1.setPreferredSize(new Dimension(600, 300));
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
         graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
+
+        //graficoEstadoTarefa = new ChartPanel(criarGraficoEstadoTarefa(tarefas));
+        //graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
+        //graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
+        //graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
 
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -498,6 +502,8 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoProcessamentoTempoTarefa;
     private ChartPanel graficoProcessamentoTempoUser1;
     private ChartPanel graficoProcessamentoTempoUser2;
+    private ChartPanel graficoEstadoTarefa;
+    private ChartPanel graficoEstadoTarefa2;
     private double poderComputacionalTotal = 0;
     private SalvarResultadosHTML html = new SalvarResultadosHTML();
 
@@ -737,9 +743,9 @@ public class JResultados extends javax.swing.JDialog {
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
 
                 Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-                for (int j = 0; j < tarefas.get(i).getTempoInicial().get(i); i++) {
-                    tmp_series.add(tarefas.get(i).getTempoInicial().get(i), uso);
-                    tmp_series.add(tarefas.get(i).getTempoFinal().get(i), uso);
+                for (int j = 0; j < tarefas.get(i).getTempoInicial().get(j); j++) {
+                    tmp_series.add(tarefas.get(i).getTempoInicial().get(j), uso);
+                    tmp_series.add(tarefas.get(i).getTempoFinal().get(j), uso);
                 }
                 i++;
                 dadosGrafico.addSeries(tmp_series);
@@ -757,6 +763,91 @@ public class JResultados extends javax.swing.JDialog {
                 true, true, false); // exibir: legendas, tooltips, url
         return jfc;
     }
+    
+    private JFreeChart criarGraficoEstadoTarefa2(List<Tarefa> tarefas, RedeDeFilas rdf) {
+        DefaultCategoryDataset dados = new DefaultCategoryDataset();
+        for (CS_Processamento maq : rdf.getMaquinas()) {
+            dados.addValue(0, "Canceled", maq.getId());
+            dados.addValue(0, "Completed", maq.getId());
+            dados.addValue(0, "Not executed", maq.getId());
+            dados.addValue(0, "Failures", maq.getId());
+        }
+        for (CS_Processamento maq : rdf.getMestres()) {
+            if (maq instanceof CS_Mestre) {
+                dados.addValue(0, "Canceled", maq.getId());
+                dados.addValue(0, "Completed", maq.getId());
+                dados.addValue(0, "Not executed", maq.getId());
+                dados.addValue(0, "Failures", maq.getId());
+            }
+        }
+        for (Tarefa tarefa : tarefas) {
+            Double val;
+            switch (tarefa.getEstado()) {
+                case Tarefa.PARADO:
+                    val = (Double) dados.getValue("Not executed", tarefa.getOrigem().getId());
+                    dados.setValue(val + 1, "Not executed", tarefa.getOrigem().getId());
+                    break;
+                case Tarefa.CONCLUIDO:
+                    val = (Double) dados.getValue("Completed", tarefa.getLocalProcessamento().getId());
+                    dados.setValue(val + 1, "Completed", tarefa.getLocalProcessamento().getId());
+                    break;
+                case Tarefa.CANCELADO:
+                    val = (Double) dados.getValue("Canceled", tarefa.getLocalProcessamento().getId());
+                    dados.setValue(val + 1, "Canceled", tarefa.getLocalProcessamento().getId());
+                    break;
+                case Tarefa.FALHA:
+                    val = (Double) dados.getValue("Failures", tarefa.getLocalProcessamento().getId());
+                    dados.setValue(val + 1, "Failures", tarefa.getLocalProcessamento().getId());
+                    break;
+            }
+        }
+        JFreeChart jfc = ChartFactory.createBarChart(
+                "State of tasks per resource", //Titulo
+                "Resource", // Eixo X
+                "Numbers of tasks", //Eixo Y
+                dados, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                true, false, false); // exibir: legendas, tooltips, url
+        return jfc;
+    }
+
+    private JFreeChart criarGraficoEstadoTarefa(List<Tarefa> tarefas) {
+        XYSeries canceladas = new XYSeries("Canceled");
+        XYSeries concluidas = new XYSeries("Completed");
+        XYSeries paradas = new XYSeries("Not executed");
+        XYSeries falhas = new XYSeries("Failures");
+        for (Tarefa tarefa : tarefas) {
+            switch (tarefa.getEstado()) {
+                case Tarefa.PARADO:
+                    paradas.add(tarefa.getTimeCriacao(), 4);
+                    break;
+                case Tarefa.CONCLUIDO:
+                    concluidas.add(
+                            tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 1.0);
+                    break;
+                case Tarefa.CANCELADO:
+                    canceladas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 2.0);
+                    break;
+                case Tarefa.FALHA:
+                    falhas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 3.0);
+                    break;
+            }
+        }
+        XYSeriesCollection data = new XYSeriesCollection();
+        data.addSeries(falhas);
+        data.addSeries(canceladas);
+        data.addSeries(concluidas);
+        data.addSeries(paradas);
+        JFreeChart chart = ChartFactory.createScatterPlot(
+                "State of tasks",
+                "Time (seconds)",
+                "Y", data,
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                true, true, false);
+        NumberAxis domainAxis = (NumberAxis) chart.getXYPlot().getDomainAxis();
+        domainAxis.setAutoRangeIncludesZero(false);
+        return chart;
+    }
 
     //Cria o gráfico que demonstra o uso de cada recurso do sistema através do tempo.
     //Ele recebe como parâmetro a lista com as maquinas que processaram durante a simulação.
@@ -767,7 +858,7 @@ public class JResultados extends javax.swing.JDialog {
             //Laço foreach que percorre as máquinas.
             for (CS_Processamento maq : rdf.getMaquinas()) {
                 //Lista que recebe os pares de intervalo de tempo em que a máquina executou.
-                LinkedList<ParesOrdenadosUso> lista = maq.getListaProcessamento();
+                List<ParesOrdenadosUso> lista = maq.getListaProcessamento();
                 poderComputacionalTotal += (maq.getPoderComputacional() - (maq.getOcupacao() * maq.getPoderComputacional()));
                 //Se a máquina tiver intervalos.
                 if (!lista.isEmpty()) {
