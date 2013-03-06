@@ -735,19 +735,16 @@ public class JResultados extends javax.swing.JDialog {
 
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
         if (!tarefas.isEmpty()) {
-            int i = 0;
             for (Tarefa task : tarefas) {
-
                 XYSeries tmp_series;
-                tmp_series = new XYSeries("task " + tarefas.get(i).getIdentificador());
+                tmp_series = new XYSeries("task " + task.getIdentificador());
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
 
                 Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-                for (int j = 0; j < tarefas.get(i).getTempoInicial().get(j); j++) {
-                    tmp_series.add(tarefas.get(i).getTempoInicial().get(j), uso);
-                    tmp_series.add(tarefas.get(i).getTempoFinal().get(j), uso);
+                for (int j = 0; j < task.getTempoInicial().size(); j++) {
+                    tmp_series.add(task.getTempoInicial().get(j), uso);
+                    tmp_series.add(task.getTempoFinal().get(j), uso);
                 }
-                i++;
                 dadosGrafico.addSeries(tmp_series);
             }
 
