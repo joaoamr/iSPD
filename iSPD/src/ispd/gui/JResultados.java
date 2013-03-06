@@ -119,10 +119,10 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
         graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
 
-        //graficoEstadoTarefa = new ChartPanel(criarGraficoEstadoTarefa(tarefas));
-        //graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
-        //graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
-        //graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
+        graficoEstadoTarefa = new ChartPanel(criarGraficoEstadoTarefa(tarefas));
+        graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
+        graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
+        graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
 
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -883,10 +883,8 @@ public class JResultados extends javax.swing.JDialog {
                         tmp_series.add(lista.get(i).getFim(), uso);
                         if (i + 1 != lista.size()) {
                             uso = 0.0000;
-                            if (lista.get(i).getFim() != lista.get(i + 1).getInicio()) {
-                                tmp_series.add(lista.get(i).getFim(), uso);
-                                tmp_series.add(lista.get(i + 1).getInicio(), uso);
-                            }
+                            tmp_series.add(lista.get(i).getFim(), uso);
+                            tmp_series.add(lista.get(i + 1).getInicio(), uso);
                         }
                     }
                     //Add no gráfico.
