@@ -742,8 +742,10 @@ public class JResultados extends javax.swing.JDialog {
 
                 Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
                 for (int j = 0; j < task.getTempoInicial().size(); j++) {
+                    tmp_series.add(task.getTempoInicial().get(j), (Double) 0.0);
                     tmp_series.add(task.getTempoInicial().get(j), uso);
                     tmp_series.add(task.getTempoFinal().get(j), uso);
+                    tmp_series.add(task.getTempoFinal().get(j), (Double) 0.0);
                 }
                 dadosGrafico.addSeries(tmp_series);
             }
@@ -760,7 +762,7 @@ public class JResultados extends javax.swing.JDialog {
                 true, true, false); // exibir: legendas, tooltips, url
         return jfc;
     }
-    
+
     private JFreeChart criarGraficoEstadoTarefa2(List<Tarefa> tarefas, RedeDeFilas rdf) {
         DefaultCategoryDataset dados = new DefaultCategoryDataset();
         for (CS_Processamento maq : rdf.getMaquinas()) {
@@ -820,13 +822,13 @@ public class JResultados extends javax.swing.JDialog {
                     break;
                 case Tarefa.CONCLUIDO:
                     concluidas.add(
-                            tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 1.0);
+                            tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 1.0);
                     break;
                 case Tarefa.CANCELADO:
-                    canceladas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 2.0);
+                    canceladas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 2.0);
                     break;
                 case Tarefa.FALHA:
-                    falhas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size()-1), (Double) 3.0);
+                    falhas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 3.0);
                     break;
             }
         }
@@ -881,8 +883,10 @@ public class JResultados extends javax.swing.JDialog {
                         tmp_series.add(lista.get(i).getFim(), uso);
                         if (i + 1 != lista.size()) {
                             uso = 0.0000;
-                            tmp_series.add(lista.get(i).getFim(), uso);
-                            tmp_series.add(lista.get(i + 1).getInicio(), uso);
+                            if (lista.get(i).getFim() != lista.get(i + 1).getInicio()) {
+                                tmp_series.add(lista.get(i).getFim(), uso);
+                                tmp_series.add(lista.get(i + 1).getInicio(), uso);
+                            }
                         }
                     }
                     //Add no gráfico.
