@@ -172,12 +172,12 @@ public class OSEP extends Escalonador {
                         if (indexMaqMin == -1) {
 
                             indexMaqMin = i;
-                            tempoExec = mestre.getSimulacao().getTime() - tar.getTempoInicial();
+                            tempoExec = mestre.getSimulacao().getTime() - tar.getTempoInicial().get(tar.getTempoInicial().size() -1);
 
-                        } else if (tempoExec > mestre.getSimulacao().getTime() - tar.getTempoInicial()) {
+                        } else if (tempoExec > mestre.getSimulacao().getTime() - tar.getTempoInicial().get(tar.getTempoInicial().size() -1)) {
 
                             indexMaqMin = i;
-                            tempoExec = mestre.getSimulacao().getTime() - tar.getTempoInicial();
+                            tempoExec = mestre.getSimulacao().getTime() - tar.getTempoInicial().get(tar.getTempoInicial().size() -1);
 
                         }
                     }
