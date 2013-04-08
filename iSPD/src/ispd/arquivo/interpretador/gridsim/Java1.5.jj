@@ -1,4 +1,4 @@
-
+	
 /*
  * Copyright © 2002 Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
  * California 95054, U.S.A. All rights reserved.  Sun Microsystems, Inc. has
@@ -33,6 +33,8 @@ package ispd.arquivo.interpretador.gridsim;
 
 import java.io.*;
 import java.util.*;
+import java.applet.Applet;
+import javax.script.*;
 
 /**
  * Grammar to parse Java version 1.5
@@ -43,7 +45,9 @@ public class JavaParser
 	private List <ResourceChar> ResourceChars = new ArrayList<ResourceChar>();
 	private List <String> TableOfNames = new ArrayList<String>();
 	private List <String> TableOfValues = new ArrayList<String>();
-	private List <String> Array = new ArrayList<String>();	
+	private List <String> Array = new ArrayList<String>();
+	private List <String> NomeMetodo = new ArrayList<String>();
+	private List <List> ListaMetodo = new ArrayList<List>();
 	private ResourceChar temp = null;
 	private String nameVariable;
 	private String valueVariable;
@@ -57,8 +61,18 @@ public class JavaParser
 	private boolean increment = false;
 	private boolean increment_update = false;
 	private boolean update_variable = false;
-	private boolean non_primitiveType;
-   
+	private boolean non_primitiveType = false;
+	private boolean acmstr = false;
+	private String acm_string = "";
+	private boolean complex_expression = false;
+	private String complex_value;
+	private boolean complex = false;
+	private String nameUpdate;
+	private boolean signal = false;
+	private boolean random = false;
+	private boolean random_indicator = false;
+   	
+	//setters
 	public void setType(boolean enter)
 	{
 		this.type = enter;
@@ -115,9 +129,44 @@ public class JavaParser
 	{
 		this.non_primitiveType = enter;
 	}
-	
+	public void setAcm_String(String enter)
+	{
+		this.acm_string = this.acm_string + enter;
+	}
+	public void setAcmstr(boolean enter)
+	{
+		this.acmstr = enter;
+	}
+	public void setComplex_Expression(boolean enter)
+	{
+		this.complex_expression = enter;
+	}
+	public void setComplex_Value(String enter)
+	{
+		this.complex_value = enter;
+	}
+	public void setComplex(boolean enter)
+	{
+		this.complex = enter;
+	}
+	public void setNameUpdate(String enter)
+	{
+		this.nameUpdate = enter;
+	}
+	public void setSignal(boolean enter)
+	{
+		this.signal = enter;
+	}
+	public void setRand(boolean enter)
+	{
+		this.random = enter;
+	}
+	public void setRandom_Indicator(boolean enter)
+	{
+		this.random_indicator = enter;
+	}
 
-
+	//getters
 	public boolean getPrimitiveType()
 	{
 		return primitiveType;
@@ -166,13 +215,50 @@ public class JavaParser
 	{
 		return update_variable;
 	}
-	public boolean getnon_PrimitiveType()
+	public boolean getNon_PrimitiveType()
 	{
 		return non_primitiveType;
 	}
+	public String getAcm_String()
+	{
+		return acm_string;
+	}
+	public boolean getAcmstr()
+	{
+		return acmstr;
+	}
+	public boolean getComplex_Expression()
+	{
+		return complex_expression;
+	}
+	public String getComplex_Value()
+	{
+		return complex_value;
+	}
+	public boolean getComplex()
+	{
+		return complex;
+	}
+	public String getNameUpdate()
+	{
+		return nameUpdate;
+	}
+	public boolean getSignal()
+	{
+		return signal;
+	}
+	public boolean getRand()
+	{
+		return random;
+	}
+	public boolean getRandom_Indicator()
+	{
+		return random_indicator;
+	}
+
 	   
 
-	public void inserir(String variavel, String valor){
+	public void inserir(String variavel, String valor){//this method receive the name and value of variable and add it in a table of values, or update the value of the variable if already exists.
 		int posicao = TableOfNames.indexOf(variavel);
 		if(posicao == -1){
 			TableOfNames.add(variavel);
@@ -182,8 +268,12 @@ public class JavaParser
 		else
 			TableOfValues.set(posicao, valor);	
    	}
-	public String retornar(String variavel, String valor){
+	public String retornar(String variavel, String valor){//this method receive the name of a variable and returns your value
 		int posicao = TableOfNames.indexOf(variavel);
+		if(getRandom_Indicator())
+		{
+			return "random";
+		}
 		if(posicao == -1)
 			return variavel;
 		else
@@ -200,85 +290,93 @@ public class JavaParser
 				return TableOfValues.get(posicao);
 		}
 	}
-   	public void insertArray(String variavel, String valor){
+   	public void insertArray(String variavel, String valor){//this method receive the name of variable and your value and insert this in a vector of values
 		if(getPosArray() == false)
 		{
 			int posicao = TableOfNames.indexOf(variavel);
 			String pos = String.valueOf(posicao);  
 			Array.add(pos);
-			System.out.println(pos);
+			System.out.println("pos" + pos);
  		}
  		else
 		{
 			Array.add(valor);	
 		}
    	}	
-	public void update_value(String variavel, String sinal, String incremento, String var_aux){
+	public void update_value(String variavel, String sinal){//this method update a value of variable that was incremented or decremented
 		int posicao = TableOfNames.indexOf(variavel);	
-		if(sinal.equals("++") || sinal.equals("--")){
-			if(sinal.equals("++"))
-			{
-				String valor = TableOfValues.get(posicao);
-				int value = Integer.parseInt(valor);
-				value++;
-				valor = String.valueOf(value);
-				System.out.println("valor: " + value);
-				TableOfValues.set(posicao, valor); 
-			}
-			if(sinal.equals("--"))
-			{
-				String valor = TableOfValues.get(posicao);
-				int value = Integer.parseInt(valor);
-				value--;
-				valor = String.valueOf(value);
-				System.out.println("valor: " + value);
-				TableOfValues.set(posicao, valor);
-			}
+		if(sinal.equals("++"))
+		{
+			String valor = TableOfValues.get(posicao);
+			int value = Integer.parseInt(valor);
+			value++;
+			valor = String.valueOf(value);
+			System.out.println("valor: " + value);
+			System.out.println();
+			TableOfValues.set(posicao, valor); 
 		}
-		else{
-			if(sinal.equals("+"))
-			{
-				String valor = TableOfValues.get(posicao);
-				int value = Integer.parseInt(valor);
-				int increment = Integer.parseInt(incremento);
-				value = value + increment;
-				valor = String.valueOf(value);
-				System.out.println("valor: " + value);
-				TableOfValues.set(posicao, valor);
-			}
-			if(sinal.equals("-"))
-			{
-				String valor = TableOfValues.get(posicao);
-				int value = Integer.parseInt(valor);
-				int increment = Integer.parseInt(incremento);
-				value = value - increment;
-				valor = String.valueOf(value);
-				System.out.println("valor: " + value);
-				TableOfValues.set(posicao, valor);
-			}
-			if(sinal.equals("*"))
-			{
-				String valor = TableOfValues.get(posicao);
-				int value = Integer.parseInt(valor);
-				int increment = Integer.parseInt(incremento);
-				value = value * increment;
-				valor = String.valueOf(value);
-				System.out.println("valor: " + value);
-				TableOfValues.set(posicao, valor);
-			}
-			if(sinal.equals("/"))
-			{
-				String valor = TableOfValues.get(posicao);
-				double value = Double.parseDouble(valor);  
-				double increment = Integer.parseInt(incremento);
-				double val = value/increment;
-				valor = String.valueOf(val);
-				System.out.println("valor: " + val);
-				TableOfValues.set(posicao, valor);
-			}
+		if(sinal.equals("--"))
+		{
+			String valor = TableOfValues.get(posicao);
+			int value = Integer.parseInt(valor);
+			value--;
+			valor = String.valueOf(value);
+			System.out.println("valor: " + value);
+			System.out.println();
+			TableOfValues.set(posicao, valor);
 		}
 	}
-	public void analise(Token t){
+	public void setStringEmpty()//reinitialize variable acm_string
+	{
+		acm_string = "";
+	}
+	public String update_value_complex(){//this method update complex expressions (Example x = x + y + 100 + 11.1;)
+		try{
+			String expression = getAcm_String();
+			ScriptEngine js = new ScriptEngineManager().getEngineByName("JavaScript");
+		 	Object result;
+		   	result = js.eval(expression);
+			String res = String.valueOf(result);
+			System.out.println("resultado:" + res);
+			System.out.println();
+			return res;
+			
+				 
+		}		
+		catch (ScriptException ex) {
+		       	System.out.println("Falha no Update");
+			return "";
+		}
+
+		
+	}
+	public void create_expression(String enter)//stores expression to pass as a parameter  
+	{
+		if(!enter.equals(";"))
+		{
+			setAcm_String(enter);
+			//setAcmstr(true);
+			//System.out.println(getAcm_String());
+		}
+		else{
+			setAcmstr(false);
+			System.out.println(getAcm_String());
+		        String valor = update_value_complex(); 
+			int posicao = TableOfNames.indexOf(getNameUpdate());	
+			if(posicao != -1 && !valor.equals(""))
+				TableOfValues.set(posicao, valor);		
+			setStringEmpty();			
+		}
+	}
+	public void return_value(String str)//returns the value of variable
+	{
+		int pos = TableOfNames.indexOf(str);
+		if(pos != -1){
+			setComplex_Value(TableOfValues.get(pos));
+			create_expression(getComplex_Value());
+		}
+	}
+	public void analise(Token t){//put the values ​​in the variables of a class
 		String parameter;
 		if(getNewInstance() && getResourceCharacteristics())
 		{
@@ -528,7 +626,7 @@ public class JavaParser
 	 	}		
 	}
 
-	public class ResourceChar
+	public class ResourceChar// class of parameters values to iSPD
 	{
 		private String arch;
 		private String os;
@@ -592,6 +690,7 @@ public class JavaParser
 			nameVariable = "";
 			valueVariable = "";
 		}
+		//setters
 		public void setArch(String arch)
 		{
 			this.arch = arch;
@@ -682,7 +781,7 @@ public class JavaParser
 			System.out.println(this.entityName_);
 			System.out.println();
 		}
-		public void setResourceID(String resourceID)
+			public void setResourceID(String resourceID)
 		{
 			this.resourceID = resourceID;
 			System.out.println(this.resourceID);
@@ -771,7 +870,7 @@ public class JavaParser
 			System.out.println();
 		}
 		
-			
+		//getters	
 		public String getArch()
 		{
 			return arch;
@@ -1010,13 +1109,16 @@ public class JavaParser
    	boolean toMIs = false;
    	boolean ast = false;
    	boolean statusfor = false;
-	
+	boolean statusmain = false;
+	boolean ListaTarefas = false;
+	boolean ListaUsuarios = false;
+	boolean statusVoid = false;
 
    	//setters e getters for the semantic analysis variables
    	public void setNewInstance(boolean entrada){
 		NewInstance = entrada;
 		if(temp != null)
-			ResourceChars.add(temp);
+			ListaMetodo.get(ListaMetodo.size()-1).add(temp);
 		temp = new ResourceChar();
    	}
    	public boolean getNewInstance(){
@@ -1176,6 +1278,35 @@ public class JavaParser
    	public boolean getFor(){
 		return statusfor;
    	}
+
+	public void setMain(boolean entrada){
+		statusmain = entrada;
+	}
+	public boolean getMain(){
+		return statusmain;
+	}
+
+	public void setListaTarefas(boolean entrada){
+		ListaTarefas = entrada;
+	}
+	public boolean getListaTarefas(){
+		return ListaTarefas;
+	}
+	
+	public void setListaUsuarios(boolean entrada){
+		ListaUsuarios = entrada;
+	}
+	public boolean getListaUsuarios(){
+		return ListaUsuarios;
+	}
+
+	public void setVoid(boolean entrada){
+		statusVoid = entrada;
+	}
+	public boolean getVoid()
+	{
+		return statusVoid;
+	}
 
 	public static void main(String args[]) {
     		JavaParser parser;
@@ -1717,8 +1848,7 @@ void VariableDeclarator():
 	{
 		if(getType())
 			setPrimitiveType(true);
-		//if(getNon_PrimitiveType())
-		//	setUpdate_Variable(true);
+			setUpdate_Variable(true);
 	}
 	VariableDeclaratorId()[ "=" VariableInitializer() ]
 }
@@ -1728,12 +1858,10 @@ void VariableDeclaratorId():
 	Token t;	
 }
 {
+	
 	t = <IDENTIFIER> {
-			  	if(getPrimitiveType()){
-					setNameVariable(t.image);
-				//if(getUpdate_Variable()){
-				//	setNameVariable(t.image);
-				}
+			  	if(getPrimitiveType())
+					setNameVariable(t.image);				 
 		   	 } ( "[" "]" )*
 }
 
@@ -1782,13 +1910,28 @@ void MethodDeclaration(int modifiers):
 	[ TypeParameters() ]
 	ResultType()
 	MethodDeclarator() [ "throws" NameList() ]
-	( Block() | ";" )
+	( Block() | ";" ) 
+	{
+		setMain(false);
+	}
+
 }
 
 void MethodDeclarator():
-{}
 {
-	<IDENTIFIER> FormalParameters() ( "[" "]" )*
+	Token t;
+}
+{
+	t = <IDENTIFIER> 
+	{
+		if(t.image.equals("main"))
+			setMain(true);
+		else if(!getVoid()){
+			NomeMetodo.add(t.image);
+			ListaMetodo.add(new ArrayList<ResourceChar>());
+		}
+	}	
+	FormalParameters() ( "[" "]" )*
 }
 
 void FormalParameters():
@@ -1841,7 +1984,7 @@ void Type():
 	 LOOKAHEAD(2) ReferenceType()
 	 {
 		setType(false);
-		//setNon_PrimitiveType(true);
+		setNon_PrimitiveType(true);
 	 }	
 	|
 	 PrimitiveType() 
@@ -1917,6 +2060,7 @@ void ClassOrInterfaceType():
 							setvazio(true);
 						}
 					}
+
 		 		}
 		 		else//else only print messages on the screen
 		 		{
@@ -1934,6 +2078,11 @@ void ClassOrInterfaceType():
 						System.out.println("Nova máquina encontrada");
 			 		if(t.image.equals("Random"))
 						System.out.println("Parâmetros randômicos encontrados");
+					if(t.image.equals("GridletList"))
+						setListaTarefas(true);
+					if(t.image.equals("ResourceUserList"))
+						setListaUsuarios(true);
+		  		
 		  		}
   			}
   	[ LOOKAHEAD(2) TypeArguments() ]
@@ -1986,7 +2135,7 @@ void PrimitiveType():
 void ResultType():
 {}
 {
-	 "void"
+	 "void" {setVoid(true);}
 	|
 	 Type()
 }
@@ -2002,6 +2151,7 @@ void Name():
 }
 {
 	t = <IDENTIFIER>{ //check the identifier setting true if correct
+				setRandom_Indicator(false);
 				if(t.image.equals("GridSimRandom"))
 					setGridSimRandom(true);	
 				if(t.image.equals("list"))
@@ -2026,7 +2176,20 @@ void Name():
          	    		}
 				if(getIncrement())
 					setNameV(t.image);	
-			
+				//if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr()) 	
+				//	return_value(t.image);
+				//if(getComplex_Expression())
+				//{
+				//	if(TableOfNames.indexOf(t.image) != -1)
+				//	{
+				//		setNameUpdate(t.image);
+				//		setComplex(true);
+				//		setAcmstr(true);
+				//	}
+				//}	
+				setRand(true);
+				
+				
 	}
   	( LOOKAHEAD(2) "." k=<IDENTIFIER>{ //check if the word after dot is the correct word and print messages
 					     	//if((getGridSimRandom() && getreal())) 
@@ -2035,11 +2198,6 @@ void Name():
 					     	//	System.out.print(k.image);
 					     	//	System.out.println();
 					     	//	System.out.println();
-		    			     	//}
-					     	//if(gettoMIs() && getGridSimStandardPE())
-					     	//{
-							//System.out.print(".");
-							//System.out.print(k.image);
 		    			     	//}
 						if(getmList() | getlist() | getuserList())
 					     	{	
@@ -2090,7 +2248,15 @@ void Name():
 								System.out.println("Setando identificador de tarefa:");
 								setvazio(true);//variable used to check if the parameters are empty
 							}
-				     		}							
+				     		}
+						if(getRand() && (k.image.equals("nextDouble") | k.image.equals("next") | k.image.equals("nextBoolean") | k.image.equals("nextBytes") | k.image.equals("nextFloat") | k.image.equals("nextGaussian") | k.image.equals("nextInt") | k.image.equals("nextLong") | (t.image.equals("Math") && k.image.equals("random"))))
+						{
+							inserir(t.image, "random");
+							//System.out.println(t.image);
+							//System.out.println();
+							setRand(false);
+							setRandom_Indicator(true);
+						}						
 				   } )*
 }
 
@@ -2127,7 +2293,12 @@ void Expression():
 void AssignmentOperator():
 {}
 {
-	"=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
+	"="
+	{
+		if(getComplex_Expression() && getComplex())
+			setSignal(true);
+	}
+	 | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
 }
 
 void ConditionalExpression():
@@ -2191,9 +2362,16 @@ void ShiftExpression():
 }
 
 void AdditiveExpression():
-{}
 {
-	MultiplicativeExpression() ( ( "+" | "-" ) MultiplicativeExpression() )*
+	Token t;
+}
+{
+	MultiplicativeExpression() ( ( t = "+" | t = "-" )
+	{
+		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+			create_expression(t.image);	
+	}
+	MultiplicativeExpression() )*	
 }
 
 void MultiplicativeExpression():
@@ -2202,22 +2380,26 @@ void MultiplicativeExpression():
 }
 {
 	UnaryExpression() ( ( t="*" | t="/" | t="%" ){
-							if(gettoMIs())
-							{
-								System.out.print(t.image);
-								settoMIs(false);
-								setast(true);
-							}	
+							//if(gettoMIs())
+							//{
+							//	System.out.print(t.image);
+							//	settoMIs(false);
+							//	setast(true);
+							//}
+							if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+								create_expression(t.image);		
 						     } UnaryExpression() )*
 }
 
 void UnaryExpression():
-{}
+{
+	Token t;
+}
 {
 	{
 		setPrimitiveValue(true);
 	}(
-		 ( "+" | "-" ) UnaryExpression()
+		 ( t = "+" | t = "-" ) UnaryExpression()
 		|
 		 PreIncrementExpression()
 		|
@@ -2227,15 +2409,37 @@ void UnaryExpression():
 }
 
 void PreIncrementExpression():
-{}
 {
-	"++" PrimaryExpression()
+	Token t;
+}
+{
+	t = "++"
+	{
+		if(getIncrement())
+			setValueV(t.image);
+	} 
+	PrimaryExpression()
+	{
+			update_value(getNameV(), getValueV());
+			setIncrement(false);		
+	}
 }
 
 void PreDecrementExpression():
-{}
 {
-	"--" PrimaryExpression()
+	Token t;
+}
+{
+	t = "--"
+	{
+		if(getIncrement())
+			setValueV(t.image);
+	} 
+	PrimaryExpression()
+	{
+			update_value(getNameV(), getValueV());
+			setIncrement(false);
+	}
 }
 
 void UnaryExpressionNotPlusMinus():
@@ -2287,9 +2491,9 @@ void PostfixExpression():
 		 }
 	]
 	{
-		if(getIncrement() && getIncrementUpdate())
+		if(getIncrement() && getIncrementUpdate() && getSignal())
 		{
-			update_value(getNameV(), getValueV(), "", "");
+			update_value(getNameV(), getValueV());
 			setIncrement(false);
 			setIncrementUpdate(false);		
 		}
@@ -2318,7 +2522,9 @@ void MemberSelector():
 }
 
 void PrimaryPrefix():
-{}
+{
+	Token t;	
+}
 {
 	 Literal()
 	|
@@ -2326,7 +2532,16 @@ void PrimaryPrefix():
  	|
  	 "super" "." <IDENTIFIER>
 	|
-	 "(" Expression() ")"
+	 t = "(" 
+	 {
+		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+			create_expression(t.image);
+	 }
+	 Expression() t = ")"
+	 {
+		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+			create_expression(t.image);
+	 }	
 	|
   	 AllocationExpression()
 	|
@@ -2368,7 +2583,8 @@ void Literal():
 					setPrimitiveValue(false);
 					setPrimitiveType(false);
          	    		}
-		    		
+				if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+					create_expression(t.image);		    		
   	 }	
 	|
   	 t=<FLOATING_POINT_LITERAL>{
@@ -2382,8 +2598,10 @@ void Literal():
 					if(getIncrement())
 					{
 						setNameV(t.image);
-					}	  			
-  	 }
+					}
+					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+						create_expression(t.image);		    		  	 
+	 }
 	|
   	 t=<CHARACTER_LITERAL>{
 	      	       			analise(t);
@@ -2393,6 +2611,8 @@ void Literal():
 	 					setPrimitiveValue(false);
 	 					setPrimitiveType(false);
 	 				}
+					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+						create_expression(t.image);		    		 
 	 }
 	|
   	 t=<STRING_LITERAL>{
@@ -2403,7 +2623,9 @@ void Literal():
 						setPrimitiveValue(false);
 						setPrimitiveType(false);
 			 		}
-         }
+					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+						return_value(t.image); 
+	 }
 	|
  	 BooleanLiteral()
 	|
@@ -2544,7 +2766,9 @@ void ArrayDimsAndInits():
  */
 
 void Statement():
-{}
+{
+	Token t;
+}
 {
 	 LOOKAHEAD(2)
 	 LabeledStatement()
@@ -2555,7 +2779,17 @@ void Statement():
 	|
   	 EmptyStatement()
 	|
-  	 StatementExpression()";" 
+	 {
+		setComplex_Expression(true);
+	 }
+  	 StatementExpression() t = ";"
+	 {
+		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+			create_expression(t.image);
+		setComplex(false);
+		setComplex_Expression(false); 
+		setSignal(false);		
+	 }
 	|
   	 SwitchStatement()
 	|
@@ -2632,8 +2866,14 @@ void StatementExpression():
 }
 {
 	 PreIncrementExpression()
+	 {
+		setIncrement(true);
+	 }
 	|
   	 PreDecrementExpression()
+	 {
+		setIncrement(true);
+	 }
 	| 
 	 {
 		setIncrement(true);
@@ -2651,7 +2891,7 @@ void StatementExpression():
 	{	
 		if(getIncrement() && getIncrementUpdate())
 		{
-			update_value(getNameV(), getValueV(), "", "");
+			update_value(getNameV(), getValueV());
 			setIncrement(false);
 			setIncrementUpdate(false);		
 		}
