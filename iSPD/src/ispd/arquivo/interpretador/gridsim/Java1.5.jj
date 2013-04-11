@@ -29,7 +29,7 @@ options {
 
 PARSER_BEGIN(JavaParser)
 
-package ispd.arquivo.interpretador.gridsim;
+//package ispd.arquivo.interpretador.gridsim;
 
 import java.io.*;
 import java.util.*;
@@ -48,7 +48,7 @@ public class JavaParser
 	private List <String> Array = new ArrayList<String>();
 	private List <String> NomeMetodo = new ArrayList<String>();
 	private List <List> ListaMetodo = new ArrayList<List>();
-	private ResourceChar temp = null;
+	private ResourceChar temp = new ResourceChar();
 	private String nameVariable;
 	private String valueVariable;
 	private String nameV;
@@ -394,7 +394,10 @@ public class JavaParser
 				default: 
 					break;
 			}
-			temp.setCont(temp.getCont() + 1);	
+			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 3){
+				newElement();
+			}	
 			//System.out.println(t.image);
 		    	//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -416,6 +419,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 4){
+				newElement();
+			}	
 			//System.out.println(t.image);
 		    	//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -440,6 +446,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 4){
+				newElement();
+			}	
 			//System.out.println(t.image);
 		    	//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -460,6 +469,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 5){
+				newElement();
+			}	
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -475,6 +487,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 2){
+				newElement();
+			}	
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -490,6 +505,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
+			if(temp.getCont() == 1){
+				newElement();
+			}
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -511,8 +529,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 3)
-				temp.setCont(0);
+			if(temp.getCont() == 3){
+				newElement();
+			}
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -531,17 +550,20 @@ public class JavaParser
 	 	}	
 		if(getuserList() && getadd())
 	 	{
+			System.out.println("Lista usuário:"+temp.getCont());
 			switch(temp.getCont())
 			{
 				case 0: parameter = retornar(t.image, "");
+					System.out.println("Adicionando usuário:");
 					temp.setUserID(parameter);
 					break;
 				default:
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1)
-				temp.setCont(0);
+			if(temp.getCont() == 1){
+				newElement();
+			}	
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
@@ -557,8 +579,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1)
-				temp.setCont(0);
+			if(temp.getCont() == 1){
+				newElement();
+			}	
 			//System.out.println(t.image);
 	    		//System.out.println(); 	 
 			setvazio(false);//variable used to check if the parameters are empty
@@ -583,8 +606,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 4)
-				temp.setCont(0);
+			if(temp.getCont() == 4){
+				newElement();
+			}	
 			//if(t.image.equals("random"))
 			//{
 			//	System.out.print(t.image);
@@ -613,8 +637,9 @@ public class JavaParser
 					break;
 			}
 			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1)
-				temp.setCont(0);
+			if(temp.getCont() == 1){
+				newElement();
+			}	
 			//System.out.print(t.image);
 	    		setvazio(false);//variable used to check if the parameters are empty
 		}
@@ -624,6 +649,17 @@ public class JavaParser
 			System.out.println();
 			setast(false);//variable used to check if the parameters are empty
 	 	}		
+	}
+	
+	public void escreverLista(){
+		for(int i = 0; i < ListaMetodo.size(); i++){
+			System.out.println("Metodo: "+NomeMetodo.get(i)+" com "+ListaMetodo.get(i).size()+" elementos");
+			//For para percorrer lista
+			for(Object obj : ListaMetodo.get(i)){
+				ResourceChar res = (ResourceChar) obj;
+				System.out.println(" Id "+res.getId()+" User "+res.getUserID());
+			}
+		}
 	}
 
 	public class ResourceChar// class of parameters values to iSPD
@@ -1081,7 +1117,7 @@ public class JavaParser
    	public JavaParser(String fileName)
    	{
       		this(System.in);
-      		try { ReInit(new FileInputStream(new File(fileName))); }
+		try { ReInit(new FileInputStream(new File(fileName))); }
       		catch(Exception e) { e.printStackTrace(); }
    	}
 
@@ -1114,12 +1150,20 @@ public class JavaParser
 	boolean ListaUsuarios = false;
 	boolean statusVoid = false;
 
+	public void newElement(){
+		if(temp != null){
+			if(ListaMetodo.size() == 0){
+				NomeMetodo.add("main");
+				ListaMetodo.add(new ArrayList<List>());
+			}
+			ListaMetodo.get(ListaMetodo.size()-1).add(temp);
+		}
+		temp = new ResourceChar();
+	}
+
    	//setters e getters for the semantic analysis variables
    	public void setNewInstance(boolean entrada){
 		NewInstance = entrada;
-		if(temp != null)
-			ListaMetodo.get(ListaMetodo.size()-1).add(temp);
-		temp = new ResourceChar();
    	}
    	public boolean getNewInstance(){
 		return NewInstance;
@@ -1309,7 +1353,7 @@ public class JavaParser
 	}
 
 	public static void main(String args[]) {
-    		JavaParser parser;
+    		JavaParser parser = null;
     		if (args.length == 0) {
       			System.out.println("Java Parser Version 1.1:  Reading from standard input . . .");
       			parser = new JavaParser(System.in);
@@ -1318,7 +1362,7 @@ public class JavaParser
 			if (args.length == 1){
 				System.out.println("Java Parser Version 1.1:  Reading from file " + args[0] + " . . .");
 				try{
-					parser = new JavaParser(new java.io.FileInputStream(args[0]));
+					parser = new JavaParser(new java.io.FileInputStream(args[0]));				
 	      			}
 				catch(java.io.FileNotFoundException e){
 	        			System.out.println("Java Parser Version 1.1:  File " + args[0] + " not found.");
@@ -1340,6 +1384,7 @@ public class JavaParser
       				System.out.println(e.getMessage());
       				System.out.println("Java Parser Version 1.1:  Encountered errors during parse.");
     		}
+		parser.escreverLista();
   	}
 }
 
@@ -1908,6 +1953,7 @@ void MethodDeclaration(int modifiers):
 {
 	// Modifiers already matched in the caller!
 	[ TypeParameters() ]
+	{setVoid(false);}
 	ResultType()
 	MethodDeclarator() [ "throws" NameList() ]
 	( Block() | ";" ) 
@@ -1924,11 +1970,14 @@ void MethodDeclarator():
 {
 	t = <IDENTIFIER> 
 	{
-		if(t.image.equals("main"))
+		if(t.image.equals("main"))			
 			setMain(true);
 		else if(!getVoid()){
+			System.out.println("Novo Metodo: "+t.image);
 			NomeMetodo.add(t.image);
 			ListaMetodo.add(new ArrayList<ResourceChar>());
+		} else {
+			System.out.println("Metodo void: "+t.image);
 		}
 	}	
 	FormalParameters() ( "[" "]" )*
@@ -2176,17 +2225,17 @@ void Name():
          	    		}
 				if(getIncrement())
 					setNameV(t.image);	
-				//if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr()) 	
-				//	return_value(t.image);
-				//if(getComplex_Expression())
-				//{
-				//	if(TableOfNames.indexOf(t.image) != -1)
-				//	{
-				//		setNameUpdate(t.image);
-				//		setComplex(true);
-				//		setAcmstr(true);
-				//	}
-				//}	
+				if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr()) 	
+					return_value(t.image);
+				if(getComplex_Expression())
+				{
+					if(TableOfNames.indexOf(t.image) != -1)
+					{
+						setNameUpdate(t.image);
+						setComplex(true);
+						setAcmstr(true);
+					}
+				}	
 				setRand(true);
 				
 				
@@ -2211,7 +2260,6 @@ void Name():
 								}
 								if(getuserList())
 								{
-									System.out.println("Adicionando usuário:");
 									setvazio(true);
 								}
 							}
