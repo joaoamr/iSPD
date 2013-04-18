@@ -7,9 +7,9 @@ package ispd.externo;
 import ispd.escalonador.Escalonador;
 import ispd.motor.Mensagens;
 import ispd.motor.filas.Tarefa;
-import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +117,6 @@ public class DynamicFPLTF extends Escalonador {
     
     @Override
     public Double getTempoAtualizar(){
-        return 0.5;
+        return 60.0;
     }
 }
