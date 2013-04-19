@@ -421,23 +421,23 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jPanelTrace.setPreferredSize(new java.awt.Dimension(500, 300));
 
         jRadioButtonwmsx.setSelected(true);
-        jRadioButtonwmsx.setText("Open an existing iSPD trace file");
+        jRadioButtonwmsx.setText(palavras.getString("Open an existing iSPD trace file")); // NOI18N
         jRadioButtonwmsx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonwmsxActionPerformed(evt);
             }
         });
 
-        jRadioButtonConvTrace.setText("Convert an external trace file to iSPD trace format");
+        jRadioButtonConvTrace.setText(palavras.getString("Convert an external trace file to iSPD trace format")); // NOI18N
         jRadioButtonConvTrace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonConvTraceActionPerformed(evt);
             }
         });
 
-        jLabel19.setText("Select the desired option:");
+        jLabel19.setText(palavras.getString("Select the desired option:")); // NOI18N
 
-        jButton2.setText("Next >");
+        jButton2.setText(palavras.getString("Next >")); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -481,18 +481,18 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jPanelConvertTrace.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanelConvertTrace.setPreferredSize(new java.awt.Dimension(500, 300));
 
-        jLabel18.setText("Select a external format trace file to convert:");
+        jLabel18.setText(palavras.getString("Select a external format trace file to convert:")); // NOI18N
 
-        jButton1.setText("Open");
+        jButton1.setText(palavras.getString("Open")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jLabel17.setText("Notifications:");
+        jLabel17.setText(palavras.getString("Notifications:")); // NOI18N
 
-        jButton4.setText("Convert!");
+        jButton4.setText(palavras.getString("Convert!")); // NOI18N
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -510,7 +510,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jTextNotifTrace.setPreferredSize(new java.awt.Dimension(164, 74));
         jScrollPane2.setViewportView(jTextNotifTrace);
 
-        jButton5.setText("< Prev");
+        jButton5.setText(palavras.getString("< Prev")); // NOI18N
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -579,24 +579,24 @@ public class SelecionaCargas extends javax.swing.JDialog {
             jPanelSelecionaTrace.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
             jPanelSelecionaTrace.setPreferredSize(new java.awt.Dimension(500, 300));
 
-            jLabel20.setText("Select an iSPD trace file to open:");
+            jLabel20.setText(palavras.getString("Select an iSPD trace file to open:")); // NOI18N
 
-            jLabel21.setText("Notifications:");
+            jLabel21.setText(palavras.getString("Notifications:")); // NOI18N
 
             jTextNotification.setColumns(20);
-            jTextNotification.setFont(new java.awt.Font("Tahoma", 0, 11));
+            jTextNotification.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
             jTextNotification.setRows(5);
             jTextNotification.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             jScrollPane1.setViewportView(jTextNotification);
 
-            jButton3.setText("< Prev");
+            jButton3.setText(palavras.getString("< Prev")); // NOI18N
             jButton3.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     jButton3ActionPerformed(evt);
                 }
             });
 
-            jButtonOpenWMSX.setText("Open");
+            jButtonOpenWMSX.setText(palavras.getString("Open")); // NOI18N
             jButtonOpenWMSX.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     jButtonOpenWMSXActionPerformed(evt);
@@ -685,7 +685,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                     .addComponent(jRadioButtonForNode)
                     .addGap(64, 64, 64)
                     .addComponent(jRadioButtonTraces)
-                    .addContainerGap(82, Short.MAX_VALUE))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             jPanelModoLayout.setVerticalGroup(
                 jPanelModoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -753,7 +753,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                             .addComponent(jButtonAddUser, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(32, 32, 32)
                             .addComponent(jButtonOK1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                        .addComponent(jScrollPaneSelecionado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelModo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addContainerGap())
             );
@@ -886,11 +886,11 @@ private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             NumTaskTrace = interpret.getNum_Tasks();
             TipoTrace = interpret.getTipo();
         } catch (Exception e) {
-            jTextNotifTrace.setText("Arquivo mal formatado");
+            jTextNotifTrace.setText(palavras.getString("Badly formatted file"));
         }
         jTextNotifTrace.setText(interpret.toString());
     } catch (Exception e) {
-        jTextNotifTrace.setText("Não há nenhum arquivo selecionado");
+        jTextNotifTrace.setText(palavras.getString("There is no file selected"));
     };
 }//GEN-LAST:event_jButton4ActionPerformed
 
