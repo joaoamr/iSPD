@@ -5,12 +5,14 @@
 
 package ispd.motor.metricas;
 
+import java.io.Serializable;
+
 /**
  * Cada centro de serviço usado para conexão deve ter um objeto desta classe
  * Responsavel por armazenar o total de comunicação realizada em Mbits e segundos
  * @author denison_usuario
  */
-public class MetricasComunicacao {
+public class MetricasComunicacao implements Serializable {
     /**
      * Armazena o total de comunicação realizada em Mbits
      */
@@ -19,8 +21,10 @@ public class MetricasComunicacao {
      * Armazena o total de comunicação realizada em segundos
      */
     private double SegundosDeTransmissao;
+    private String id;
     
-    public MetricasComunicacao(){
+    public MetricasComunicacao(String id) {
+        this.id = id;
         this.MbitsTransmitidos = 0;
         this.SegundosDeTransmissao = 0;
     }
@@ -40,5 +44,16 @@ public class MetricasComunicacao {
     public double getSegundosDeTransmissao() {
         return SegundosDeTransmissao;
     }
-    
+
+    public String getId() {
+        return id;
+    }
+
+    void setMbitsTransmitidos(double d) {
+        this.MbitsTransmitidos = d;
+    }
+
+    void setSegundosDeTransmissao(double d) {
+        this.SegundosDeTransmissao = d;
+    }
 }

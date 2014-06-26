@@ -31,23 +31,23 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jSpinnerNumTarefas" alignment="0" min="-2" pref="61" max="-2" attributes="1"/>
-                      <Component id="jSpinnerTimeOfArrival" pref="61" max="32767" attributes="1"/>
-                      <Component id="jSpinnerMinComunicacao" alignment="0" pref="61" max="32767" attributes="1"/>
-                      <Component id="jSpinnerMinComputacao" alignment="0" pref="61" max="32767" attributes="1"/>
-                      <Component id="jLabel4" alignment="0" pref="61" max="32767" attributes="1"/>
+                      <Component id="jSpinnerTimeOfArrival" max="32767" attributes="1"/>
+                      <Component id="jSpinnerMinComunicacao" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jSpinnerMinComputacao" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jLabel4" alignment="0" pref="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jSpinnerAverageComunicacao" alignment="0" pref="51" max="32767" attributes="1"/>
+                              <Component id="jSpinnerAverageComunicacao" alignment="0" max="32767" attributes="1"/>
                               <Component id="jSpinnerAverageComputacao" alignment="0" max="32767" attributes="1"/>
                               <Component id="jLabel5" alignment="0" min="-2" pref="62" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jSpinnerMaxComunicacao" max="32767" attributes="1"/>
-                              <Component id="jSpinnerMaxComputacao" alignment="0" pref="48" max="32767" attributes="1"/>
+                              <Component id="jSpinnerMaxComputacao" alignment="0" max="32767" attributes="1"/>
                               <Component id="jLabel6" alignment="0" min="-2" pref="56" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
@@ -64,7 +64,7 @@
                       </Group>
                       <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="72" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -129,7 +129,7 @@
                       </Group>
                       <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="138" max="32767" attributes="0"/>
+                  <EmptySpace pref="134" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -319,7 +319,7 @@
                                       <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="1"/>
                                   </Group>
                               </Group>
-                              <Component id="jButtonAddTabela" pref="94" max="32767" attributes="0"/>
+                              <Component id="jButtonAddTabela" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
@@ -328,11 +328,11 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                                  <Component id="jSpinnerNumTarefasNo" pref="100" max="32767" attributes="0"/>
+                                  <Component id="jSpinnerNumTarefasNo" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jButtonAddTabela1" pref="94" max="32767" attributes="0"/>
+                                  <Component id="jButtonAddTabela1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -352,13 +352,13 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jSpinnerMaxComuNo" pref="74" max="32767" attributes="1"/>
+                              <Component id="jSpinnerMaxComuNo" max="32767" attributes="1"/>
                               <Component id="jLabel14" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="jSpinnerMinComuNo" alignment="0" pref="74" max="32767" attributes="1"/>
+                              <Component id="jSpinnerMinComuNo" alignment="0" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="71" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -397,10 +397,10 @@
                               <Component id="jButtonAddTabela" alignment="3" min="-2" max="-2" attributes="1"/>
                               <Component id="jButtonAddTabela1" alignment="3" min="-2" max="-2" attributes="1"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jScrollPaneTabela" pref="180" max="32767" attributes="0"/>
+                  <Component id="jScrollPaneTabela" pref="177" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -555,23 +555,27 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                          <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jRadioButtonConvTrace" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jRadioButtonwmsx" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                  <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jRadioButtonConvTrace" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jRadioButtonwmsx" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
                           </Group>
+                          <EmptySpace min="0" pref="48" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace pref="422" max="32767" attributes="0"/>
+                          <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="172" max="32767" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="423" max="32767" attributes="0"/>
-                  <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -585,7 +589,7 @@
                   <Component id="jRadioButtonwmsx" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jRadioButtonConvTrace" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="69" max="32767" attributes="0"/>
+                  <EmptySpace pref="66" max="32767" attributes="0"/>
                   <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
               </Group>
@@ -617,14 +621,14 @@
         <Component class="javax.swing.JLabel" name="jLabel19">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Select the desired option:" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Select the desired option" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Next &gt;" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Next" replaceFormat="palavras.getString(&quot;{key}&quot;)+&quot; &gt;&gt;&quot;"/>
             </Property>
           </Properties>
           <Events>
@@ -651,13 +655,13 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" alignment="0" pref="478" max="32767" attributes="1"/>
+                      <Component id="jScrollPane2" alignment="0" pref="474" max="32767" attributes="1"/>
                       <Component id="jLabel18" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel17" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="1">
                           <Component id="jButton1" min="-2" pref="78" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextFieldCaminhoTrace" pref="313" max="32767" attributes="0"/>
+                          <Component id="jTextFieldCaminhoTrace" pref="295" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton4" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -710,14 +714,14 @@
         <Component class="javax.swing.JLabel" name="jLabel17">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Notifications:" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Notifications" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton4">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Convert!" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Convert" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -750,7 +754,7 @@
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="&lt; Prev" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Previous" replaceFormat="&quot;&lt;&lt; &quot;+palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -787,7 +791,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel20" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" alignment="0" pref="480" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="476" max="32767" attributes="0"/>
                       <Component id="jButton3" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel21" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
@@ -816,7 +820,7 @@
                   <Component id="jScrollPane1" min="-2" pref="147" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="38" max="32767" attributes="0"/>
+                  <EmptySpace pref="31" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -832,7 +836,7 @@
         <Component class="javax.swing.JLabel" name="jLabel21">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Notifications:" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Notifications" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -860,7 +864,7 @@
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="&lt; Prev" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Previous" replaceFormat="&quot;&lt;&lt; &quot;+palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -902,6 +906,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -981,13 +986,13 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                   <Component id="jRadioButtonRandom" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
-                  <Component id="jRadioButtonForNode" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
-                  <Component id="jRadioButtonTraces" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonForNode" min="-2" pref="126" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonTraces" min="-2" pref="72" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -997,9 +1002,9 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jRadioButtonRandom" alignment="3" max="32767" attributes="1"/>
-                      <Component id="jRadioButtonTraces" alignment="3" pref="25" max="32767" attributes="1"/>
-                      <Component id="jRadioButtonForNode" alignment="3" max="32767" attributes="1"/>
+                      <Component id="jRadioButtonRandom" alignment="3" min="-2" max="-2" attributes="1"/>
+                      <Component id="jRadioButtonTraces" alignment="3" min="-2" pref="25" max="-2" attributes="1"/>
+                      <Component id="jRadioButtonForNode" alignment="3" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               </Group>

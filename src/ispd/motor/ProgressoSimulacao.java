@@ -6,20 +6,17 @@ package ispd.motor;
 
 import InterpretadorInterno.ModeloIconico.InterpretadorIconico;
 import InterpretadorInterno.ModeloSimulavel.InterpretadorSimulavel;
-import ispd.gui.AreaDesenho;
-import ispd.gui.Icone;
+import ispd.arquivo.xml.IconicoXML;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.w3c.dom.Document;
 
 /**
  * Classe de conexão entre interface de usuario e motor de simulação
@@ -45,38 +42,6 @@ public abstract class ProgressoSimulacao {
     public abstract void incProgresso(int n);
 
     public abstract void print(String text, Color cor);
-
-    /**
-     * Verifica a partir dos icones graficos se a simulação pode ser iniciada
-     *
-     * @param aDesenho AreaDesenho contendo o modelo que será simulado
-     * @throws IllegalArgumentException Exceção retornada caso encontre
-     * elementos não configurados
-     */
-    public void validarInicioSimulacao(AreaDesenho aDesenho) throws IllegalArgumentException {
-        this.print("Verifying configuration of the icons.");
-        this.print(" -> ");
-        if (aDesenho == null || aDesenho.getIcones().isEmpty()) {
-            this.println("Error!", Color.red);
-            throw new IllegalArgumentException("The model has no icons.");
-        }
-        for (Icone I : aDesenho.getIcones()) {
-            if (I.getConfigurado() == false) {
-                this.println("Error!", Color.red);
-                throw new IllegalArgumentException("One or more parameters have not been configured.");
-            }
-        }
-        this.incProgresso(4);
-        this.println("OK", Color.green);
-        this.print("Verifying configuration of the tasks.");
-        this.print(" -> ");
-        if (aDesenho.getCargasConfiguracao() == null) {
-            this.println("Error!", Color.red);
-            throw new IllegalArgumentException("One or more  workloads have not been configured.");
-        }
-        this.incProgresso(1);
-        this.println("OK", Color.green);
-    }
 
     /**
      * Escreve os arquivos com os modelos icônicos e simuláveis, e realiza a
@@ -120,6 +85,23 @@ public abstract class ProgressoSimulacao {
         parser2.leArquivo(new File("modelosimulavel"));
         System.setOut(stdout);
         incProgresso(5);//[5%] --> 25%
+        this.println("OK", Color.green);
+    }
+
+    public void validarInicioSimulacao(Document modelo) throws IllegalArgumentException {
+        this.print("Verifying configuration of the icons.");
+        this.print(" -> ");
+        if (modelo == null) {
+            this.println("Error!", Color.red);
+            throw new IllegalArgumentException("The model has no icons.");
+        }
+        try {
+            IconicoXML.validarModelo(modelo);
+        } catch (IllegalArgumentException e) {
+            this.println("Error!", Color.red);
+            throw e;
+        }
+        this.incProgresso(5);
         this.println("OK", Color.green);
     }
 }

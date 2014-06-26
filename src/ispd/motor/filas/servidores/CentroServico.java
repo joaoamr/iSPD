@@ -46,4 +46,9 @@ public abstract class CentroServico {
      * Retorna conexões de saida do recurso
      */
     public abstract Object getConexoesSaida();
+    /**
+     * Indica o númro de tarefas sendo atendidas ou na fila do centro de serviço
+     * @return número de tarefas
+     */
+    public abstract Integer getCargaTarefas();
 }

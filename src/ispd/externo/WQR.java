@@ -93,6 +93,7 @@ public class WQR extends Escalonador {
     @Override
     public void escalonar() {
         CS_Processamento rec = escalonarRecurso();
+        boolean sair = false;
         if(rec != null){
             Tarefa trf = escalonarTarefa();
             if(trf != null){
@@ -106,9 +107,11 @@ public class WQR extends Escalonador {
                 trf.setLocalProcessamento(rec);
                 trf.setCaminho(escalonarRota(rec));
                 mestre.enviarTarefa(trf);
+            } else if(tarefas.isEmpty()) {
+                sair = true;
             }
         }
-        if(servidoresOcupados > 0 && servidoresOcupados < escravos.size() && tarefas.isEmpty()){
+        if(servidoresOcupados > 0 && servidoresOcupados < escravos.size() && tarefas.isEmpty() && !sair){
             for (Tarefa tar : tarefaEnviada) {
                 if(tar != null && tar.getOrigem().equals(mestre)){
                     mestre.executarEscalonamento();

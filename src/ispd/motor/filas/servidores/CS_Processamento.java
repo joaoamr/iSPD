@@ -25,31 +25,25 @@ public abstract class CS_Processamento extends CentroServico {
     /**
      * Identificador do centro de serviço, deve ser o mesmo do modelo icônico
      */
-    private String id;
-    private String proprietario;
     private double poderComputacional;
     private int numeroProcessadores;
     private double Ocupacao;
     private double PoderComputacionalDisponivelPorProcessador;
     private MetricasProcessamento metrica;
     private List<ParesOrdenadosUso> lista_pares = new ArrayList<ParesOrdenadosUso>();
-    private int numeroMaquina;
     
     public CS_Processamento(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
-        this.id = id;
-        this.proprietario = proprietario;
         this.poderComputacional = PoderComputacional;
         this.numeroProcessadores = numeroProcessadores;
         this.Ocupacao = Ocupacao;
-        this.metrica = new MetricasProcessamento();
+        this.metrica = new MetricasProcessamento(id, numeroMaquina, proprietario);
         this.PoderComputacionalDisponivelPorProcessador =
                 (this.poderComputacional - (this.poderComputacional * this.Ocupacao))
                 / this.numeroProcessadores;
-        this.numeroMaquina = numeroMaquina;
     }
     
     public int getnumeroMaquina(){
-        return this.numeroMaquina;
+        return metrica.getnumeroMaquina();
     }
     
     
@@ -63,12 +57,12 @@ public abstract class CS_Processamento extends CentroServico {
 
     @Override
     public String getId() {
-        return id;
+        return metrica.getId();
     }
     
    
     public String getProprietario() {
-        return proprietario;
+        return metrica.getProprietario();
     }
 
     public int getNumeroProcessadores() {
@@ -92,9 +86,6 @@ public abstract class CS_Processamento extends CentroServico {
      * deve retornar em erro se não encontrar nenhum caminho
      */
     public abstract void determinarCaminhos() throws LinkageError;
-    //dados dinamicos do recursos de processamento
-    public abstract List getInformacaoDinamicaFila();
-    public abstract List getInformacaoDinamicaProcessador();
     /**
      * Método que determina todas as conexões entre dois recursos
      * podendo haver conexões indiretas, passando por diverssos elementos de comunicação

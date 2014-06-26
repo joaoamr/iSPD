@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class Escalonador {
     //Atributos
     protected List<CS_Processamento> escravos;
+    protected List<List> filaEscravo;
     protected List<Tarefa> tarefas;
     protected MetricasUsuarios metricaUsuarios;
     protected Mestre mestre;
@@ -94,5 +95,8 @@ public abstract class Escalonador {
         return null;
     }
 
-    public void resultadoAtualizar(Mensagem mensagem) {}
+    public void resultadoAtualizar(Mensagem mensagem) {
+        int index = escravos.indexOf(mensagem.getOrigem());
+        filaEscravo.set(index, mensagem.getFilaEscravo());
+    }
 }

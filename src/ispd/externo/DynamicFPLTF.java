@@ -25,6 +25,7 @@ public class DynamicFPLTF extends Escalonador {
     public DynamicFPLTF() {
         this.tarefas = new ArrayList<Tarefa>();
         this.escravos = new ArrayList<CS_Processamento>();
+        this.filaEscravo = new ArrayList<List>();
         this.tarefaSelecionada = null;
     }
 
@@ -33,6 +34,7 @@ public class DynamicFPLTF extends Escalonador {
         tempoTornaDisponivel = new ArrayList<Double>(escravos.size());
         for (int i = 0; i < escravos.size(); i++) {
             tempoTornaDisponivel.add(0.0);
+            this.filaEscravo.add(new ArrayList());
         }
     }
 
@@ -102,15 +104,15 @@ public class DynamicFPLTF extends Escalonador {
         for (int i = 0; i < escravos.size(); i++) {
             if (escravos.get(i) instanceof CS_Maquina) {
                 CS_Processamento escravo = escravos.get(i);
-                for (int j = 0; j < escravo.getInformacaoDinamicaFila().size(); j++) {
-                    Tarefa trf = (Tarefa) escravo.getInformacaoDinamicaFila().get(j);
+                for (int j = 0; j < filaEscravo.get(i).size(); j++) {
+                    Tarefa trf = (Tarefa) filaEscravo.get(i).get(j);
                     double custo = escravo.tempoProcessar(trf.getTamProcessamento());
                     if (tempoTornaDisponivel.get(i) - custo > 0) {
                         tempoTornaDisponivel.set(i, tempoTornaDisponivel.get(i) - custo);
                     }
                     mestre.enviarMensagem(trf, escravo, Mensagens.DEVOLVER);
                 }
-                escravo.getInformacaoDinamicaFila().clear();
+                filaEscravo.get(i).clear();
             }
         }
     }

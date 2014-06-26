@@ -17,7 +17,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,15 +50,6 @@ public class CargaTrace extends GerarCarga {
     }
 
     @Override
-    public Vector toVector() {
-        Vector temp = new Vector();
-        temp.add(0, file);
-        temp.add(1, tipo);
-        temp.add(2, num_tasks);
-        return temp;
-    }
-
-    @Override
     public List<Tarefa> toTarefaList(RedeDeFilas rdf) {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
         List<String> users = new ArrayList<String>();
@@ -82,7 +72,7 @@ public class CargaTrace extends GerarCarga {
                     for (int i = 0; i < quantidadePorMestre; i++) {
                         aux = in.readLine();
                         String[] campos = aux.split("\"");
-                        if (rdf.getMetricasUsuarios().getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
+                        if (rdf.getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
                             users.add(campos[11]);
                             pcomp.add(0.0);
                         }
@@ -105,7 +95,7 @@ public class CargaTrace extends GerarCarga {
                 for (int i = 0; i < resto; i++) {
                     aux = in.readLine();
                     String[] campos = aux.split("\"");
-                    if (rdf.getMetricasUsuarios().getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
+                    if (rdf.getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
                         users.add(campos[11]);
                         pcomp.add(0.0);
                     }
@@ -128,7 +118,7 @@ public class CargaTrace extends GerarCarga {
                     CS_Mestre mestreaux = (CS_Mestre) mestre;
                     mestreaux.getEscalonador().getMetricaUsuarios().addAllUsuarios(users, pcomp);
                 }
-                rdf.getMetricasUsuarios().addAllUsuarios(users, pcomp);
+                rdf.getUsuarios().addAll(users);
                 return tarefas;
 
             } else if (tipo.equals("iSPD")) {
@@ -136,7 +126,7 @@ public class CargaTrace extends GerarCarga {
                     for (int i = 0; i < quantidadePorMestre; i++) {
                         aux = in.readLine();
                         String[] campos = aux.split("\"");
-                        if (rdf.getMetricasUsuarios().getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
+                        if (rdf.getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
                             users.add(campos[11]);
                             pcomp.add(0.0);
                         }
@@ -156,7 +146,7 @@ public class CargaTrace extends GerarCarga {
                 for (int i = 0; i < resto; i++) {
                     aux = in.readLine();
                     String[] campos = aux.split("\"");
-                    if (rdf.getMetricasUsuarios().getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
+                    if (rdf.getUsuarios().contains(campos[11]) == false && users.contains(campos[11]) == false) {
                         users.add(campos[11]);
                         pcomp.add(0.0);
                     }
@@ -175,8 +165,7 @@ public class CargaTrace extends GerarCarga {
                     CS_Mestre mestreaux = (CS_Mestre) mestre;
                     mestreaux.getEscalonador().getMetricaUsuarios().addAllUsuarios(users, pcomp);
                 }
-                rdf.getMetricasUsuarios().addAllUsuarios(users, pcomp);
-                System.out.println(num_tasks + "usuarios:" + rdf.getMetricasUsuarios().getUsuarios());
+                rdf.getUsuarios().addAll(users);
                 return tarefas;
 
             }
@@ -186,6 +175,18 @@ public class CargaTrace extends GerarCarga {
         }
 
         return null;
+    }
+    
+    public File getFile() {
+        return file;
+    }
+    
+    public String getTraceType() {
+        return tipo;
+    }
+    
+    public Integer getNumberTasks() {
+        return num_tasks;
     }
 
     @Override

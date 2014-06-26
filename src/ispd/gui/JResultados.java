@@ -15,10 +15,12 @@ import ispd.arquivo.interpretador.cargas.Interpretador;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
-import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
+import ispd.motor.metricas.Metricas;
+import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
+import ispd.motor.metricas.MetricasProcessamento;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -62,12 +64,13 @@ public class JResultados extends javax.swing.JDialog {
      * Cria no JResultado sem carregar parte gráfica para utilizar no modo
      * terminal
      */
-    public JResultados(RedeDeFilas rdf, List tarefas) {
-        html.setMetricasGlobais(rdf.getMetricasGlobais());
-        tabelaRecurso = setTabelaRecurso(rdf);
-        getResultadosTarefas(tarefas);
-        gerarGraficosProcessamento(rdf);
-        gerarGraficosComunicacao(rdf);
+    public JResultados(Metricas metricas, RedeDeFilas rdf, List tarefas) {
+        html.setMetricasGlobais(metricas.getMetricasGlobais());
+        tabelaRecurso = setTabelaRecurso(metricas);
+        getResultadosTarefas(metricas);
+        html.setMetricasTarefas(metricas);
+        gerarGraficosProcessamento(metricas.getMetricasProcessamento());
+        gerarGraficosComunicacao(metricas.getMetricasComunicacao());
         if (rdf.getMaquinas().size() < 21) {
             graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
         } else {
@@ -82,22 +85,37 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
     }
+    
+    /**
+     * Cria no JResultado sem carregar parte gráfica para utilizar no modo
+     * terminal usando apenas a classe "Metricas"
+     */
+    public JResultados(Metricas metricas) {
+        html.setMetricasGlobais(metricas.getMetricasGlobais());
+        tabelaRecurso = setTabelaRecurso(metricas);
+        getResultadosTarefas(metricas);
+        html.setMetricasTarefas(metricas);
+        gerarGraficosProcessamento(metricas.getMetricasProcessamento());
+        gerarGraficosComunicacao(metricas.getMetricasComunicacao());
+    }
 
     /**
      * Creates new form JResultados
      */
-    public JResultados(java.awt.Frame parent, RedeDeFilas rdf, List<Tarefa> tarefas) {
+    public JResultados(java.awt.Frame parent, Metricas metricas, RedeDeFilas rdf, List<Tarefa> tarefas) {
         super(parent, true);
         this.tarefas = tarefas;
-        gerarGraficosProcessamento(rdf);
-        gerarGraficosComunicacao(rdf);
-        tabelaRecurso = setTabelaRecurso(rdf);
+        gerarGraficosProcessamento(metricas.getMetricasProcessamento());
+        gerarGraficosComunicacao(metricas.getMetricasComunicacao());
+        tabelaRecurso = setTabelaRecurso(metricas);
         initComponents();
-        this.jTextAreaGlobal.setText(getResultadosGlobais(rdf.getMetricasGlobais()));
-        html.setMetricasGlobais(rdf.getMetricasGlobais());
-        this.jTextAreaTarefa.setText(getResultadosTarefas(tarefas));
-        setResultadosUsuario(rdf.getMetricasUsuarios());
-
+        this.jTextAreaGlobal.setText(getResultadosGlobais(metricas.getMetricasGlobais()));
+        html.setMetricasGlobais(metricas.getMetricasGlobais());
+        this.jTextAreaTarefa.setText(getResultadosTarefas(metricas));
+        html.setMetricasTarefas(metricas);
+        CS_Mestre mestre = (CS_Mestre) rdf.getMestres().get(0);
+        setResultadosUsuario(mestre.getEscalonador().getMetricaUsuarios(), metricas);
+        
         if (rdf.getMaquinas().size() < 21) {
             graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
             graficoProcessamentoTempo.setPreferredSize(new Dimension(600, 300));
@@ -119,10 +137,10 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
         graficoProcessamentoTempoUser2.setPreferredSize(new Dimension(600, 300));
 
-        graficoEstadoTarefa = new ChartPanel(criarGraficoEstadoTarefa(tarefas));
-        graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
-        graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
-        graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
+        //graficoEstadoTarefa = new ChartPanel(criarGraficoEstadoTarefa(tarefas));
+        //graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
+        //graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
+        //graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
 
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
@@ -511,7 +529,7 @@ public class JResultados extends javax.swing.JDialog {
         String texto = "\t\tSimulation Results\n\n";
         texto += String.format("\tTotal Simulated Time = %g \n", globais.getTempoSimulacao());
         texto += String.format("\tSatisfaction = %g %%\n", globais.getSatisfacaoMedia());
-        texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeCompuacao());
+        texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeComputacao());
         texto += String.format("\tIdleness of communication resources = %g %%\n", globais.getOciosidadeComunicacao());
         texto += String.format("\tEfficiency = %g %%\n", globais.getEficiencia());
         if (globais.getEficiencia() > 70.0) {
@@ -524,64 +542,29 @@ public class JResultados extends javax.swing.JDialog {
         return texto;
     }
 
-    private String getResultadosTarefas(List<Tarefa> tarefas) {
+    private String getResultadosTarefas(Metricas metrica) {
         String texto = "\n\n\t\tTASKS\n ";
-        double tempoMedioFilaComunicacao = 0;
-        double tempoMedioComunicacao = 0;
-        double tempoMedioSistemaComunicacao;
-        double tempoMedioFilaProcessamento = 0;
-        double tempoMedioProcessamento = 0;
-        double tempoMedioSistemaProcessamento;
-
-        int numTarefasCanceladas = 0;
-        double MflopsDesperdicio = 0;
-        int numTarefas = 0;
-
-        for (Tarefa no : tarefas) {
-            if (no.getEstado() == Tarefa.CONCLUIDO) {
-                tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
-                tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
-                tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
-                tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
-                numTarefas++;
-            } else if (no.getEstado() == Tarefa.CANCELADO) {
-                MflopsDesperdicio += no.getTamProcessamento() * no.getMflopsProcessado();
-                numTarefasCanceladas++;
-            }
-            CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
-            if (temp != null) {
-                for (int i = 0; i < no.getTempoInicial().size(); i++) {
-                    temp.setTempoProcessamento(no.getTempoInicial().get(i), no.getTempoFinal().get(i));
-                }
-            }
-        }
-
-        tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
-        tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;
-        tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
-        tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
-        tempoMedioSistemaComunicacao = tempoMedioFilaComunicacao + tempoMedioComunicacao;
-        tempoMedioSistemaProcessamento = tempoMedioFilaProcessamento + tempoMedioProcessamento;
+        double tempoMedioSistemaComunicacao = metrica.getTempoMedioFilaComunicacao() + metrica.getTempoMedioComunicacao();
+        double tempoMedioSistemaProcessamento = metrica.getTempoMedioFilaProcessamento() + metrica.getTempoMedioProcessamento();
         texto += "\n Communication \n";
-        texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaComunicacao);
-        texto += String.format("    Communication average time: %g seconds.\n", tempoMedioComunicacao);
+        texto += String.format("    Queue average time: %g seconds.\n", metrica.getTempoMedioFilaComunicacao());
+        texto += String.format("    Communication average time: %g seconds.\n", metrica.getTempoMedioComunicacao());
         texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaComunicacao);
         texto += "\n Processing \n";
-        texto += String.format("    Queue average time: %g seconds.\n", tempoMedioFilaProcessamento);
-        texto += String.format("    Processing average time: %g seconds.\n", tempoMedioProcessamento);
+        texto += String.format("    Queue average time: %g seconds.\n", metrica.getTempoMedioFilaProcessamento());
+        texto += String.format("    Processing average time: %g seconds.\n", metrica.getTempoMedioProcessamento());
         texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaProcessamento);
-        if (numTarefasCanceladas > 0) {
+        if (metrica.getNumTarefasCanceladas() > 0) {
             texto += "\n Tasks Canceled \n";
-            texto += String.format("    Number: %d \n", numTarefasCanceladas);
-            texto += String.format("    Wasted Processing: %g Mflops", MflopsDesperdicio);
+            texto += String.format("    Number: %d \n", metrica.getNumTarefasCanceladas());
+            texto += String.format("    Wasted Processing: %g Mflops", metrica.getMflopsDesperdicio());
         }
-        html.setMetricasTarefas(tempoMedioFilaComunicacao, tempoMedioComunicacao, tempoMedioSistemaComunicacao, tempoMedioFilaProcessamento, tempoMedioProcessamento, tempoMedioSistemaProcessamento);
         return texto;
     }
 
     private JFreeChart[] gerarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilas rdf) {
         ArrayList<tempo_uso_usuario> lista = new ArrayList<tempo_uso_usuario>();
-        int numberUsers = rdf.getMetricasUsuarios().getUsuarios().size();
+        int numberUsers = rdf.getUsuarios().size();
         Map<String, Integer> users = new HashMap<String, Integer>();
         XYSeries tmp_series[] = new XYSeries[numberUsers];
         XYSeries tmp_series1[] = new XYSeries[numberUsers];
@@ -590,19 +573,20 @@ public class JResultados extends javax.swing.JDialog {
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
         XYSeriesCollection dadosGrafico1 = new XYSeriesCollection();
         for (int i = 0; i < numberUsers; i++) {
-            users.put(rdf.getMetricasUsuarios().getUsuarios().get(i), i);
+            users.put(rdf.getUsuarios().get(i), i);
             utilizacaoUser[i] = 0.0;
-            tmp_series[i] = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
+            tmp_series[i] = new XYSeries(rdf.getUsuarios().get(i));
             utilizacaoUser1[i] = 0.0;
-            tmp_series1[i] = new XYSeries(rdf.getMetricasUsuarios().getUsuarios().get(i));
+            tmp_series1[i] = new XYSeries(rdf.getUsuarios().get(i));
         }
         if (!tarefas.isEmpty()) {
             //Insere cada tarefa como dois pontos na lista
             for (Tarefa task : tarefas) {
                 CS_Processamento local = (CS_Processamento) task.getLocalProcessamento();
                 if (local != null) {
-                    Double uso = (local.getPoderComputacional() / poderComputacionalTotal) * 100;
+
                     for (int i = 0; i < task.getTempoInicial().size(); i++) {
+                        Double uso = (task.getHistoricoProcessamento().get(i).getPoderComputacional() / poderComputacionalTotal) * 100;
                         tempo_uso_usuario provisorio1 = new tempo_uso_usuario(task.getTempoInicial().get(i), true, uso, users.get(task.getProprietario()));
                         lista.add(provisorio1);
                         tempo_uso_usuario provisorio2 = new tempo_uso_usuario(task.getTempoFinal().get(i), false, uso, users.get(task.getProprietario()));
@@ -739,15 +723,16 @@ public class JResultados extends javax.swing.JDialog {
                 XYSeries tmp_series;
                 tmp_series = new XYSeries("task " + task.getIdentificador());
                 CS_Processamento temp = (CS_Processamento) task.getLocalProcessamento();
-
-                Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
-                for (int j = 0; j < task.getTempoInicial().size(); j++) {
-                    tmp_series.add(task.getTempoInicial().get(j), (Double) 0.0);
-                    tmp_series.add(task.getTempoInicial().get(j), uso);
-                    tmp_series.add(task.getTempoFinal().get(j), uso);
-                    tmp_series.add(task.getTempoFinal().get(j), (Double) 0.0);
+                if (temp != null) {
+                    Double uso = (temp.getPoderComputacional() / this.poderComputacionalTotal) * 100;
+                    for (int j = 0; j < task.getTempoInicial().size(); j++) {
+                        tmp_series.add(task.getTempoInicial().get(j), (Double) 0.0);
+                        tmp_series.add(task.getTempoInicial().get(j), uso);
+                        tmp_series.add(task.getTempoFinal().get(j), uso);
+                        tmp_series.add(task.getTempoFinal().get(j), (Double) 0.0);
+                    }
+                    dadosGrafico.addSeries(tmp_series);
                 }
-                dadosGrafico.addSeries(tmp_series);
             }
 
         }
@@ -825,7 +810,9 @@ public class JResultados extends javax.swing.JDialog {
                             tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 1.0);
                     break;
                 case Tarefa.CANCELADO:
-                    canceladas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 2.0);
+                    if (!tarefa.getTempoFinal().isEmpty()) {
+                        canceladas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 2.0);
+                    }
                     break;
                 case Tarefa.FALHA:
                     falhas.add(tarefa.getTempoFinal().get(tarefa.getTempoFinal().size() - 1), (Double) 3.0);
@@ -904,8 +891,8 @@ public class JResultados extends javax.swing.JDialog {
         return jfc;
     }
 
-    private void setResultadosUsuario(MetricasUsuarios metricasUsuarios) {
-        if (metricasUsuarios.getUsuarios().size() > 1) {
+    private void setResultadosUsuario(MetricasUsuarios metricasUsuarios, Metricas metricas) {
+        if (metricasUsuarios != null && metricasUsuarios.getUsuarios().size() > 1) {
             String texto = "";
             for (int i = 0; i < metricasUsuarios.getUsuarios().size(); i++) {
                 String userName = metricasUsuarios.getUsuarios().get(i);
@@ -944,26 +931,30 @@ public class JResultados extends javax.swing.JDialog {
                 texto += String.format("    Processing average time: %g seconds.\n", tempoMedioProcessamento);
                 texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaProcessamento);
             }
+            String name;
+            texto += String.format( "\nSatisfação dos usuários em porcentagem\n" );
+            for (Map.Entry<String, Double> entry : metricas.getMetricasSatisfacao().entrySet()) {
+                
+                String user = entry.getKey();
+                Double satisfacao = entry.getValue();
+                texto += user + " : "+satisfacao+" %\n";
+                
+            }
             jTextAreaUsuario.setText(texto);
         } else {
             jTabbedPane1.remove(jScrollPaneUsuario);
         }
     }
 
-    private void gerarGraficosComunicacao(RedeDeFilas rdf) {
+    private void gerarGraficosComunicacao(Map<String, MetricasComunicacao> mComunicacao) {
         DefaultCategoryDataset dadosGraficoComunicacao = new DefaultCategoryDataset();
         DefaultPieDataset dadosGraficoPizzaComunicacao = new DefaultPieDataset();
 
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
-                dadosGraficoComunicacao.addValue(link.getMetrica().getMbitsTransmitidos(), "vermelho", link.getId());
-                dadosGraficoPizzaComunicacao.insertValue(0, link.getId(), link.getMetrica().getMbitsTransmitidos());
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                dadosGraficoComunicacao.addValue(net.getMetrica().getMbitsTransmitidos(), "vermelho", net.getId());
-                dadosGraficoPizzaComunicacao.insertValue(0, net.getId(), net.getMetrica().getMbitsTransmitidos());
+        if (mComunicacao != null) {
+            for (Map.Entry<String, MetricasComunicacao> entry : mComunicacao.entrySet()) {
+                MetricasComunicacao link = entry.getValue();
+                dadosGraficoComunicacao.addValue(link.getMbitsTransmitidos(), "vermelho", link.getId());
+                dadosGraficoPizzaComunicacao.insertValue(0, link.getId(), link.getMbitsTransmitidos());
             }
         }
 
@@ -985,31 +976,19 @@ public class JResultados extends javax.swing.JDialog {
         graficoPizzaComunicacao.setPreferredSize(new Dimension(600, 300));
     }
 
-    private void gerarGraficosProcessamento(RedeDeFilas rdf) {
+    private void gerarGraficosProcessamento(Map<String, MetricasProcessamento> mProcess) {
         DefaultCategoryDataset dadosGraficoProcessamento = new DefaultCategoryDataset();
         DefaultPieDataset dadosGraficoPizzaProcessamento = new DefaultPieDataset();
 
-        List<String> maqNomes = new ArrayList<String>();
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mst : rdf.getMestres()) {
-                dadosGraficoProcessamento.addValue(mst.getMetrica().getMFlopsProcessados(), "vermelho", mst.getId());
-                dadosGraficoPizzaProcessamento.insertValue(0, mst.getId(), mst.getMetrica().getMFlopsProcessados());
-                maqNomes.add(mst.getId());
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (maqNomes.contains(maq.getId())) {
-                    Double valor = (Double) dadosGraficoProcessamento.getValue("vermelho", maq.getId());
-                    valor += maq.getMetrica().getMFlopsProcessados();
-                    dadosGraficoProcessamento.setValue(valor, "vermelho", maq.getId());
-                    valor = (Double) dadosGraficoPizzaProcessamento.getValue(maq.getId());
-                    valor += maq.getMetrica().getMFlopsProcessados();
-                    dadosGraficoPizzaProcessamento.setValue(maq.getId(), valor);
+        if (mProcess != null) {
+            for (Map.Entry<String, MetricasProcessamento> entry : mProcess.entrySet()) {
+                MetricasProcessamento mt = entry.getValue();
+                if (mt.getnumeroMaquina() == 0) {
+                    dadosGraficoProcessamento.addValue(mt.getMFlopsProcessados(), "vermelho", mt.getId());
+                    dadosGraficoPizzaProcessamento.insertValue(0, mt.getId(), mt.getMFlopsProcessados());
                 } else {
-                    dadosGraficoProcessamento.addValue(maq.getMetrica().getMFlopsProcessados(), "vermelho", maq.getId());
-                    dadosGraficoPizzaProcessamento.insertValue(0, maq.getId(), maq.getMetrica().getMFlopsProcessados());
-                    maqNomes.add(maq.getId());
+                    dadosGraficoProcessamento.addValue(mt.getMFlopsProcessados(), "vermelho", mt.getId() + " node " + mt.getnumeroMaquina());
+                    dadosGraficoPizzaProcessamento.insertValue(0, mt.getId() + " node " + mt.getnumeroMaquina(), mt.getMFlopsProcessados());
                 }
             }
         }
@@ -1033,69 +1012,35 @@ public class JResultados extends javax.swing.JDialog {
 
     }
 
-    private Object[][] setTabelaRecurso(RedeDeFilas rdf) {
-        List<String> recurso = new ArrayList<String>();
+    private Object[][] setTabelaRecurso(Metricas metricas) {
         List<Object[]> tabela = new ArrayList<Object[]>();
         //linha [Nome] [Proprietario] [Processamento] [comunicacao]
         String nome;
         String prop;
         Double proc;
         Double comu;
-        if (rdf.getMestres() != null) {
-            for (CS_Processamento mestre : rdf.getMestres()) {
-                if (recurso.contains(mestre.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(mestre.getId())) {
-                        i++;
-                    }
-                    tabela.get(i)[2] = (Double) tabela.get(i)[2] + mestre.getMetrica().getSegundosDeProcessamento();
-                } else {
-                    nome = mestre.getId();
-                    prop = mestre.getProprietario();
-                    proc = mestre.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(mestre.getId());
-                }
-            }
-        }
-        if (rdf.getMaquinas() != null) {
-            for (CS_Processamento maq : rdf.getMaquinas()) {
-                if (recurso.contains(maq.getId())) {
-                    int i = 0;
-                    while (!tabela.get(i)[0].equals(maq.getId())) {
-                        i++;
-                    }
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    proc += Double.valueOf(tabela.get(i)[2].toString());
-                    tabela.get(i)[2] = proc;
-                } else {
+        if (metricas.getMetricasProcessamento() != null) {
+            for (Map.Entry<String, MetricasProcessamento> entry : metricas.getMetricasProcessamento().entrySet()) {
+                MetricasProcessamento maq = entry.getValue();
+                if (maq.getnumeroMaquina() == 0) {
                     nome = maq.getId();
-                    prop = maq.getProprietario();
-                    proc = maq.getMetrica().getSegundosDeProcessamento();
-                    comu = 0.0;
-                    tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                    recurso.add(maq.getId());
+                } else {
+                    nome = maq.getId() + " node " + maq.getnumeroMaquina();
                 }
-            }
-        }
-        if (rdf.getInternets() != null) {
-            for (CS_Comunicacao net : rdf.getInternets()) {
-                nome = net.getId();
-                prop = "---";
-                proc = 0.0;
-                comu = net.getMetrica().getSegundosDeTransmissao();
+                prop = maq.getProprietario();
+                proc = maq.getSegundosDeProcessamento();
+                comu = 0.0;
                 tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
             }
         }
-        if (rdf.getLinks() != null) {
-            for (CS_Comunicacao link : rdf.getLinks()) {
+        if (metricas.getMetricasComunicacao() != null) {
+            for (Map.Entry<String, MetricasComunicacao> entry : metricas.getMetricasComunicacao().entrySet()) {
+                MetricasComunicacao link = entry.getValue();
                 nome = link.getId();
                 prop = "---";
                 proc = 0.0;
-                comu = link.getMetrica().getSegundosDeTransmissao();
+                comu = link.getSegundosDeTransmissao();
                 tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
-                recurso.add(link.getId());
             }
         }
         Object[][] temp = new Object[tabela.size()][4];

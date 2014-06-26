@@ -6,6 +6,7 @@ package ispd.escalonador;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,5 +27,9 @@ public interface ManipularArquivos {
     public boolean remover(String escalonador);
 
     public boolean importarEscalonadorJava(File arquivo);
+    
+    public List listarAdicionados();
+    
+    public List listarRemovidos();
     
 }

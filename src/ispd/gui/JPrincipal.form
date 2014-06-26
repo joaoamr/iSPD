@@ -4,20 +4,6 @@
   <NonVisualComponents>
     <Component class="ispd.gui.GerenciarEscalonador" name="jFrameGerenciador">
     </Component>
-    <Component class="ispd.gui.configuracao.JPanelConfiguraMaquina" name="jPanelMaquina">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelMaquina.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
-      </AuxValues>
-    </Component>
-    <Component class="ispd.gui.configuracao.JPanelConfiguraCluster" name="jPanelCluster">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelCluster.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
-      </AuxValues>
-    </Component>
-    <Component class="ispd.gui.configuracao.JPanelConfiguraRede" name="jPanelRede">
-    </Component>
-    <Component class="ispd.gui.configuracao.JPanelConfiguraInternet" name="jPanelInternet">
-    </Component>
     <Component class="ispd.gui.configuracao.JPanelSimples" name="jPanelSimples">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelSimples.setjLabelTexto(palavras.getString(&quot;No icon selected.&quot;));"/>
@@ -33,6 +19,11 @@
           <Connection code="new javax.swing.filechooser.FileView() {@Override&#xd;&#xa;        public Icon getIcon(File f) {&#xd;&#xa;            String ext = null;&#xd;&#xa;            String s = f.getName();&#xd;&#xa;            int i = s.lastIndexOf(&apos;.&apos;);&#xd;&#xa;            if (i &gt; 0 &amp;&amp; i &lt; s.length() - 1) {&#xd;&#xa;                ext = s.substring(i + 1).toLowerCase();&#xd;&#xa;            }&#xd;&#xa;            if (ext != null) {&#xd;&#xa;                if (ext.equals(&quot;ims&quot;) || ext.equals(&quot;imsx&quot;)) {&#xd;&#xa;                    java.net.URL imgURL = JPrincipal.class.getResource(&quot;imagens/Logo_GSPD_25.png&quot;);&#xd;&#xa;                    if (imgURL != null) {&#xd;&#xa;                        return new ImageIcon(imgURL);&#xd;&#xa;                    }&#xd;&#xa;                }&#xd;&#xa;            }&#xd;&#xa;            return null;&#xd;&#xa;        }}" type="code"/>
         </Property>
       </Properties>
+    </Component>
+    <Component class="ispd.gui.configuracao.JPanelConfigIcon" name="jPanelConfiguracao">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelConfiguracao.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
+      </AuxValues>
     </Component>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar">
       <SubComponents>
@@ -197,6 +188,15 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemToTXTActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="jMenuItemToSimGrid">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="to SimGrid"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemToSimGridActionPerformed"/>
+                  </Events>
+                </MenuItem>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
@@ -351,6 +351,15 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemEquipararActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOrganizar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Arrange icons"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemOrganizarActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -532,6 +541,7 @@
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <Events>
     <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
@@ -553,19 +563,15 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="jScrollPaneProperties" max="32767" attributes="1"/>
+                  <Component id="jScrollPaneBarraLateral" alignment="1" pref="236" max="32767" attributes="1"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPaneBarraNotifica" alignment="1" pref="780" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="jScrollPaneProperties" max="32767" attributes="1"/>
-                          <Component id="jScrollPaneBarraLateral" alignment="1" pref="236" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jToolBar" alignment="1" pref="538" max="32767" attributes="0"/>
-                          <Component id="jScrollPaneAreaDesenho" alignment="0" pref="538" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <Component id="jScrollPaneBarraNotifica" max="32767" attributes="0"/>
+                  <Component id="jToolBar" alignment="1" pref="595" max="32767" attributes="0"/>
+                  <Component id="jScrollPaneAreaDesenho" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -573,23 +579,23 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPaneBarraLateral" pref="248" max="32767" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPaneProperties" min="-2" pref="205" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" attributes="0">
                       <Component id="jToolBar" min="-2" pref="42" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneAreaDesenho" pref="314" max="32767" attributes="1"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="11" pref="11" max="11" attributes="0"/>
-                      <Component id="jScrollPaneBarraLateral" min="-2" pref="223" max="-2" attributes="1"/>
+                      <Component id="jScrollPaneAreaDesenho" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPaneProperties" pref="122" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneBarraNotifica" min="-2" pref="102" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPaneBarraNotifica" min="-2" pref="102" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -628,8 +634,8 @@
       <SubComponents>
         <Component class="javax.swing.JTextArea" name="jTextAreaNotifica">
           <Properties>
-            <Property name="columns" type="int" value="20"/>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>

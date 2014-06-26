@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author denison_usuario
  */
-public class CS_Switch extends CS_Comunicacao {
+public class CS_Switch extends CS_Comunicacao implements Vertice {
 
     private List<CentroServico> conexoesEntrada;
     private List<CentroServico> conexoesSaida;
@@ -48,17 +48,17 @@ public class CS_Switch extends CS_Comunicacao {
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        cliente.iniciarEsperaComunicacao(simulacao.getTime());
+        cliente.iniciarEsperaComunicacao(simulacao.getTime(this));
         if (linkDisponivel) {
             //indica que recurso está ocupado
             linkDisponivel = false;
             //cria evento para iniciar o atendimento imediatamente
             EventoFuturo novoEvt = new EventoFuturo(
-                    simulacao.getTime(),
+                    simulacao.getTime(this),
                     EventoFuturo.ATENDIMENTO,
                     this,
                     cliente);
-            simulacao.getEventos().offer(novoEvt);
+            simulacao.addEventoFuturo(novoEvt);
         } else {
             filaPacotes.add(cliente);
         }
@@ -66,15 +66,15 @@ public class CS_Switch extends CS_Comunicacao {
 
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
-        cliente.finalizarEsperaComunicacao(simulacao.getTime());
-        cliente.iniciarAtendimentoComunicacao(simulacao.getTime());
+        cliente.finalizarEsperaComunicacao(simulacao.getTime(this));
+        cliente.iniciarAtendimentoComunicacao(simulacao.getTime(this));
         //Gera evento para atender proximo cliente da lista
         EventoFuturo evtFut = new EventoFuturo(
-                simulacao.getTime() + tempoTransmitir(cliente.getTamComunicacao()),
+                simulacao.getTime(this) + tempoTransmitir(cliente.getTamComunicacao()),
                 EventoFuturo.SAÍDA,
                 this, cliente);
         //Event adicionado a lista de evntos futuros
-        simulacao.getEventos().offer(evtFut);
+        simulacao.addEventoFuturo(evtFut);
     }
 
     @Override
@@ -85,14 +85,14 @@ public class CS_Switch extends CS_Comunicacao {
         double tempoTrans = this.tempoTransmitir(cliente.getTamComunicacao());
         this.getMetrica().incSegundosDeTransmissao(tempoTrans);
         //Incrementa o tempo de transmissão no pacote
-        cliente.finalizarAtendimentoComunicacao(simulacao.getTime());
+        cliente.finalizarAtendimentoComunicacao(simulacao.getTime(this));
         //Gera evento para chegada da tarefa no proximo servidor
         EventoFuturo evtFut = new EventoFuturo(
-                simulacao.getTime(),
+                simulacao.getTime(this),
                 EventoFuturo.CHEGADA,
                 cliente.getCaminho().remove(0), cliente);
         //Event adicionado a lista de evntos futuros
-        simulacao.getEventos().offer(evtFut);
+        simulacao.addEventoFuturo(evtFut);
         if (filaPacotes.isEmpty()) {
             //Indica que está livre
             this.linkDisponivel = true;
@@ -100,11 +100,11 @@ public class CS_Switch extends CS_Comunicacao {
             //Gera evento para atender proximo cliente da lista
             Tarefa proxCliente = filaPacotes.remove(0);
             evtFut = new EventoFuturo(
-                    simulacao.getTime(),
+                    simulacao.getTime(this),
                     EventoFuturo.ATENDIMENTO,
                     this, proxCliente);
             //Event adicionado a lista de evntos futuros
-            simulacao.getEventos().offer(evtFut);
+            simulacao.addEventoFuturo(evtFut);
         }
     }
 
@@ -119,19 +119,19 @@ public class CS_Switch extends CS_Comunicacao {
             this.getMetrica().incSegundosDeTransmissao(tempoTrans);
             //Gera evento para chegada da mensagem no proximo servidor
             EventoFuturo evtFut = new EventoFuturo(
-                    simulacao.getTime() + tempoTrans,
+                    simulacao.getTime(this) + tempoTrans,
                     EventoFuturo.MENSAGEM,
                     cliente.getCaminho().remove(0), cliente);
             //Event adicionado a lista de evntos futuros
-            simulacao.getEventos().offer(evtFut);
+            simulacao.addEventoFuturo(evtFut);
             if (!filaMensagens.isEmpty()) {
                 //Gera evento para chegada da mensagem no proximo servidor
                 evtFut = new EventoFuturo(
-                        simulacao.getTime() + tempoTrans,
+                        simulacao.getTime(this) + tempoTrans,
                         EventoFuturo.SAIDA_MENSAGEM,
                         this, filaMensagens.remove(0));
                 //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);
+                simulacao.addEventoFuturo(evtFut);
             }else{
                 linkDisponivelMensagem = true;
             }
@@ -139,17 +139,37 @@ public class CS_Switch extends CS_Comunicacao {
             linkDisponivelMensagem = false;
                 //Gera evento para chegada da mensagem no proximo servidor
                 EventoFuturo evtFut = new EventoFuturo(
-                        simulacao.getTime(),
+                        simulacao.getTime(this),
                         EventoFuturo.SAIDA_MENSAGEM,
                         this, cliente);
                 //Event adicionado a lista de evntos futuros
-                simulacao.getEventos().offer(evtFut);
+                simulacao.addEventoFuturo(evtFut);
         }else{
             filaMensagens.add(cliente);
         }
     }
 
+    @Override
     public List<CentroServico> getConexoesSaida() {
         return this.conexoesSaida;
+    }
+
+    @Override
+    public void addConexoesEntrada(CS_Link conexao) {
+        this.conexoesSaida.add(conexao);
+    }
+
+    @Override
+    public void addConexoesSaida(CS_Link conexao) {
+        this.conexoesSaida.add(conexao);
+    }
+    
+    @Override
+    public Integer getCargaTarefas() {
+        if (linkDisponivel && linkDisponivelMensagem) {
+            return 0;
+        } else {
+            return (filaMensagens.size() + filaPacotes.size()) + 1;
+        }
     }
 }

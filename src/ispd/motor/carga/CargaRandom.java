@@ -10,7 +10,6 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Descreve como gerar tarefas na forma randomica
@@ -43,30 +42,16 @@ public class CargaRandom extends GerarCarga {
     }
 
     @Override
-    public Vector toVector() {
-        Vector temp = new Vector(10);
-        temp.add(0, numeroTarefas);
-        temp.add(1, minComputacao);
-        temp.add(2, maxComputacao);
-        temp.add(3, AverageComputacao);
-        temp.add(4, ProbabilityComputacao);
-        temp.add(5, minComunicacao);
-        temp.add(6, maxComunicacao);
-        temp.add(7, AverageComunicacao);
-        temp.add(8, ProbabilityComunicacao);
-        temp.add(9, timeOfArrival);
-        return temp;
-    }
-
-    @Override
     public List<Tarefa> toTarefaList(RedeDeFilas rdf) {
         List<Tarefa> tarefas = new ArrayList<Tarefa>();
+        int identificador = 0;
         int quantidadePorMestre = this.getNumeroTarefas() / rdf.getMestres().size();
         int resto = this.getNumeroTarefas() % rdf.getMestres().size();
         GeracaoNumAleatorios gerador = new GeracaoNumAleatorios((int)System.currentTimeMillis());
         for (CS_Processamento mestre : rdf.getMestres()) {
             for (int i = 0; i < quantidadePorMestre; i++) {
                 Tarefa tarefa = new Tarefa(
+                        identificador,
                         mestre.getProprietario(),
                         "application1",
                         mestre,
@@ -75,18 +60,21 @@ public class CargaRandom extends GerarCarga {
                         gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),
                         gerador.exponencial(timeOfArrival)/*tempo de criação*/);
                 tarefas.add(tarefa);
+                identificador++;
             }
         }
         for (int i = 0; i < resto; i++) {
             Tarefa tarefa = new Tarefa(
-                        rdf.getMestres().get(0).getProprietario(),
-                        "application1",
-                        rdf.getMestres().get(0),
-                        gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
-                        0.0009765625 /*arquivo recebimento 1 kbit*/,
-                        gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),
-                        gerador.exponencial(timeOfArrival)/*tempo de criação*/);
+                    identificador,
+                    rdf.getMestres().get(0).getProprietario(),
+                    "application1",
+                    rdf.getMestres().get(0),
+                    gerador.twoStageUniform(minComunicacao, AverageComunicacao, maxComunicacao, ProbabilityComunicacao),
+                    0.0009765625 /*arquivo recebimento 1 kbit*/,
+                    gerador.twoStageUniform(minComputacao, AverageComputacao, maxComputacao, ProbabilityComputacao),
+                    gerador.exponencial(timeOfArrival)/*tempo de criação*/);
             tarefas.add(tarefa);
+            identificador++;
         }
         return tarefas;
     }
@@ -100,7 +88,7 @@ public class CargaRandom extends GerarCarga {
     }
 
     public static GerarCarga newGerarCarga(String entrada) {
-        CargaRandom newObj = null;
+        CargaRandom newObj;
         String aux = entrada.replace("\n", " ");
         String[] valores = aux.split(" ");
         int minComputacao = Integer.parseInt(valores[0]);
@@ -121,6 +109,7 @@ public class CargaRandom extends GerarCarga {
         return newObj;
     }
 
+    @Override
     public int getTipo() {
         return GerarCarga.RANDOM;
     }

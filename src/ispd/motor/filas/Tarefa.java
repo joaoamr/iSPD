@@ -24,20 +24,13 @@ public class Tarefa implements Cliente {
     public static final int CANCELADO = 3;
     public static final int CONCLUIDO = 4;
     public static final int FALHA = 5;
-    private static int contador = 0;
+    
     private String proprietario;
     private String aplicacao;
     private int identificador;
     private boolean copia;
-    private double falha = -1;
+    private List<CS_Processamento> historicoProcessamento = new ArrayList<CS_Processamento>();
 
-    public double getFalha() {
-        return falha;
-    }
-
-    public void setFalha(double falha) {
-        this.falha = falha;
-    }
     /**
      * Indica a quantidade de mflops já processados no momento de um bloqueio
      */
@@ -77,11 +70,10 @@ public class Tarefa implements Cliente {
     private int estado;
     private double tamComunicacao;
 
-    public Tarefa(String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
+    public Tarefa(int id, String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double tamProcessamento, double tempoCriacao) {
         this.proprietario = proprietario;
         this.aplicacao = aplicacao;
-        this.identificador = Tarefa.contador;
-        Tarefa.contador++;//hashCode();
+        this.identificador = id;
         this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;
@@ -96,31 +88,10 @@ public class Tarefa implements Cliente {
         this.tempoFinal = new ArrayList<Double>();
     }
 
-    public Tarefa(String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
-        this.proprietario = proprietario;
-        this.aplicacao = aplicacao;
-        this.identificador = Tarefa.contador;
-        Tarefa.contador++;//hashCode();
-        this.copia = false;
-        this.origem = origem;
-        this.tamComunicacao = arquivoEnvio;
-        this.arquivoEnvio = arquivoEnvio;
-        this.arquivoRecebimento = arquivoRecebimento;
-        this.tamProcessamento = tamProcessamento;
-        this.metricas = new MetricasTarefa();
-        this.tempoCriacao = tempoCriacao;
-        this.estado = PARADO;
-        this.mflopsProcessado = 0;
-        this.tempoInicial = new ArrayList<Double>();
-        this.tempoFinal = new ArrayList<Double>();
-    }
-
     public Tarefa(int id, String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
         this.identificador = id;
         this.proprietario = proprietario;
         this.aplicacao = aplicacao;
-        this.identificador = Tarefa.contador;
-        Tarefa.contador++;//hashCode();
         this.copia = false;
         this.origem = origem;
         this.tamComunicacao = arquivoEnvio;
@@ -217,6 +188,11 @@ public class Tarefa implements Cliente {
         this.estado = PROCESSANDO;
         this.inicioEspera = tempo;
         this.tempoInicial.add(tempo);
+        this.historicoProcessamento.add((CS_Processamento) localProcessamento);
+    }
+    
+    public List<CS_Processamento> getHistoricoProcessamento(){
+        return this.historicoProcessamento;
     }
 
     public void finalizarAtendimentoProcessamento(double tempo) {
@@ -278,6 +254,10 @@ public class Tarefa implements Cliente {
     public int getEstado() {
         return this.estado;
     }
+    
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
 
     public int getIdentificador() {
         return this.identificador;
@@ -307,19 +287,16 @@ public class Tarefa implements Cliente {
         this.mflopsProcessado = mflopsProcessado;
     }
 
-    public static void setContador(int contador) {
-        Tarefa.contador = contador;
-    }
-
     public double getCheckPoint() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        //return 1.0;//Fazer Chekcpoint a cada 1 megaflop
+        //double tempo = mflopsProcessado/((CS_Processamento) localProcessamento).getPoderComputacional();
+        //double resto = tempo%600;
+        //return mflopsProcessado - ((CS_Processamento) localProcessamento).getPoderComputacional()*resto;
+        return 0.0;
+        //throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public double getArquivoEnvio() {
         return arquivoEnvio;
-    }
-
-    public void falhar() {
-        this.estado = Tarefa.FALHA;
     }
 }

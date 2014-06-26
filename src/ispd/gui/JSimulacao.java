@@ -1,22 +1,19 @@
 package ispd.gui;
 
-import InterpretadorInterno.ModeloIconico.InterpretadorIconico;
-import InterpretadorInterno.ModeloSimulavel.InterpretadorSimulavel;
+import ispd.arquivo.xml.IconicoXML;
 import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
+import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
+import ispd.motor.metricas.Metricas;
 import java.awt.Color;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import org.w3c.dom.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -31,11 +28,11 @@ import javax.swing.text.StyleConstants;
  * @author denison_usuario
  */
 public class JSimulacao extends javax.swing.JDialog implements Runnable {
-
+    
     /**
      * Creates new form AguardaSimulacao
      */
-    public JSimulacao(java.awt.Frame parent, boolean modal, AreaDesenho area, ResourceBundle plavras) {
+    public JSimulacao(java.awt.Frame parent, boolean modal, Document modelo, String modeloTexto, ResourceBundle plavras) {
         super(parent, modal);
         this.palavras = plavras;
         this.progrSim = new ProgressoSimulacao() {
@@ -48,7 +45,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
 
             @Override
             public void print(String text, Color cor) {
-                Document doc = jTextPaneNotificacao.getDocument();
+                javax.swing.text.Document doc = jTextPaneNotificacao.getDocument();
                 try {
                     if (cor != null) {
                         StyleConstants.setForeground(configuraCor, cor);
@@ -66,7 +63,8 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             }
         };
         initComponents();
-        this.aDesenho = area;
+        this.modelo = modelo;
+        this.modeloTexto = modeloTexto;
         this.tarefas = null;
         this.redeDeFilas = null;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -108,7 +106,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         });
 
         jTextPaneNotificacao.setEditable(false);
-        jTextPaneNotificacao.setFont(new java.awt.Font("Arial", 1, 12));
+        jTextPaneNotificacao.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jScrollPane.setViewportView(jTextPaneNotificacao);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -156,7 +154,8 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     private Thread threadSim;
     private RedeDeFilas redeDeFilas;
     private List<Tarefa> tarefas;
-    private AreaDesenho aDesenho;
+    private String modeloTexto;
+    private Document modelo;
     private ResourceBundle palavras;
     private double porcentagem = 0;
     private ProgressoSimulacao progrSim;
@@ -199,24 +198,23 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         try {
             //0%
             //Verifica se foi construido modelo na area de desenho
-            progrSim.validarInicioSimulacao(aDesenho);//[5%] --> 5%
+            progrSim.validarInicioSimulacao(modelo);//[5%] --> 5%
             //Constrói e verifica modelos icônicos e simuláveis
-            progrSim.AnalisarModelos(aDesenho.toString());//[20%] --> 25%
+            progrSim.AnalisarModelos(modeloTexto);//[20%] --> 25%
             //criar grade
             progrSim.print("Mounting network queue.");
             progrSim.print(" -> ");
-            this.redeDeFilas = aDesenho.getRedeDeFilas();
+            this.redeDeFilas = IconicoXML.newRedeDeFilas(modelo);
             incProgresso(10);//[10%] --> 35%
             progrSim.println("OK", Color.green);
             //criar tarefas
             progrSim.print("Creating tasks.");
             progrSim.print(" -> ");
-            Tarefa.setContador(0);
-            this.tarefas = aDesenho.getCargasConfiguracao().toTarefaList(redeDeFilas);
+            this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
             incProgresso(10);//[10%] --> 45%
             progrSim.println("OK", Color.green);
             //Verifica recursos do modelo e define roteamento
-            Simulacao sim = new Simulacao(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+            Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
             //Realiza asimulação
             progrSim.println("Simulating.");
             //recebe instante de tempo em milissegundos ao iniciar a simulação
@@ -229,11 +227,12 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             //Calcula tempo de simulação em segundos
             double tempototal = (t2 - t1) / 1000;
             //Obter Resultados
+            Metricas metrica = sim.getMetricas();
             //[5%] --> 90%
             //Apresentar resultados
             progrSim.print("Showing results.");
             progrSim.print(" -> ");
-            JResultados janelaResultados = new JResultados(null, redeDeFilas, tarefas);
+            JResultados janelaResultados = new JResultados(null, metrica, redeDeFilas, tarefas);
             incProgresso(10);//[10%] --> 100%
             progrSim.println("OK", Color.green);
             progrSim.println("Simulation Execution Time = " + tempototal + "seconds");

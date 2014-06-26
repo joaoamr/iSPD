@@ -37,12 +37,12 @@ public class LogExceptions implements Thread.UncaughtExceptionHandler {
         scroll.setPreferredSize(new Dimension(500, 300));
     }
 
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
         ByteArrayOutputStream fosErr = new ByteArrayOutputStream();
         PrintStream psErr = new PrintStream(fosErr);
         e.printStackTrace(psErr);
         mostrarErro(fosErr);
-        e.printStackTrace();
     }
 
     private void mostrarErro(ByteArrayOutputStream objErr) {

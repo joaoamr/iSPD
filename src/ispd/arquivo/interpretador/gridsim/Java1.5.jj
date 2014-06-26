@@ -29,12 +29,14 @@ options {
 
 PARSER_BEGIN(JavaParser)
 
-//package ispd.arquivo.interpretador.gridsim;
+package ispd.arquivo.interpretador.gridsim;
 
 import java.io.*;
 import java.util.*;
 import java.applet.Applet;
 import javax.script.*;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 /**
  * Grammar to parse Java version 1.5
@@ -47,7 +49,9 @@ public class JavaParser
 	private List <String> TableOfValues = new ArrayList<String>();
 	private List <String> Array = new ArrayList<String>();
 	private List <String> NomeMetodo = new ArrayList<String>();
-	private List <List> ListaMetodo = new ArrayList<List>();
+	private List <String> Nome = new ArrayList<String>();
+	private List <Integer> Quantidade = new ArrayList<Integer>();
+	private List <HashMap<String,ResourceChar>> ListaMetodo = new ArrayList<HashMap<String,ResourceChar>>();
 	private ResourceChar temp = new ResourceChar();
 	private String nameVariable;
 	private String valueVariable;
@@ -64,14 +68,33 @@ public class JavaParser
 	private boolean non_primitiveType = false;
 	private boolean acmstr = false;
 	private String acm_string = "";
+	private String acm_for_init = "";
+	private String acm_for_condition = "";
+	private String acm_for_stop = "";
+	private boolean for_init = false;
+	private boolean for_condition = false;
+	private boolean for_stop = false;
 	private boolean complex_expression = false;
 	private String complex_value;
 	private boolean complex = false;
 	private String nameUpdate;
 	private boolean signal = false;
 	private boolean random = false;
-	private boolean random_indicator = false;
-   	
+   	public int cont_for = 0;
+	public int num_repeat = 0;
+	private boolean complex_for = true;
+	private boolean RIPRouter = false;
+	private boolean SimpleLink = false;
+	private boolean attachRouter = false;
+	private boolean attachHost = false;
+	private String nomeObjeto = "";
+   	private boolean machineList = false;
+	private boolean non_update_variable = false;
+	private boolean repeat = false;
+	private boolean num_met = false;
+	private boolean random_update = false;
+	private boolean flag_random = false;
+
 	//setters
 	public void setType(boolean enter)
 	{
@@ -88,8 +111,8 @@ public class JavaParser
 	public void setNameVariable(String name)
 	{
 		this.nameVariable = name;
-		System.out.print(this.nameVariable);
-		System.out.println();
+		//System.out.print(this.nameVariable);
+		//System.out.println();
 	}
 	public void setNameV(String name)
 	{
@@ -98,8 +121,8 @@ public class JavaParser
 	public void setValueVariable(String value)
 	{
 		this.valueVariable = value;
-	        System.out.println(this.valueVariable);
-		System.out.println();
+	        //System.out.println(this.valueVariable);
+		//System.out.println();
 	}
 	public void setValueV(String value)
 	{
@@ -133,6 +156,18 @@ public class JavaParser
 	{
 		this.acm_string = this.acm_string + enter;
 	}
+	public void setAcm_For_Init(String enter)
+	{
+		this.acm_for_init = this.acm_for_init + enter;
+	}
+	public void setAcm_For_Condition(String enter)
+	{
+		this.acm_for_condition = this.acm_for_condition + enter;
+	}
+	public void setAcm_For_Stop(String enter)
+	{
+		this.acm_for_stop = this.acm_for_stop + enter;
+	}  
 	public void setAcmstr(boolean enter)
 	{
 		this.acmstr = enter;
@@ -161,9 +196,65 @@ public class JavaParser
 	{
 		this.random = enter;
 	}
-	public void setRandom_Indicator(boolean enter)
+	public void setFor_Init(boolean enter)
 	{
-		this.random_indicator = enter;
+		this.for_init = enter;
+	}
+	public void setFor_Condition(boolean enter)
+	{
+		this.for_condition = enter;
+	}
+	public void setFor_Stop(boolean enter)
+	{
+		this.for_stop = enter;
+	}
+	public void setComplex_for(boolean enter)
+	{
+		this.complex_for = enter;
+	}
+	public void setRIPRouter(boolean enter)
+	{
+		this.RIPRouter = enter;
+	}
+	public void setSimpleLink(boolean enter)
+	{
+		this.SimpleLink = enter;
+	}
+	public void setAttachRouter(boolean enter)
+	{
+		this.attachRouter = enter;
+	}	
+	public void setAttachHost(boolean enter)
+	{
+		this.attachHost = enter;
+	}
+	public void setNomeObjeto(String enter)
+	{
+		this.nomeObjeto = enter;
+	}
+	public void setMachineList(boolean enter)
+	{
+		this.machineList = enter;
+	}
+	public void setNon_Update_Variable(boolean enter)
+	{
+		this.non_update_variable = enter;
+	}
+	public void setRepeat(boolean enter)
+	{	
+		this.repeat = enter;
+	}
+	public void setNum_Method(boolean enter)
+	{
+		this.num_met = enter;
+	}
+	public void setRandom_Update(boolean enter)
+	{
+		this.random_update = enter;
+	}
+	public void setFlag_Random(boolean enter)
+	{
+		this.flag_random = enter;
 	}
 
 	//getters
@@ -223,6 +314,18 @@ public class JavaParser
 	{
 		return acm_string;
 	}
+	public String getAcm_For_Init()
+	{
+		return acm_for_init;
+	}
+	public String getAcm_For_Condition()
+	{
+		return acm_for_condition;
+	}
+	public String getAcm_For_Stop()
+	{
+		return acm_for_stop;
+	}
 	public boolean getAcmstr()
 	{
 		return acmstr;
@@ -251,12 +354,78 @@ public class JavaParser
 	{
 		return random;
 	}
-	public boolean getRandom_Indicator()
+	public boolean getFor_Init()
 	{
-		return random_indicator;
+		return for_init;
 	}
-
-	   
+	public boolean getFor_Condition()
+	{
+		return for_condition;
+	}
+	public boolean getFor_Stop()
+	{
+		return for_stop;
+	}
+	public boolean getComplex_for()
+	{
+		return complex_for;
+	}
+	public boolean getRIPRouter()
+	{
+		return RIPRouter;
+	}
+	public boolean getSimpleLink()
+	{
+		return SimpleLink;
+	}
+	public boolean getAttachRouter()
+	{
+		return attachRouter;
+	}
+	public boolean getAttachHost()
+	{
+		return attachHost;
+	}
+	public String getNomeObjeto()
+	{
+		return nomeObjeto;
+	}
+	public boolean getMachineList()
+	{
+		return machineList;
+	}
+	public boolean getNon_Update_Variable()
+	{
+		return non_update_variable;
+	}
+	public boolean getRepeat()
+	{
+		return repeat;
+	}
+	public boolean getNum_Method()
+	{
+		return num_met;
+	}
+	public List<String> getNomeMetodo() 
+        {
+            	return NomeMetodo;
+        }
+        public List<String> getNome() 
+        {
+            	return Nome;
+        }
+        public List<Integer> getQuantidade() 
+        {
+            	return Quantidade;
+        }   
+	public boolean getRandom_Update()
+	{	
+	    	return random_update;
+	} 
+	public boolean getFlag_Random()
+	{
+		return flag_random;
+	}
 
 	public void inserir(String variavel, String valor){//this method receive the name and value of variable and add it in a table of values, or update the value of the variable if already exists.
 		int posicao = TableOfNames.indexOf(variavel);
@@ -268,12 +437,12 @@ public class JavaParser
 		else
 			TableOfValues.set(posicao, valor);	
    	}
+	public int verifica_variavel(String variavel){//this method verify if a string is a variable.
+		int posicao = TableOfNames.indexOf(variavel);
+		return posicao;	
+   	}
 	public String retornar(String variavel, String valor){//this method receive the name of a variable and returns your value
 		int posicao = TableOfNames.indexOf(variavel);
-		if(getRandom_Indicator())
-		{
-			return "random";
-		}
 		if(posicao == -1)
 			return variavel;
 		else
@@ -296,7 +465,7 @@ public class JavaParser
 			int posicao = TableOfNames.indexOf(variavel);
 			String pos = String.valueOf(posicao);  
 			Array.add(pos);
-			System.out.println("pos" + pos);
+			//System.out.println("pos" + pos);
  		}
  		else
 		{
@@ -305,50 +474,102 @@ public class JavaParser
    	}	
 	public void update_value(String variavel, String sinal){//this method update a value of variable that was incremented or decremented
 		int posicao = TableOfNames.indexOf(variavel);	
-		if(sinal.equals("++"))
+		if(sinal.equals("++") && !getFor_Stop())
 		{
 			String valor = TableOfValues.get(posicao);
 			int value = Integer.parseInt(valor);
 			value++;
 			valor = String.valueOf(value);
-			System.out.println("valor: " + value);
-			System.out.println();
+			//System.out.println("valor: " + value);
+			//System.out.println();
 			TableOfValues.set(posicao, valor); 
 		}
-		if(sinal.equals("--"))
+		if(sinal.equals("--") && !getFor_Stop() )
 		{
 			String valor = TableOfValues.get(posicao);
 			int value = Integer.parseInt(valor);
 			value--;
 			valor = String.valueOf(value);
-			System.out.println("valor: " + value);
-			System.out.println();
+			//System.out.println("valor: " + value);
+			//System.out.println();
 			TableOfValues.set(posicao, valor);
 		}
 	}
+	public void inserir_metodo(String variavel){//this method receive the name and value the numbers of a method and add it in a table of values, or update the value of the variable if already exists.
+		int posicao = Nome.indexOf(variavel);
+		//System.out.print("Nome:" + variavel);
+		if(posicao == -1){
+			Nome.add(variavel);
+			if(getFor()){
+				Quantidade.add(num_repeat);
+				//System.out.println(" Quantidade de repeticoes do método:" + num_repeat);
+			}
+			else{
+				Quantidade.add(1);
+				//System.out.println(" Quantidade de repeticoes do método:" + 1);
+			}
+		}
+		else{
+			int val = Quantidade.get(posicao);
+			val = val + 1;
+			Quantidade.set(posicao, val);
+			//System.out.println(" Quantidade de repeticoes do método:" + val);	
+		}
+   	}
 	public void setStringEmpty()//reinitialize variable acm_string
 	{
 		acm_string = "";
 	}
-	public String update_value_complex(){//this method update complex expressions (Example x = x + y + 100 + 11.1;)
+	public void setForInitEmpty()//reinitialize variable acm_for_init
+	{
+		acm_for_init = "";
+	}
+	public void setForConditionEmpty()//reinitialize variable acm_for_condition
+	{
+		acm_for_condition = "";
+	}
+	public void setForStopEmpty()//reinitialize variable acm_for_stop
+	{
+		acm_for_stop = "";
+	}
+	public Object update_value_complex(){//this method update complex expressions (Example x = x + y + 100 + 11.1;)
 		try{
 			String expression = getAcm_String();
 			ScriptEngine js = new ScriptEngineManager().getEngineByName("JavaScript");
 		 	Object result;
 		   	result = js.eval(expression);
 			String res = String.valueOf(result);
-			System.out.println("resultado:" + res);
-			System.out.println();
+			//void analiseSystem.out.println("resultado:" + res);
+			//System.out.println();
 			return res;
 			
 				 
 		}		
 		catch (ScriptException ex) {
-		       	System.out.println("Falha no Update");
-			return "";
+		       	//System.out.println("Variável atualizada por uma chamada de método ou de função, update não realizado");
+                        if(ListaMetodo.get(ListaMetodo.size()-1).containsKey(getAcm_String())){
+                            return ListaMetodo.get(ListaMetodo.size()-1).get(getAcm_String());
+                        }
+                        return getAcm_String();
 		}
 
 		
+	}
+	public Object parameter_expression(String enter){
+		if(!enter.equals(","))
+		{
+			setAcm_String(enter);
+			//setAcmstr(true);
+			//System.out.println(getAcm_String());
+			return null;
+		}else{
+			setAcmstr(false);
+			//System.out.println(getAcm_String());
+		        Object valor = update_value_complex(); 
+			//System.out.println("Valor:"+valor);	
+			setStringEmpty();
+			return valor;
+		}
 	}
 	public void create_expression(String enter)//stores expression to pass as a parameter  
 	{
@@ -360,14 +581,249 @@ public class JavaParser
 		}
 		else{
 			setAcmstr(false);
-			System.out.println(getAcm_String());
-		        String valor = update_value_complex(); 
-			int posicao = TableOfNames.indexOf(getNameUpdate());	
+			//System.out.println(getAcm_String());
+		        String valor = (String) update_value_complex(); 
+			int posicao = TableOfNames.indexOf(getNameUpdate());
+			//System.out.println("Nome:"+getNameUpdate());
+			//System.out.println("Valor:"+valor);	
 			if(posicao != -1 && !valor.equals(""))
 				TableOfValues.set(posicao, valor);		
 			setStringEmpty();			
 		}
 	}
+	public Object var_val(){//this method update complex expressions (Example x = x + y + 100 + 11.1;)
+		String res = "";
+		String expression = getAcm_String();
+		if(!expression.equals("null") && !expression.equals("true") && !expression.equals("false"))
+		{		
+			try{
+				ScriptEngine js = new ScriptEngineManager().getEngineByName("JavaScript");
+			 	Object result;
+			   	result = js.eval(expression);
+				res = String.valueOf(result);
+				if(result instanceof Double)
+				{
+					Double tempVar = (Double) result;
+					int r = tempVar.intValue();
+					res = String.valueOf(r);
+				}
+				else 
+				{
+					int r = Integer.parseInt(res);
+					res = String.valueOf(r);
+				}
+				return res;
+			}		
+			catch (ScriptException ex) {
+					if(!getFlag_Random()){					
+						res = JOptionPane.showInputDialog("Expressão " + getNameUpdate() + " atualizada por uma chamada de método ou de função, update não realizado, digite o valor que deseja atribuir");		       	
+                                                while(res == null){
+                                                    res = JOptionPane.showInputDialog("Expressão " + getNameUpdate() + " atualizada por uma chamada de método ou de função, update não realizado, digite o valor que deseja atribuir");		       	
+                                                }
+                                                return res;
+					}
+					else{
+						setFlag_Random(false);
+						return "random";
+					}
+			}
+		}
+		else 
+			return expression;
+	}
+	public void variable_declarator(String enter)//give the values in variable declaration  
+	{
+		String res;
+		if(!enter.equals(";"))
+		{
+			setAcm_String(enter);
+		}
+		else{
+			//System.out.println(getAcm_String());
+			String valor = (String) var_val(); 
+			setValueVariable(valor);		
+			setStringEmpty();
+		} 
+					
+	}
+	public String return_function_value(String enter)
+	{
+		if(!getFlag_Random()){
+             		String val = JOptionPane.showInputDialog("Chamada do método ou função " + enter+ " na atualização da variável " + getNameUpdate() + ", por favor, digite o valor retornado por ele(a)"); 
+                        while(val == null)
+                            val = JOptionPane.showInputDialog("Chamada do método ou função " + enter+ " na atualização da variável " + getNameUpdate() + ", por favor, digite o valor retornado por ele(a)"); 
+                        return val;
+		}
+		else
+			return "random";
+	}				
+	public void create_for_expression(String enter)//stores expression to pass as a parameter  
+	{
+		int res = 0;
+		int init = 0;
+		int increment = 0;
+		if(!enter.equals(";"))
+		{
+			if(getFor_Init())
+				setAcm_For_Init(enter);
+			if(getFor_Condition())
+				setAcm_For_Condition(enter);
+			if(getFor_Stop())
+				setAcm_For_Stop(enter);
+		}
+		else{
+			//System.out.println("Cond:" + getAcm_For_Condition());
+			if(getFor_Init())
+			{
+				setFor_Init(false);
+				//System.out.println("init:" + getAcm_For_Init());
+			}
+			if(getFor_Condition())
+			{
+				setFor_Condition(false);
+				//System.out.println(getAcm_For_Condition());
+			}
+			if(getFor_Stop())
+			{
+				setFor_Stop(false);
+				//System.out.println(getAcm_For_Stop());
+			}
+			int i = 0;
+			int l = 0;
+			String aux = "";
+			String aux2 = "";
+			String aux3 = "";
+			String val = "";
+			int k;
+			String initializer = retornar(getAcm_For_Init(), "");
+			init = Integer.parseInt(initializer);
+			while(getAcm_For_Condition().charAt(i) != '<' && getAcm_For_Condition().charAt(i) != '>' && getAcm_For_Condition().charAt(i) != '=' && getAcm_For_Condition().charAt(i) != '!')
+			{
+				aux = aux + getAcm_For_Condition().charAt(i);
+				i++;
+			}
+			if(getAcm_For_Init().equals(aux))
+			{
+				int x = i;
+				if(getAcm_For_Condition().charAt(i+1) == '=')
+					i++;
+				for (i = i+1; i<getAcm_For_Condition().length(); i++) 
+					aux2 = aux2 + getAcm_For_Condition().charAt(i);
+				try{
+					String expression = aux2;
+					ScriptEngine js = new ScriptEngineManager().getEngineByName("JavaScript");
+					Object result;
+					result = js.eval(expression);
+					String v = String.valueOf(result);
+					//System.out.println("Res:" + result);
+					if(result instanceof Double){
+						Double tempVar = (Double) result;
+						res = tempVar.intValue();
+					}
+					else 
+					{
+						res = Integer.parseInt(v);
+					}
+				}
+				catch (ScriptException ex) {
+					String num = JOptionPane.showInputDialog("Comando For(" + getAcm_For_Init() + ";" + getAcm_For_Condition() + ";" + getAcm_For_Stop() + ") incompreendido, por favor digite o número de repetições desejadas");
+					while(num == null)
+                                            num = JOptionPane.showInputDialog("Comando For(" + getAcm_For_Init() + ";" + getAcm_For_Condition() + ";" + getAcm_For_Stop() + ") incompreendido, por favor digite o número de repetições desejadas");
+				        num_repeat = Integer.parseInt(num);
+					setRepeat(true);
+				}
+				catch (NumberFormatException ex){
+					//System.out.println("Erro for cond");
+					res = Integer.parseInt(aux2);
+				}
+				if(getAcm_For_Condition().charAt(x) == '<' && getAcm_For_Condition().charAt(x+1) == '=')
+				{
+					res++;
+				}
+				if(getAcm_For_Condition().charAt(x) == '>' && getAcm_For_Condition().charAt(x+1) == '=')
+				{
+					init++;
+					//System.out.println("Init" + init);
+				}
+				if(getComplex_for())				
+				{				
+					for(int j=0; j<getAcm_For_Stop().length()-1; j++)
+					{					
+						if(getAcm_For_Stop().charAt(j) == '+' && getAcm_For_Stop().charAt(j+1) == '+')
+							increment = 1;
+						else if(getAcm_For_Stop().charAt(j) == '-' && getAcm_For_Stop().charAt(j+1) == '-')
+							increment = -1;							
+						else if(getAcm_For_Stop().charAt(j) == '+' && getAcm_For_Stop().charAt(j+1) == '=')
+						{
+							k = j+2;
+							while(k < getAcm_For_Stop().length())
+							{
+								val = val + getAcm_For_Stop().charAt(k);
+								k++;
+							}
+							increment = Integer.parseInt(val);
+							break;
+						}	
+						else if(getAcm_For_Stop().charAt(j) == '-' && getAcm_For_Stop().charAt(j+1) == '=')
+							{
+							k = j+2;
+							while( k <getAcm_For_Stop().length())
+							{	
+								val = val + getAcm_For_Stop().charAt(k);
+								k++;
+							}
+							increment = Integer.parseInt(val) * -1;
+							break;
+						}
+					}
+					if(increment == 0 )
+						setComplex_for(false);
+				}
+				if(!getComplex_for())
+				{
+					aux3 = getAcm_For_Stop();
+					aux3 = aux3.replaceAll(getAcm_For_Init(), "");
+					aux3 = aux3.replaceAll("=", "");
+					aux3 = aux3.replaceAll(" ", "");
+					
+					for(int w = 0; w < aux3.length(); w++)
+					{
+						if(aux3.charAt(w) == '+')
+							aux3 = aux3.replace("+", "");
+						
+					}
+					increment = Integer.parseInt(aux3);	
+				 }				
+				 //System.out.println("res:" + res);
+				 //System.out.println("Init:" +init);
+				 //System.out.println("Increment:" + increment);
+				 if(!getRepeat())
+				 {	
+				 	num_repeat = (res - init)/increment;
+					setRepeat(false);
+				 }
+				 //System.out.println("Repeat:" + num_repeat);
+				 setComplex_for(true);
+				 setForInitEmpty();
+				 setForConditionEmpty();
+				 setForStopEmpty();
+				 setSignal(false);
+			}	
+			else
+			{
+                                String num = JOptionPane.showInputDialog("Comando For(" + getAcm_For_Init() + ";" + getAcm_For_Condition() + ";" + getAcm_For_Stop() + ") incompreendido, por favor digite o número de repetições desejadas");
+                                while(num == null)
+                                    num = JOptionPane.showInputDialog("Comando For(" + getAcm_For_Init() + ";" + getAcm_For_Condition() + ";" + getAcm_For_Stop() + ") incompreendido, por favor digite o número de repetições desejadas");
+                                num_repeat = Integer.parseInt(num);
+                                setComplex_for(true);
+				setForInitEmpty();
+				setForConditionEmpty();
+				setForStopEmpty();
+				setSignal(false);
+			} 
+		
+		}
+	}		
 	public void return_value(String str)//returns the value of variable
 	{
 		int pos = TableOfNames.indexOf(str);
@@ -378,164 +834,274 @@ public class JavaParser
 	}
 	public void analise(Token t){//put the values ​​in the variables of a class
 		String parameter;
+		Object valor;
 		if(getNewInstance() && getResourceCharacteristics())
 		{
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0:	parameter = retornar(t.image, "");
-					temp.setArch(parameter);
-					break; 
-				case 1: parameter = retornar(t.image, "");
-					temp.setOS(parameter);
-					break;
-				case 2: parameter = retornar(t.image, "");
-					temp.setMlist(parameter);
-					break;
-				default: 
-					break;
+				switch(temp.getCont())
+				{
+					case 0:	parameter = valor.toString();
+						temp.setArch(parameter);
+						break; 
+					case 1: parameter = valor.toString();
+						temp.setOS(parameter);
+						break;
+					case 2: temp.setMlist((ResourceChar) valor);
+						break;
+					default: 
+						break;
+				}	
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 6){
+					if(getFor())
+					{
+						String Arch = temp.getArch();
+						String OS = temp.getOS();
+						ResourceChar Mlist = temp.getMLIST();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setArch(Arch);
+							temp.setOS(OS);
+							temp.setMlist(Mlist);
+							temp.setType("ResourceCharacteristics");
+							newElement();
+						}					
+					}
+					else
+					{
+						temp.setType("ResourceCharacteristics");
+						newElement();				
+					}
+				}	
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
 			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 3){
-				newElement();
-			}	
-			//System.out.println(t.image);
-		    	//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-		}
-		if(getNewInstance() && getGridResource())
-		{
-			switch(temp.getCont())
-			{
-				case 1: parameter = retornar(t.image, ""); 
-					temp.setBaud_rate(parameter);
-					break;
-				case 2: parameter = retornar(t.image, ""); 
-					temp.setSeed(parameter);
-					break;
-				case 3: parameter = retornar(t.image, "");
-					temp.setResConfig(parameter);
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 4){
-				newElement();
-			}	
-			//System.out.println(t.image);
-		    	//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
 		}
 		if(getNewInstance() && getGridlet())
 		{
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setId(parameter);
-					break;
-				case 1: parameter = retornar(t.image, "");
-					temp.setLength(parameter);
-					break;
-				case 2: parameter = retornar(t.image, "");
-					temp.setFile_size(parameter);
-					break;
-				case 3: parameter = retornar(t.image, "");
-					temp.setOutput_size(parameter);
-					break;
-				default:
-					break;
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setId(parameter);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setLength(parameter);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setFile_size(parameter);
+						break;
+					case 3: parameter = valor.toString();
+						temp.setOutput_size(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 4){
+					if(getFor())
+					{
+						String Id = temp.getId();
+						String Length = temp.getLenght();
+						String File_Size = temp.getFile_size();
+						String Output_Size = temp.getOutput_size();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setId(Id);
+							temp.setLength(Length);
+							temp.setFile_size(File_Size);
+							temp.setOutput_size(Output_Size);
+							temp.setType("gridlet");
+							newElement();
+						}
+					}
+					else
+					{
+						temp.setType("gridlet");
+						newElement();
+					}						
+				}
+				//System.out.println(t.image);
+			    	//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
 			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 4){
-				newElement();
-			}	
-			//System.out.println(t.image);
-		    	//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
 		}
-	 	if(getNewInstance() && getNewGridResource())
+	 	if(getNewInstance() && getGridResource())
 	 	{	
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 1: parameter = retornar(t.image, ""); 
-					temp.setBaud_rate(parameter);
-					break;
-				case 2: parameter = retornar(t.image, "");
-					temp.setResConfig(parameter);
-					break;
-				case 4: System.out.println(t.image);//verificar aqui
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 5){
-				newElement();
-			}	
-			//System.out.println(t.image);
-	    		//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-          	}
-	  	if(getNewInstance() && getNewPolicy())
-	  	{	
-			switch(temp.getCont())
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setName(parameter);
+						break;
+					case 1: temp.setLink((ResourceChar) valor);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setSeed(parameter);
+						break;
+					case 3: temp.setResConfig((ResourceChar) valor);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 9){
+					if(getFor())
+					{	
+						String nm = temp.getName();
+						ResourceChar Nl = temp.getLink();
+						String Sd = temp.getSeed();
+						ResourceChar ResChar = temp.getResConfig();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setName(nm);
+							temp.setLink(Nl);
+							temp.setSeed(Sd);
+							temp.setResConfig(ResChar);
+							temp.setType("GridResource");
+							newElement();
+						}
+					}
+					else
+					{
+						temp.setType("GridResource");
+						temp.getLink().setOrigination(temp);
+						newElement();
+					}
+				}	
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	          	}
+		}
+		if(getNewInstance() && getNewPolicy())
+		{	
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 1: parameter = retornar(t.image, "");
-					temp.setPOLICY(parameter);
-					break;
-				default:
-					break;
+				switch(temp.getCont())
+				{
+					case 1: parameter = valor.toString();
+						temp.setPOLICY(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 2){
+					if(getFor())
+					{
+						String Policy = temp.getPOLICY();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setPOLICY(Policy);
+							temp.setType("NewPolicy");	
+							newElement();
+						}
+					}
+					else
+					{
+						temp.setType("NewPolicy");
+						newElement();
+					}
+				}	
+				//System.out.println(t.image);
+				//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
 			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 2){
-				newElement();
-			}	
-			//System.out.println(t.image);
-	    		//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-	  	}	
-	 	if(getNewInstance() && getRandom())
-	  	{
-			switch(temp.getCont())
+		}	
+		/*if(getNewInstance() && getRandom())
+		{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setSeed(parameter);
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1){
-				newElement();
-			}
-			//System.out.println(t.image);
-	    		//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-	    	}	
-	 	if(getmList() && getadd() && getMachine())
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setSeed(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 1){
+					if(getFor())
+					{
+						String Seed2 = temp.getSeed();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setSeed(Seed2);
+							newElement();
+						}
+					}
+					else
+						newElement();
+				}
+				//System.out.println(t.image);
+	    			//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	    		}
+		}*/	
+	 	if(getNewInstance() && getMachine())
 	 	{
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setId(parameter);
-					break;
-				case 1: parameter = retornar(t.image, "");
-					temp.setPeRating(parameter);
-					break;
-				case 2: parameter = retornar(t.image, "");
-					temp.setMipsRating(parameter);
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 3){
-				newElement();
-			}
-			//System.out.println(t.image);
-	    		//System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-	 	}
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setId(parameter);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setPeRating(parameter);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setMipsRating(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 3){
+					if(getFor())
+					{
+						ResourceChar Ml = temp.getOrigination();
+						String Id2 = temp.getId();
+						String PeRating = temp.getPeRating();
+						String MipsRating = temp.getMipsRating();
+						for(int i = 0; i < num_repeat; i++)
+						{
+                                                        temp.setType("Machine");
+							temp.setId(Id2);
+							temp.setPeRating(PeRating);
+							temp.setMipsRating(MipsRating);
+                                                        temp.setOrigination(Ml);
+							if(Ml != null && Ml.getType().equals("MachineList"))
+								temp.getOrigination().getMach_List().add(temp);
+						
+							newElement();
+						}
+					}
+					else
+                                        {
+                                                temp.setType("Machine");
+						if(temp.getOrigination() != null && temp.getOrigination().getType().equals("MachineList"))
+							temp.getOrigination().getMach_List().add(temp);
+						newElement();
+                                        }
+				}
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	 		}
+		}
 	 	//if(getNewInstance() && getExample())
 	 	//{	
 			//System.out.println(t.image);
@@ -544,134 +1110,425 @@ public class JavaParser
 	 	//}
 	 	if(getlist() && getadd())
 	 	{
-			System.out.println(t.image);
-	    		System.out.println();
-			setvazio(false);//variable used to check if the parameters are empty
-	 	}	
-		if(getuserList() && getadd())
-	 	{
-			System.out.println("Lista usuário:"+temp.getCont());
-			switch(temp.getCont())
-			{
-				case 0: parameter = retornar(t.image, "");
-					System.out.println("Adicionando usuário:");
-					temp.setUserID(parameter);
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1){
-				newElement();
-			}	
 			//System.out.println(t.image);
 	    		//System.out.println();
 			setvazio(false);//variable used to check if the parameters are empty
 	 	}	
+		if(getuserList() && getadd())
+	 	{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				//System.out.println("Lista usuário:"+temp.getCont());
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						//System.out.println("Adicionando usuário:");
+                                                temp.setType("ResourceUser");
+						temp.setUserID(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 1){
+					if(getFor())
+					{
+						String UserID = temp.getUserID();
+						for(int i = 0; i < num_repeat; i++)
+						{
+                                                        temp.setType("ResourceUser");
+							temp.setUserID(UserID);
+							newElement();
+						}
+					}
+					else
+						newElement();
+				
+				}	
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+		 	}
+		}	
 	 	if(getGridSimStandardPE() && getRating())
 	 	{	
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setPeRating(parameter);
-					break;
-				default:
-					break;
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setPeRating(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 1){
+					if(getFor())
+					{
+						String PeRating2 = temp.getPeRating();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setPeRating(PeRating2);
+							newElement();
+						}
+					}
+					else
+						newElement();
+				
+				}	
+				//System.out.println(t.image);
+				//System.out.println(); 	 
+				setvazio(false);//variable used to check if the parameters are empty
 			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1){
-				newElement();
-			}	
+		}
+		if(getGridSimRandom() && getreal())
+		{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setFile_size(parameter);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setMin_range(parameter);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setMax_range(parameter);
+						break;
+					case 3: parameter = valor.toString();
+						temp.setInterval(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 4){
+					if(getFor())
+					{
+						String File_Size2 = temp.getFile_size();
+						String Min_range = temp.getMin_range();
+						String Max_range = temp.getMax_range();
+						String Interval = temp.getInterval(); 
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setFile_size(File_Size2);
+							temp.setMin_range(Min_range);
+							temp.setMax_range(Max_range);
+							temp.setInterval(Interval);
+							newElement();
+						}
+					}
+					else
+						newElement();
+				
+				}	
+				//if(t.image.equals("random"))
+				//{
+				//	System.out.print(t.image);
+				//}
+				//else
+				//{
+				//	System.out.println(t.image);				
+				//	System.out.println();
+				//}
+				setvazio(false);//variable used to check if the parameters are empty
+			 }
+		}	
+	 	if(getgridlet() && getuser())
+	 	{	
 			//System.out.println(t.image);
 	    		//System.out.println(); 	 
 			setvazio(false);//variable used to check if the parameters are empty
 	 	}	
-	 	if(getGridSimRandom() && getreal())
-	 	{	
-			switch(temp.getCont())
-			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setFile_size(parameter);
-					break;
-				case 1: parameter = retornar(t.image, "");
-					temp.setMin_range(parameter);
-					break;
-				case 2: parameter = retornar(t.image, "");
-					temp.setMax_range(parameter);
-					break;
-				case 3: parameter = retornar(t.image, "");
-					temp.setInterval(parameter);
-					break;
-				default:
-					break;
-			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 4){
-				newElement();
-			}	
-			//if(t.image.equals("random"))
-			//{
-			//	System.out.print(t.image);
-			//}
-			//else
-			//{
-			//	System.out.println(t.image);				
-			//	System.out.println();
-			//}
-			setvazio(false);//variable used to check if the parameters are empty
-		}	
-	 	if(getgridlet() && getuser())
-	 	{	
-			System.out.println(t.image);
-	    		System.out.println(); 	 
-			setvazio(false);//variable used to check if the parameters are empty
-	 	}	
 	 	if(gettoMIs() && getGridSimStandardPE())
 	 	{
-			switch(temp.getCont())
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
 			{
-				case 0: parameter = retornar(t.image, "");
-					temp.setRandom(parameter);
-					break;
-				default:
-					break;
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						temp.setRandom(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 1){
+					if(getFor())
+					{
+						String Random = temp.getRandom();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setRandom(Random);
+							newElement();
+						}
+					}
+					else
+						newElement();
+				
+				}	
+				//System.out.print(t.image);
+		    		setvazio(false);//variable used to check if the parameters are empty
 			}
-			temp.setCont(temp.getCont() + 1);
-			if(temp.getCont() == 1){
-				newElement();
-			}	
-			//System.out.print(t.image);
-	    		setvazio(false);//variable used to check if the parameters are empty
+		}
+		if(getNewInstance() && getRIPRouter())
+	 	{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						parameter = parameter.replaceAll("\"", "");
+						temp.setName_Router(parameter);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setActivity(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 2){
+					if(getFor())
+					{
+						String name_rt = temp.getName_Router();
+						String activ = temp.getActivity();
+						for(int i = 0; i < num_repeat; i++)
+						{
+                                                        temp.setType("Router");
+							temp.setName_Router(name_rt);
+							temp.setPeRating(activ);
+							newElement();
+						}
+					}
+					else
+                                        {
+                                                temp.setType("Router");
+						newElement();
+                                        }
+				}
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	 		}
+		}
+		if(getNewInstance() && getSimpleLink())
+	 	{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				switch(temp.getCont())
+				{
+					case 0: parameter = valor.toString();
+						parameter = parameter.replaceAll("\"", "");
+						temp.setName_Link(parameter);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setBaud_rate(parameter);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setPropDelay(parameter);
+						break;
+					case 3: parameter = valor.toString();
+						temp.setMtu(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 4){
+					if(getFor())
+					{
+						String name = temp.getName_Link();
+						String baud_rate = temp.getBaud_rate();
+						String PropDelay = temp.getPropDelay();
+						String Mtu = temp.getMtu();
+						for(int i = 0; i < num_repeat; i++)
+						{
+                                                        temp.setType("SimpleLink");
+							temp.setName_Link(name);
+							temp.setBaud_rate(baud_rate);
+							temp.setPropDelay(PropDelay);
+							temp.setMtu(Mtu);
+							newElement();
+						}
+					}
+					else
+                                        {
+                                                temp.setType("SimpleLink");
+						newElement();
+                                        }
+				}
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	 		}
+		}
+		if(getAttachRouter())
+	 	{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				switch(temp.getCont())
+				{
+					case 0:	temp.setRouter((ResourceChar) valor);
+						break;
+					case 1: temp.setLink((ResourceChar) valor);
+						break;
+					case 2: parameter = valor.toString();
+						temp.setScheduler(parameter);
+						break;
+					case 3: parameter = valor.toString();
+						temp.setScheduler2(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 4){
+					if(getFor())
+					{
+						ResourceChar R_t = temp.getOrigination();
+						ResourceChar rt = temp.getRouter();
+						ResourceChar lk = temp.getLink();
+						String sched = temp.getScheduler();
+						String sched2 = temp.getScheduler2();
+						for(int i = 0; i < num_repeat; i++)
+						{
+							temp.setType("attachRouter");
+							temp.setOrigination(R_t);
+							temp.setRouter(rt);
+							temp.setLink(lk);
+							temp.setScheduler(sched);
+							temp.setScheduler2(sched2);
+							newElement();
+						}
+					}
+					else
+                                        {
+                                                temp.setType("attachRouter");
+						//Connect the origination with the destination of link
+						//falta fazer dentro do for
+						temp.getLink().setOrigination(temp.getOrigination());
+						temp.getLink().setRouter(temp.getRouter());
+						newElement();
+                                        }
+				}
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	 		}
+		}
+		if(getAttachHost())
+	 	{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null)
+			{
+				switch(temp.getCont())
+				{
+					case 0:	temp.setCoreAttach(valor);
+						break;
+					case 1: parameter = valor.toString();
+						temp.setScheduler(parameter);
+						break;
+					default:
+						break;
+				}
+				temp.setCont(temp.getCont() + 1);
+				if(temp.getCont() == 2){
+					if(getFor())
+					{
+						temp.setCoreAttach("ALL");
+						temp.setType("attachHost");
+						newElement();
+					}
+					else
+                                        {
+                                                temp.setType("attachHost");
+						newElement();
+                                        }
+				}
+				//System.out.println(t.image);
+		    		//System.out.println();
+				setvazio(false);//variable used to check if the parameters are empty
+	 		}
+		}
+		if(getNewInstance() && getMachineList() && getvazio() && t==null)
+		{
+			temp.setMach_List(new ArrayList<ResourceChar>());
+			temp.setType("MachineList");
+			newElement();						
+			setvazio(false);
+		}
+		if(getadd() && getMachineList() && !getNewInstance())
+		{
+			valor = parameter_expression(retornar(t.image, ""));
+			if(valor!=null && temp.getOrigination()!=null)
+			{
+				temp.getOrigination().getMach_List().add((ResourceChar)valor);
+			}
+			setvazio(false);
 		}
 	 	if(getast())
 	 	{
-			System.out.println(t.image);
-			System.out.println();
+			//System.out.println(t.image);
+			//System.out.println();
 			setast(false);//variable used to check if the parameters are empty
 	 	}		
 	}
 	
 	public void escreverLista(){
 		for(int i = 0; i < ListaMetodo.size(); i++){
-			System.out.println("Metodo: "+NomeMetodo.get(i)+" com "+ListaMetodo.get(i).size()+" elementos");
+			//System.out.println("Metodo: "+NomeMetodo.get(i)+" com "+ListaMetodo.get(i).size()+" elementos");
 			//For para percorrer lista
-			for(Object obj : ListaMetodo.get(i)){
-				ResourceChar res = (ResourceChar) obj;
-				System.out.println(" Id "+res.getId()+" User "+res.getUserID());
-			}
+			for (Map.Entry<String,ResourceChar> object : ListaMetodo.get(i).entrySet()) {
+                            String key = object.getKey();
+			    ResourceChar res = object.getValue();
+                            //System.out.println("Key: "+key+" Tipo "+res.getType()+" Id "+res.getId()+" User "+res.getUserID());
+			    //if(res.getMach_List() != null)
+				//System.out.println(" TamanhoMlist " + res.getMach_List().size()); 
+                        }
 		}
 	}
 
+       public List<HashMap<String,ResourceChar>> getListaMetodo(){
+                return ListaMetodo;
+        }
+        
+        public ResourceChar Criar(ResourceChar Original, String novoNome){
+           ResourceChar temp =  new ResourceChar();
+           temp.setName(novoNome);
+           temp.setSeed(Original.getSeed());
+           temp.setName_Link(novoNome);
+           temp.setBaud_rate(Original.getBaud_rate());
+           temp.setPropDelay(Original.getPropDelay());
+           temp.setMtu(Original.getMtu());
+           temp.setId(Original.getId());
+           temp.setPeRating(Original.getPeRating());
+           temp.setMipsRating(Original.getMipsRating());
+           temp.setType(Original.getType());
+           temp.setPropDelay(Original.getPropDelay());
+           return temp;
+       }
+
 	public class ResourceChar// class of parameters values to iSPD
 	{
+		private String type;
 		private String arch;
 		private String os;
-		private String mList;
+		private ResourceChar mList;
 		private String policy;
 		private String name;
 		private String baud_rate;
 		private String seed;
-		private String resConfig;
+		private ResourceChar resConfig;
 		private String id;
 		private String length; 
 		private String file_size;
@@ -694,16 +1551,27 @@ public class JavaParser
 		private String interval;
 		private String random;
 		private int cont = 0;
+		private String name_router;
+		private String activity;
+		private String name_link;
+		private String propDelay;
+		private String mtu;
+		private ResourceChar router;
+		private ResourceChar link;
+		private String scheduler;
+		private String scheduler2;
+		private Object coreAttach;
+		private ResourceChar origination;
+		private List<ResourceChar> mach_list; 
+
 		public ResourceChar()
 		{
 			arch = "";
 			os = "";
-			mList = "";
 			policy = "";
 			name = "";
 			baud_rate = "0.0";
 			seed = "0.0";
-			resConfig = "";
 			id = "";
 			length = "0.0"; 
 			file_size = "0.0";
@@ -725,163 +1593,166 @@ public class JavaParser
 			random = "0.0";
 			nameVariable = "";
 			valueVariable = "";
+			type = "";
+			scheduler = "";
+			scheduler2 = "";
 		}
 		//setters
 		public void setArch(String arch)
 		{
 			this.arch = arch;
-			System.out.println(this.arch);
-			System.out.println();
+			//System.out.println(this.arch);
+			//System.out.println();
 		}
 		public void setOS(String os)
 		{
 			this.os = os;
-			System.out.println(this.os);
-			System.out.println();
+			//System.out.println(this.os);
+			//System.out.println();
 		}
-		public void setMlist(String mList)
+		public void setMlist(ResourceChar mList)
 		{
 			this.mList = mList;
-			System.out.println(this.mList);
-			System.out.println();
+			//System.out.println(this.mList);
+			//System.out.println();
 		}		
 		public void setPOLICY(String policy)
 		{
 			this.policy = policy;
-			System.out.println(this.policy);
-			System.out.println();
+			//System.out.println(this.policy);
+			//System.out.println();
 		}
 		public void setName(String name)
 		{
 			this.name = name;
-			System.out.println(this.name);
-			System.out.println();
+			//System.out.println(this.name);
+			//System.out.println();
 		}
 		public void setBaud_rate(String baud_rate)
 		{
 			this.baud_rate = baud_rate;
-			System.out.println(this.baud_rate);
-			System.out.println();
+			//System.out.println(this.baud_rate);
+			//System.out.println();
 		}
 		public void setSeed(String seed)
 		{
 			this.seed = seed;
-			System.out.println(this.seed);
-			System.out.println();
+			//System.out.println(this.seed);
+			//System.out.println();
 		}
-		public void setResConfig(String resConfig)
+		public void setResConfig(ResourceChar resConfig)
 		{
 			this.resConfig = resConfig;
-			System.out.println(this.resConfig);
-			System.out.println();
+			//System.out.println(this.resConfig);
+			//System.out.println();
 		}
 		public void setId(String id)
 		{
 			this.id = id;
-			System.out.println(this.id);
-			System.out.println();
+			//System.out.println(this.id);
+			//System.out.println();
 		}
 		public void setLength(String length)
 		{
 			this.length = length;
-			System.out.println(this.length);
-			System.out.println();
+			//System.out.println(this.length);
+			//System.out.println();
 		}
 		public void setFile_size(String file_size)
 		{
 			this.file_size = file_size;
-			System.out.println(this.file_size);
-			System.out.println();
+			//System.out.println(this.file_size);
+			//System.out.println();
 		}
 		public void setOutput_size(String output_size)
 		{
 			this.output_size = output_size;
-			System.out.println(this.output_size);
-			System.out.println();
+			//System.out.println(this.output_size);
+			//System.out.println();
 		}
 		public void setMin_range(String min_range)
 		{
 			this.min_range = min_range;
-			System.out.println(this.min_range);
-			System.out.println();
+			//System.out.println(this.min_range);
+			//System.out.println();
 		}
 		public void setMax_range(String max_range)
 		{
 			this.max_range = max_range;
-			System.out.println(this.max_range);
-			System.out.println();
+			//System.out.println(this.max_range);
+			//System.out.println();
 		}
 		public void setEntityName(String entityName_)
 		{
 			this.entityName_ = entityName_;
-			System.out.println(this.entityName_);
-			System.out.println();
+			//System.out.println(this.entityName_);
+			//System.out.println();
 		}
-			public void setResourceID(String resourceID)
+		public void setResourceID(String resourceID)
 		{
 			this.resourceID = resourceID;
-			System.out.println(this.resourceID);
-			System.out.println();
+			//System.out.println(this.resourceID);
+			//System.out.println();
 		}
 		public void setUserID(String userID)
 		{
 			this.userID = userID;
-			System.out.println(this.userID);
-			System.out.println();
+			//System.out.println(this.userID);
+			//System.out.println();
 		}
 		public void setTotal_resource(String Total_resource)
 		{
 			this.total_resource = total_resource;
-			System.out.println(this.total_resource);
-			System.out.println();
+			//System.out.println(this.total_resource);
+			//System.out.println();
 		}
 		public void setTotalMachine(String totalMachine)
 		{
 			this.totalMachine = totalMachine;
-			System.out.println(this.totalMachine);
-			System.out.println();
+			//System.out.println(this.totalMachine);
+			//System.out.println();
 		}
 		public void setTotalPE(String totalPE)
 		{
 			this.totalPE = totalPE;
-			System.out.println(this.totalPE);
-			System.out.println();
+			//System.out.println(this.totalPE);
+			//System.out.println();
 		}
 		public void setPeRating(String peRating)
 		{
 			this.peRating = peRating;
-			System.out.println(this.peRating);
-			System.out.println();
+			//System.out.println(this.peRating);
+			//System.out.println();
 		}
 		public void setTotalUser(String totalUser)
 		{
 			this.totalUser = totalUser;
-			System.out.println(this.totalUser);
-			System.out.println();
+			//System.out.println(this.totalUser);
+			//System.out.println();
 		}
 		public void setTotalGridlet(String totalGridlet)
 		{
 			this.totalGridlet = totalGridlet;
-			System.out.println(this.totalGridlet);
-			System.out.println();
+			//System.out.println(this.totalGridlet);
+			//System.out.println();
 		}
 		public void setGridletLength(String gridletLength)
 		{
 			this.gridletLength = gridletLength;
-			System.out.println(this.gridletLength);
-			System.out.println();
+			//System.out.println(this.gridletLength);
+			//System.out.println();
 		}
 		public void setBandwidth(String bandwidth)
 		{
 			this.bandwidth = bandwidth;
-			System.out.println(this.totalPE);
-			System.out.println();
+			//System.out.println(this.totalPE);
+			//System.out.println();
 		}
 		public void setDelay(String delay)
 		{
 			this.delay = delay;
-			System.out.println(this.delay);
-			System.out.println(); 
+			//System.out.println(this.delay);
+			//System.out.println(); 
 		}
 		public void setCont(int cont)
 		{
@@ -890,21 +1761,95 @@ public class JavaParser
 		public void setMipsRating(String mipsRating)
 		{
 			this.mipsRating = mipsRating;
-			System.out.println(this.mipsRating);
-			System.out.println();
+			//System.out.println(this.mipsRating);
+			//System.out.println();
 		}
 		public void setInterval(String interval)
 		{
 			this.interval = interval;
-			System.out.println(this.interval);
-			System.out.println();
+			//System.out.println(this.interval);
+			//System.out.println();
 		}
 		public void setRandom(String random)
 		{
 			this.random = random;
-			System.out.println(this.random);
-			System.out.println();
+			//System.out.println(this.random);
+			//System.out.println();
 		}
+		public void setType(String enter)
+		{
+			this.type = enter;
+		}
+		public void setName_Router(String enter)
+		{
+			this.name_router = enter;
+			//System.out.println(this.name_router);
+			//System.out.println();
+		}
+		public void setActivity(String enter)
+		{
+			this.activity = enter;
+			//System.out.println(this.activity);
+			//System.out.println();
+		}
+		public void setName_Link(String enter)
+		{
+			this.name_link = enter;
+			//System.out.println(this.name_link);
+			//System.out.println();
+		}
+		public void setPropDelay(String enter)
+		{
+			this.propDelay = enter;
+			//System.out.println(this.propDelay);
+			//System.out.println();
+		}
+		public void setMtu(String enter)
+		{
+			this.mtu = enter;
+			//System.out.println(this.mtu);
+			//System.out.println();
+		}
+		public void setRouter(ResourceChar enter)
+		{
+			this.router = enter;
+			//System.out.println(this.router);
+			//System.out.println();
+		}
+		public void setLink(ResourceChar enter)
+		{
+			this.link = enter;
+			//System.out.println(this.link);
+			//System.out.println();
+		}
+		public void setScheduler(String enter)
+		{
+			this.scheduler = enter;
+			//System.out.println(this.scheduler);
+			//System.out.println();
+		}
+		public void setScheduler2(String enter)
+		{
+			this.scheduler2 = enter;
+			//System.out.println(this.scheduler2);
+			//System.out.println();
+		}
+		public void setCoreAttach(Object enter)
+		{
+			this.coreAttach = enter;
+			//System.out.println(this.coreAttach);
+			//System.out.println();
+		}
+		public void setOrigination(ResourceChar enter)
+		{
+			this.origination = enter;
+			//System.out.println(this.origination);
+			//System.out.println();
+		}
+		public void setMach_List(List<ResourceChar> enter)
+		{
+			this.mach_list = enter;
+		}		
 		
 		//getters	
 		public String getArch()
@@ -915,7 +1860,7 @@ public class JavaParser
 		{
 			return os;
 		}
-		public String getMLIST()
+		public ResourceChar getMLIST()
 		{
 			return mList;
 		}		
@@ -935,7 +1880,7 @@ public class JavaParser
 		{
 			return seed;
 		}
-		public String getResConfig()
+		public ResourceChar getResConfig()
 		{
 			return resConfig;
 		}
@@ -1027,7 +1972,58 @@ public class JavaParser
 		{
 			return random;
 		}
-		
+		public String getType()
+		{
+			return type;
+		}
+		public String getName_Router()
+		{
+			return name_router;
+		}
+		public String getActivity()
+		{
+			return activity;
+		}
+		public String getName_Link()
+		{
+			return name_link;
+		}
+		public String getPropDelay()
+		{
+			return propDelay;
+		}
+		public String getMtu()
+		{
+			return mtu;
+		}
+		public ResourceChar getRouter()
+		{
+			return router;
+		}
+		public ResourceChar getLink()
+		{
+			return link;
+		}
+		public String getScheduler()
+		{
+			return scheduler;
+		}
+		public String getScheduler2()
+		{
+			return scheduler2;
+		}
+		public Object getCoreAttach()
+		{
+			return coreAttach;
+		}
+		public ResourceChar getOrigination()
+		{
+			return origination;
+		}
+		public List<ResourceChar> getMach_List()
+		{
+			return mach_list;
+		}
 	}
 /**
 * Class to hold modifiers.
@@ -1114,7 +2110,11 @@ public class JavaParser
      		}
    	}
 
-   	public JavaParser(String fileName)
+   	public JavaParser(){
+            
+        }
+        
+        public JavaParser(String fileName)
    	{
       		this(System.in);
 		try { ReInit(new FileInputStream(new File(fileName))); }
@@ -1154,9 +2154,14 @@ public class JavaParser
 		if(temp != null){
 			if(ListaMetodo.size() == 0){
 				NomeMetodo.add("main");
-				ListaMetodo.add(new ArrayList<List>());
+				ListaMetodo.add(new HashMap<String, ResourceChar>());
 			}
-			ListaMetodo.get(ListaMetodo.size()-1).add(temp);
+			//System.out.println("Adicionando elemento no método: "+NomeMetodo.get(ListaMetodo.size()-1));
+			if(!ListaMetodo.get(ListaMetodo.size()-1).containsKey(getNomeObjeto())){
+                            ListaMetodo.get(ListaMetodo.size()-1).put(getNomeObjeto(),temp);
+                        } else {
+                            ListaMetodo.get(ListaMetodo.size()-1).put(getNomeObjeto()+ListaMetodo.get(ListaMetodo.size()-1).size(),temp);
+                        }
 		}
 		temp = new ResourceChar();
 	}
@@ -1355,12 +2360,12 @@ public class JavaParser
 	public static void main(String args[]) {
     		JavaParser parser = null;
     		if (args.length == 0) {
-      			System.out.println("Java Parser Version 1.1:  Reading from standard input . . .");
+      			//System.out.println("Java Parser Version 1.1:  Reading from standard input . . .");
       			parser = new JavaParser(System.in);
     		} 
 		else 
 			if (args.length == 1){
-				System.out.println("Java Parser Version 1.1:  Reading from file " + args[0] + " . . .");
+				//System.out.println("Java Parser Version 1.1:  Reading from file " + args[0] + " . . .");
 				try{
 					parser = new JavaParser(new java.io.FileInputStream(args[0]));				
 	      			}
@@ -1370,10 +2375,10 @@ public class JavaParser
 	      			}
 	    		} 
 			else{
-			      System.out.println("Java Parser Version 1.1:  Usage is one of:");
-			      System.out.println("         java JavaParser < inputfile");
-			      System.out.println("OR");
-			      System.out.println("         java JavaParser inputfile");
+			      //System.out.println("Java Parser Version 1.1:  Usage is one of:");
+			      //System.out.println("         java JavaParser < inputfile");
+			      //System.out.println("OR");
+			      //System.out.println("         java JavaParser inputfile");
 		  	      return;
     			}
     			try{
@@ -1885,15 +2890,23 @@ void FieldDeclaration(int modifiers):
 {
 	// Modifiers are already matched in the caller
 	Type() VariableDeclarator() ("," VariableDeclarator() )* ";" 
+	{
+		//setPrimitiveValue(false);
+		//setPrimitiveType(false);
+		setNum_Method(false);
+	}
 }
 
 void VariableDeclarator():
 {}
 {	
 	{
-		if(getType())
+		setNum_Method(true);
+		if(getType()){
 			setPrimitiveType(true);
 			setUpdate_Variable(true);
+		}
+		
 	}
 	VariableDeclaratorId()[ "=" VariableInitializer() ]
 }
@@ -1905,8 +2918,17 @@ void VariableDeclaratorId():
 {
 	
 	t = <IDENTIFIER> {
-			  	if(getPrimitiveType())
-					setNameVariable(t.image);				 
+			  	//System.out.println("Declarando variavel: "+t.image);
+                                if(getPrimitiveType()){
+					setNameVariable(t.image);
+					setRandom_Update(false);
+				}
+				if(getNon_PrimitiveType())
+					setNomeObjeto(t.image);
+				if(getRandom())
+					inserir(t.image, "random");
+				if(getFor_Init())
+					setAcm_For_Init(t.image);
 		   	 } ( "[" "]" )*
 }
 
@@ -1917,7 +2939,13 @@ void VariableInitializer():
 	|
   	 Expression(){
 			if(getArrayStatus() == false){
-				inserir(getNameVariable(), getValueVariable());
+				if(getPrimitiveType() && getPrimitiveValue())
+				{
+					variable_declarator(";");
+					inserir(getNameVariable(), getValueVariable());
+					setPrimitiveValue(false);
+					setPrimitiveType(false);
+				}
 			}
 			else
 			{
@@ -1945,6 +2973,7 @@ void ArrayInitializer():
 		setPosArray(false);
 		setPrimitiveValue(false);
 		setPrimitiveType(false);
+		setNon_PrimitiveType(false);
 	}
 }
 
@@ -1970,15 +2999,22 @@ void MethodDeclarator():
 {
 	t = <IDENTIFIER> 
 	{
-		if(t.image.equals("main"))			
+		if(t.image.equals("main")){
 			setMain(true);
-		else if(!getVoid()){
-			System.out.println("Novo Metodo: "+t.image);
-			NomeMetodo.add(t.image);
-			ListaMetodo.add(new ArrayList<ResourceChar>());
-		} else {
-			System.out.println("Metodo void: "+t.image);
+			if(ListaMetodo.isEmpty()){
+				NomeMetodo.add("main");
+				ListaMetodo.add(new HashMap<String, ResourceChar>());
+			}
 		}
+		else if(!getVoid()){
+			//System.out.println("Novo Metodo: "+t.image);
+			NomeMetodo.add(t.image);
+			ListaMetodo.add(new HashMap<String,ResourceChar>());
+		} else {
+			//System.out.println("Metodo void: "+t.image);
+		}
+		
+		
 	}	
 	FormalParameters() ( "[" "]" )*
 }
@@ -2061,51 +3097,64 @@ void ClassOrInterfaceType():
 					if(t.image.equals("ResourceCharacteristics"))
 					{
 						setResourceCharacteristics(true);
-						System.out.println("Estanciando recursos:");
+						//System.out.println("Estanciando recursos:");
 						setvazio(true);
 					}
 					if(t.image.equals("GridResource"))
 					{
 						setGridResource(true);
-						System.out.println("Estanciando recursos do Grid:");
+						//System.out.println("Estanciando recursos do Grid:");
 						setvazio(true);
 					}		
 					if(t.image.equals("Gridlet"))
 					{
 						setGridlet(true);
-						System.out.println("Estanciando pacote de tarefas do Grid:");
-						setvazio(true);
-					}
-					if(t.image.equals("NewGridResource"))
-					{
-						setNewGridResource(true);
-						System.out.println("Criar novo recurso do grid:");
+						//System.out.println("Estanciando pacote de tarefas do Grid:");
 						setvazio(true);
 					}
 					if(t.image.equals("NewPolicy"))
 					{
 						setNewPolicy(true);
-						System.out.println("Criar nova politica de alocação:");
+						//System.out.println("Criar nova politica de alocação:");
 						setvazio(true);
 					}
-					if(getmList() && getadd() && t.image.equals("Machine"))
+					if(t.image.equals("Machine"))
 					{
 						setMachine(true);
-						System.out.println("Adicionando máquina à Grade:");
+						//System.out.println("Adicionando máquina à Grade:");
 						setvazio(true);
 					}
 					if(t.image.equals("Random"))
 					{
 						setRandom(true);
-						System.out.println("Estanciando parâmetros para o Grid:");
+						//System.out.println("Estanciando parâmetros para o Grid:");
 						setvazio(true);
+					}
+					if(t.image.equals("RIPRouter"))
+					{
+						setRIPRouter(true);
+						//System.out.println("Estanciando Roteador:");
+						setvazio(true);
+					}
+					if(t.image.equals("SimpleLink"))
+					{
+						setSimpleLink(true);
+						//System.out.println("Estanciando link simples:");
+						setvazio(true);
+					}
+					if(t.image.equals("MachineList"))
+					{
+						setMachineList(true);
+						//System.out.println("Adicionando na lista de máquinas:");
+						setvazio(true);
+						analise(null);
 					}
 					if((t.image).length()>=7)//verifies which characters make up the string until the seventh element,  because the next characters are variable
 					{
 						if((t.image.substring(0,7)).equals("Example"))
 						{
 							setExample(true);
-							System.out.println("Estanciando Exemplo:");
+							//System.out.println("Estanciando Exemplo:");
 							setvazio(true);
 						}
 					}
@@ -2114,19 +3163,25 @@ void ClassOrInterfaceType():
 		 		else//else only print messages on the screen
 		 		{
 		 	 		if(t.image.equals("GridResource"))
-						System.out.println("Recursos do Grid encontrados");
+						//System.out.println("Recursos do Grid encontrados");
 			 		if(t.image.equals("ResourceCharacteristics"))
-						System.out.println("Características de recursos encontradas");
+						//System.out.println("Características de recursos encontradas");
 					if(t.image.equals("Gridlet"))
-					        System.out.println("Pacote de tarefas do Grid encontrado");
+					        //System.out.println("Pacote de tarefas do Grid encontrado");
 					if(t.image.equals("NewGridResource"))
-						System.out.println("Novo recurso do grid encontrado");   		
+						//System.out.println("Novo recurso do grid encontrado");   		
 			 		if(t.image.equals("NewPolicy"))
-						System.out.println("Nova politica de alocação");
+						//System.out.println("Nova politica de alocação");
 			 		if(t.image.equals("Machine"))
-						System.out.println("Nova máquina encontrada");
-			 		if(t.image.equals("Random"))
-						System.out.println("Parâmetros randômicos encontrados");
+						//System.out.println("Nova máquina encontrada");
+			 		if(t.image.equals("Random")) {
+						//System.out.println("Parâmetros randômicos encontrados");
+                                                setRandom(true);
+                                        }
+                                        if(t.image.equals("GridSimRandom")) {
+						//System.out.println("Parâmetros randômicos encontrados");
+                                                setRandom(true);
+                                        }
 					if(t.image.equals("GridletList"))
 						setListaTarefas(true);
 					if(t.image.equals("ResourceUserList"))
@@ -2162,23 +3217,25 @@ void WildcardBounds():
 
 
 void PrimitiveType():
-{}
 {
-	 "boolean"
+	Token t;
+}
+{
+	 t = "boolean"
 	|
-	 "char"
+	 t = "char"
 	|
-  	 "byte"
+  	 t = "byte"
 	|
-  	 "short"
+  	 t = "short"
 	|
-  	 "int"
+  	 t = "int"
+ 	|
+  	 t = "long"
 	|
-  	 "long"
+  	 t = "float"
 	|
-  	 "float"
-	|
-  	 "double"
+  	 t = "double"
 }
 
 void ResultType():
@@ -2200,9 +3257,10 @@ void Name():
 }
 {
 	t = <IDENTIFIER>{ //check the identifier setting true if correct
-				setRandom_Indicator(false);
-				if(t.image.equals("GridSimRandom"))
-					setGridSimRandom(true);	
+				if(getNon_PrimitiveType() && getNum_Method() && getMain() && !getNewInstance())
+					inserir_metodo(t.image);
+			   	if(t.image.equals("GridSimRandom"))
+					setGridSimRandom(true);
 				if(t.image.equals("list"))
 					setlist(true);
 		    		if(t.image.equals("mList"))
@@ -2218,26 +3276,45 @@ void Name():
 		    		}
 		    		analise(t);
 		    		if(getPrimitiveValue() && getPrimitiveType())
-	 	    		{	
-					setValueVariable(t.image);
-					setPrimitiveValue(false);
-					setPrimitiveType(false);
-         	    		}
+				{
+					variable_declarator(retornar(t.image, ""));
+					//setPrimitiveType(false);
+					//setPrimitiveValue(false);
+				}
+				if(getNon_PrimitiveType())
+					setNon_PrimitiveType(false);
 				if(getIncrement())
 					setNameV(t.image);	
-				if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr()) 	
+				int ver = verifica_variavel(t.image);
+				if(ver == -1 && (!getGridSimRandom() && getComplex_Expression() && getComplex() && getSignal() && getAcmstr() && getNon_Update_Variable()))
+					create_expression(return_function_value(t.image));
+				else if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr()) 	
 					return_value(t.image);
-				if(getComplex_Expression())
+				if(getComplex_Expression() && (!getComplex() || !getSignal() || !getAcmstr()))
 				{
 					if(TableOfNames.indexOf(t.image) != -1)
 					{
 						setNameUpdate(t.image);
+						//System.out.println("Nome:" + t.image);
 						setComplex(true);
 						setAcmstr(true);
+						setRandom_Update(true);
 					}
-				}	
+				}
+				if(getFor_Condition())
+				{
+					if(getSignal())
+					{
+						String x = retornar(t.image, "");
+						setAcm_For_Condition(x);
+					}
+					else
+						setAcm_For_Condition(t.image);
+				}
+				if(getFor_Stop())
+					setAcm_For_Stop(t.image);
+
 				setRand(true);
-				
 				
 	}
   	( LOOKAHEAD(2) "." k=<IDENTIFIER>{ //check if the word after dot is the correct word and print messages
@@ -2248,6 +3325,7 @@ void Name():
 					     	//	System.out.println();
 					     	//	System.out.println();
 		    			     	//}
+						setNon_Update_Variable(true);
 						if(getmList() | getlist() | getuserList())
 					     	{	
 							if(k.image.equals("add"))					
@@ -2255,7 +3333,7 @@ void Name():
 								setadd(true);
 								if(getlist())
 								{
-									System.out.println("Adicionando tarefa:");
+									//System.out.println("Adicionando tarefa:");
 									setvazio(true);
 								}
 								if(getuserList())
@@ -2264,18 +3342,30 @@ void Name():
 								}
 							}
 				     		}
+						if(k.image.equals("add"))
+						{
+							
+							ResourceChar obj = ListaMetodo.get(ListaMetodo.size()-1).get(t.image);
+                                                        if(obj != null && obj.getType().equals("MachineList"))
+							{
+								setadd(true);
+								setMachineList(true);
+								temp.setOrigination(ListaMetodo.get(ListaMetodo.size()-1).get(t.image));
+							}
+							
+						}
 				     		if(getGridSimStandardPE())
 				     		{	
 							if(k.image.equals("setRating"))
 							{
 								setRating(true);
-								System.out.println("Atribuindo padrão a PE:");
+								//System.out.println("Atribuindo padrão a PE:");
 								setvazio(true);//variable used to check if the parameters are empty
 							}
 							if(k.image.equals("toMIs"))
 							{
 								settoMIs(true);
-								System.out.println("Atribuindo valor a length:");
+								//System.out.println("Atribuindo valor a length:");
 								setvazio(true);//variable used to check if the parameters are empty
 							}
 				     		}	
@@ -2284,7 +3374,7 @@ void Name():
 							if(k.image.equals("real"))
 							{
 								setreal(true);
-								System.out.println("Gerando um atributo randômico:");
+								//System.out.println("Gerando um atributo randômico:");
 								setvazio(true);//variable used to check if the parameters are empty
 				    			}
 				     		}	
@@ -2293,18 +3383,39 @@ void Name():
 							if(k.image.equals("setUserID"))
 							{
 								setuser(true);
-								System.out.println("Setando identificador de tarefa:");
+								//System.out.println("Setando identificador de tarefa:");
 								setvazio(true);//variable used to check if the parameters are empty
 							}
 				     		}
-						if(getRand() && (k.image.equals("nextDouble") | k.image.equals("next") | k.image.equals("nextBoolean") | k.image.equals("nextBytes") | k.image.equals("nextFloat") | k.image.equals("nextGaussian") | k.image.equals("nextInt") | k.image.equals("nextLong") | (t.image.equals("Math") && k.image.equals("random"))))
+						if(getRand() && (k.image.equals("real") | k.image.equals("nextDouble") | k.image.equals("next") | k.image.equals("nextBoolean") | k.image.equals("nextBytes") | k.image.equals("nextFloat") | k.image.equals("nextGaussian") | k.image.equals("nextInt") | k.image.equals("nextLong") | (t.image.equals("Math") && k.image.equals("random"))))
 						{
-							inserir(t.image, "random");
-							//System.out.println(t.image);
+							if(getRandom_Update()){
+								inserir(getNameUpdate(), "random");
+								//System.out.println("Add random to:");
+								//System.out.println(getNameUpdate());
+								setFlag_Random(true);
+							}
+							else{
+								inserir(getNameVariable(), "random");
+								//System.out.println("Add random to:");
+								//System.out.println(getNameVariable());
+								setFlag_Random(true);
+							}
+                                                        //System.out.println("Up "+getNameUpdate());
+                                                        //System.out.println("Var "+getNameVariable());
+                                                        
 							//System.out.println();
-							setRand(false);
-							setRandom_Indicator(true);
-						}						
+						}
+						if(k.image.equals("attachHost"))
+						{
+							setAttachHost(true);
+							temp.setOrigination(ListaMetodo.get(ListaMetodo.size()-1).get(t.image));
+						}
+						if(k.image.equals("attachRouter"))
+						{
+							setAttachRouter(true);
+							temp.setOrigination(ListaMetodo.get(ListaMetodo.size()-1).get(t.image));
+						}
 				   } )*
 }
 
@@ -2339,14 +3450,107 @@ void Expression():
 }
 
 void AssignmentOperator():
-{}
 {
-	"="
+	Token t;
+}
+{
+	t = "="
 	{
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
 		if(getComplex_Expression() && getComplex())
 			setSignal(true);
 	}
-	 | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
+	 | 
+	  t = "*="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "/="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "%="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "+="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "-="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "<<="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = ">>="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = ">>>="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "&="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "^="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
+	 |
+	  t = "|="
+	  {
+		if(getFor_Condition())
+			setAcm_For_Condition(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
+	  }
 }
 
 void ConditionalExpression():
@@ -2386,9 +3590,28 @@ void AndExpression():
 }
 
 void EqualityExpression():
-{}
 {
-	InstanceOfExpression() ( ( "==" | "!=" ) InstanceOfExpression() )*
+	Token t;
+}
+{
+	InstanceOfExpression() ( ( t = "==" 
+				   	{
+						if(getFor_Condition())
+							setAcm_For_Condition(t.image);
+						if(getFor_Stop())
+							setAcm_For_Stop(t.image);
+						setSignal(true);
+					}
+					
+				   |
+				    t = "!=" 
+				    	{
+						if(getFor_Condition())
+							setAcm_For_Condition(t.image);
+						if(getFor_Stop())
+							setAcm_For_Stop(t.image);
+						setSignal(true);	
+					}) InstanceOfExpression() )*
 }
 
 void InstanceOfExpression():
@@ -2398,15 +3621,30 @@ void InstanceOfExpression():
 }
 
 void RelationalExpression():
-{}
 {
-	ShiftExpression() ( ( "<" | ">" | "<=" | ">=" ) ShiftExpression() )*
+	Token t;
+}
+{
+	ShiftExpression() ( ( t = "<" | t = ">" | t = "<=" | t = ">=" )	{
+								if(getFor_Condition())
+									setAcm_For_Condition(t.image);
+								if(getFor_Stop())
+									setAcm_For_Stop(t.image);
+								setSignal(true);
+							}ShiftExpression() )*
 }
 
 void ShiftExpression():
-{}
 {
-	AdditiveExpression() ( ( "<<" | RSIGNEDSHIFT() | RUNSIGNEDSHIFT() ) AdditiveExpression() )*
+	Token t;
+}
+{
+	AdditiveExpression() ( ( t = "<<" {
+						if(getFor_Condition())
+							setAcm_For_Condition(t.image);
+						if(getFor_Stop())
+							setAcm_For_Stop(t.image);
+					  }| RSIGNEDSHIFT() | RUNSIGNEDSHIFT() ) AdditiveExpression() )*
 }
 
 void AdditiveExpression():
@@ -2416,8 +3654,21 @@ void AdditiveExpression():
 {
 	MultiplicativeExpression() ( ( t = "+" | t = "-" )
 	{
+		analise(t);
+		{
+			if(getFor_Condition())
+				setAcm_For_Condition(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+		}
 		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
-			create_expression(t.image);	
+			create_expression(t.image);
+		if(getPrimitiveValue() && getPrimitiveType())
+		{
+			variable_declarator(t.image);
+			//setPrimitiveType(false);
+			//setPrimitiveValue(false);
+		}
 	}
 	MultiplicativeExpression() )*	
 }
@@ -2434,8 +3685,21 @@ void MultiplicativeExpression():
 							//	settoMIs(false);
 							//	setast(true);
 							//}
+							analise(t);
+							{
+								if(getFor_Condition())
+									setAcm_For_Condition(t.image);
+								if(getFor_Stop())
+									setAcm_For_Stop(t.image);
+							}
 							if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
-								create_expression(t.image);		
+								create_expression(t.image);
+							if(getPrimitiveValue() && getPrimitiveType())
+							{
+								variable_declarator(t.image);
+								//setPrimitiveType(false);
+								//setPrimitiveValue(false);
+							}
 						     } UnaryExpression() )*
 }
 
@@ -2447,7 +3711,19 @@ void UnaryExpression():
 	{
 		setPrimitiveValue(true);
 	}(
-		 ( t = "+" | t = "-" ) UnaryExpression()
+		 ( t = "+" | t = "-" ) 
+	 	 {
+			if(getFor_Condition())
+				setAcm_For_Condition(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+			if(getPrimitiveValue() && getPrimitiveType())
+			{
+				variable_declarator(t.image);
+				//setPrimitiveType(false);
+				//setPrimitiveValue(false);
+			}
+		 }UnaryExpression()
 		|
 		 PreIncrementExpression()
 		|
@@ -2465,6 +3741,8 @@ void PreIncrementExpression():
 	{
 		if(getIncrement())
 			setValueV(t.image);
+		if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 	} 
 	PrimaryExpression()
 	{
@@ -2482,6 +3760,8 @@ void PreDecrementExpression():
 	{
 		if(getIncrement())
 			setValueV(t.image);
+		if(getFor_Stop())
+			setAcm_For_Stop(t.image);
 	} 
 	PrimaryExpression()
 	{
@@ -2530,12 +3810,20 @@ void PostfixExpression():
 		 { 
 			setIncrementUpdate(true); 
 			setValueV(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 		 } 
 		|
 		 t = "--" 
 		 {
 			setIncrementUpdate(true); 
 			setValueV(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 		 }
 	]
 	{
@@ -2577,24 +3865,38 @@ void PrimaryPrefix():
 	 Literal()
 	|
   	 "this"
+	 {
+		setNon_Update_Variable(true);
+	 }
  	|
- 	 "super" "." <IDENTIFIER>
+ 	 "super" "." 
+	 {
+		setNon_Update_Variable(true);
+	 } <IDENTIFIER>
 	|
 	 t = "(" 
 	 {
+		analise(t);
 		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
 			create_expression(t.image);
 	 }
 	 Expression() t = ")"
 	 {
+		analise(t);
 		if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
 			create_expression(t.image);
 	 }	
 	|
   	 AllocationExpression()
+	 {
+		setNon_Update_Variable(true);
+	 }
 	|
   	 LOOKAHEAD( ResultType() "." "class" )
   	 ResultType() "." "class"
+	 {
+		setNon_Update_Variable(true);
+	 }
 	|
   	 Name()
 }
@@ -2626,27 +3928,39 @@ void Literal():
 	 t=<INTEGER_LITERAL>{//check the words and print message
 		    		analise(t);
 		    		if(getPrimitiveValue() && getPrimitiveType())
-	 	    		{
-					setValueVariable(t.image);
-					setPrimitiveValue(false);
-					setPrimitiveType(false);
-         	    		}
+				{
+					variable_declarator(t.image);
+					//setPrimitiveType(false);
+					//setPrimitiveValue(false);
+				}
+				if(getNon_PrimitiveType())
+					setNon_PrimitiveType(false);
 				if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
-					create_expression(t.image);		    		
+					create_expression(t.image);
+				if(getFor_Condition())
+					setAcm_For_Condition(t.image);
+				if(getFor_Stop())
+					setAcm_For_Stop(t.image);
   	 }	
 	|
   	 t=<FLOATING_POINT_LITERAL>{
 					analise(t);
 					if(getPrimitiveValue() && getPrimitiveType())
-	 				{
-						setValueVariable(t.image);
-						setPrimitiveValue(false);
-						setPrimitiveType(false);
-         				}
+					{
+						variable_declarator(t.image);
+						//setPrimitiveType(false);
+						//setPrimitiveValue(false);
+					}
+					if(getNon_PrimitiveType())
+						setNon_PrimitiveType(false);
 					if(getIncrement())
 					{
 						setNameV(t.image);
 					}
+					if(getFor_Condition())
+						setAcm_For_Condition(t.image);
+					if(getFor_Stop())
+						setAcm_For_Stop(t.image);
 					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
 						create_expression(t.image);		    		  	 
 	 }
@@ -2654,25 +3968,59 @@ void Literal():
   	 t=<CHARACTER_LITERAL>{
 	      	       			analise(t);
 	 				if(getPrimitiveValue() && getPrimitiveType())
-	 				{	
-	 					setValueVariable(t.image);
-	 					setPrimitiveValue(false);
-	 					setPrimitiveType(false);
-	 				}
-					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
-						create_expression(t.image);		    		 
+					{
+						variable_declarator(retornar(t.image, ""));
+						//setPrimitiveType(false);
+						//setPrimitiveValue(false);
+					}
+					if(getNon_PrimitiveType())
+						setNon_PrimitiveType(false);
+					if(getFor_Condition())
+					{
+						if(getSignal())
+						{
+							String x = retornar(t.image, "");
+							setAcm_For_Condition(x);
+						}
+						else
+							setAcm_For_Condition(t.image);
+					}
+					if(getFor_Stop())
+						setAcm_For_Stop(t.image);
+					int ver = verifica_variavel(t.image);
+					if(ver == -1 && (getNon_Update_Variable() && getComplex_Expression() && getComplex() && getSignal() && getAcmstr()))
+						create_expression(return_function_value(t.image));
+					else if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+						create_expression(t.image);
 	 }
 	|
   	 t=<STRING_LITERAL>{
-			   		analise(t);
+					analise(t);
 					if(getPrimitiveValue() && getPrimitiveType())
-			 		{
-						setValueVariable(t.image);
-						setPrimitiveValue(false);
-						setPrimitiveType(false);
-			 		}
-					if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
-						return_value(t.image); 
+					{
+						variable_declarator(retornar(t.image, ""));
+						//setPrimitiveType(false);
+						//setPrimitiveValue(false);
+					}
+					if(getNon_PrimitiveType())
+						setNon_PrimitiveType(false);
+			 		if(getFor_Condition())
+					{
+						if(getSignal())
+						{
+							String x = retornar(t.image, "");
+							setAcm_For_Condition(x);
+						}
+						else
+							setAcm_For_Condition(t.image);
+					}
+					if(getFor_Stop())
+						setAcm_For_Stop(t.image);
+					int veri = verifica_variavel(t.image);
+					if(veri == -1 && (getComplex_Expression() && getComplex() && getSignal() && getAcmstr() && getNon_Update_Variable()))
+						create_expression(return_function_value(t.image));
+					else if(getComplex_Expression() && getComplex() && getSignal() && getAcmstr())
+						return_value(t.image);
 	 }
 	|
  	 BooleanLiteral()
@@ -2688,21 +4036,33 @@ void BooleanLiteral():
 	 t="true"{
 			analise(t);
 			if(getPrimitiveValue() && getPrimitiveType())
-	 		{
-				setValueVariable(t.image);
-				setPrimitiveValue(false);
-				setPrimitiveType(false);
-         	    	}
+			{
+				variable_declarator(t.image);
+				//setPrimitiveType(false);
+				//setPrimitiveValue(false);
+			}
+			if(getNon_PrimitiveType())
+				setNon_PrimitiveType(false);
+			if(getFor_Condition())
+				setAcm_For_Condition(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 	 }
 	|
  	 t="false"{
 			analise(t);
 		    	if(getPrimitiveValue() && getPrimitiveType())
-	 	    	{	
-				setValueVariable(t.image);
-				setPrimitiveValue(false);
-				setPrimitiveType(false);
-         	    	}
+			{
+				variable_declarator(t.image);
+				//setPrimitiveType(false);
+				//setPrimitiveValue(false);
+			}
+			if(getNon_PrimitiveType())
+				setNon_PrimitiveType(false);
+			if(getFor_Condition())
+				setAcm_For_Condition(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 	 }
 }
 
@@ -2714,85 +4074,116 @@ void NullLiteral():
 	t = "null"{
 			analise(t);
 		    	if(getPrimitiveValue() && getPrimitiveType())
-	 	    	{
-				setValueVariable(t.image);
-				setPrimitiveValue(false);
-				setPrimitiveType(false);
-         	    	}
+			{
+				variable_declarator(t.image);
+				//setPrimitiveType(false);
+				//setPrimitiveValue(false);
+			}
+			if(getNon_PrimitiveType())
+				setNon_PrimitiveType(false);
+			if(getFor_Condition())
+				setAcm_For_Condition(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
 	}
 }
 
 void Arguments():
 {}
 {
-	"(" [ ArgumentList() ] ")"
+	"(" {cont_for ++;} [ ArgumentList() ] ")"
 	{//set the boolean variables false after use
-		if(getNewInstance())
-			setNewInstance(false);
-		if(getExample())
-			setExample(false);
-		if(getResourceCharacteristics())
-			setResourceCharacteristics(false);
-		if(getGridResource())
-			setGridResource(false);
-		if(getGridlet())
-			setGridlet(false);
-		if(getNewGridResource())
-			setNewGridResource(false);
-		if(getNewPolicy())
-			setNewPolicy(false);
-		if(getRandom())
-			setRandom(false);
-		if(getmList())
-			setmList(false);
-		if(getlist())
-			setlist(false);	
-		if(getadd())
-			setadd(false);
-		if(getMachine())
-			setMachine(false);
-		if(getuserList())
-			setuserList(false);
-		if(getRating())
-			setRating(false);
-		if(getGridSimStandardPE())
-			setGridSimStandardPE(false);
-		if(getGridSimRandom())
-			setGridSimRandom(false);
-		if(getreal())
-			setreal(false);
-		if(getvazio())//print message about empty parameters
+		if(cont_for == 1) 
 		{
-			System.out.println("Passagem de parâmetros sem argumentos");
-			System.out.println();
-		}	
-		else
-			setvazio(false);
-		if(getgridlet())
-			setgridlet(false);
-		if(getuser())
-			setuser(false);
+			if(getExample())
+				setExample(false);
+			if(getResourceCharacteristics())
+				setResourceCharacteristics(false);
+			if(getGridResource())
+				setGridResource(false);
+			if(getGridlet())
+				setGridlet(false);
+			if(getNewGridResource())
+				setNewGridResource(false);
+			if(getNewPolicy())
+				setNewPolicy(false);
+			if(getRandom())
+				setRandom(false);
+			if(getmList())
+				setmList(false);
+			if(getlist())
+				setlist(false);	
+			if(getadd())
+				setadd(false);
+			if(getMachine())
+				setMachine(false);
+			if(getuserList())
+				setuserList(false);
+			if(getRating())
+				setRating(false);
+			if(getGridSimStandardPE())
+				setGridSimStandardPE(false);
+			if(getGridSimRandom())
+				setGridSimRandom(false);
+			if(getreal())
+				setreal(false);
+			if(getRIPRouter())
+				setRIPRouter(false);
+			if(getSimpleLink())
+				setSimpleLink(false);
+			if(getAttachHost())
+				setAttachHost(false);
+			if(getAttachRouter())
+				setAttachRouter(false);
+			if(getMachineList())
+				setMachineList(false);
+			if(getvazio())//print message about empty parameters
+			{
+				//System.out.println("Passagem de parâmetros sem argumentos");
+				//System.out.println();
+			}	
+			else
+				setvazio(false);
+			if(getgridlet())
+				setgridlet(false);
+			if(getuser())
+				setuser(false);
+
+		}
+		cont_for --;
 	}
 }
 
 void ArgumentList():
-{}
 {
-	Expression() ( "," Expression() )*
+	Token t;
+}
+{
+	Expression() (t="," 
+		{
+			analise(t);
+		}
+	Expression() )*
+		{
+			Token x = new Token();
+			x.image = ",";
+			analise(x);
+		}
 }
 
 void AllocationExpression():
 {}
 {
 	 LOOKAHEAD(2)
-	 "new"{setNewInstance(true);} PrimitiveType() ArrayDimsAndInits()
+	 "new"{setNewInstance(true);} PrimitiveType() ArrayDimsAndInits() {setNewInstance(false);}
 	|
-  	 "new"{setNewInstance(true);} ClassOrInterfaceType() [ TypeArguments() ]
-    	 (
-      	 	 ArrayDimsAndInits()
-    		|
-      	 	 Arguments() [ ClassOrInterfaceBody(false) ]
-    	 )
+	 "new"{setNewInstance(true);} ClassOrInterfaceType() [ TypeArguments() ]
+	 (
+		 ArrayDimsAndInits()
+		|
+		 Arguments() [ ClassOrInterfaceBody(false) ]
+	 ) 
+	 {setNewInstance(false);}
 }
 
 /*
@@ -2827,7 +4218,7 @@ void Statement():
 	|
   	 EmptyStatement()
 	|
-	 {
+	 { 
 		setComplex_Expression(true);
 	 }
   	 StatementExpression() t = ";"
@@ -2877,7 +4268,10 @@ void LabeledStatement():
 void Block():
 {}
 {
-	"{" ( BlockStatement() )* "}"
+	"{" ( BlockStatement() )* "}" 
+	{
+		//setNum_Method(false);
+	}
 }
 
 void BlockStatement():
@@ -2929,13 +4323,24 @@ void StatementExpression():
 	 PrimaryExpression()
   	 [
     		 t = "++"
-		 {setIncrementUpdate(true); setValueV(t.image); }
+		 {
+			setIncrementUpdate(true); 
+			setValueV(t.image);
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+		 }
+		 
   		|
 		 t = "--"
-		 {setIncrementUpdate(true); setValueV(t.image); }
+		 {
+			setIncrementUpdate(true); 
+			setValueV(t.image); 
+			if(getFor_Stop())
+				setAcm_For_Stop(t.image);
+		 }
   		|
     		 AssignmentOperator() Expression()
-  	]
+  	 ]
 	{	
 		if(getIncrement() && getIncrementUpdate())
 		{
@@ -2990,26 +4395,59 @@ void DoStatement():
 }
 
 void ForStatement():
-{}
 {
-	"for"{
-	     	setFor(true);
-		System.out.println("Início do comando for");
-		System.out.println(); 
-		System.out.println();
+	Token t;
+}
+{
+	"for"
+	{
+		setFor(true);
+		setSignal(false);
+		//System.out.println("Início do comando for");
+		//System.out.println(); 
+		//System.out.println();
 	} "("
 	(
-      		 LOOKAHEAD(Type() <IDENTIFIER> ":")
-      		 Type() <IDENTIFIER> ":" Expression() 
-    		|
-     		 [ ForInit() ] ";" [ Expression() ] ";" [ ForUpdate() ]
-  	)
+		LOOKAHEAD(Type() <IDENTIFIER> ":")
+		Type() <IDENTIFIER> ":" Expression() 
+		|
+		
+			{
+				setFor_Init(true);
+			} [ForInit() ] ";" 
+			{
+				setFor_Init(false);
+				//System.out.println("Forinit:" + getAcm_For_Init());
+			}
+		 
+			{
+				setFor_Condition(true);
+			} [Expression() ] ";"
+			{	
+				setFor_Condition(false);
+				//System.out.println("ForCondition:" + getAcm_For_Condition());
+			}
+			{
+				setFor_Stop(true);
+			} [ForUpdate() ]
+			{	
+				setFor_Stop(false);
+				//System.out.println("ForStop:" + getAcm_For_Stop());
+			}
+	)
 
-  	")" Statement() {
-				System.out.println("Fim do comando for");	
-				System.out.println();
-				System.out.println();
-		  	}
+	")"
+		{
+			t = new Token();
+			t.image = ";";
+			create_for_expression(t.image);
+		} Statement()
+	{
+		setFor(false);
+		//System.out.println("Fim do comando for");
+		//System.out.println();
+		//System.out.println();
+	}
 }
 
 void ForInit():

@@ -10,14 +10,16 @@
  */
 package ispd.gui;
 
-import CarregaArqTexto.CarregaArqTexto;
 import DescreveSistema.DescreveSistema;
-import InterpretadorExterno.SimGrid.InterpretadorSimGrid;
+import ispd.arquivo.xml.IconicoXML;
 import ispd.arquivo.interpretador.gridsim.InterpretadorGridSim;
+import ispd.arquivo.interpretador.simgrid.InterpretadorSimGrid;
 import ispd.gui.componenteauxiliar.Corner;
 import ispd.gui.componenteauxiliar.FiltroDeArquivos;
-import ispd.gui.componenteauxiliar.Rule;
-import java.awt.Font;
+import ispd.gui.configuracao.JPanelConfigIcon;
+import ispd.gui.iconico.grade.DesenhoGrade;
+import ispd.gui.iconico.grade.ItemGrade;
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -31,17 +33,17 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -81,11 +83,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.jButtonUsuarios.addKeyListener(this);
         this.jButtonSimular.addKeyListener(this);
         //paineis de configuração
-        this.jPanelMaquina.addKeyListener(this);
-        this.jPanelCluster.addKeyListener(this);
-        this.jPanelInternet.addKeyListener(this);
-        this.jPanelRede.addKeyListener(this);
         this.jPanelSimples.addKeyListener(this);
+        this.jPanelConfiguracao.addKeyListener(this);
         this.jPanelPropriedades.addKeyListener(this);
     }
 
@@ -99,15 +98,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private void initComponents() {
 
         jFrameGerenciador = new ispd.gui.GerenciarEscalonador();
-        jPanelMaquina = new ispd.gui.configuracao.JPanelConfiguraMaquina();
-        jPanelMaquina.setEscalonadores(jFrameGerenciador.getEscalonadores());
-        jPanelCluster = new ispd.gui.configuracao.JPanelConfiguraCluster();
-        jPanelCluster.setEscalonadores(jFrameGerenciador.getEscalonadores());
-        jPanelRede = new ispd.gui.configuracao.JPanelConfiguraRede();
-        jPanelInternet = new ispd.gui.configuracao.JPanelConfiguraInternet();
         jPanelSimples = new ispd.gui.configuracao.JPanelSimples();
         jPanelSimples.setjLabelTexto(palavras.getString("No icon selected."));
         jFileChooser = new javax.swing.JFileChooser();
+        jPanelConfiguracao = new ispd.gui.configuracao.JPanelConfigIcon();
+        jPanelConfiguracao.setEscalonadores(jFrameGerenciador.getEscalonadores());
         jScrollPaneAreaDesenho = new javax.swing.JScrollPane();
         jScrollPaneBarraLateral = new javax.swing.JScrollPane();
         jScrollPaneBarraNotifica = new javax.swing.JScrollPane();
@@ -136,6 +131,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuExport = new javax.swing.JMenu();
         jMenuItemToJPG = new javax.swing.JMenuItem();
         jMenuItemToTXT = new javax.swing.JMenuItem();
+        jMenuItemToSimGrid = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuIdioma = new javax.swing.JMenu();
         jMenuItemIngles = new javax.swing.JMenuItem();
@@ -148,6 +144,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemPaste = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
         jMenuItemEquiparar = new javax.swing.JMenuItem();
+        jMenuItemOrganizar = new javax.swing.JMenuItem();
         jMenuExibir = new javax.swing.JMenu();
         jCheckBoxMenuItemConectado = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItemIndireto = new javax.swing.JCheckBoxMenuItem();
@@ -196,8 +193,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
             jScrollPaneBarraNotifica.setBorder(javax.swing.BorderFactory.createTitledBorder(palavras.getString("Notifications"))); // NOI18N
 
-            jTextAreaNotifica.setColumns(20);
             jTextAreaNotifica.setEditable(false);
+            jTextAreaNotifica.setColumns(20);
             jTextAreaNotifica.setRows(5);
             jTextAreaNotifica.setBorder(null);
             jScrollPaneBarraNotifica.setViewportView(jTextAreaNotifica);
@@ -399,6 +396,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             });
             jMenuExport.add(jMenuItemToTXT);
 
+            jMenuItemToSimGrid.setText("to SimGrid");
+            jMenuItemToSimGrid.setEnabled(false);
+            jMenuItemToSimGrid.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemToSimGridActionPerformed(evt);
+                }
+            });
+            jMenuExport.add(jMenuItemToSimGrid);
+
             jMenuArquivo.add(jMenuExport);
             jMenuArquivo.add(jSeparator1);
 
@@ -492,6 +498,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jMenuEditar.add(jMenuItemEquiparar);
+
+            jMenuItemOrganizar.setText("Arrange icons");
+            jMenuItemOrganizar.setEnabled(false);
+            jMenuItemOrganizar.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemOrganizarActionPerformed(evt);
+                }
+            });
+            jMenuEditar.add(jMenuItemOrganizar);
 
             jMenuBar.add(jMenuEditar);
 
@@ -605,33 +620,31 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jScrollPaneProperties)
+                        .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPaneBarraNotifica, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jScrollPaneProperties)
-                                .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
-                                .addComponent(jScrollPaneAreaDesenho, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE))))
+                        .addComponent(jScrollPaneBarraNotifica)
+                        .addComponent(jToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
+                        .addComponent(jScrollPaneAreaDesenho))
                     .addContainerGap())
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPaneProperties, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPaneAreaDesenho, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(11, 11, 11)
-                            .addComponent(jScrollPaneBarraLateral, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPaneAreaDesenho)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPaneProperties, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jScrollPaneBarraNotifica, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPaneBarraNotifica, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addContainerGap())
             );
 
@@ -696,10 +709,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
         //Realiza ação
         if (jToggleButtonMaquina.isSelected()) {
-            aDesenho.setIconeSelecionado(Icone.MACHINE);
+            aDesenho.setIconeSelecionado(DesenhoGrade.MACHINE);
             appendNotificacao(palavras.getString("Machine button selected."));
         } else {
-            aDesenho.semIconeSelecionado();
+            aDesenho.setIconeSelecionado(null);
         }
     }//GEN-LAST:event_jToggleButtonMaquinaActionPerformed
 
@@ -711,10 +724,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonInternet.setSelected(false);
 
         if (jToggleButtonRede.isSelected()) {
-            aDesenho.setIconeSelecionado(Icone.NETWORK);
+            aDesenho.setIconeSelecionado(DesenhoGrade.NETWORK);
             appendNotificacao(palavras.getString("Network button selected."));
         } else {
-            aDesenho.semIconeSelecionado();
+            aDesenho.setIconeSelecionado(null);
         }
     }//GEN-LAST:event_jToggleButtonRedeActionPerformed
 
@@ -726,10 +739,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonInternet.setSelected(false);
 
         if (jToggleButtonCluster.isSelected()) {
-            aDesenho.setIconeSelecionado(Icone.CLUSTER);
+            aDesenho.setIconeSelecionado(DesenhoGrade.CLUSTER);
             appendNotificacao(palavras.getString("Cluster button selected."));
         } else {
-            aDesenho.semIconeSelecionado();
+            aDesenho.setIconeSelecionado(null);
         }
     }//GEN-LAST:event_jToggleButtonClusterActionPerformed
 
@@ -741,10 +754,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonCluster.setSelected(false);
 
         if (jToggleButtonInternet.isSelected()) {
-            aDesenho.setIconeSelecionado(Icone.INTERNET);
+            aDesenho.setIconeSelecionado(DesenhoGrade.INTERNET);
             appendNotificacao(palavras.getString("Internet button selected."));
         } else {
-            aDesenho.semIconeSelecionado();
+            aDesenho.setIconeSelecionado(null);
         }
     }//GEN-LAST:event_jToggleButtonInternetActionPerformed
 
@@ -752,8 +765,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
         if (aDesenho != null) {
             SelecionaCargas carga = new SelecionaCargas(this, true,
-                    new Vector<String>(aDesenho.getUsuarios()),
-                    aDesenho.getNosEscalonadores(),
+                    aDesenho.getUsuarios().toArray(),
+                    aDesenho.getNosEscalonadores().toArray(),
                     aDesenho.getCargasConfiguracao(),
                     palavras);
             carga.setLocationRelativeTo(this);
@@ -766,7 +779,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jButtonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSimularActionPerformed
         // TODO add your handling code here:
-        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho, palavras);
+        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho.getGrade(), aDesenho.toString(), palavras);
         janelaSimulacao.iniciarSimulacao();
         janelaSimulacao.setLocationRelativeTo(this);
         janelaSimulacao.setVisible(true);
@@ -775,10 +788,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNovoActionPerformed
         // TODO add your handling code here:
-        aDesenho = new AreaDesenho(1500, 1500);
+        aDesenho = new DesenhoGrade(1500, 1500);
         aDesenho.addKeyListener(this);
         aDesenho.setPaineis(this);
-        this.setRegua();
+        //this.setRegua();
         jScrollPaneBarraLateral.setViewportView(null);
         jPanelPropriedades.setjLabelTexto("");
         jScrollPaneAreaDesenho.setViewportView(aDesenho);
@@ -808,10 +821,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                     try {
                         if (file.getName().endsWith(".imsx")) {
                             //Realizar leitura do arquivoo xml...
-                            Document descricao = ispd.arquivo.IconicoXML.ler(file);
+                            Document descricao = ispd.arquivo.xml.IconicoXML.ler(file);
                             //Carregar na aDesenho
-                            aDesenho = new AreaDesenho(1500, 1500);
-                            aDesenho.setDadosSalvos(descricao);
+                            aDesenho = new DesenhoGrade(1500, 1500);
+                            aDesenho.setGrade(descricao);
                         } else {
                             //Realiza leitura do arquivo da outra versão
                             FileInputStream arquivo = new FileInputStream(file);
@@ -820,12 +833,12 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                             objectInput.close();
                             file = null;
                             //Carregar na aDesenho
-                            aDesenho = new AreaDesenho(1500, 1500);
-                            aDesenho.setDadosSalvos(descricao);
+                            aDesenho = new DesenhoGrade(1500, 1500);
+                            aDesenho.setGrade(descricao);
                         }
                         aDesenho.addKeyListener(this);
                         aDesenho.setPaineis(this);
-                        this.setRegua();
+                        //this.setRegua();
                         jScrollPaneBarraLateral.setViewportView(null);
                         jPanelPropriedades.setjLabelTexto("");
                         jScrollPaneAreaDesenho.setViewportView(aDesenho);
@@ -845,7 +858,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                         JOptionPane.showMessageDialog(null, palavras.getString("Error opening file.") + "\n" + ex.getMessage(), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, palavras.getString("Invalid file"), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
+                    if ("Torre".equals(jFileChooser.getSelectedFile().getName())) {
+                        jScrollPaneAreaDesenho.setViewportView(new ispd.gui.componenteauxiliar.Torre());
+                    } else {
+                        JOptionPane.showMessageDialog(null, palavras.getString("Invalid file"), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
+                    }
                 }
             } else {
                 //Cancelado
@@ -859,8 +876,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             jMenuItemSalvarComoActionPerformed(null);
         } else if (aDesenho != null /*&& modificado*/) {
             //Implementar ações para salvar conteudo
-            Document docxml = aDesenho.getDadosASalvar();
-            ispd.arquivo.IconicoXML.escrever(docxml, arquivoAberto);
+            Document docxml = aDesenho.getGrade();
+            ispd.arquivo.xml.IconicoXML.escrever(docxml, arquivoAberto);
             appendNotificacao(palavras.getString("model saved"));
             salvarModificacao();
         }
@@ -882,33 +899,23 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 InterpretadorSimGrid interp = new InterpretadorSimGrid();
                 interp.interpreta(file1, file2);
                 try {
-                    File file = new File("modeloiconico");
-                    if (file.exists()) {
-                        CarregaArqTexto arq = new CarregaArqTexto();
-                        boolean achouErro = arq.leArquivo(file);
-                        if (!achouErro) {
-                            DescreveSistema descricao = arq.getDescricao();
-                            if (arq.getW() > 1500) {
-                                aDesenho = new AreaDesenho(arq.getW(), arq.getW());
-                            } else {
-                                aDesenho = new AreaDesenho(1500, 1500);
-                            }
-                            aDesenho.setDadosSalvos(descricao);
-                            aDesenho.addKeyListener(this);
-                            aDesenho.setPaineis(this);
-                            this.setRegua();
-                            jScrollPaneBarraLateral.setViewportView(null);
-                            jPanelPropriedades.setjLabelTexto("");
-                            jScrollPaneAreaDesenho.setViewportView(aDesenho);
-                            appendNotificacao(palavras.getString("model opened"));
-                            abrirEdição(null);
-                            //modelo não salvo ainda
-                            modificar();
-                        }
+                    if (interp.getModelo() != null) {
+                        aDesenho = new DesenhoGrade(1500, 1500);
+                        aDesenho.setGrade(interp.getModelo());
+                        aDesenho.iconArrange();
+                        aDesenho.addKeyListener(this);
+                        aDesenho.setPaineis(this);
+                        //this.setRegua();
+                        jScrollPaneBarraLateral.setViewportView(null);
+                        jPanelPropriedades.setjLabelTexto("");
+                        jScrollPaneAreaDesenho.setViewportView(aDesenho);
+                        appendNotificacao(palavras.getString("model opened"));
+                        abrirEdição(null);
+                        //modelo não salvo ainda
+                        modificar();
                     } else {
                         JOptionPane.showMessageDialog(null, palavras.getString("File not found.") + "\n", palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
                     }
-                    file.delete();
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, palavras.getString("Error opening file.") + "\n" + e.getMessage(), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
                 }
@@ -933,6 +940,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 ImageIO.write(img, "jpg", file);
             } catch (IOException ex) {
                 Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_jMenuItemToJPGActionPerformed
@@ -967,21 +975,21 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private void jMenuItemPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPasteActionPerformed
         // TODO add your handling code here:
         if (aDesenho != null) {
-            aDesenho.acaoColarIcone();
+            aDesenho.botaoPainelActionPerformed(evt);
         }
 }//GEN-LAST:event_jMenuItemPasteActionPerformed
 
     private void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteActionPerformed
         // TODO add your handling code here:
         if (aDesenho != null) {
-            aDesenho.deletarIcone();
+            aDesenho.botaoIconeActionPerformed(evt);
         }
 }//GEN-LAST:event_jMenuItemDeleteActionPerformed
 
     private void jMenuItemCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyActionPerformed
         // TODO add your handling code here:
         if (aDesenho != null) {
-            aDesenho.acaoCopiarIcone();
+            aDesenho.botaoVerticeActionPerformed(evt);
         }
 }//GEN-LAST:event_jMenuItemCopyActionPerformed
 
@@ -1036,13 +1044,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         if (!jCheckBoxMenuItemGrade.isSelected()) {
             jCheckBoxMenuItemGrade.setSelected(false);
             if (aDesenho != null) {
-                aDesenho.setGrid(false);
+                aDesenho.setGridOn(false);
             }
             appendNotificacao(palavras.getString("Drawing grid disabled."));
         } else {
             jCheckBoxMenuItemGrade.setSelected(true);
             if (aDesenho != null) {
-                aDesenho.setGrid(true);
+                aDesenho.setGridOn(true);
             }
             appendNotificacao(palavras.getString("Drawing grid enabled."));
         }
@@ -1066,10 +1074,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             if (evt != null) {
                 appendNotificacao(palavras.getString("Drawing rule enabled."));
             }
-            jScrollPaneAreaDesenho.setColumnHeaderView(columnView);
-            jScrollPaneAreaDesenho.setRowHeaderView(rowView);
+            jScrollPaneAreaDesenho.setColumnHeaderView(aDesenho.getColumnView());
+            jScrollPaneAreaDesenho.setRowHeaderView(aDesenho.getRowView());
 
-            jScrollPaneAreaDesenho.setCorner(JScrollPane.UPPER_LEFT_CORNER, buttonCorner);
+            jScrollPaneAreaDesenho.setCorner(JScrollPane.UPPER_LEFT_CORNER, aDesenho.getCorner());
             jScrollPaneAreaDesenho.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
             jScrollPaneAreaDesenho.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
         }
@@ -1134,8 +1142,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                     file = temp;
                 }
                 //Implementar ações para salvar conteudo
-                Document docxml = aDesenho.getDadosASalvar();
-                ispd.arquivo.IconicoXML.escrever(docxml, file);
+                Document docxml = aDesenho.getGrade();
+                ispd.arquivo.xml.IconicoXML.escrever(docxml, file);
                 appendNotificacao(palavras.getString("model saved"));
                 abrirEdição(file);
             }
@@ -1171,47 +1179,106 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemGridSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGridSimActionPerformed
         // TODO add your handling code here:
-        filtro.setDescricao(palavras.getString("Java File"));
+        filtro.setDescricao(palavras.getString("Java Source Files (. java)"));
         filtro.setExtensao(".java");
         jFileChooser.setAcceptAllFileFilterUsed(true);
         int returnVal = jFileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file2 = jFileChooser.getSelectedFile();
-            InterpretadorGridSim interp = new InterpretadorGridSim();
-            interp.interpreta(file2);
+            /*JWindow window = new JWindow(this);
+             //window.add(new JLabel(new ImageIcon(getClass().getResource("imagens/simbolo_t.gif"))));
+             window.add(new JLabel("Carregando..."));
+             window.setSize(200, 100);
+             JPanel panel = new JPanel();
+             panel.setBorder(new javax.swing.border.EtchedBorder());
+             window.getContentPane().add(panel, BorderLayout.CENTER);
+             JLabel label = new JLabel("Carregando...");
+             label.setFont(new Font("Verdana", Font.BOLD, 15));
+             panel.add(label);
+             JProgressBar progressBar = new JProgressBar();
+             progressBar.setIndeterminate(true);
+             window.getContentPane().add(progressBar, BorderLayout.SOUTH);
+             window.setLocationRelativeTo(this);
+             window.setVisible(true);*/
+            final JDialog window = new JDialog(this, "Carregando");
+            Thread th = new Thread() {
+                @Override
+                public void run() {
+                    window.setSize(200, 100);
+                    window.add(new JLabel("Carregando..."), BorderLayout.CENTER);
+                    JProgressBar progressBar = new JProgressBar();
+                    progressBar.setIndeterminate(true);
+                    window.add(progressBar, BorderLayout.SOUTH);
+                    window.setVisible(true);
+                }
+            };
+            window.setLocationRelativeTo(this);
+            th.start();
             try {
-                File file = new File("modeloiconico");
+                File file = jFileChooser.getSelectedFile();
+                InterpretadorGridSim interp = new InterpretadorGridSim();
                 if (file.exists()) {
-                    CarregaArqTexto arq = new CarregaArqTexto();
-                    boolean achouErro = arq.leArquivo(file);
-                    if (!achouErro) {
-                        DescreveSistema descricao = arq.getDescricao();
-                        if (arq.getW() > 1500) {
-                            aDesenho = new AreaDesenho(arq.getW(), arq.getW());
-                        } else {
-                            aDesenho = new AreaDesenho(1500, 1500);
-                        }
-                        aDesenho.setDadosSalvos(descricao);
-                        aDesenho.addKeyListener(this);
-                        aDesenho.setPaineis(this);
-                        this.setRegua();
-                        jScrollPaneBarraLateral.setViewportView(null);
-                        jPanelPropriedades.setjLabelTexto("");
-                        jScrollPaneAreaDesenho.setViewportView(aDesenho);
-                        appendNotificacao(palavras.getString("model opened"));
-                        abrirEdição(null);
-                        //modelo não salvo ainda
-                        modificar();
+                    interp.interpreta(file);
+                    Document descricao = interp.getDescricao();
+                    if (interp.getW() > 1500) {
+                        aDesenho = new DesenhoGrade(interp.getW(), interp.getW());
+                    } else {
+                        aDesenho = new DesenhoGrade(1500, 1500);
                     }
+                    //Carregar na aDesenho
+                    aDesenho.setGrade(descricao);
+                    aDesenho.addKeyListener(this);
+                    aDesenho.setPaineis(this);
+                    //this.setRegua();
+                    jScrollPaneBarraLateral.setViewportView(null);
+                    jPanelPropriedades.setjLabelTexto("");
+                    jScrollPaneAreaDesenho.setViewportView(aDesenho);
+                    appendNotificacao(palavras.getString("model opened"));
+                    abrirEdição(null);
+                    //modelo não salvo ainda
+                    modificar();
                 } else {
                     JOptionPane.showMessageDialog(null, palavras.getString("File not found.") + "\n", palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
                 }
-                file.delete();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, palavras.getString("Error opening file.") + "\n" + e.getMessage(), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
             }
+            window.dispose();
         }
     }//GEN-LAST:event_jMenuItemGridSimActionPerformed
+
+    private void jMenuItemOrganizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOrganizarActionPerformed
+        // TODO add your handling code here:
+        if (aDesenho != null) {
+            if (jMenuItemOrganizar.getDisplayedMnemonicIndex() == 2) {
+                jMenuItemOrganizar.setDisplayedMnemonicIndex(1);
+                aDesenho.iconArrangeType();
+            } else {
+                jMenuItemOrganizar.setDisplayedMnemonicIndex(2);
+                aDesenho.iconArrange();
+            }
+            aDesenho.repaint();
+        }
+    }//GEN-LAST:event_jMenuItemOrganizarActionPerformed
+
+    private void jMenuItemToSimGridActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemToSimGridActionPerformed
+        filtro.setDescricao(palavras.getString("XML File"));
+        filtro.setExtensao(".xml");
+        jFileChooser.setAcceptAllFileFilterUsed(false);
+        int returnVal = jFileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            if (!file.getName().endsWith(".xml")) {
+                File temp = new File(file.toString() + ".xml");
+                file = temp;
+            }
+            try {
+                IconicoXML.iSPDtoSimGrid(aDesenho.getGrade(), file);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jMenuItemToSimGridActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
@@ -1243,6 +1310,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JMenuItem jMenuItemGridSim;
     private javax.swing.JMenuItem jMenuItemIngles;
     private javax.swing.JMenuItem jMenuItemNovo;
+    private javax.swing.JMenuItem jMenuItemOrganizar;
     private javax.swing.JMenuItem jMenuItemPaste;
     private javax.swing.JMenuItem jMenuItemPortugues;
     private javax.swing.JMenuItem jMenuItemSair;
@@ -1251,12 +1319,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JMenuItem jMenuItemSimGrid;
     private javax.swing.JMenuItem jMenuItemSobre;
     private javax.swing.JMenuItem jMenuItemToJPG;
+    private javax.swing.JMenuItem jMenuItemToSimGrid;
     private javax.swing.JMenuItem jMenuItemToTXT;
-    private ispd.gui.configuracao.JPanelConfiguraCluster jPanelCluster;
-    private ispd.gui.configuracao.JPanelConfiguraInternet jPanelInternet;
-    private ispd.gui.configuracao.JPanelConfiguraMaquina jPanelMaquina;
+    private ispd.gui.configuracao.JPanelConfigIcon jPanelConfiguracao;
     private ispd.gui.configuracao.JPanelSimples jPanelPropriedades;
-    private ispd.gui.configuracao.JPanelConfiguraRede jPanelRede;
     private ispd.gui.configuracao.JPanelSimples jPanelSimples;
     private javax.swing.JScrollPane jScrollPaneAreaDesenho;
     private javax.swing.JScrollPane jScrollPaneBarraLateral;
@@ -1272,47 +1338,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private ResourceBundle palavras;
     private boolean modificado = false;//indica se arquivo atual foi modificado
     private File arquivoAberto = null;
-    private AreaDesenho aDesenho = null;
+    private DesenhoGrade aDesenho = null;
     private FiltroDeArquivos filtro;
-    //Desenhar regua
-    private Rule columnView;
-    private Rule rowView;
-    private JToggleButton isMetric;
-    private JPanel buttonCorner;
 
-    public void setRegua() {
-        //Create the row and column headers.
-        columnView = new Rule(Rule.HORIZONTAL, true);
-        rowView = new Rule(Rule.VERTICAL, true);
-
-        columnView.setPreferredWidth(aDesenho.getIconWidth());
-        rowView.setPreferredHeight(aDesenho.getIconHeight());
-
-        //Create the corners.
-        buttonCorner = new JPanel(); //use FlowLayout
-        isMetric = new JToggleButton("cm", true);
-        isMetric.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        isMetric.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (isMetric.isSelected()) {
-                    //Turn it to metric.
-                    isMetric.setText("cm");
-                    rowView.setIsMetric(true);
-                    columnView.setIsMetric(true);
-                    aDesenho.setIsMetric(true);
-                } else {
-                    //Turn it to inches.
-                    isMetric.setText("in");
-                    rowView.setIsMetric(false);
-                    columnView.setIsMetric(false);
-                    aDesenho.setIsMetric(false);
-                }
-            }
-        });
-
-        buttonCorner.add(isMetric);
-
+    public JPanelConfigIcon getjPanelConfiguracao() {
+        return jPanelConfiguracao;
     }
 
     private void initTexts() {
@@ -1327,7 +1357,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jButtonTarefas.setToolTipText(palavras.getString("Selects insertion model of tasks")); // NOI18N
         jButtonUsuarios.setToolTipText(palavras.getString("Add and remove users to the model"));
         jButtonSimular.setText(palavras.getString("Simulate")); // NOI18N
-        jButtonSimular.setToolTipText(palavras.getString("Starts the simulation")); // NOI18N
+        jButtonSimular.setToolTipText(palavras.getString("Starts the simulation"));
 
         jMenuArquivo.setText(palavras.getString("File")); // NOI18N
         jMenuItemNovo.setText(palavras.getString("New")); // NOI18N
@@ -1382,43 +1412,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemSobre.setToolTipText(palavras.getString("About") + " " + palavras.getString("nomePrograma"));
 
         jPanelSimples.setjLabelTexto(palavras.getString("No icon selected."));
-        jPanelInternet.setIdioma(palavras);
-        jPanelRede.setIdioma(palavras);
-        jPanelCluster.setIdioma(palavras);
-        jPanelMaquina.setIdioma(palavras);
-    }
-
-    public void setSelectedIcon(Icone I, String Texto) {
-        if (I != null) {
-            switch (I.getTipoIcone()) {
-                case Icone.MACHINE: {
-                    this.jPanelMaquina.setUsuarios(aDesenho.getUsuarios());
-                    this.jPanelMaquina.setIcone(I);
-                    jScrollPaneBarraLateral.setViewportView(jPanelMaquina);
-                }
-                break;
-                case Icone.NETWORK: {
-                    this.jPanelRede.setIcone(I);
-                    jScrollPaneBarraLateral.setViewportView(jPanelRede);
-                }
-                break;
-                case Icone.CLUSTER: {
-                    this.jPanelCluster.setUsuarios(aDesenho.getUsuarios());
-                    this.jPanelCluster.setIcone(I);
-                    jScrollPaneBarraLateral.setViewportView(jPanelCluster);
-                }
-                break;
-                case Icone.INTERNET: {
-                    this.jPanelInternet.setIcone(I);
-                    jScrollPaneBarraLateral.setViewportView(jPanelInternet);
-                }
-                break;
-            }
-            this.jPanelPropriedades.setjLabelTexto(Texto);
-        } else {
-            jScrollPaneBarraLateral.setViewportView(jPanelSimples);
-            jPanelPropriedades.setjLabelTexto("");
-        }
+        jPanelConfiguracao.setPalavras(palavras);
     }
 
     public void appendNotificacao(String text) {
@@ -1467,7 +1461,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         aDesenho.setConectados(jCheckBoxMenuItemConectado.isSelected());
         aDesenho.setIndiretos(jCheckBoxMenuItemIndireto.isSelected());
         aDesenho.setEscalonaveis(jCheckBoxMenuItemEscalonavel.isSelected());
-        aDesenho.setGrid(jCheckBoxMenuItemGrade.isSelected());
+        aDesenho.setGridOn(jCheckBoxMenuItemGrade.isSelected());
         jCheckBoxMenuItemReguaActionPerformed(null);
         //Tirar seleção dos botões de icones
         jToggleButtonMaquina.setSelected(false);
@@ -1483,9 +1477,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.arquivoAberto = null;
         setObjetosEnabled(false);
         this.modificado = false;
+        //remove a regua
+        jScrollPaneAreaDesenho.setColumnHeaderView(null);
+        jScrollPaneAreaDesenho.setRowHeaderView(null);
+        jScrollPaneAreaDesenho.setCorner(JScrollPane.UPPER_LEFT_CORNER, null);
+        jScrollPaneAreaDesenho.setCorner(JScrollPane.LOWER_LEFT_CORNER, null);
+        jScrollPaneAreaDesenho.setCorner(JScrollPane.UPPER_RIGHT_CORNER, null);
     }
-    //Habilitar Desabilita botões
 
+    //Habilitar Desabilita botões
     private void setObjetosEnabled(boolean opcao) {
         //Icones
         jToggleButtonCluster.setEnabled(opcao);
@@ -1501,8 +1501,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemFechar.setEnabled(opcao);
         jMenuItemToJPG.setEnabled(opcao);
         jMenuItemToTXT.setEnabled(opcao);
+        jMenuItemToSimGrid.setEnabled(opcao);
         //Editar
         jMenuItemEquiparar.setEnabled(opcao);
+        jMenuItemOrganizar.setEnabled(opcao);
         jMenuItemCopy.setEnabled(opcao);
         jMenuItemPaste.setEnabled(opcao);
         jMenuItemDelete.setEnabled(opcao);
@@ -1520,18 +1522,33 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     public void keyPressed(KeyEvent evt) {
         if (aDesenho != null) {
             if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-                aDesenho.deletarIcone();
+                aDesenho.botaoIconeActionPerformed(null);
             }
             if (evt.getModifiers() == InputEvent.CTRL_MASK && evt.getKeyCode() == KeyEvent.VK_C) {
-                aDesenho.acaoCopiarIcone();
+                aDesenho.botaoVerticeActionPerformed(null);
             }
             if (evt.getModifiers() == InputEvent.CTRL_MASK && evt.getKeyCode() == KeyEvent.VK_V) {
-                aDesenho.acaoColarIcone();
+                aDesenho.botaoPainelActionPerformed(null);
             }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void setSelectedIcon(ItemGrade icon, String Texto) {
+        if (icon != null) {
+            if (icon instanceof ispd.gui.iconico.grade.Machine || icon instanceof ispd.gui.iconico.grade.Cluster) {
+                this.jPanelConfiguracao.setIcone(icon, aDesenho.getUsuarios());
+            } else {
+                this.jPanelConfiguracao.setIcone(icon);
+            }
+            jScrollPaneBarraLateral.setViewportView(jPanelConfiguracao);
+            this.jPanelPropriedades.setjLabelTexto(Texto);
+        } else {
+            jScrollPaneBarraLateral.setViewportView(jPanelSimples);
+            jPanelPropriedades.setjLabelTexto("");
+        }
     }
 }

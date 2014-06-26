@@ -9,33 +9,42 @@ import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author denison_usuario
  */
-public class MetricasGlobais {
+public class MetricasGlobais implements Serializable {
     private double tempoSimulacao;
     private double satisfacaoMedia;
-    private double ociosidadeCompuacao;
+    private double ociosidadeComputacao;
     private double ociosidadeComunicacao;
     private double eficiencia;
     
     public MetricasGlobais(RedeDeFilas redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas){
         this.tempoSimulacao = tempoSimulacao;
         this.satisfacaoMedia = 100;
-        this.ociosidadeCompuacao = getOciosidadeComputacao(redeDeFilas);
+        this.ociosidadeComputacao = getOciosidadeComputacao(redeDeFilas);
         this.ociosidadeComunicacao = getOciosidadeComunicacao(redeDeFilas);
         this.eficiencia = getEficiencia(tarefas);
+    }
+    
+    public MetricasGlobais(){
+        this.tempoSimulacao = 0;
+        this.satisfacaoMedia = 0;
+        this.ociosidadeComputacao = 0;
+        this.ociosidadeComunicacao = 0;
+        this.eficiencia = 0;
     }
 
     public double getEficiencia() {
         return eficiencia;
     }
 
-    public double getOciosidadeCompuacao() {
-        return ociosidadeCompuacao;
+    public double getOciosidadeComputacao() {
+        return ociosidadeComputacao;
     }
 
     public double getOciosidadeComunicacao() {
@@ -96,5 +105,24 @@ public class MetricasGlobais {
         return tempoMedio; 
          */
     }
-    
+
+    public void setTempoSimulacao(double tempoSimulacao) {
+        this.tempoSimulacao = tempoSimulacao;
+    }
+
+    public void setSatisfacaoMedia(double satisfacaoMedia) {
+        this.satisfacaoMedia = satisfacaoMedia;
+    }
+
+    public void setOciosidadeComputacao(double ociosidadeComputacao) {
+        this.ociosidadeComputacao = ociosidadeComputacao;
+    }
+
+    public void setOciosidadeComunicacao(double ociosidadeComunicacao) {
+        this.ociosidadeComunicacao = ociosidadeComunicacao;
+    }
+
+    public void setEficiencia(double eficiencia) {
+        this.eficiencia = eficiencia;
+    }
 }

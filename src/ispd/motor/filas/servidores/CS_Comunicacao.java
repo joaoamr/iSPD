@@ -16,7 +16,6 @@ public abstract class CS_Comunicacao extends CentroServico {
     /**
      * Identificador do centro de serviço, deve ser o mesmo do modelo icônico
      */
-    private String id;
     private double larguraBanda;
     private double ocupacao;
     private double latencia;
@@ -24,11 +23,10 @@ public abstract class CS_Comunicacao extends CentroServico {
     private double larguraBandaDisponivel;
 
     public CS_Comunicacao(String id, double LarguraBanda, double Ocupacao, double Latencia) {
-        this.id = id;
         this.larguraBanda = LarguraBanda;
         this.ocupacao = Ocupacao;
         this.latencia = Latencia;
-        this.metrica = new MetricasComunicacao();
+        this.metrica = new MetricasComunicacao(id);
         this.larguraBandaDisponivel = this.larguraBanda - (this.larguraBanda * this.ocupacao);
     }
 
@@ -36,8 +34,9 @@ public abstract class CS_Comunicacao extends CentroServico {
         return metrica;
     }
 
+    @Override
     public String getId(){
-        return id;
+        return metrica.getId();
     }
 
     public double getLarguraBanda() {

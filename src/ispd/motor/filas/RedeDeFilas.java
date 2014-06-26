@@ -2,48 +2,50 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ispd.motor.filas;
 
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.implementacao.CS_Internet;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.CS_Processamento;
-import ispd.motor.metricas.MetricasGlobais;
-import ispd.motor.metricas.MetricasUsuarios;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
- * Possui listas de todos os icones presentes no modelo utilizado para buscas e para o motor de simulação
+ * Possui listas de todos os icones presentes no modelo utilizado para buscas e
+ * para o motor de simulação
+ *
  * @author denison_usuario
  */
 public class RedeDeFilas {
     /**
-     * Todos os mestres existentes no sistema incluindo o front-node dos clusters
+     * Todos os mestres existentes no sistema incluindo o front-node dos
+     * clusters
      */
-    List<CS_Processamento> mestres;
+    private List<CS_Processamento> mestres;
     /**
      * Todas as máquinas que não são mestres
      */
-    List<CS_Maquina> maquinas;
+    private List<CS_Maquina> maquinas;
     /**
      * Todas as conexões
      */
-    List<CS_Comunicacao> links;
+    private List<CS_Comunicacao> links;
     /**
      * Todos icones de internet do modelo
      */
-    List<CS_Internet> internets;
+    private List<CS_Internet> internets;
     /**
-     * Mantem métricas dos usuarios da rede de filas
+     * Mantem lista dos usuarios da rede de filas
      */
-    MetricasUsuarios metricasUsuarios;
+    private List<String> usuarios;
+
     /**
-     * Armazena métricas obtidas após realiza a simulação
-     */
-    MetricasGlobais metricasGlobais;
-    /**
-     * Armazena listas com a arquitetura de todo o sistema modelado, utilizado para buscas das métricas e pelo motor de simulação
+     * Armazena listas com a arquitetura de todo o sistema modelado, utilizado
+     * para buscas das métricas e pelo motor de simulação
+     *
      * @param mestres
      * @param maquinas
      * @param links
@@ -88,20 +90,38 @@ public class RedeDeFilas {
         this.mestres = mestres;
     }
 
-    public MetricasGlobais getMetricasGlobais() {
-        return metricasGlobais;
+    public void setUsuarios(List<String> usuarios) {
+        this.usuarios = usuarios;
     }
 
-    public void setMetricasGlobais(MetricasGlobais metricasGlobais) {
-        this.metricasGlobais = metricasGlobais;
+    public List<String> getUsuarios() {
+        return this.usuarios;
     }
 
-    public MetricasUsuarios getMetricasUsuarios() {
-        return metricasUsuarios;
+    /**
+     * Cria falhas para ocorrer durante a simulação usando a distribuição de Weibull.
+     * A distribuição de Weibull indica o momento que ocorre a falha, 
+     * enquanto a uniforme indica o tempo de recuperação do recurso
+     * @param min número mínimo de falhas que ocorrerão
+     * @param max número máximo do falahas que ocorrerão
+     * @param scale parâmetro de escala da distribuição de Weibull
+     * @param shape parâmetro de forma da distribuição de Weibull
+     * @param recMin tempo mínimo para recuperação do recurso que falhou
+     * @param recMax tempo máximo para recuperação do recurso que falhou
+     * @param recuperavel indica se a falha tem recuperação automática
+     */
+    public void setFalhas(int min, int max, double scale, double shape, double recMin, double recMax, boolean recuperavel) {
+        Random rd = new Random();
+        int numFalhas = min + rd.nextInt(max - min);
+        List<Double> falhas = new ArrayList<Double>();
+        for (int i = 0; i < numFalhas; i++) {
+            falhas.add(scale * Math.pow(-Math.log(1 - rd.nextDouble()), 1 / shape));
+        }
+        Collections.sort(falhas);
+        while(!falhas.isEmpty()){
+            int next = rd.nextInt(maquinas.size());
+            System.out.println("Falha "+falhas.get(0)+" no "+maquinas.get(next).getId());
+            maquinas.get(next).addFalha(falhas.remove(0), recMin, recuperavel);
+        }
     }
-
-    public void setMetricasUsuarios(MetricasUsuarios metricasUsuarios) {
-        this.metricasUsuarios = metricasUsuarios;
-    }
-    
 }

@@ -56,6 +56,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         javax.swing.text.Document doc = jEditorPane.getDocument();
         doc.addUndoableEditListener(new UndoableEditListener() {
 
+            @Override
             public void undoableEditHappened(UndoableEditEvent evt) {
                 undo.addEdit(evt.getEdit());
             }
@@ -63,18 +64,21 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         // Evento verifica alterações
         doc.addDocumentListener(new DocumentListener() {
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 if (!modificado) {
                     modificar();
                 }
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 if (!modificado) {
                     modificar();
                 }
             }
 
+            @Override
             public void changedUpdate(DocumentEvent e) {
             }
         });

@@ -1,5 +1,6 @@
 package ispd.arquivo;
 
+import ispd.motor.metricas.Metricas;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -67,7 +68,7 @@ public class SalvarResultadosHTML {
         } else {
             this.globais += "<li><strong>Satisfaction</strong>" + satisfacao + "</li>\n";
         }
-        this.globais += "<li><strong>Idleness of processing resources</strong> = " + globais.getOciosidadeCompuacao() + " %</li>\n"
+        this.globais += "<li><strong>Idleness of processing resources</strong> = " + globais.getOciosidadeComputacao() + " %</li>\n"
                 + "<li><strong>Idleness of communication resources</strong> = " + globais.getOciosidadeComunicacao() + " %</li>\n"
                 + "<li><strong>Efficiency</strong> = " + globais.getEficiencia() + " %</li>\n";
         if (globais.getEficiencia() > 70.0) {
@@ -79,20 +80,16 @@ public class SalvarResultadosHTML {
         }
     }
 
-    public void setMetricasTarefas(
-            double tempoMedioFilaComunicacao,
-            double tempoMedioComunicacao,
-            double tempoMedioSistemaComunicacao,
-            double tempoMedioFilaProcessamento,
-            double tempoMedioProcessamento,
-            double tempoMedioSistemaProcessamento) {
+    public void setMetricasTarefas(Metricas metricas) {
+        double tempoMedioSistemaComunicacao = metricas.getTempoMedioFilaComunicacao() + metricas.getTempoMedioComunicacao();
+        double tempoMedioSistemaProcessamento = metricas.getTempoMedioFilaProcessamento() + metricas.getTempoMedioProcessamento();
         this.tarefas = "<ul><li><h2>Tasks</h2><ul><li><strong>Communication</strong><ul>\n"
-                + "<li>Queue average time: " + tempoMedioFilaComunicacao + " seconds.</li>\n"
-                + "<li>Communication average time: " + tempoMedioComunicacao + " seconds.</li>\n"
+                + "<li>Queue average time: " + metricas.getTempoMedioFilaComunicacao() + " seconds.</li>\n"
+                + "<li>Communication average time: " + metricas.getTempoMedioComunicacao() + " seconds.</li>\n"
                 + "<li>System average time: " + tempoMedioSistemaComunicacao + " seconds.</li>\n"
                 + "</ul></li><li><strong>Processing</strong><ul>\n"
-                + "<li>Queue average time: " + tempoMedioFilaProcessamento + " seconds.</li>\n"
-                + "<li>Processing average time: " + tempoMedioProcessamento + " seconds.</li>\n"
+                + "<li>Queue average time: " + metricas.getTempoMedioFilaProcessamento() + " seconds.</li>\n"
+                + "<li>Processing average time: " + metricas.getTempoMedioProcessamento() + " seconds.</li>\n"
                 + "<li>System average time: " + tempoMedioSistemaProcessamento + " seconds.</li></ul></li></ul></li></ul>";
     }
 
