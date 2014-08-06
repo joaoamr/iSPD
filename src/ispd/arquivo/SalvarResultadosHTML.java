@@ -103,9 +103,9 @@ public class SalvarResultadosHTML {
                 + "    <body background=\"fundo_html.jpg\" style=\"background-position: top center; background-repeat: no-repeat;\">\n"
                 + "        <h1 id=\"topo\" style=\"text-align: center;\">\n"
                 + "            <span style=\"color:#8b4513;\">\n"
-                + "            <img alt=\"\" src=\"Logo_GSPD_100.jpg\" align=\"left\" style=\"width: 70px; height: 70px;\" />\n"
+                + "            <img alt=\"\" src=\"Logo_iSPD_128.png\" align=\"left\" style=\"width: 70px; height: 70px;\" />\n"
                 + "            Simulation Results</span>\n"
-                + "            <img alt=\"\" src=\"Logo_UNESP.jpg\" align=\"right\" style=\"width: 70px; height: 70px;\" />\n"
+                + "            <img alt=\"\" src=\"Logo_UNESP.png\" align=\"right\" style=\"width: 70px; height: 70px;\" />\n"
                 + "        </h1>\n"
                 + "        <hr /><br />\n"
                 + "        <div>\n"
@@ -182,13 +182,13 @@ public class SalvarResultadosHTML {
         if (!arquivo.exists()) {
             ImageIO.write(getImagem("fundo_html.jpg"), "jpg", arquivo);
         }
-        arquivo = new File(diretorio, "Logo_GSPD_100.jpg");
+        arquivo = new File(diretorio, "Logo_iSPD_128.png");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("Logo_GSPD_100.jpg"), "jpg", arquivo);
+            ImageIO.write(getImagem("Logo_iSPD_128.png"), "png", arquivo);
         }
-        arquivo = new File(diretorio, "Logo_UNESP.jpg");
+        arquivo = new File(diretorio, "Logo_UNESP.png");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("Logo_UNESP.jpg"), "jpg", arquivo);
+            ImageIO.write(getImagem("Logo_UNESP.png"), "png", arquivo);
         }
     }
 

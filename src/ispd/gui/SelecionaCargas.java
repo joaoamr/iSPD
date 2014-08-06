@@ -587,7 +587,7 @@ public class SelecionaCargas extends javax.swing.JDialog {
                 }
                 if (ext != null) {
                     if (ext.equals("wmsx")) {
-                        java.net.URL imgURL = JPrincipal.class.getResource("imagens/Logo_GSPD_25.png");
+                        java.net.URL imgURL = JPrincipal.class.getResource("imagens/Logo_iSPD_25.png");
                         if (imgURL != null) {
                             return new ImageIcon(imgURL);
                         }

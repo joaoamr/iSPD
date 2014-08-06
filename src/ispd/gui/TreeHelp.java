@@ -68,7 +68,7 @@ public class TreeHelp extends JFrame implements TreeSelectionListener {
     public TreeHelp() {
         setTitle("Help");
 	setMinimumSize(new java.awt.Dimension(700, 400));
-	Image imagem = Toolkit.getDefaultToolkit().getImage( getClass().getResource("imagens/Logo_GSPD_128.png"));
+	Image imagem = Toolkit.getDefaultToolkit().getImage( getClass().getResource("imagens/Logo_iSPD_25.png"));
 	setIconImage(imagem);
 
         //super(new GridLayout(1,0));

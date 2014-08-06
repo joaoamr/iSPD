@@ -172,7 +172,7 @@ public class GerenciarEscalonador extends javax.swing.JFrame {
         setTitle(palavras.getString("Manage Schedulers")); // NOI18N
         setAlwaysOnTop(true);
         setFocusable(false);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_iSPD_25.png")));
 
         jToolBar1.setRollover(true);
 

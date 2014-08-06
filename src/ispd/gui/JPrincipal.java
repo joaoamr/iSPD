@@ -171,7 +171,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
                 if (ext != null) {
                     if (ext.equals("ims") || ext.equals("imsx")) {
-                        java.net.URL imgURL = JPrincipal.class.getResource("imagens/Logo_GSPD_25.png");
+                        java.net.URL imgURL = JPrincipal.class.getResource("imagens/Logo_iSPD_25.png");
                         if (imgURL != null) {
                             return new ImageIcon(imgURL);
                         }
@@ -182,7 +182,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
             setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
             setTitle(palavras.getString("nomePrograma")); // NOI18N
-            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_iSPD_25.png")));
             addWindowListener(new java.awt.event.WindowAdapter() {
                 public void windowClosing(java.awt.event.WindowEvent evt) {
                     formWindowClosing(evt);
@@ -659,7 +659,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
         // TODO add your handling code here:
-        Icon icone = new ImageIcon(getClass().getResource("imagens/simbolo_t.gif"));
+        Icon icone = new ImageIcon(getClass().getResource("imagens/Logo_iSPD_128.png"));
         String sobre = "\n" + palavras.getString("InicioSobre") + "\n"
                 + "\"Instituto de Biociências, Letras e Ciências Exatas\", UNESP - Univ Estadual\n"
                 + "Paulista, campus de São José do Rio Preto, Departamento de Ciências de\n"

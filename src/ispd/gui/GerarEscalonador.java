@@ -218,7 +218,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanelPasso1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Enter the name of the scheduler"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
-        jLabelP1NomeEsc.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
+        jLabelP1NomeEsc.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
         jLabelP1NomeEsc.setText(palavras.getString("Scheduler name")); // NOI18N
 
         jTextFieldP1NomeEsc.setText("NewScheduler");
@@ -228,7 +228,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
             }
         });
 
-        jLabelP1LocalArq.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
+        jLabelP1LocalArq.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
         jLabelP1LocalArq.setText(palavras.getString("File")); // NOI18N
 
         jTextFieldP1LocalArq.setEditable(false);
@@ -482,11 +482,11 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPasso4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Advanced") + " - " + palavras.getString("Tasks distribution order"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
         jPanelPasso4.setPreferredSize(new java.awt.Dimension(600, 350));
 
-        jLabelP4Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
+        jLabelP4Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
         jLabelP4Formula.setText(palavras.getString("Formula:")); // NOI18N
 
         jTextFieldP4Formula.setEditable(false);
-        jTextFieldP4Formula.setFont(new java.awt.Font("Verdana", 1, 11));
+        jTextFieldP4Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
         jTextFieldP4Formula.setText("Random");
         jTextFieldP4Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -794,11 +794,11 @@ public class GerarEscalonador extends javax.swing.JDialog {
         jPanelPasso5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Advanced") + " - " + palavras.getString("Resource aloccation order"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
         jPanelPasso5.setPreferredSize(new java.awt.Dimension(600, 350));
 
-        jLabelP5Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11));
+        jLabelP5Formula.setFont(new java.awt.Font("Comic Sans MS", 0, 11)); // NOI18N
         jLabelP5Formula.setText(palavras.getString("Formula:")); // NOI18N
 
         jTextFieldP5Formula.setEditable(false);
-        jTextFieldP5Formula.setFont(new java.awt.Font("Verdana", 1, 11));
+        jTextFieldP5Formula.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
         jTextFieldP5Formula.setText("Random");
         jTextFieldP5Formula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1264,7 +1264,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
 
         jPanelPasso7.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), palavras.getString("Finish"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Comic Sans MS", 1, 12))); // NOI18N
 
-        jTextPaneP7Gramatica.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jTextPaneP7Gramatica.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jScrollPane3.setViewportView(jTextPaneP7Gramatica);
 
         javax.swing.GroupLayout jPanelPasso7Layout = new javax.swing.GroupLayout(jPanelPasso7);
@@ -1286,12 +1286,12 @@ public class GerarEscalonador extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(palavras.getString("New Scheduler")); // NOI18N
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_GSPD_128.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagens/Logo_iSPD_25.png")));
 
         jPanelPassos.setBackground(new java.awt.Color(255, 255, 255));
         jPanelPassos.setBorder(new javax.swing.border.MatteBorder(null));
 
-        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12));
+        jLabelPassos.setFont(new java.awt.Font("Comic Sans MS", 1, 12)); // NOI18N
         jLabelPassos.setText("<html><b>" + palavras.getString("Steps") + "<br>----------------</b></html>"); // NOI18N
 
         jLabelPasso1.setText("1 - " + palavras.getString("Enter the name")); // NOI18N
@@ -1321,7 +1321,7 @@ public class GerarEscalonador extends javax.swing.JDialog {
             .addGroup(jPanelPassosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelPassosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelPassos, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                    .addComponent(jLabelPassos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelPasso1)
                     .addComponent(jLabelPasso2)
                     .addComponent(jLabelPasso4)
