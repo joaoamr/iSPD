@@ -7,15 +7,13 @@ package ispd;
 import ispd.gui.JPrincipal;
 import ispd.gui.LogExceptions;
 import ispd.gui.SplashWindow;
-import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -35,12 +33,7 @@ public class Main {
             tel.executar();
             System.exit(0);
         } else {
-            BufferedImage image = null;
-            try {
-                image = ImageIO.read(Main.class.getResourceAsStream("gui/imagens/Splash2.png"));
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ImageIcon image = new ImageIcon(Main.class.getResource("gui/imagens/Splash.gif"));
             SplashWindow window = new SplashWindow(image);
             window.setVisible(true);
             //Exibir e armazenar erros durante execução:

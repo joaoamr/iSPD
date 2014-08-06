@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.util.Arrays;
+import javax.swing.ImageIcon;
 import javax.swing.JWindow;
 
 /**
@@ -27,20 +28,21 @@ import javax.swing.JWindow;
 
 public class SplashWindow extends JWindow {
 
-    private BufferedImage splash = null;
+    private static final int EXTRA = 7;
+    private BufferedImage splash;
+    private ImageIcon imagem;
 
-    public SplashWindow(BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int extra = 14;
+    public SplashWindow(ImageIcon image) {
+        int width = image.getIconWidth();
+        int height = image.getIconHeight();
 
         setSize(new Dimension(
-                width + extra, height + extra));
+                width + EXTRA*2, height + EXTRA*2));
         setLocationRelativeTo(null);
         Rectangle windowRect = getBounds();
-
+        imagem = image;
         splash = new BufferedImage(
-                width + extra, height + extra,
+                width + EXTRA*2, height + EXTRA*2,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = (Graphics2D) splash.getGraphics();
 
@@ -49,15 +51,15 @@ public class SplashWindow extends JWindow {
                     getGraphicsConfiguration().getDevice());
             BufferedImage capture = robot.createScreenCapture(
                     new Rectangle(windowRect.x, windowRect.y,
-                    windowRect.width + extra,
-                    windowRect.height + extra));
+                    windowRect.width + EXTRA*2,
+                    windowRect.height + EXTRA*2));
             g2.drawImage(capture, null, 0, 0);
         } catch (AWTException ex) {
             ex.printStackTrace();
         }
 
         BufferedImage shadow = new BufferedImage(
-                width + extra, height + extra,
+                width + EXTRA*2, height + EXTRA*2,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics shadowGraphics = shadow.getGraphics();
         shadowGraphics.setColor(
@@ -71,7 +73,6 @@ public class SplashWindow extends JWindow {
         g2.drawImage(shadow,
                 new ConvolveOp(new Kernel(7, 7, data)),
                 0, 0);
-        g2.drawImage(image, 0, 0, this);
         g2.dispose();
     }
 
@@ -79,6 +80,7 @@ public class SplashWindow extends JWindow {
     public void paint(Graphics g) {
         if (splash != null) {
             g.drawImage(splash, 0, 0, null);
+            imagem.paintIcon(this, g, EXTRA, EXTRA);
         }
     }
 }
