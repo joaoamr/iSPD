@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
@@ -145,6 +146,9 @@ public class JResultados extends javax.swing.JDialog {
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
+        
+        //this.jScrollPaneProcessamento.setViewportView(this.graficoEstadoTarefa);
+        //this.jScrollPaneComunicacao.setViewportView(this.graficoEstadoTarefa2);
     }
 
     /**
@@ -965,6 +969,10 @@ public class JResultados extends javax.swing.JDialog {
                 dadosGraficoComunicacao, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if(mComunicacao != null && mComunicacao.size() > 10) {
+            jfc.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
         graficoBarraComunicacao = new ChartPanel(jfc);
         graficoBarraComunicacao.setPreferredSize(new Dimension(600, 300));
 
@@ -1000,6 +1008,10 @@ public class JResultados extends javax.swing.JDialog {
                 dadosGraficoProcessamento, // Dados para o grafico
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if(mProcess.size() > 10) {
+            jfc.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
         graficoBarraProcessamento = new ChartPanel(jfc);
         graficoBarraProcessamento.setPreferredSize(new Dimension(600, 300));
 

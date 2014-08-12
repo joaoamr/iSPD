@@ -81,6 +81,7 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
     private Color defaultStyle = Color.black;
     private Color commentStyle = Color.lightGray;
     private Color keyStyle = Color.blue;
+    private Color numberStyle = new Color(0, 150, 0);
     private Color stringStyle = new Color(250, 125, 0);
     private Pattern singleCommentDelim = Pattern.compile("//");
     private Pattern multiCommentDelimStart = Pattern.compile("/\\*");
@@ -100,13 +101,9 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
         "Mensagens.CANCELAR", "Mensagens.PARAR", "Mensagens.DEVOLVER", "Mensagens.DEVOLVER_COM_PREEMPCAO", "Mensagens.ATUALIZAR"};
 
     public DocumentColor() {
-
+        
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
-
         rootElement = getDefaultRootElement();
-
-        //keywords = 
-
         style = new SimpleAttributeSet();
         //Define estilo de fonte
         font = new Font(Font.MONOSPACED, Font.BOLD, 12);
@@ -174,6 +171,7 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
                 if (text.substring(offset - 4).equals("    ")) {
                     super.remove(offset - 4, 4);
                 }
+                processChangedLines(offset, str.length());
             } else {
                 super.insertString(offset, str, style);
                 processChangedLines(offset, str.length());
@@ -237,7 +235,8 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
             }
         }
 
-        StyleConstants.setForeground(style, Color.green);
+        //numbers
+        StyleConstants.setForeground(style, numberStyle);
         {
             Pattern p = Pattern.compile(keyNumbers);
             Matcher m = p.matcher(text);

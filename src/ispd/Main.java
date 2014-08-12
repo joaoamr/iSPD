@@ -36,7 +36,9 @@ public class Main {
             ImageIcon image = new ImageIcon(Main.class.getResource("gui/imagens/Splash.gif"));
             SplashWindow window = new SplashWindow(image);
             window.setVisible(true);
+            //window.setText("Loading images...");
             //Exibir e armazenar erros durante execução:
+            //window.setText("Loading error controller...");
             LogExceptions logExceptions = new LogExceptions(null);
             Thread.setDefaultUncaughtExceptionHandler(logExceptions);
             // cria os novos fluxos de saida para arquivo
@@ -54,15 +56,10 @@ public class Main {
             // redefine os fluxos na classe System
             //System.setErr(psErr);
             //System.setOut(psOut);
+            //window.setText("Loading graphical interface...");
             try {
                 UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedLookAndFeelException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
             JPrincipal gui = new JPrincipal();
