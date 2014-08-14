@@ -22,6 +22,7 @@ public class MetricasGlobais implements Serializable {
     private double ociosidadeComputacao;
     private double ociosidadeComunicacao;
     private double eficiencia;
+    private int total;
     
     public MetricasGlobais(RedeDeFilas redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas){
         this.tempoSimulacao = tempoSimulacao;
@@ -29,6 +30,7 @@ public class MetricasGlobais implements Serializable {
         this.ociosidadeComputacao = getOciosidadeComputacao(redeDeFilas);
         this.ociosidadeComunicacao = getOciosidadeComunicacao(redeDeFilas);
         this.eficiencia = getEficiencia(tarefas);
+        this.total = 0;
     }
     
     public MetricasGlobais(){
@@ -37,6 +39,7 @@ public class MetricasGlobais implements Serializable {
         this.ociosidadeComputacao = 0;
         this.ociosidadeComunicacao = 0;
         this.eficiencia = 0;
+        this.total = 0;
     }
 
     public double getEficiencia() {
@@ -124,5 +127,32 @@ public class MetricasGlobais implements Serializable {
 
     public void setEficiencia(double eficiencia) {
         this.eficiencia = eficiencia;
+    }
+
+    public void add(MetricasGlobais global) {
+        tempoSimulacao += global.getTempoSimulacao();
+        satisfacaoMedia += global.getSatisfacaoMedia();
+        ociosidadeComputacao += global.getOciosidadeComputacao();
+        ociosidadeComunicacao += global.getOciosidadeComunicacao();
+        eficiencia += global.getEficiencia();
+        total++;
+    }
+
+    @Override
+    public String toString() {
+        String texto = "\t\tSimulation Results\n\n";
+        texto += String.format("\tTotal Simulated Time = %g \n", tempoSimulacao / total);
+        texto += String.format("\tSatisfaction = %g %%\n", satisfacaoMedia / total);
+        texto += String.format("\tIdleness of processing resources = %g %%\n", ociosidadeComputacao / total);
+        texto += String.format("\tIdleness of communication resources = %g %%\n", ociosidadeComunicacao / total);
+        texto += String.format("\tEfficiency = %g %%\n", eficiencia / total);
+        if (eficiencia / total > 70.0) {
+            texto += "\tEfficiency GOOD\n ";
+        } else if (eficiencia / total > 40.0) {
+            texto += "\tEfficiency MEDIA\n ";
+        } else {
+            texto += "\tEfficiency BAD\n ";
+        }
+        return texto;
     }
 }

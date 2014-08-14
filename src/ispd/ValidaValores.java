@@ -5,6 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import javax.swing.JOptionPane;
 
+/**
+ * Classe para validação e controle de nomes e valores da interface gráfica do iSPD
+ * @author denison
+ */
 public class ValidaValores {
 
     /**
@@ -57,9 +61,6 @@ public class ValidaValores {
             JOptionPane.showMessageDialog(null, "There's already an icon named \'" + temp + "\'.\nPlease enter a different name.", "WARNING", JOptionPane.PLAIN_MESSAGE);
             return false;
         }
-    }
-
-    public ValidaValores() {
     }
 
     /**

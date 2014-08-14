@@ -15,11 +15,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
- *
- * @author denison_usuario
+ * Classe de inicialização do iSPD.
+ * Indetifica se deve executar comando a partir do termila ou carrega interface gráfica
+ * @author denison
  */
 public class Main {
 
@@ -35,10 +35,9 @@ public class Main {
         } else {
             ImageIcon image = new ImageIcon(Main.class.getResource("gui/imagens/Splash.gif"));
             SplashWindow window = new SplashWindow(image);
+            window.setText("Copyright (c) 2010 - 2014 GSPD.  All rights reserved.");
             window.setVisible(true);
-            //window.setText("Loading images...");
             //Exibir e armazenar erros durante execução:
-            //window.setText("Loading error controller...");
             LogExceptions logExceptions = new LogExceptions(null);
             Thread.setDefaultUncaughtExceptionHandler(logExceptions);
             // cria os novos fluxos de saida para arquivo
@@ -56,7 +55,6 @@ public class Main {
             // redefine os fluxos na classe System
             //System.setErr(psErr);
             //System.setOut(psOut);
-            //window.setText("Loading graphical interface...");
             try {
                 UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             } catch (Exception ex) {

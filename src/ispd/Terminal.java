@@ -12,11 +12,6 @@ import ispd.motor.SimulacaoParalela;
 import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
-import ispd.motor.filas.servidores.CS_Comunicacao;
-import ispd.motor.filas.servidores.CS_Processamento;
-import ispd.motor.filas.servidores.implementacao.CS_Link;
-import ispd.motor.filas.servidores.implementacao.CS_Maquina;
-import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.metricas.Metricas;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.Color;
@@ -39,13 +34,30 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Classe de controle para chamada do terminal.
+ * Atende aos seguintes parametros:
+ * java -jar iSPD.jar [option] [model_file.imsx]
+ * [option] pode ser um ou mais:
+ *     -n <number>    number of simulation
+ *     -th <number>   number of threads
+ *     -p             Optimistic parallel simulation
+ *     -o <directory> directory to save html output
+ *     -help          print this help message
  * @author denison
  */
 public class Terminal {
 
+    /**
+     * Arquivo contendo o modelo que será simulados
+     */
     private File arquivoIn = null;
+    /**
+     * Diretório no qual será salvo html com os resultados da simulação
+     */
     private File arquivoOut = null;
+    /**
+     * Arquivo de configuração para um processo cliente executar simulações em rede
+     */
     private File configuracao = null;
     private int opcao;
     private int numExecucoes;
@@ -55,12 +67,12 @@ public class Terminal {
     private boolean visible = true;
     private int port = 2004;
     //Resultados
-    private double tempoSimulacao = 0;
-    private double satisfacaoMedia = 0;
-    private double ociosidadeComputacao = 0;
-    private double ociosidadeComunicacao = 0;
-    private double eficiencia = 0;
+    MetricasGlobais resuladosGlobais;
 
+    /**
+     * Argumentos do main devem ser repassados para o construtor configurar execução
+     * @param args 
+     */
     public Terminal(String[] args) {
         if (args[0].equals("help") || args[0].equals("-help") || args[0].equals("-h")) {
             opcao = 0;
@@ -151,7 +163,10 @@ public class Terminal {
         }
     }
 
-    void executar() {
+    /**
+     * Inicia atendimento de acordo com parametros
+     */
+    public void executar() {
         switch (opcao) {
             case 0:
                 System.out.println("Usage: java -jar iSPD.jar");
@@ -199,6 +214,10 @@ public class Terminal {
         }
     }
 
+    /**
+     * Executa n simulações do modelo passado por parametro de forma sequencial
+     * (usando o motor de execução padrão)
+     */
     private void simularSequencial() {
         progrSim.println("Simulation Initiated.");
         try {
@@ -240,11 +259,10 @@ public class Terminal {
                 //recebe instante de tempo em milissegundos ao iniciar a simulação
                 sim.simular();//[30%] --> 85%
                 if (arquivoOut == null) {
-                    this.addResultadosGlobais(new MetricasGlobais(redeDeFilas, sim.getTime(null), tarefas));
+                    resuladosGlobais.add(new MetricasGlobais(redeDeFilas, sim.getTime(null), tarefas));
                 } else {
                     Metricas temp = sim.getMetricas();
                     metricas.addMetrica(temp);
-                    this.addResultadosGlobais(temp.getMetricasGlobais());
                 }
                 //Recebe instante de tempo em milissegundos ao fim da execução da simulação
                 double t2 = System.currentTimeMillis();
@@ -255,6 +273,7 @@ public class Terminal {
             }
             if (numExecucoes > 1 && arquivoOut != null) {
                 metricas.calculaMedia();
+                resuladosGlobais = metricas.getMetricasGlobais();
             }
             progrSim.println("Results:");
             if (numExecucoes > 1) {
@@ -269,7 +288,7 @@ public class Terminal {
                 double tempototal = (t2 - t1) / 1000;
                 progrSim.println("  Time to create html = " + tempototal + "seconds");
             }
-            progrSim.println(this.getResultadosGlobais());
+            progrSim.println(resuladosGlobais.toString());
         } catch (Exception erro) {
             progrSim.println(erro.getMessage(), Color.red);
             progrSim.print("Simulation Aborted", Color.red);
@@ -277,6 +296,10 @@ public class Terminal {
         }
     }
 
+    /**
+     * Executa n simulações do modelo passado por parametro de forma paralela
+     * (usando o motor de execução padrão em várias threads, ou usando o motor experimental de simulação otimista)
+     */
     private void simularParalelo() {
         progrSim.println("Simulation Initiated.");
         try {
@@ -323,12 +346,11 @@ public class Terminal {
             if (numExecucoes > 1 && arquivoOut != null) {
                 for (int i = 0; i < numThreads; i++) {
                     metricas.addMetrica(trabalhador[i].getMetricas());
-                    this.addResultadosGlobais(trabalhador[i].getMetricasGlobais());
                 }
                 metricas.calculaMedia();
             } else {
                 for (int i = 0; i < numThreads; i++) {
-                    this.addResultadosGlobais(trabalhador[i].getMetricasGlobais());
+                    resuladosGlobais.add(trabalhador[i].getMetricasGlobais());
                 }
             }
             progrSim.println("OK");
@@ -342,7 +364,7 @@ public class Terminal {
                 tempototal = (t2 - t1) / 1000;
                 progrSim.println("  Time to create html = " + tempototal + "seconds");
             }
-            progrSim.println(this.getResultadosGlobais());
+            progrSim.println(resuladosGlobais.toString());
         } catch (Exception erro) {
             progrSim.println(erro.getMessage(), Color.red);
             progrSim.print("Simulation Aborted", Color.red);
@@ -350,6 +372,10 @@ public class Terminal {
         }
     }
 
+    /**
+     * Simulação cliente servidor
+     * Executa as ações do servidor, porem ainda não é a versão definitiva
+     */
     private void simularRedeServidor() {
         Document modelo = null;
         Metricas metricas = new Metricas(null);
@@ -410,6 +436,10 @@ public class Terminal {
         }
     }
 
+    /**
+     * Simulação cliente servidor
+     * Executa as ações do cliente, porem ainda não é a versão definitiva
+     */
     private void simularRedeCliente(String servers[], int ports[], int numSim[]) {
         //Obtem modelo
         progrSim.print("Opening iconic model.");
@@ -470,56 +500,11 @@ public class Terminal {
         System.out.println("Realizados " + metricas.getNumeroDeSimulacoes() + " simulações");
     }
 
-    private void addResultadosGlobais(MetricasGlobais globais) {
-        this.tempoSimulacao += globais.getTempoSimulacao();
-        this.satisfacaoMedia += globais.getSatisfacaoMedia();
-        this.ociosidadeComputacao += globais.getOciosidadeComputacao();
-        this.ociosidadeComunicacao += globais.getOciosidadeComunicacao();
-        this.eficiencia += globais.getEficiencia();
-    }
-
-    private String getResultadosGlobais() {
-        String texto = "\t\tSimulation Results\n\n";
-        texto += String.format("\tTotal Simulated Time = %g \n", tempoSimulacao / numExecucoes);
-        texto += String.format("\tSatisfaction = %g %%\n", satisfacaoMedia / numExecucoes);
-        texto += String.format("\tIdleness of processing resources = %g %%\n", ociosidadeComputacao / numExecucoes);
-        texto += String.format("\tIdleness of communication resources = %g %%\n", ociosidadeComunicacao / numExecucoes);
-        texto += String.format("\tEfficiency = %g %%\n", eficiencia / numExecucoes);
-        if (eficiencia / numExecucoes > 70.0) {
-            texto += "\tEfficiency GOOD\n ";
-        } else if (eficiencia / numExecucoes > 40.0) {
-            texto += "\tEfficiency MEDIA\n ";
-        } else {
-            texto += "\tEfficiency BAD\n ";
-        }
-        return texto;
-    }
-
-    private void modelo(RedeDeFilas redeDeFilas) {
-        int cs_maq = 0, cs_link = 0, cs_mestre = 0;
-
-        for (CS_Maquina maq : redeDeFilas.getMaquinas()) {
-            if (maq instanceof CS_Maquina) {
-                cs_maq++;
-            }
-        }
-        for (CS_Comunicacao link : redeDeFilas.getLinks()) {
-            if (link instanceof CS_Link) {
-                cs_link++;
-            }
-        }
-        for (CS_Processamento mestre : redeDeFilas.getMestres()) {
-            if (mestre instanceof CS_Mestre) {
-                cs_mestre++;
-            }
-        }
-        progrSim.println("* Grid:");
-        progrSim.println("  - Number of Masters: " + cs_mestre);
-        progrSim.println("  - Number of Slaves: " + cs_maq);
-        progrSim.println("  - Number of Links: " + cs_link);
-        //progrSim.println("  - Number of Tasks: "+task);
-    }
-
+    /**
+     * Realiza a leitura de um arquivo de configuração para a simulação cliente/servidor
+     * @param configuracao aquivo com linhas contendo: [servidor/ip] [porta] [numero de simulações]
+     * @return vetor contendo todos os objetos lidos do arquivo
+     */
     private Object[] lerConfiguracao(File configuracao) {
         ArrayList config = new ArrayList();
         FileReader arq = null;
@@ -544,6 +529,9 @@ public class Terminal {
         }
     }
 
+    /**
+     * Classe interna para executar uma simulação em thread
+     */
     private class RunnableImpl implements Runnable {
 
         private final Document modelo;
