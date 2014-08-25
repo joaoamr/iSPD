@@ -8,7 +8,6 @@ package ispd.arquivo.interpretador.cargas;
 import ispd.motor.filas.Tarefa;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -138,8 +137,7 @@ public class Interpretador {
 
     @Override
     public String toString() {
-        int i = 0;
-        i = saida.lastIndexOf("\\");
+        int i = saida.lastIndexOf("\\");
         saida = saida.substring(i + 1);
         return ("File " + saida + " was generated sucessfully:\n"
                 + "\t- Generated from the format: "+ tipo 
@@ -151,13 +149,12 @@ public class Interpretador {
         try {
             BufferedReader in = new BufferedReader(new FileReader(caminho));
             String texto = "";
-            int j = 0;
-            j = caminho.lastIndexOf("\\");
+            int j = caminho.lastIndexOf("\\");
             //pega o nome do arquivo
             String nome;
             nome = caminho.substring(j + 1);
             texto = texto.concat("File " + nome + " was opened sucessfully:\n");
-            String aux = null;
+            String aux;
             int i = 0;
             while (in.ready()) {
                 aux = in.readLine();

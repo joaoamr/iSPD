@@ -7,6 +7,8 @@ PARSER_BEGIN(Interpretador)
 
 package ispd.arquivo.interpretador.gerador;
 
+import javax.swing.JOptionPane;
+
 class Interpretador{
 
 	public boolean verbose;
@@ -83,15 +85,10 @@ class Interpretador{
 	}
 
 	public void resuladoParser(){
-		if(erroEncontrado){
-			MostraSaida saida = new MostraSaida("Found Errors",erros);
-			saida.setVisible(true);
-		}
-		else{
-			if(verbose){
-                            MostraSaida saida = new MostraSaida("Saida do Reconhecimento",textoVerbose);
-                            saida.setVisible(true);
-			}
+		if (erroEncontrado) {
+		    JOptionPane.showMessageDialog(null, erros, "Found Errors", JOptionPane.ERROR_MESSAGE);
+		} else if(verbose){
+                    JOptionPane.showMessageDialog(null, textoVerbose, "Saida do Reconhecimento", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

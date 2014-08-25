@@ -11,10 +11,10 @@
 package ispd.gui;
 
 import ispd.ValidaValores;
-import ispd.gui.componenteauxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.FiltroDeArquivos;
 import ispd.arquivo.Escalonadores;
 import ispd.escalonador.ManipularArquivos;
-import ispd.gui.componenteauxiliar.DocumentColor;
+import ispd.gui.auxiliar.DocumentColor;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;

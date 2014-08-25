@@ -12,7 +12,8 @@ package ispd.gui;
 
 import ispd.arquivo.SalvarResultadosHTML;
 import ispd.arquivo.interpretador.cargas.Interpretador;
-import ispd.gui.componenteauxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.HtmlPane;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
@@ -22,12 +23,13 @@ import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasProcessamento;
 import ispd.motor.metricas.MetricasUsuarios;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,10 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -86,7 +85,7 @@ public class JResultados extends javax.swing.JDialog {
         graficoProcessamentoTempoUser1 = new ChartPanel(temp[0]);
         graficoProcessamentoTempoUser2 = new ChartPanel(temp[1]);
     }
-    
+
     /**
      * Cria no JResultado sem carregar parte gráfica para utilizar no modo
      * terminal usando apenas a classe "Metricas"
@@ -116,7 +115,7 @@ public class JResultados extends javax.swing.JDialog {
         html.setMetricasTarefas(metricas);
         CS_Mestre mestre = (CS_Mestre) rdf.getMestres().get(0);
         setResultadosUsuario(mestre.getEscalonador().getMetricaUsuarios(), metricas);
-        
+
         if (rdf.getMaquinas().size() < 21) {
             graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
             graficoProcessamentoTempo.setPreferredSize(new Dimension(600, 300));
@@ -146,7 +145,7 @@ public class JResultados extends javax.swing.JDialog {
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
-        
+
         //this.jScrollPaneProcessamento.setViewportView(this.graficoEstadoTarefa);
         //this.jScrollPaneComunicacao.setViewportView(this.graficoEstadoTarefa2);
     }
@@ -464,7 +463,11 @@ public class JResultados extends javax.swing.JDialog {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = jFileChooser.getSelectedFile();
             salvarHTML(file);
-            abrirHTML(file);
+            try {
+                HtmlPane.openDefaultBrowser(new URL("file://" + file.getAbsolutePath() + "/result.html"));
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_jButtonSalvarActionPerformed
 
@@ -699,26 +702,6 @@ public class JResultados extends javax.swing.JDialog {
         }
     }
 
-    /**
-     * Apresenta uma janela com o HTML dos resultados
-     *
-     * @param file diretório do arquivo html
-     */
-    private void abrirHTML(File file) {
-        try {
-            JDialog frame = new JDialog(this, "Simulation Results", true);
-            Container con = frame.getContentPane();
-            JEditorPane jep = new JEditorPane("file://" + file.getAbsolutePath() + "/result.html");
-            JScrollPane jsp = new JScrollPane(jep);
-            con.add(jsp);
-            frame.setBounds(50, 50, 700, 500);
-            frame.setLocationRelativeTo(this);
-            frame.setVisible(true);
-        } catch (IOException ex) {
-            Logger.getLogger(JResultados.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     private JFreeChart criarGraficoProcessamentoTempoTarefa(List<Tarefa> tarefas) {
 
         XYSeriesCollection dadosGrafico = new XYSeriesCollection();
@@ -936,13 +919,13 @@ public class JResultados extends javax.swing.JDialog {
                 texto += String.format("    System average time: %g seconds.\n", tempoMedioSistemaProcessamento);
             }
             String name;
-            texto += String.format( "\nSatisfação dos usuários em porcentagem\n" );
+            texto += String.format("\nSatisfação dos usuários em porcentagem\n");
             for (Map.Entry<String, Double> entry : metricas.getMetricasSatisfacao().entrySet()) {
-                
+
                 String user = entry.getKey();
                 Double satisfacao = entry.getValue();
-                texto += user + " : "+satisfacao+" %\n";
-                
+                texto += user + " : " + satisfacao + " %\n";
+
             }
             jTextAreaUsuario.setText(texto);
         } else {
@@ -970,7 +953,7 @@ public class JResultados extends javax.swing.JDialog {
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 false, false, false); // exibir: legendas, tooltips, url
         //Inclina nome da barra em 45 graus
-        if(mComunicacao != null && mComunicacao.size() > 10) {
+        if (mComunicacao != null && mComunicacao.size() > 10) {
             jfc.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         }
         graficoBarraComunicacao = new ChartPanel(jfc);
@@ -1009,7 +992,7 @@ public class JResultados extends javax.swing.JDialog {
                 PlotOrientation.VERTICAL, //Orientacao do grafico
                 false, false, false); // exibir: legendas, tooltips, url
         //Inclina nome da barra em 45 graus
-        if(mProcess.size() > 10) {
+        if (mProcess.size() > 10) {
             jfc.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         }
         graficoBarraProcessamento = new ChartPanel(jfc);

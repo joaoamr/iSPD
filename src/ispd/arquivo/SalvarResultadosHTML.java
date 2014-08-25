@@ -3,7 +3,6 @@ package ispd.arquivo;
 import ispd.motor.metricas.Metricas;
 import ispd.motor.metricas.MetricasGlobais;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,26 +10,51 @@ import java.io.PrintWriter;
 import javax.imageio.ImageIO;
 
 /**
+ * Classe responsável por armazenar resultados obtidos da simulação e
+ * transformar em um arquivo html
  *
  * @author denison
  */
 public class SalvarResultadosHTML {
 
-    private String tabela;
     private String globais;
     private String satisfacao;
     private String tarefas;
+    private String tabela;
     private String chartstxt;
     private BufferedImage charts[];
 
+    /**
+     * Cria String com tabela com os resultados de cada centro de serviços
+     * @param tabela contêm as seguintes colunas: [Label] [Owner] [Processing performed] [Communication performed]
+     */
     public void setTabela(Object tabela[][]) {
         //Adicionando resultados na tabela do html
-        this.tabela = "";
+        this.tabela = "<table align=\"center\" border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width: 80%;\">\n"
+                    + "            <thead>\n"
+                    + "                <tr>\n"
+                    + "                    <th scope=\"col\">\n"
+                    + "                        <span style=\"color:#800000;\">Label</span></th>\n"
+                    + "                    <th scope=\"col\">\n"
+                    + "                        <span style=\"color:#800000;\">Owner</span></th>\n"
+                    + "                    <th scope=\"col\">\n"
+                    + "                        <span style=\"color:#800000;\">Processing performed</span></th>\n"
+                    + "                    <th scope=\"col\">\n"
+                    + "                        <span style=\"color:#800000;\">Communication&nbsp;performed</span></th>\n"
+                    + "                </tr>\n"
+                    + "            </thead>\n"
+                    + "            <tbody>\n";
         for (Object[] item : tabela) {
-            this.tabela += "<tr><td>" + item[0] + "</td><td>" + item[1] + "</td><td>" + item[2] + "</td><td>" + item[3] + "</td></tr>\n";
+            this.tabela += "                <tr><td>" + item[0] + "</td><td>" + item[1] + "</td><td>" + item[2] + "</td><td>" + item[3] + "</td></tr>\n";
         }
+        this.tabela += "            </tbody>\n"
+                     + "        </table>\n";
     }
 
+    /**
+     * Armazena as imagens dos gráficos e cria string com a ligação dos arquivos para html
+     * @param charts vetor com imagens que devem ser salvas juntos com o html
+     */
     public void setCharts(BufferedImage charts[]) {
         int cont = 0;
         for (BufferedImage item : charts) {
@@ -51,6 +75,10 @@ public class SalvarResultadosHTML {
 
     }
 
+    /**
+     * Cria string com satisfação do usuário
+     * @param satisfacao matriz contendo: [nome do usuário][satifação]
+     */
     public void setSatisfacao(Object[][] satisfacao) {
         if (satisfacao.length > 1) {
             this.satisfacao = "<ul>";
@@ -61,6 +89,10 @@ public class SalvarResultadosHTML {
         }
     }
 
+    /**
+     * Gera String com as métricas globais
+     * @param globais metricas globais obtidas da simulação
+     */
     public void setMetricasGlobais(MetricasGlobais globais) {
         this.globais = "<li><strong>Total Simulated Time </strong>= " + globais.getTempoSimulacao() + "</li>\n";
         if (satisfacao == null) {
@@ -80,6 +112,10 @@ public class SalvarResultadosHTML {
         }
     }
 
+    /**
+     * Cria String com as métricas dos clientes na rede de filas
+     * @param metricas 
+     */
     public void setMetricasTarefas(Metricas metricas) {
         double tempoMedioSistemaComunicacao = metricas.getTempoMedioFilaComunicacao() + metricas.getTempoMedioComunicacao();
         double tempoMedioSistemaProcessamento = metricas.getTempoMedioFilaProcessamento() + metricas.getTempoMedioProcessamento();
@@ -93,6 +129,10 @@ public class SalvarResultadosHTML {
                 + "<li>System average time: " + tempoMedioSistemaProcessamento + " seconds.</li></ul></li></ul></li></ul>";
     }
 
+    /**
+     * Cria texto da descrição completa em html contendo os resultados inseridos
+     * @return texto completo do html
+     */
     public String getHTMLText() {
         return "<!DOCTYPE html>\n"
                 + "<html>\n"
@@ -124,23 +164,7 @@ public class SalvarResultadosHTML {
                 + "        <h2 id=\"table\" style=\"text-align: center;\">\n"
                 + "            Table of Resource\n"
                 + "        </h2>\n"
-                + "        <table align=\"center\" border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width: 80%;\">\n"
-                + "            <thead>\n"
-                + "                <tr>\n"
-                + "                    <th scope=\"col\">\n"
-                + "                        <span style=\"color:#800000;\">Label</span></th>\n"
-                + "                    <th scope=\"col\">\n"
-                + "                        <span style=\"color:#800000;\">Owner</span></th>\n"
-                + "                    <th scope=\"col\">\n"
-                + "                        <span style=\"color:#800000;\">Processing performed</span></th>\n"
-                + "                    <th scope=\"col\">\n"
-                + "                        <span style=\"color:#800000;\">Communication&nbsp;performed</span></th>\n"
-                + "                </tr>\n"
-                + "            </thead>\n"
-                + "            <tbody>\n"
-                + "                " + tabela
-                + "            </tbody>\n"
-                + "        </table>\n"
+                +          tabela
                 + "        <div>\n"
                 + "            <a href=\"#topo\">Inicio</a>\n"
                 + "        </div>\n"
@@ -161,6 +185,11 @@ public class SalvarResultadosHTML {
                 + "</html>";
     }
 
+    /**
+     * Cria diretório contendo todos os arquivos necessários para abrir um html com os resultados da simulação
+     * @param diretorio diretório para criar arquivos
+     * @throws IOException gera uma exceção se não for possivel criar diretório indicado
+     */
     public void gerarHTML(File diretorio) throws IOException {
         if (!diretorio.exists()) {
             if (!diretorio.mkdir()) {
@@ -180,19 +209,15 @@ public class SalvarResultadosHTML {
         }
         arquivo = new File(diretorio, "fundo_html.jpg");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("fundo_html.jpg"), "jpg", arquivo);
+            ImageIO.write(ImageIO.read(ispd.gui.JPrincipal.class.getResource("imagens/fundo_html.jpg")), "jpg", arquivo);
         }
         arquivo = new File(diretorio, "Logo_iSPD_128.png");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("Logo_iSPD_128.png"), "png", arquivo);
+            ImageIO.write(ImageIO.read(ispd.gui.JPrincipal.class.getResource("imagens/Logo_iSPD_128.png")), "png", arquivo);
         }
         arquivo = new File(diretorio, "Logo_UNESP.png");
         if (!arquivo.exists()) {
-            ImageIO.write(getImagem("Logo_UNESP.png"), "png", arquivo);
+            ImageIO.write(ImageIO.read(ispd.gui.JPrincipal.class.getResource("imagens/Logo_UNESP.png")), "png", arquivo);
         }
-    }
-
-    private RenderedImage getImagem(String img) throws IOException {
-        return ImageIO.read(ispd.gui.JPrincipal.class.getResource("imagens/" + img));
     }
 }

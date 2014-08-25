@@ -439,8 +439,6 @@ public class DesenhoGrade extends AreaDesenho {
 
     /**
      * Transforma os icones da area de desenho em um Document xml dom
-     *
-     * @param descricao
      */
     public Document getGrade() {
         IconicoXML xml = new IconicoXML();

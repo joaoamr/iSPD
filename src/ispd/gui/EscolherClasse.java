@@ -164,9 +164,7 @@ public class EscolherClasse extends javax.swing.JDialog {
         }
         this.setVisible(false);
     }//GEN-LAST:event_jButtonEscNovoOKActionPerformed
-    /**
-     * @param args the command line arguments
-     */
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonEscNovoOK;
     private javax.swing.JLabel jLabel1;

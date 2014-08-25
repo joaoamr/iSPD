@@ -14,8 +14,9 @@ import DescreveSistema.DescreveSistema;
 import ispd.arquivo.xml.IconicoXML;
 import ispd.arquivo.interpretador.gridsim.InterpretadorGridSim;
 import ispd.arquivo.interpretador.simgrid.InterpretadorSimGrid;
-import ispd.gui.componenteauxiliar.Corner;
-import ispd.gui.componenteauxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.Corner;
+import ispd.gui.auxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.HtmlPane;
 import ispd.gui.configuracao.JPanelConfigIcon;
 import ispd.gui.iconico.grade.DesenhoGrade;
 import ispd.gui.iconico.grade.ItemGrade;
@@ -31,6 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -125,6 +127,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemAbrir = new javax.swing.JMenuItem();
         jMenuItemSalvar = new javax.swing.JMenuItem();
         jMenuItemSalvarComo = new javax.swing.JMenuItem();
+        jMenuItemAbrirResult = new javax.swing.JMenuItem();
         jMenuImport = new javax.swing.JMenu();
         jMenuItemSimGrid = new javax.swing.JMenuItem();
         jMenuItemGridSim = new javax.swing.JMenuItem();
@@ -347,6 +350,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jMenuArquivo.add(jMenuItemSalvarComo);
+
+            jMenuItemAbrirResult.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/document-open.png"))); // NOI18N
+            jMenuItemAbrirResult.setText("Open Results");
+            jMenuItemAbrirResult.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemAbrirResultActionPerformed(evt);
+                }
+            });
+            jMenuArquivo.add(jMenuItemAbrirResult);
 
             jMenuImport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/document-import.png"))); // NOI18N
             jMenuImport.setText(palavras.getString("Import")); // NOI18N
@@ -859,7 +871,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                     }
                 } else {
                     if ("Torre".equals(jFileChooser.getSelectedFile().getName())) {
-                        jScrollPaneAreaDesenho.setViewportView(new ispd.gui.componenteauxiliar.Torre());
+                        jScrollPaneAreaDesenho.setViewportView(new ispd.gui.auxiliar.Stalemate());
                     } else {
                         JOptionPane.showMessageDialog(null, palavras.getString("Invalid file"), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
                     }
@@ -1279,6 +1291,22 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         }
     }//GEN-LAST:event_jMenuItemToSimGridActionPerformed
 
+    private void jMenuItemAbrirResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirResultActionPerformed
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = jFileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File dir = jFileChooser.getSelectedFile();
+            if(dir.isDirectory() && dir.exists()) {
+                try {
+                    HtmlPane.openDefaultBrowser(new URL("file://" + dir.getAbsolutePath() + "/result.html"));
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, palavras.getString("Error opening file.") + "\n" + e.getMessage(), palavras.getString("WARNING"), JOptionPane.PLAIN_MESSAGE);
+                }
+            }
+        }
+        jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    }//GEN-LAST:event_jMenuItemAbrirResultActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
@@ -1300,6 +1328,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JMenu jMenuIdioma;
     private javax.swing.JMenu jMenuImport;
     private javax.swing.JMenuItem jMenuItemAbrir;
+    private javax.swing.JMenuItem jMenuItemAbrirResult;
     private javax.swing.JMenuItem jMenuItemAjuda;
     private javax.swing.JMenuItem jMenuItemCopy;
     private javax.swing.JMenuItem jMenuItemDelete;

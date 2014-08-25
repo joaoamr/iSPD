@@ -90,7 +90,7 @@ public abstract class CS_Processamento extends CentroServico {
      * Método que determina todas as conexões entre dois recursos
      * podendo haver conexões indiretas, passando por diverssos elementos de comunicação
      * @param inicio CS_Internet inicial
-     * @param escravo Recurso que está sendo buscado um caminho
+     * @param fim Recurso que está sendo buscado um caminho
      * @return lista de caminho existentes
      */
     protected List<List> getCaminhos(CS_Comunicacao inicio, CentroServico fim, List itensVerificados) {

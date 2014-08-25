@@ -20,15 +20,6 @@ public abstract class GerarCarga {
     public static final int TRACE = 2;
     public static final int DAG = 3;
 
-    /**
-     * Deve ser implementado nas classes que herdam os métodos da GerarCarga
-     * @param entrada
-     * @return
-     */
-    public static GerarCarga newGerarCarga(String entrada){
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public abstract List<Tarefa> toTarefaList(RedeDeFilas rdf);
 
     @Override

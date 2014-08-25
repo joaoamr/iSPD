@@ -11,7 +11,7 @@
 package ispd.gui;
 
 import ispd.arquivo.interpretador.cargas.Interpretador;
-import ispd.gui.componenteauxiliar.FiltroDeArquivos;
+import ispd.gui.auxiliar.FiltroDeArquivos;
 import ispd.motor.carga.CargaList;
 import ispd.motor.carga.CargaRandom;
 import ispd.motor.carga.CargaForNode;

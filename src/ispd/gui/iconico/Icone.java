@@ -20,12 +20,10 @@ public interface Icone {
     public boolean contains(int x, int y);
     /**
      * Posição do objeto no eixo X
-     * @return 
      */
     public Integer getX();
     /**
      * Posição do objeto no eixo Y
-     * @return 
      */
     public Integer getY();
 }

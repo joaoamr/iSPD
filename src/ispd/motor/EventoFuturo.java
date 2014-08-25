@@ -57,7 +57,7 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
 
     /**
      * Retorna tarefa alvo da ação
-     * @return
+     * @return cliente do evento
      */
     public Cliente getCliente() {
         return this.cliente;

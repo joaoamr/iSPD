@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ispd.gui.componenteauxiliar;
+package ispd.gui.auxiliar;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -101,7 +101,7 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
         "Mensagens.CANCELAR", "Mensagens.PARAR", "Mensagens.DEVOLVER", "Mensagens.DEVOLVER_COM_PREEMPCAO", "Mensagens.ATUALIZAR"};
 
     public DocumentColor() {
-        
+
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
         rootElement = getDefaultRootElement();
         style = new SimpleAttributeSet();
@@ -274,7 +274,6 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
             int endOffset = rootElement.getElement(line).getEndOffset() - 1;
             setCharacterAttributes(slc.start(), (endOffset - slc.start()), style, true);
         }
-
     }
 
     private void inserirLinhas(int total) throws BadLocationException {
@@ -293,9 +292,10 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
         //System.out.println("Mover");
         int dot = ce.getDot();
         int mark = ce.getMark();
+        JTextComponent jTexto = (JTextComponent) ce.getSource();
+        String textoSelecionado = "";
 
         if (dot == mark) {// no selection
-            JTextComponent jTexto = (JTextComponent) ce.getSource();
             try {
                 Rectangle caretCoords = jTexto.modelToView(dot);
                 BarraPosCursor.setText("Linha: " + ((caretCoords.y - 4) / 15 + 1) + " | Coluna: " + (caretCoords.x - 6) / 7 + " ");
@@ -303,9 +303,31 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
                 //Logger.getLogger(DocumentColor.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (dot < mark) {
+            try {
+                textoSelecionado = "\\b" + this.getText(dot, mark - dot) + "\\b";
+                processChangedLines(0, 0);
+            } catch (BadLocationException ex) {
+            }
             BarraPosCursor.setText("selection from: " + dot + " to " + mark + " ");
         } else {
+            try {
+                textoSelecionado = "\\b" + this.getText(mark, dot - mark) + "\\b";
+                processChangedLines(0, 0);
+            } catch (BadLocationException ex) {
+            }
             BarraPosCursor.setText("selection from: " + mark + " to " + dot + " ");
+        }
+        //Marcar texto igual ao texto selecionado
+        if (!textoSelecionado.equals("")) {
+            StyleConstants.setForeground(style, Color.BLACK);
+            StyleConstants.setBackground(style, Color.YELLOW);
+            Pattern p = Pattern.compile(textoSelecionado);
+            Matcher m = p.matcher(jTexto.getText());
+            while (m.find()) {
+                System.out.println(m.start() + " - " + m.end());
+                setCharacterAttributes(m.start(), m.end() - m.start(), style, true);
+            }
+            StyleConstants.setBackground(style, Color.WHITE);
         }
     }
 

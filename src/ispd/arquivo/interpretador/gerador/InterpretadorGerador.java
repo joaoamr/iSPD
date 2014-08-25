@@ -12,14 +12,18 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
- * @author denison_usuario
+ * Classe de interface entre arquivos gerados pelo javaCC para interpretar 
+ * a gramatica do gerador de escalonadores e o iSPD
+ * @author denison
  */
 public class InterpretadorGerador {
 
     private InputStream istream;
     private Interpretador parser = null;
     
+    /**
+     * @param codigo Texto com código do gerador de escalonadores
+     */
     public InterpretadorGerador(String codigo){
         try {
             istream = new ByteArrayInputStream(codigo.getBytes("UTF-8"));
@@ -32,6 +36,10 @@ public class InterpretadorGerador {
         this.istream = istream;
     }
 
+    /**
+     * Inicia a analise do código gerador de escalonadores
+     * @return erros encontrados no código
+     */
     public boolean executarParse() {
         try {
             parser = new Interpretador(istream);
@@ -47,10 +55,16 @@ public class InterpretadorGerador {
         }
     }
 
+    /**
+     * @return Retorna nome do escalonador gerado
+     */
     public String getNome() {
         return parser.getArquivoNome();
     }
     
+    /**
+     * @return Retorna código java do escalonador gerado a partir do código interpretado
+     */
     public String getCodigo() {
         return parser.getCodigo();
     }

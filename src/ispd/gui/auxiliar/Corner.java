@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-package ispd.gui.componenteauxiliar;
+package ispd.gui.auxiliar;
 
 import java.awt.*;
 import javax.swing.*;

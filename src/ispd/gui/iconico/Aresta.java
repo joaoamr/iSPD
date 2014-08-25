@@ -32,8 +32,7 @@ public abstract class Aresta implements Icone {
     }
     
     /**
-     * Posição central da aresta no eixo X
-     * @return 
+     * @return Posição central da aresta no eixo X
      */
     @Override
     public Integer getX() {
@@ -41,8 +40,7 @@ public abstract class Aresta implements Icone {
     }
     
     /**
-     * Posição central da aresta no eixo Y
-     * @return 
+     * @return Posição central da aresta no eixo Y
      */
     @Override
     public Integer getY() {
