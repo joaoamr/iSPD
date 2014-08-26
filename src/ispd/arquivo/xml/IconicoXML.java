@@ -48,9 +48,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Realiza leitura do arquivo xml do modelo icônico
+ * Realiza manupulações com o arquivo xml do modelo icônico
  *
- * @author denison_usuario
+ * @author denison
  */
 public class IconicoXML {
 
@@ -68,15 +68,33 @@ public class IconicoXML {
 
     /**
      * Este método sobrescreve ou cria arquivo xml do modelo iconico
+     *
+     * @param documento modelo iconico
+     * @param arquivo local que será salvo
+     * @return indica se arquivo foi salvo corretamente
      */
     public static boolean escrever(Document documento, File arquivo) {
         return ManipuladorXML.escrever(documento, arquivo, "iSPD.dtd");
     }
-    
+
+    /**
+     * Realiza a leitura de um arquivo xml contendo o modelo iconico
+     * especificado pelo iSPD.dtd
+     *
+     * @param xmlFile endereço do arquivo xml
+     * @return modelo iconico obtido do arquivo
+     */
     public static Document ler(File xmlFile) throws ParserConfigurationException, IOException, SAXException {
         return ManipuladorXML.ler(xmlFile, "iSPD.dtd");
     }
 
+    /**
+     * Converte modelo iconico do iSPD nos arquivos xml do SimGrid
+     *
+     * @param documento modelo iconico do iSPD
+     * @param arquivo local no qual será salvo os arquivos plataform e
+     * application no formato do xml usado no SimGrid 3.2
+     */
     public static void iSPDtoSimGrid(Document documento, File arquivo) {
         validarModelo(documento);
 
@@ -343,6 +361,7 @@ public class IconicoXML {
     }
 
     /**
+     * Converte um modelo iconico em uma rede de filas para o motor de simulação
      *
      * @param modelo Objeto obtido a partir do xml com a grade computacional
      * modelada
@@ -556,6 +575,11 @@ public class IconicoXML {
         return rdf;
     }
 
+    /**
+     * Obtem a configuração da carga de trabalho contida em um modelo iconico
+     * @param modelo contem conteudo recuperado de um arquivo xml
+     * @return carga de trabalho contida no modelo
+     */
     public static GerarCarga newGerarCarga(Document modelo) {
         org.w3c.dom.NodeList cargas = modelo.getElementsByTagName("load");
         GerarCarga cargasConfiguracao = null;
@@ -619,7 +643,7 @@ public class IconicoXML {
                     CargaForNode item = new CargaForNode(aplicacao, proprietario, escalonador, numeroTarefas, maxComputacao, minComputacao, maxComunicacao, minComunicacao);
                     tarefasDoNo.add(item);
                 }
-                cargasConfiguracao = new CargaList(tarefasDoNo,GerarCarga.FORNODE);
+                cargasConfiguracao = new CargaList(tarefasDoNo, GerarCarga.FORNODE);
             }
             cargas = cargaAux.getElementsByTagName("trace");
             if (cargas.getLength() != 0) {

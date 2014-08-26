@@ -62,6 +62,7 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
         "\\bprivate\\b",
         "\\bprotected\\b",
         "\\breturn\\b",
+        "\\bthis\\b",
         "\\bstatic\\b",
         "\\bvoid\\b",
         "\\btry\\b",
@@ -290,44 +291,38 @@ public class DocumentColor extends DefaultStyledDocument implements CaretListene
     @Override
     public void caretUpdate(CaretEvent ce) {
         //System.out.println("Mover");
-        int dot = ce.getDot();
-        int mark = ce.getMark();
+        int inicio = ce.getDot();
+        int fim = ce.getMark();
         JTextComponent jTexto = (JTextComponent) ce.getSource();
         String textoSelecionado = "";
 
-        if (dot == mark) {// no selection
+        if (inicio == fim) {// no selection
             try {
-                Rectangle caretCoords = jTexto.modelToView(dot);
+                Rectangle caretCoords = jTexto.modelToView(inicio);
                 BarraPosCursor.setText("Linha: " + ((caretCoords.y - 4) / 15 + 1) + " | Coluna: " + (caretCoords.x - 6) / 7 + " ");
             } catch (Exception ex) {
                 //Logger.getLogger(DocumentColor.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (dot < mark) {
-            try {
-                textoSelecionado = "\\b" + this.getText(dot, mark - dot) + "\\b";
-                processChangedLines(0, 0);
-            } catch (BadLocationException ex) {
-            }
-            BarraPosCursor.setText("selection from: " + dot + " to " + mark + " ");
         } else {
+            if (inicio > fim) {
+                inicio = ce.getMark();
+                fim = ce.getDot();
+            }
             try {
-                textoSelecionado = "\\b" + this.getText(mark, dot - mark) + "\\b";
+                textoSelecionado = "\\b" + this.getText(inicio, fim - inicio) + "\\b";
                 processChangedLines(0, 0);
-            } catch (BadLocationException ex) {
+                //Marcar texto igual ao texto selecionado
+                StyleConstants.setForeground(style, Color.BLACK);
+                StyleConstants.setBackground(style, Color.YELLOW);
+                Pattern p = Pattern.compile(textoSelecionado);
+                Matcher m = p.matcher(jTexto.getText());
+                while (m.find()) {
+                    setCharacterAttributes(m.start(), m.end() - m.start(), style, true);
+                }
+                StyleConstants.setBackground(style, Color.WHITE);
+            } catch (Exception ex) {
             }
-            BarraPosCursor.setText("selection from: " + mark + " to " + dot + " ");
-        }
-        //Marcar texto igual ao texto selecionado
-        if (!textoSelecionado.equals("")) {
-            StyleConstants.setForeground(style, Color.BLACK);
-            StyleConstants.setBackground(style, Color.YELLOW);
-            Pattern p = Pattern.compile(textoSelecionado);
-            Matcher m = p.matcher(jTexto.getText());
-            while (m.find()) {
-                System.out.println(m.start() + " - " + m.end());
-                setCharacterAttributes(m.start(), m.end() - m.start(), style, true);
-            }
-            StyleConstants.setBackground(style, Color.WHITE);
+            BarraPosCursor.setText("selection from: " + inicio + " to " + fim + " ");
         }
     }
 
