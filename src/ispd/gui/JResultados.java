@@ -10,6 +10,7 @@
  */
 package ispd.gui;
 
+import ispd.gui.auxiliar.ParesOrdenadosUso;
 import ispd.arquivo.SalvarResultadosHTML;
 import ispd.arquivo.interpretador.cargas.Interpretador;
 import ispd.gui.auxiliar.FiltroDeArquivos;

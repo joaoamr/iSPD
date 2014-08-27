@@ -11,7 +11,7 @@ import ispd.escalonador.Mestre;
 import ispd.motor.metricas.MetricasProcessamento;
 import java.util.ArrayList;
 import java.util.List;
-import ispd.gui.ParesOrdenadosUso;
+import ispd.gui.auxiliar.ParesOrdenadosUso;
 import java.util.Collections;
 
 /**

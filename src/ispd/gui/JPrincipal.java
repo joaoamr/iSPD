@@ -11,6 +11,7 @@
 package ispd.gui;
 
 import DescreveSistema.DescreveSistema;
+import ispd.arquivo.exportador.Exportador;
 import ispd.arquivo.xml.IconicoXML;
 import ispd.arquivo.interpretador.gridsim.InterpretadorGridSim;
 import ispd.arquivo.interpretador.simgrid.InterpretadorSimGrid;
@@ -135,6 +136,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemToJPG = new javax.swing.JMenuItem();
         jMenuItemToTXT = new javax.swing.JMenuItem();
         jMenuItemToSimGrid = new javax.swing.JMenuItem();
+        jMenuItemToGridSim = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuIdioma = new javax.swing.JMenu();
         jMenuItemIngles = new javax.swing.JMenuItem();
@@ -416,6 +418,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jMenuExport.add(jMenuItemToSimGrid);
+
+            jMenuItemToGridSim.setText("to GridSim");
+            jMenuItemToGridSim.setEnabled(false);
+            jMenuItemToGridSim.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemToGridSimActionPerformed(evt);
+                }
+            });
+            jMenuExport.add(jMenuItemToGridSim);
 
             jMenuArquivo.add(jMenuExport);
             jMenuArquivo.add(jSeparator1);
@@ -1284,9 +1295,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 file = temp;
             }
             try {
-                IconicoXML.iSPDtoSimGrid(aDesenho.getGrade(), file);
+                Exportador convert = new Exportador(aDesenho.getGrade());
+                convert.toSimGrid(file);
+                JOptionPane.showMessageDialog(this, palavras.getString("model saved"), "Done", JOptionPane.INFORMATION_MESSAGE);
             } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), palavras.getString("WARNING"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_jMenuItemToSimGridActionPerformed
@@ -1306,6 +1319,27 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         }
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     }//GEN-LAST:event_jMenuItemAbrirResultActionPerformed
+
+    private void jMenuItemToGridSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemToGridSimActionPerformed
+        filtro.setDescricao(palavras.getString("Java Source Files (. java)"));
+        filtro.setExtensao(".java");
+        jFileChooser.setAcceptAllFileFilterUsed(false);
+        int returnVal = jFileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            if (!file.getName().endsWith(".java")) {
+                File temp = new File(file.toString() + ".java");
+                file = temp;
+            }
+            try {
+                Exportador convert = new Exportador(aDesenho.getGrade());
+                convert.toGridSim(file);
+                JOptionPane.showMessageDialog(this, palavras.getString("model saved"), "Done", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), palavras.getString("WARNING"), JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSimular;
@@ -1347,6 +1381,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JMenuItem jMenuItemSalvarComo;
     private javax.swing.JMenuItem jMenuItemSimGrid;
     private javax.swing.JMenuItem jMenuItemSobre;
+    private javax.swing.JMenuItem jMenuItemToGridSim;
     private javax.swing.JMenuItem jMenuItemToJPG;
     private javax.swing.JMenuItem jMenuItemToSimGrid;
     private javax.swing.JMenuItem jMenuItemToTXT;
@@ -1531,6 +1566,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuItemToJPG.setEnabled(opcao);
         jMenuItemToTXT.setEnabled(opcao);
         jMenuItemToSimGrid.setEnabled(opcao);
+        jMenuItemToGridSim.setEnabled(opcao);
         //Editar
         jMenuItemEquiparar.setEnabled(opcao);
         jMenuItemOrganizar.setEnabled(opcao);
