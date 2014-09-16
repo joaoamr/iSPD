@@ -59,6 +59,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class JPrincipal extends javax.swing.JFrame implements KeyListener {
+    private EscolherClasse ChooseClass;
 
     /**
      * Creates new form Principal
@@ -701,7 +702,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 + "                Diogo Tavares da Silva\n"
                 + "                Gabriel Covello Furlanetto\n"
                 + "                Rafael Stabile \n"
-                + "                Danilo Costa Marim Segura";
+                + "                Danilo Costa Marim Segura\n"
+                + "                Arthur Jorge\n";
         JOptionPane.showOptionDialog(this, sobre, palavras.getString("About") + " \"" + palavras.getString("nomePrograma") + "\"", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, icone, null, null);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
@@ -811,6 +813,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNovoActionPerformed
         // TODO add your handling code here:
+        ChooseClass = new EscolherClasse(this,true);
+        ChooseClass.setLocationRelativeTo(this);
+        ChooseClass.setVisible(true);
         aDesenho = new DesenhoGrade(1500, 1500);
         aDesenho.addKeyListener(this);
         aDesenho.setPaineis(this);

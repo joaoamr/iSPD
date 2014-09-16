@@ -4,6 +4,8 @@
  */
 package ispd.gui;
 
+import java.awt.Frame;
+
 /**
  *
  * @author Diogo Tavares
@@ -12,8 +14,11 @@ public class EscolherClasse extends javax.swing.JDialog {
 
     /**
      * Creates new form escolherClasse
+     * @param owner
+     * @param modal
      */
-    public EscolherClasse() {
+    public EscolherClasse(Frame owner, boolean modal) {
+        super(owner, modal);
         initComponents();
     }
 
@@ -65,7 +70,7 @@ public class EscolherClasse extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setText("Escolha o serviço que deseja modelar:");
+        jLabel1.setText("Choose the service that do you want to model");
 
         javax.swing.GroupLayout jPanelEscolherNovoLayout = new javax.swing.GroupLayout(jPanelEscolherNovo);
         jPanelEscolherNovo.setLayout(jPanelEscolherNovoLayout);
