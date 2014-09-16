@@ -675,12 +675,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             pack();
         }// </editor-fold>//GEN-END:initComponents
 
+    
+    
+    
     private void jMenuItemGerenciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerenciarActionPerformed
         // TODO add your handling code here:
         jFrameGerenciador.setLocationRelativeTo(this);
         jFrameGerenciador.setVisible(true);
     }//GEN-LAST:event_jMenuItemGerenciarActionPerformed
-
+    
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
         // TODO add your handling code here:
         Icon icone = new ImageIcon(getClass().getResource("imagens/Logo_iSPD_128.png"));
@@ -816,6 +819,9 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         ChooseClass = new EscolherClasse(this,true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
+    
+            
+        
         aDesenho = new DesenhoGrade(1500, 1500);
         aDesenho.addKeyListener(this);
         aDesenho.setPaineis(this);

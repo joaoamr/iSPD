@@ -11,6 +11,7 @@ import java.awt.Frame;
  * @author Diogo Tavares
  */
 public class EscolherClasse extends javax.swing.JDialog {
+    private int escolha;
 
     /**
      * Creates new form escolherClasse
@@ -21,7 +22,8 @@ public class EscolherClasse extends javax.swing.JDialog {
         super(owner, modal);
         initComponents();
     }
-
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -128,7 +130,10 @@ public class EscolherClasse extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    public int getChooseReturn (){
+        return escolha;
+}
+    
     private void jRadioGridActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioGridActionPerformed
         // TODO add your handling code here:
         if(jRadioGrid.isSelected()){
@@ -159,13 +164,19 @@ public class EscolherClasse extends javax.swing.JDialog {
     private void jButtonEscNovoOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEscNovoOKActionPerformed
         // TODO add your handling code here:
         if(jRadioGrid.isSelected()){
-            //abrir interface Grid
+            escolha=0;
+           
+//abrir interface Grid
         }
         else if(jRadioIaaS.isSelected()){
-            //abrir interface IaaS
+             escolha=1;
+            
+//abrir interface IaaS
         }
         else if(jRadioPaaS.isSelected()){
-            //abrir código PaaS
+             escolha=2;
+            
+//abrir código PaaS
         }
         this.setVisible(false);
     }//GEN-LAST:event_jButtonEscNovoOKActionPerformed
