@@ -11,8 +11,11 @@ import java.awt.Frame;
  * @author Diogo Tavares
  */
 public class EscolherClasse extends javax.swing.JDialog {
+    
     private int escolha;
-
+    public static final int GRID = 0;
+    public static final int IAAS = 1;
+    public static final int PAAS = 2;
     /**
      * Creates new form escolherClasse
      * @param owner
@@ -164,17 +167,17 @@ public class EscolherClasse extends javax.swing.JDialog {
     private void jButtonEscNovoOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEscNovoOKActionPerformed
         // TODO add your handling code here:
         if(jRadioGrid.isSelected()){
-            escolha=0;
+            escolha=GRID;
            
 //abrir interface Grid
         }
         else if(jRadioIaaS.isSelected()){
-             escolha=1;
+             escolha=IAAS;
             
 //abrir interface IaaS
         }
         else if(jRadioPaaS.isSelected()){
-             escolha=2;
+             escolha=PAAS;
             
 //abrir código PaaS
         }

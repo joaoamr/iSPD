@@ -118,6 +118,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jToggleButtonInternet = new javax.swing.JToggleButton();
         javax.swing.JToolBar.Separator jSeparator4 = new javax.swing.JToolBar.Separator();
         jButtonTarefas = new javax.swing.JButton();
+        jButtonConfigVM = new javax.swing.JButton();
         jButtonUsuarios = new javax.swing.JButton();
         jButtonSimular = new javax.swing.JButton();
         jScrollPaneProperties = new javax.swing.JScrollPane();
@@ -272,6 +273,19 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jToolBar.add(jButtonTarefas);
+
+            jButtonConfigVM.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/vm_icon.png"))); // NOI18N
+            jButtonConfigVM.setToolTipText("Add and remove the virtual machines");
+            jButtonConfigVM.setEnabled(false);
+            jButtonConfigVM.setFocusable(false);
+            jButtonConfigVM.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+            jButtonConfigVM.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+            jButtonConfigVM.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonConfigVMActionPerformed(evt);
+                }
+            });
+            jToolBar.add(jButtonConfigVM);
 
             jButtonUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/system-users.png"))); // NOI18N
             jButtonUsuarios.setToolTipText(palavras.getString("Add and remove users to the model")); // NOI18N
@@ -819,20 +833,31 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         ChooseClass = new EscolherClasse(this,true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
-    
+         aDesenho = new DesenhoGrade(1500, 1500);
+         aDesenho.addKeyListener(this);
+         aDesenho.setPaineis(this);
+                //this.setRegua();
+         jScrollPaneBarraLateral.setViewportView(null);
+         jPanelPropriedades.setjLabelTexto("");
+         jScrollPaneAreaDesenho.setViewportView(aDesenho);
+         appendNotificacao(palavras.getString("New model opened"));
+         abrirEdição(null);
+                 //novo modelo não salvo ainda
+         modificar();
+        switch(ChooseClass.getChooseReturn()){
             
+            case EscolherClasse.GRID:
+                jButtonConfigVM.setVisible(false);
+                break;
+            case EscolherClasse.IAAS:               
+                jButtonConfigVM.setVisible(true);
+                break;
+            case EscolherClasse.PAAS:
+                break;
+            
+        }
         
-        aDesenho = new DesenhoGrade(1500, 1500);
-        aDesenho.addKeyListener(this);
-        aDesenho.setPaineis(this);
-        //this.setRegua();
-        jScrollPaneBarraLateral.setViewportView(null);
-        jPanelPropriedades.setjLabelTexto("");
-        jScrollPaneAreaDesenho.setViewportView(aDesenho);
-        appendNotificacao(palavras.getString("New model opened"));
-        abrirEdição(null);
-        //novo modelo não salvo ainda
-        modificar();
+        
     }//GEN-LAST:event_jMenuItemNovoActionPerformed
 
     private void jMenuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirActionPerformed
@@ -1352,7 +1377,16 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         }
     }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
 
+    private void jButtonConfigVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigVMActionPerformed
+        
+        
+        
+        
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonConfigVMActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonConfigVM;
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
     private javax.swing.JButton jButtonUsuarios;
@@ -1570,6 +1604,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jButtonSimular.setEnabled(opcao);
         jButtonTarefas.setEnabled(opcao);
         jButtonUsuarios.setEnabled(opcao);
+        jButtonConfigVM.setEnabled(opcao);
         //Arquivo
         jMenuItemSalvar.setEnabled(opcao);
         jMenuItemSalvarComo.setEnabled(opcao);
@@ -1588,6 +1623,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jCheckBoxMenuItemConectado.setEnabled(opcao);
         jCheckBoxMenuItemIndireto.setEnabled(opcao);
         jCheckBoxMenuItemEscalonavel.setEnabled(opcao);
+        
     }
 
     @Override
