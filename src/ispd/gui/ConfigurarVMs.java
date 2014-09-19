@@ -65,7 +65,8 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         jButtonRemoveVM = new javax.swing.JButton();
         jScrollPaneTabela = new javax.swing.JScrollPane();
         jTableVMs = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        jButtonAddUser = new javax.swing.JButton();
+        jButtonOKVm = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -81,6 +82,11 @@ public class ConfigurarVMs extends javax.swing.JDialog {
 
         jVMMComboBox.setModel(new DefaultComboBoxModel(VMMs)
         );
+        jVMMComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jVMMComboBoxActionPerformed(evt);
+            }
+        });
 
         jLabeluser.setText("User:");
 
@@ -109,14 +115,26 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         });
 
         jButtonRemoveVM.setText("Remove VM");
+        jButtonRemoveVM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemoveVMActionPerformed(evt);
+            }
+        });
 
         jTableVMs.setModel(new DefaultTableModel(this.tabelaLinha,this.tabelaColuna));
         jScrollPaneTabela.setViewportView(jTableVMs);
 
-        jButton1.setText("Add User");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAddUser.setText("Add User");
+        jButtonAddUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonAddUserActionPerformed(evt);
+            }
+        });
+
+        jButtonOKVm.setText("OK!");
+        jButtonOKVm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOKVmActionPerformed(evt);
             }
         });
 
@@ -141,7 +159,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
                                         .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabelVMM)
                                             .addComponent(jVMMComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jButtonAddUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(36, 36, 36)
                                 .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
@@ -154,11 +172,13 @@ public class ConfigurarVMs extends javax.swing.JDialog {
                             .addComponent(jLabel3)
                             .addComponent(jSpinnerMem)
                             .addComponent(jLabel5)
-                            .addComponent(jSOComboBox, 0, 142, Short.MAX_VALUE)))
+                            .addComponent(jSOComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VMconfigPanelLayout.createSequentialGroup()
                         .addComponent(jButtonAddVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonRemoveVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonRemoveVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonOKVm)))
                 .addContainerGap())
         );
         VMconfigPanelLayout.setVerticalGroup(
@@ -186,14 +206,15 @@ public class ConfigurarVMs extends javax.swing.JDialog {
                 .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSpinnerDisc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSOComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jButtonAddUser))
                 .addGap(18, 18, 18)
                 .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonAddVM)
-                    .addComponent(jButtonRemoveVM))
+                    .addComponent(jButtonRemoveVM)
+                    .addComponent(jButtonOKVm))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -211,16 +232,17 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jUserComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUserComboBoxActionPerformed
-        // TODO add your handling code here:
+        
+    // TODO add your handling code here:
     }//GEN-LAST:event_jUserComboBoxActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddUserActionPerformed
         // TODO add your handling code here:
         String newUser = JOptionPane.showInputDialog(this,"Enter the name","Add user", JOptionPane.QUESTION_MESSAGE);
         if (!usuarios.contains(newUser) && !newUser.equals("")) {
             usuarios.add(newUser);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonAddUserActionPerformed
 
     private void jSOComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSOComboBoxActionPerformed
         // TODO add your handling code here:
@@ -241,14 +263,33 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         jScrollPaneTabela.setViewportView(jTableVMs);
     }//GEN-LAST:event_jButtonAddVMActionPerformed
 
+    private void jVMMComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jVMMComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jVMMComboBoxActionPerformed
+
+    private void jButtonRemoveVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveVMActionPerformed
+        int linha = jTableVMs.getSelectedRow();
+        if (linha >= 0 && linha < tabelaLinha.size()) {
+            tabelaLinha.remove(linha);
+        }
+        jScrollPaneTabela.setViewportView(jTableVMs);
+// TODO add your handling code here:
+    }//GEN-LAST:event_jButtonRemoveVMActionPerformed
+
+    private void jButtonOKVmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKVmActionPerformed
+        this.setVisible(false);
+// TODO add your handling code here:
+    }//GEN-LAST:event_jButtonOKVmActionPerformed
+
     /**
      * @param args the command line arguments
      */
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel VMconfigPanel;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonAddUser;
     private javax.swing.JButton jButtonAddVM;
+    private javax.swing.JButton jButtonOKVm;
     private javax.swing.JButton jButtonRemoveVM;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

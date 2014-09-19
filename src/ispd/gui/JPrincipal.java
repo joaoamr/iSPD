@@ -60,6 +60,8 @@ import org.xml.sax.SAXException;
  */
 public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private EscolherClasse ChooseClass;
+    private ConfigurarVMs JanelaVM;
+   
 
     /**
      * Creates new form Principal
@@ -274,7 +276,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             });
             jToolBar.add(jButtonTarefas);
 
-            jButtonConfigVM.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/vm_icon.png"))); // NOI18N
+            jButtonConfigVM.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/vm_icon.png"))); // NOI18N
             jButtonConfigVM.setToolTipText("Add and remove the virtual machines");
             jButtonConfigVM.setEnabled(false);
             jButtonConfigVM.setFocusable(false);
@@ -1376,9 +1378,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             }
         }
     }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
-
+    
     private void jButtonConfigVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigVMActionPerformed
-        
+        JanelaVM = new ConfigurarVMs(this,true,
+                aDesenho.getUsuarios().toArray(),
+                aDesenho.getNosEscalonadores().toArray());
+        JanelaVM.setLocationRelativeTo(this);
+        JanelaVM.setVisible(true);
         
         
         
