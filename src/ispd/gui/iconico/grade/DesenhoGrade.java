@@ -85,6 +85,7 @@ public class DesenhoGrade extends AreaDesenho {
     //Obejtos para copiar um icone
     private Vertice iconeCopiado;
     private int tipoDeVertice;
+    private HashSet<VirtualMachine> maquinasVirtuais;
 
     public DesenhoGrade(int w, int h) {
         super(true, true, true, false);
@@ -104,11 +105,20 @@ public class DesenhoGrade extends AreaDesenho {
         imprimeNosConectados = false;
         imprimeNosIndiretos = false;
         imprimeNosEscalonaveis = true;
+        maquinasVirtuais = null;
     }
 
     public void setPaineis(JPrincipal janelaPrincipal) {
         this.janelaPrincipal = janelaPrincipal;
         this.initTexts();
+    }
+
+    public HashSet<VirtualMachine> getMaquinasVirtuais() {
+        return maquinasVirtuais;
+    }
+
+    public void setMaquinasVirtuais(HashSet<VirtualMachine> maquinasVirtuais) {
+        this.maquinasVirtuais = maquinasVirtuais;
     }
 
     //utilizado para inserir novo valor nas Strings dos componentes
@@ -480,6 +490,15 @@ public class DesenhoGrade extends AreaDesenho {
                     I.getBanda(), I.getTaxaOcupacao(), I.getLatencia(),
                     ((ItemGrade) I.getOrigem()).getId().getIdGlobal(), ((ItemGrade) I.getDestino()).getId().getIdGlobal());
         }
+        //trecho de escrita das máquinas virtuais
+        if(maquinasVirtuais != null){
+            for(VirtualMachine vm : maquinasVirtuais){
+                VirtualMachine I = vm;
+                xml.addVirtualMachines(I.getNome(),I.getProprietario(),I.getVMM(),I.getPoderComputacional(),
+                        I.getMemoriaAlocada(),I.getDiscoAlocado(),I.getOS());
+            }
+        }
+        
         //configurar carga
         if (cargasConfiguracao != null) {
             if (cargasConfiguracao instanceof CargaRandom) {
