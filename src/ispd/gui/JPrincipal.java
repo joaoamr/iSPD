@@ -21,6 +21,7 @@ import ispd.gui.auxiliar.HtmlPane;
 import ispd.gui.configuracao.JPanelConfigIcon;
 import ispd.gui.iconico.grade.DesenhoGrade;
 import ispd.gui.iconico.grade.ItemGrade;
+import ispd.gui.iconico.grade.VirtualMachine;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -92,6 +94,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         this.jPanelSimples.addKeyListener(this);
         this.jPanelConfiguracao.addKeyListener(this);
         this.jPanelPropriedades.addKeyListener(this);
+        this.maquinasVirtuais = null;
+    }
+
+    public HashSet<VirtualMachine> getMaquinasVirtuais() {
+        return maquinasVirtuais;
+    }
+
+    public void setMaquinasVirtuais(HashSet<VirtualMachine> maquinasVirtuais) {
+        this.maquinasVirtuais = maquinasVirtuais;
     }
 
     /**
@@ -1383,8 +1394,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         JanelaVM = new ConfigurarVMs(this,true,
                 aDesenho.getUsuarios().toArray(),
                 aDesenho.getNosEscalonadores().toArray());
-        JanelaVM.setLocationRelativeTo(this);
-        JanelaVM.setVisible(true);
+                JanelaVM.setLocationRelativeTo(this);
+                JanelaVM.setVisible(true);
+                //depois que a janela fechou..
+                maquinasVirtuais = JanelaVM.getMaqVirtuais();
+                aDesenho.setMaquinasVirtuais(maquinasVirtuais);
         
         
         
@@ -1454,6 +1468,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private boolean modificado = false;//indica se arquivo atual foi modificado
     private File arquivoAberto = null;
     private DesenhoGrade aDesenho = null;
+    private HashSet<VirtualMachine> maquinasVirtuais;
     private FiltroDeArquivos filtro;
 
     public JPanelConfigIcon getjPanelConfiguracao() {

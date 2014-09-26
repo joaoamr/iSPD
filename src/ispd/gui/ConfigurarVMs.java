@@ -4,6 +4,8 @@
  */
 package ispd.gui;
 
+import ispd.gui.iconico.grade.VirtualMachine;
+import java.util.HashSet;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -35,7 +37,16 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         this.tabelaColuna.add("Mem alloc");
         this.tabelaColuna.add("Disk alloc");
         this.tabelaColuna.add("OS");
+        this.maqVirtuais = null;
         initComponents();
+    }
+
+    public HashSet<VirtualMachine> getMaqVirtuais() {
+        return maqVirtuais;
+    }
+
+    public void setMaqVirtuais(HashSet<VirtualMachine> maqVirtuais) {
+        this.maqVirtuais = maqVirtuais;
     }
 
     /**
@@ -145,8 +156,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
             .addGroup(VMconfigPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPaneTabela)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VMconfigPanelLayout.createSequentialGroup()
+                    .addGroup(VMconfigPanelLayout.createSequentialGroup()
                         .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addGroup(VMconfigPanelLayout.createSequentialGroup()
@@ -167,19 +177,22 @@ public class ConfigurarVMs extends javax.swing.JDialog {
                                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jSpinnerProc)
                                         .addComponent(jSpinnerDisc)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(18, 18, 18)
+                        .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSpinnerMem, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSOComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)
-                            .addComponent(jSpinnerMem)
-                            .addComponent(jLabel5)
-                            .addComponent(jSOComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VMconfigPanelLayout.createSequentialGroup()
-                        .addComponent(jButtonAddVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonRemoveVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonOKVm)))
-                .addContainerGap())
+                            .addGroup(VMconfigPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel5))))
+                    .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(VMconfigPanelLayout.createSequentialGroup()
+                            .addComponent(jButtonAddVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jButtonRemoveVM, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButtonOKVm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         VMconfigPanelLayout.setVerticalGroup(
             VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,11 +223,12 @@ public class ConfigurarVMs extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(VMconfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonAddVM)
-                    .addComponent(jButtonRemoveVM)
-                    .addComponent(jButtonOKVm))
+                    .addComponent(jButtonRemoveVM))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPaneTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonOKVm)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -225,7 +239,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(VMconfigPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(VMconfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -277,8 +291,13 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonRemoveVMActionPerformed
 
     private void jButtonOKVmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKVmActionPerformed
+         
+        for(Vector linha : tabelaLinha){
+            VirtualMachine VM = new VirtualMachine(linha.get(1).toString(), linha.get(2).toString(), linha.get(3).toString(), Double.parseDouble( linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), Double.parseDouble(linha.get(6).toString()), linha.get(7).toString());
+            maqVirtuais.add(VM);
+        }
+        
         this.setVisible(false);
-// TODO add your handling code here:
     }//GEN-LAST:event_jButtonOKVmActionPerformed
 
     /**
@@ -312,4 +331,5 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     private Vector<Vector> tabelaLinha;
     private Vector<String> tabelaColuna = new Vector<String>(7);
     private int tabelaIndex = 0;
+    private HashSet<VirtualMachine> maqVirtuais;
 }
