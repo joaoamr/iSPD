@@ -37,7 +37,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         this.tabelaColuna.add("Mem alloc");
         this.tabelaColuna.add("Disk alloc");
         this.tabelaColuna.add("OS");
-        this.maqVirtuais = null;
+        this.maqVirtuais = new HashSet<VirtualMachine>();
         initComponents();
     }
 
@@ -293,7 +293,12 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     private void jButtonOKVmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKVmActionPerformed
          
         for(Vector linha : tabelaLinha){
-            VirtualMachine VM = new VirtualMachine(linha.get(1).toString(), linha.get(2).toString(), linha.get(3).toString(), Double.parseDouble( linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), Double.parseDouble(linha.get(6).toString()), linha.get(7).toString());
+            Vector linha2 = linha;
+            //linha de teste
+            System.out.println(linha2.get(0) + "|" + linha2.get(1) + "|" + linha2.get(2) + "|" + linha2.get(3) + "|" + linha2.get(4) + "|" + linha2.get(5) + "|" + linha2.get(6));
+            //^FIX-ME
+            VirtualMachine VM = new VirtualMachine(linha.get(0).toString(), linha.get(1).toString(), linha.get(2).toString(), Double.parseDouble( linha.get(3).toString()), Double.parseDouble(linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), linha.get(6).toString());
+            System.out.println("cheguei aqui");
             maqVirtuais.add(VM);
         }
         
