@@ -632,7 +632,7 @@ public class IconicoXML {
             system.appendChild(owner);
         }
     }
-
+    
     public void addInternet(int x, int y, int idLocal, int idGlobal, String nome,
             double banda, double ocupacao, double latencia) {
         Element aux;
@@ -743,6 +743,20 @@ public class IconicoXML {
         aux.setAttribute("id", nome);
         aux.appendChild(posicao);
         aux.appendChild(icon_id);
+        system.appendChild(aux);
+    }
+    
+    public void addVirtualMachines(String id, String user, String VMM, double poderComputacional, 
+            double memAlocada, double discoAlocado, String OS){
+        Element aux;
+        aux = descricao.createElement("virtualMac");
+        aux.setAttribute("id", id);
+        aux.setAttribute("owner", user);
+        aux.setAttribute("vmm", VMM);
+        aux.setAttribute("power", Double.toString(poderComputacional));
+        aux.setAttribute("mem_alloc", Double.toString(memAlocada));
+        aux.setAttribute("disk_alloc",Double.toString(discoAlocado));
+        aux.setAttribute("op_system", OS);
         system.appendChild(aux);
     }
 
