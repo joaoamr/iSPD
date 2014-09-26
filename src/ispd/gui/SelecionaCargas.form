@@ -420,6 +420,9 @@
               <Connection code="new DefaultComboBoxModel(usuarios)" type="code"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxUsersActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel12">
           <Properties>
@@ -659,13 +662,13 @@
                       <Component id="jLabel18" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel17" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="1">
-                          <Component id="jButton1" min="-2" pref="78" max="-2" attributes="0"/>
+                          <Component id="jButtonAbreExterno" min="-2" pref="78" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jTextFieldCaminhoTrace" pref="295" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonConvertExterno" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jButton5" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonPrev" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -678,16 +681,16 @@
                   <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonAbreExterno" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextFieldCaminhoTrace" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonConvertExterno" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jScrollPane2" min="-2" pref="142" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jButton5" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonPrev" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -701,14 +704,14 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="jButtonAbreExterno">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Open" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAbreExternoActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel17">
@@ -718,14 +721,14 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton4">
+        <Component class="javax.swing.JButton" name="jButtonConvertExterno">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Convert" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonConvertExternoActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldCaminhoTrace">
@@ -751,14 +754,14 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="jButton5">
+        <Component class="javax.swing.JButton" name="jButtonPrev">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Previous" replaceFormat="&quot;&lt;&lt; &quot;+palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonPrevActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -855,7 +858,7 @@
                 </Property>
                 <Property name="rows" type="int" value="5"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor Default"/>
+                  <Color id="Cursor Padr&#xe3;o"/>
                 </Property>
               </Properties>
             </Component>

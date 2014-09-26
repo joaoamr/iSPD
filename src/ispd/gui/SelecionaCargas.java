@@ -139,13 +139,13 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jPanelConvertTrace = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        jButtonAbreExterno = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
+        jButtonConvertExterno = new javax.swing.JButton();
         jTextFieldCaminhoTrace = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextNotifTrace = new javax.swing.JTextArea();
-        jButton5 = new javax.swing.JButton();
+        jButtonPrev = new javax.swing.JButton();
         jOpenTrace = new javax.swing.JFileChooser();
         jPanelSelecionaTrace = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
@@ -312,6 +312,11 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jLabel8.setText(palavras.getString("User")); // NOI18N
 
         jComboBoxUsers.setModel(new DefaultComboBoxModel(usuarios));
+        jComboBoxUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxUsersActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText(palavras.getString("Scheduler")); // NOI18N
 
@@ -503,19 +508,19 @@ public class SelecionaCargas extends javax.swing.JDialog {
 
         jLabel18.setText(palavras.getString("Select a external format trace file to convert:")); // NOI18N
 
-        jButton1.setText(palavras.getString("Open")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAbreExterno.setText(palavras.getString("Open")); // NOI18N
+        jButtonAbreExterno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonAbreExternoActionPerformed(evt);
             }
         });
 
         jLabel17.setText(palavras.getString("Notifications")); // NOI18N
 
-        jButton4.setText(palavras.getString("Convert")); // NOI18N
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jButtonConvertExterno.setText(palavras.getString("Convert")); // NOI18N
+        jButtonConvertExterno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jButtonConvertExternoActionPerformed(evt);
             }
         });
 
@@ -530,10 +535,10 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jTextNotifTrace.setPreferredSize(new java.awt.Dimension(164, 74));
         jScrollPane2.setViewportView(jTextNotifTrace);
 
-        jButton5.setText("<< "+palavras.getString("Previous")); // NOI18N
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        jButtonPrev.setText("<< "+palavras.getString("Previous")); // NOI18N
+        jButtonPrev.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                jButtonPrevActionPerformed(evt);
             }
         });
 
@@ -548,12 +553,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
                     .addComponent(jLabel18)
                     .addComponent(jLabel17)
                     .addGroup(jPanelConvertTraceLayout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonAbreExterno, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldCaminhoTrace, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addComponent(jButtonConvertExterno))
+                    .addComponent(jButtonPrev, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanelConvertTraceLayout.setVerticalGroup(
@@ -563,15 +568,15 @@ public class SelecionaCargas extends javax.swing.JDialog {
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanelConvertTraceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(jButtonAbreExterno)
                     .addComponent(jTextFieldCaminhoTrace, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4))
+                    .addComponent(jButtonConvertExterno))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton5)
+                .addComponent(jButtonPrev)
                 .addGap(65, 65, 65))
         );
 
@@ -795,6 +800,12 @@ public class SelecionaCargas extends javax.swing.JDialog {
             pack();
         }// </editor-fold>//GEN-END:initComponents
 
+    /*
+     *O trecho dos radiobuttons abaixo faz set para o tipo de configuração de carga de trabalho a ser selecionada 
+     *  
+     */
+   
+    
     private void jRadioButtonRandomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonRandomActionPerformed
         setTipo(GerarCarga.RANDOM);
     }//GEN-LAST:event_jRadioButtonRandomActionPerformed
@@ -888,8 +899,9 @@ public class SelecionaCargas extends javax.swing.JDialog {
         jScrollPaneTabela.setViewportView(jTable1);
     }//GEN-LAST:event_jButtonAddTabela1ActionPerformed
 
-private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+private void jButtonConvertExternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConvertExternoActionPerformed
 // TODO add your handling code here:
+    
     try {
         Interpretador interpret = new Interpretador(jTextFieldCaminhoTrace.getText());
         try {//inicia a conversão do arquivo
@@ -907,7 +919,7 @@ private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     } catch (Exception e) {
         jTextNotifTrace.setText(palavras.getString("There is no file selected"));
     };
-}//GEN-LAST:event_jButton4ActionPerformed
+}//GEN-LAST:event_jButtonConvertExternoActionPerformed
 
 private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldCaminhoTraceActionPerformed
 // TODO add your handling code here:
@@ -959,10 +971,10 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void jButtonPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrevActionPerformed
         // TODO add your handling code here:
         jScrollPaneSelecionado.setViewportView(jPanelTrace);
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_jButtonPrevActionPerformed
 
     private void jButtonOpenWMSXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenWMSXActionPerformed
         // TODO add your handling code here:
@@ -985,7 +997,7 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
         }
     }//GEN-LAST:event_jButtonOpenWMSXActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonAbreExternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbreExternoActionPerformed
         // TODO add your handling code here:
         filtro2.setDescricao(palavras.getString("External Trace File"));
         String[] exts = {".swf", ".gwf"};
@@ -997,20 +1009,24 @@ private void jTextFieldCaminhoTraceActionPerformed(java.awt.event.ActionEvent ev
             jTextFieldCaminhoTrace.setText(file.getAbsolutePath());
         }
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonAbreExternoActionPerformed
+
+    private void jComboBoxUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUsersActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxUsersActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonAbreExterno;
     private javax.swing.JButton jButtonAddTabela;
     private javax.swing.JButton jButtonAddTabela1;
     private javax.swing.JButton jButtonAddUser;
     private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonConvertExterno;
     private javax.swing.JButton jButtonOK1;
     private javax.swing.JButton jButtonOpenWMSX;
+    private javax.swing.JButton jButtonPrev;
     private javax.swing.JComboBox jComboBoxEscalonadores;
     private javax.swing.JComboBox jComboBoxUsers;
     private javax.swing.JFileChooser jFileExternalTrace;
