@@ -36,6 +36,7 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -61,9 +62,9 @@ import org.xml.sax.SAXException;
  *
  */
 public class JPrincipal extends javax.swing.JFrame implements KeyListener {
+
     private EscolherClasse ChooseClass;
     private ConfigurarVMs JanelaVM;
-   
 
     /**
      * Creates new form Principal
@@ -702,15 +703,13 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             pack();
         }// </editor-fold>//GEN-END:initComponents
 
-    
-    
-    
+
     private void jMenuItemGerenciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerenciarActionPerformed
         // TODO add your handling code here:
         jFrameGerenciador.setLocationRelativeTo(this);
         jFrameGerenciador.setVisible(true);
     }//GEN-LAST:event_jMenuItemGerenciarActionPerformed
-    
+
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
         // TODO add your handling code here:
         Icon icone = new ImageIcon(getClass().getResource("imagens/Logo_iSPD_128.png"));
@@ -843,34 +842,35 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNovoActionPerformed
         // TODO add your handling code here:
-        ChooseClass = new EscolherClasse(this,true);
+        ChooseClass = new EscolherClasse(this, true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
-         aDesenho = new DesenhoGrade(1500, 1500);
-         aDesenho.addKeyListener(this);
-         aDesenho.setPaineis(this);
-                //this.setRegua();
-         jScrollPaneBarraLateral.setViewportView(null);
-         jPanelPropriedades.setjLabelTexto("");
-         jScrollPaneAreaDesenho.setViewportView(aDesenho);
-         appendNotificacao(palavras.getString("New model opened"));
-         abrirEdição(null);
-                 //novo modelo não salvo ainda
-         modificar();
-        switch(ChooseClass.getChooseReturn()){
-            
+        aDesenho = new DesenhoGrade(1500, 1500);
+        aDesenho.addKeyListener(this);
+        aDesenho.setPaineis(this);
+        //this.setRegua();
+        jScrollPaneBarraLateral.setViewportView(null);
+        jPanelPropriedades.setjLabelTexto("");
+        jScrollPaneAreaDesenho.setViewportView(aDesenho);
+        appendNotificacao(palavras.getString("New model opened"));
+        abrirEdição(null);
+        //novo modelo não salvo ainda
+        modificar();
+        switch (ChooseClass.getChooseReturn()) {
+
             case EscolherClasse.GRID:
                 jButtonConfigVM.setVisible(false);
                 break;
-            case EscolherClasse.IAAS:               
+            case EscolherClasse.IAAS:
                 jButtonConfigVM.setVisible(true);
                 break;
             case EscolherClasse.PAAS:
+                jButtonConfigVM.setVisible(false);
                 break;
-            
+
         }
-        
-        
+
+
     }//GEN-LAST:event_jMenuItemNovoActionPerformed
 
     private void jMenuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirActionPerformed
@@ -1358,7 +1358,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         int returnVal = jFileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File dir = jFileChooser.getSelectedFile();
-            if(dir.isDirectory() && dir.exists()) {
+            if (dir.isDirectory() && dir.exists()) {
                 try {
                     HtmlPane.openDefaultBrowser(new URL("file://" + dir.getAbsolutePath() + "/result.html"));
                 } catch (IOException e) {
@@ -1389,19 +1389,20 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             }
         }
     }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
-    
+
     private void jButtonConfigVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigVMActionPerformed
-        JanelaVM = new ConfigurarVMs(this,true,
+        
+        JanelaVM = new ConfigurarVMs(this, true,
                 aDesenho.getUsuarios().toArray(),
-                aDesenho.getNosEscalonadores().toArray());
-                JanelaVM.setLocationRelativeTo(this);
-                JanelaVM.setVisible(true);
-                //depois que a janela fechou..
-                maquinasVirtuais = JanelaVM.getMaqVirtuais();
-                aDesenho.setMaquinasVirtuais(maquinasVirtuais);
-        
-        
-        
+                aDesenho.getNosEscalonadores().toArray(), maquinasVirtuais);
+        JanelaVM.setLocationRelativeTo(this);
+        JanelaVM.setVisible(true);
+        //depois que a janela fechou..
+        maquinasVirtuais = JanelaVM.getMaqVirtuais();
+        aDesenho.setUsuarios(JanelaVM.atualizaUsuarios());
+        aDesenho.setMaquinasVirtuais(maquinasVirtuais);
+        modificar();
+
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConfigVMActionPerformed
 
@@ -1644,7 +1645,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jCheckBoxMenuItemConectado.setEnabled(opcao);
         jCheckBoxMenuItemIndireto.setEnabled(opcao);
         jCheckBoxMenuItemEscalonavel.setEnabled(opcao);
-        
+
     }
 
     @Override

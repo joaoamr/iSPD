@@ -20,8 +20,9 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     /**
      * Creates new form ConfigurarVMs
      */
-    public ConfigurarVMs(java.awt.Frame parent, boolean modal, Object[] users, Object[] vmms) {
+    public ConfigurarVMs(java.awt.Frame parent, boolean modal, Object[] users, Object[] vmms, HashSet<VirtualMachine>vmList) {
         super(parent, modal);
+        
         this.usuarios = new Vector<String>();
         for (Object object : users)
             usuarios.add((String) object);
@@ -37,10 +38,43 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         this.tabelaColuna.add("Mem alloc");
         this.tabelaColuna.add("Disk alloc");
         this.tabelaColuna.add("OS");
-        this.maqVirtuais = new HashSet<VirtualMachine>();
+        this.tabelaIndex = 0;
+        if(vmList == null){
+            this.maqVirtuais = new HashSet<VirtualMachine>();
+        } else {
+            this.maqVirtuais = vmList;
+            for(VirtualMachine aux : maqVirtuais){
+                tabelaIndex++;
+                Vector linha = new Vector();
+                linha.add(aux.getNome());
+                linha.add(aux.getProprietario());
+                linha.add(aux.getVMM());
+                linha.add(aux.getPoderComputacional());
+                linha.add(aux.getMemoriaAlocada());
+                linha.add(aux.getDiscoAlocado());
+                linha.add(aux.getOS());
+                tabelaLinha.add(linha);
+            }
+        }
         initComponents();
+       
     }
 
+    public Vector<String> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(Vector<String> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public HashSet atualizaUsuarios(){
+        HashSet<String> users = new HashSet<String>();
+        for(String aux : usuarios){
+            users.add(aux);
+        }
+        return users;
+    }
     public HashSet<VirtualMachine> getMaqVirtuais() {
         return maqVirtuais;
     }
@@ -48,6 +82,8 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     public void setMaqVirtuais(HashSet<VirtualMachine> maqVirtuais) {
         this.maqVirtuais = maqVirtuais;
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -245,6 +281,14 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public Vector<Vector> getTabelaLinha() {
+        return tabelaLinha;
+    }
+
+    public void setTabelaLinha(Vector<Vector> tabelaLinha) {
+        this.tabelaLinha = tabelaLinha;
+    }
+
     private void jUserComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUserComboBoxActionPerformed
         
     // TODO add your handling code here:
@@ -291,17 +335,14 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonRemoveVMActionPerformed
 
     private void jButtonOKVmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKVmActionPerformed
-         
+        HashSet<VirtualMachine> aux = new HashSet<VirtualMachine>(); 
         for(Vector linha : tabelaLinha){
-            Vector linha2 = linha;
-            //linha de teste
-            System.out.println(linha2.get(0) + "|" + linha2.get(1) + "|" + linha2.get(2) + "|" + linha2.get(3) + "|" + linha2.get(4) + "|" + linha2.get(5) + "|" + linha2.get(6));
-            //^FIX-ME
+            
             VirtualMachine VM = new VirtualMachine(linha.get(0).toString(), linha.get(1).toString(), linha.get(2).toString(), Double.parseDouble( linha.get(3).toString()), Double.parseDouble(linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), linha.get(6).toString());
-            System.out.println("cheguei aqui");
-            maqVirtuais.add(VM);
+            aux.add(VM);
         }
-        
+        setMaqVirtuais(aux); //adicionando as máquinas virtuais já configuradas..
+        setUsuarios(usuarios);
         this.setVisible(false);
     }//GEN-LAST:event_jButtonOKVmActionPerformed
 
@@ -337,4 +378,5 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     private Vector<String> tabelaColuna = new Vector<String>(7);
     private int tabelaIndex = 0;
     private HashSet<VirtualMachine> maqVirtuais;
+
 }
