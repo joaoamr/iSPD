@@ -1391,10 +1391,18 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
 
     private void jButtonConfigVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigVMActionPerformed
-        
+        if (aDesenho.getNosEscalonadores().isEmpty()){
+            JOptionPane.showMessageDialog( // Caixa de mensagem  
+            null, // Janela da aplicação (opcional, pode ser null)  
+            "One or more VMMs need to be configurated", // Mensagem  
+            "Configuration Error!", // Título da caixa de mensagem  
+            JOptionPane.ERROR_MESSAGE // Ícone da caixa de mensagem  
+        );  
+        } else {
         JanelaVM = new ConfigurarVMs(this, true,
                 aDesenho.getUsuarios().toArray(),
-                aDesenho.getNosEscalonadores().toArray(), maquinasVirtuais);
+                aDesenho.getNosEscalonadores().toArray(), 
+                maquinasVirtuais);
         JanelaVM.setLocationRelativeTo(this);
         JanelaVM.setVisible(true);
         //depois que a janela fechou..
@@ -1402,7 +1410,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         aDesenho.setUsuarios(JanelaVM.atualizaUsuarios());
         aDesenho.setMaquinasVirtuais(maquinasVirtuais);
         modificar();
-
+        }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConfigVMActionPerformed
 
