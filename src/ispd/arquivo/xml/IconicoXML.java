@@ -97,6 +97,7 @@ public class IconicoXML {
         org.w3c.dom.NodeList clusters = documento.getElementsByTagName("cluster");
         org.w3c.dom.NodeList internet = documento.getElementsByTagName("internet");
         org.w3c.dom.NodeList links = documento.getElementsByTagName("link");
+        org.w3c.dom.NodeList vms = documento.getElementsByTagName("vitualMac");
         org.w3c.dom.NodeList cargas = documento.getElementsByTagName("load");
         if (owner.getLength() == 0) {
             throw new IllegalArgumentException("The model has no users.");
