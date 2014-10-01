@@ -37,7 +37,12 @@ and open the template in the editor.
 <!ATTLIST machine load CDATA "0.0">
 <!ATTLIST machine owner CDATA "user1">
 
-<!ELEMENT characteristic (process,memory,hard_disk)>
+<!ELEMENT characteristic (process,memory,hard_disk,cost?)>
+
+<!ELEMENT cost EMPTY>
+<!ATTLIST cost cost_proc CDATA "0.0">
+<!ATTLIST cost cost_mem CDATA "0.0">
+<!ATTLIST cost cost_disk CDATA "0.0">
 
 <!ELEMENT process EMPTY>
 <!ATTLIST process power CDATA "0.0">
