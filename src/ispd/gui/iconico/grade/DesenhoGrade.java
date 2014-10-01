@@ -778,6 +778,7 @@ public class DesenhoGrade extends AreaDesenho {
     public void setGrade(Document descricao) {
         //Realiza leitura dos usuários/proprietários do modelo
         this.usuarios = IconicoXML.newSetUsers(descricao);
+        this.maquinasVirtuais = IconicoXML.newListVirtualMachines(descricao);
         //Realiza leitura dos icones
         IconicoXML.newGrade(descricao, vertices, arestas);
         //Realiza leitura da configuração de carga do modelo
