@@ -11,6 +11,7 @@ import ispd.gui.iconico.grade.Internet;
 import ispd.gui.iconico.grade.ItemGrade;
 import ispd.gui.iconico.grade.Link;
 import ispd.gui.iconico.grade.Machine;
+import ispd.gui.iconico.grade.VirtualMachine;
 import ispd.motor.carga.CargaList;
 import ispd.motor.carga.CargaRandom;
 import ispd.motor.carga.CargaForNode;
@@ -603,6 +604,23 @@ public class IconicoXML {
         }
         return usuarios;
     }
+    
+    public static HashSet<VirtualMachine> newListVirtualMachines(Document descricao) {
+        NodeList owners = descricao.getElementsByTagName("virtualMac");
+        HashSet<VirtualMachine> maqVirtuais = new HashSet<VirtualMachine>();
+        for (int i=0; i < owners.getLength(); i++){
+            Element owner = (Element) owners.item(i);
+            VirtualMachine mac = new VirtualMachine(owner.getAttribute("id"), 
+                       owner.getAttribute("owner"), 
+                       owner.getAttribute("vmm"),
+                       Double.parseDouble(owner.getAttribute("power")),
+                       Double.parseDouble(owner.getAttribute("mem_alloc")), 
+                       Double.parseDouble(owner.getAttribute("disk_alloc")),
+                       owner.getAttribute("op_system"));
+            maqVirtuais.add(mac);
+        }
+        return maqVirtuais;
+    } 
 
     public static Document[] clone(File file, int number) throws ParserConfigurationException, IOException, SAXException {
         Document[] documento = new Document[number];
