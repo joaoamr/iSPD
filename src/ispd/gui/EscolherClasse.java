@@ -25,6 +25,14 @@ public class EscolherClasse extends javax.swing.JDialog {
         super(owner, modal);
         initComponents();
     }
+
+    public int getEscolha() {
+        return escolha;
+    }
+
+    public void setEscolha(int escolha) {
+        this.escolha = escolha;
+    }
     
     
     /**
@@ -133,9 +141,7 @@ public class EscolherClasse extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    public int getChooseReturn (){
-        return escolha;
-}
+
     
     private void jRadioGridActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioGridActionPerformed
         // TODO add your handling code here:
@@ -167,17 +173,17 @@ public class EscolherClasse extends javax.swing.JDialog {
     private void jButtonEscNovoOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEscNovoOKActionPerformed
         // TODO add your handling code here:
         if(jRadioGrid.isSelected()){
-            escolha=GRID;
+            setEscolha(GRID);
            
 //abrir interface Grid
         }
         else if(jRadioIaaS.isSelected()){
-             escolha=IAAS;
+             setEscolha(IAAS);
             
 //abrir interface IaaS
         }
         else if(jRadioPaaS.isSelected()){
-             escolha=PAAS;
+             setEscolha(PAAS);
             
 //abrir código PaaS
         }

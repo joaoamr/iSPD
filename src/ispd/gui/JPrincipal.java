@@ -63,8 +63,17 @@ import org.xml.sax.SAXException;
  */
 public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
-    private EscolherClasse ChooseClass;
-    private ConfigurarVMs JanelaVM;
+    private EscolherClasse ChooseClass; //janela de escolha de qual tipo de serviço irá ser modelado
+    private ConfigurarVMs JanelaVM; //janela de configuração de máquinas virtuais para IaaS
+    private int tipoModelo; //define se o modelo é GRID, IAAS ou PAAS;
+
+    public int getTipoModelo() {
+        return tipoModelo;
+    }
+
+    public void setTipoModelo(int tipoModelo) {
+        this.tipoModelo = tipoModelo;
+    }
 
     /**
      * Creates new form Principal
@@ -856,7 +865,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         abrirEdição(null);
         //novo modelo não salvo ainda
         modificar();
-        switch (ChooseClass.getChooseReturn()) {
+        this.tipoModelo = ChooseClass.getEscolha();
+        switch (tipoModelo) {
 
             case EscolherClasse.GRID:
                 jButtonConfigVM.setVisible(false);
@@ -1395,8 +1405,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             JOptionPane.showMessageDialog( // Caixa de mensagem  
             null, // Janela da aplicação (opcional, pode ser null)  
             "One or more VMMs need to be configurated", // Mensagem  
-            "Configuration Error!", // Título da caixa de mensagem  
-            JOptionPane.ERROR_MESSAGE // Ícone da caixa de mensagem  
+            "WARNING!", // Título da caixa de mensagem  
+            JOptionPane.PLAIN_MESSAGE // Ícone da caixa de mensagem  
         );  
         } else {
         JanelaVM = new ConfigurarVMs(this, true,
