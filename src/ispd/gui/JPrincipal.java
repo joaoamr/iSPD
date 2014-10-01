@@ -907,6 +907,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                             //Carregar na aDesenho
                             aDesenho = new DesenhoGrade(1500, 1500);
                             aDesenho.setGrade(descricao);
+                            this.maquinasVirtuais = aDesenho.getMaquinasVirtuais();
                         } else {
                             //Realiza leitura do arquivo da outra versão
                             FileInputStream arquivo = new FileInputStream(file);
