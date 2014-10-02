@@ -52,6 +52,15 @@ public class DesenhoGrade extends AreaDesenho {
     public static final int CLUSTER = 3;
     public static final int INTERNET = 4;
     private ResourceBundle palavras;
+    private int tipoModelo; //tipo de serviço que o modelo vai simular (GRID, IAAS ou PAAS)
+
+    public int getTipoModelo() {
+        return tipoModelo;
+    }
+
+    public void setTipoModelo(int tipoModelo) {
+        this.tipoModelo = tipoModelo;
+    }
     //Objetos principais da classe
     /**
      * Lista com os usuarios/proprietarios do modelo criado
@@ -735,7 +744,7 @@ public class DesenhoGrade extends AreaDesenho {
     public void showActionIcon(MouseEvent me, ispd.gui.iconico.Icone icon) {
         this.janelaPrincipal.modificar();
         if (icon instanceof Machine || icon instanceof Cluster) {
-            this.janelaPrincipal.getjPanelConfiguracao().setIcone((ItemGrade) icon, usuarios);
+            this.janelaPrincipal.getjPanelConfiguracao().setIcone((ItemGrade) icon, usuarios, tipoModelo);
             JOptionPane.showMessageDialog(
                     janelaPrincipal,
                     this.janelaPrincipal.getjPanelConfiguracao(),

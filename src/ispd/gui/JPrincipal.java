@@ -866,6 +866,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         //novo modelo não salvo ainda
         modificar();
         this.tipoModelo = ChooseClass.getEscolha();
+        aDesenho.setTipoModelo(tipoModelo);
         switch (tipoModelo) {
 
             case EscolherClasse.GRID:
@@ -1693,7 +1694,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     public void setSelectedIcon(ItemGrade icon, String Texto) {
         if (icon != null) {
             if (icon instanceof ispd.gui.iconico.grade.Machine || icon instanceof ispd.gui.iconico.grade.Cluster) {
-                this.jPanelConfiguracao.setIcone(icon, aDesenho.getUsuarios());
+                this.jPanelConfiguracao.setIcone(icon, aDesenho.getUsuarios(),tipoModelo);
             } else {
                 this.jPanelConfiguracao.setIcone(icon);
             }
