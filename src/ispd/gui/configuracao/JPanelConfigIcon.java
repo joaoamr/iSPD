@@ -27,6 +27,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
     private VariedRowTable Tmachine;
     private VariedRowTable TmachineIaaS;
     private VariedRowTable Tcluster;
+    private VariedRowTable TclusterIaaS;
     private VariedRowTable Tlink;
     private ResourceBundle palavras;
     private ManipularArquivos escalonadores;
@@ -42,6 +43,9 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         Tcluster = new VariedRowTable();
         Tcluster.setModel(new ClusterTable(palavras));
         Tcluster.setRowHeight(20);
+        TclusterIaaS = new VariedRowTable();
+        TclusterIaaS.setModel(new ClusterTableIaaS(palavras));
+        TclusterIaaS.setRowHeight(20);
         Tlink = new VariedRowTable();
         Tlink.setModel(new LinkTable(palavras));
         Tlink.setRowHeight(20);
@@ -139,6 +143,11 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 getTabelaMaquina().setMaquina((Machine) icone, usuarios);
                 jScrollPane1.setViewportView(Tmachine);
             }
+            if (icone instanceof Cluster) {
+                jLabelTitle.setText(palavras.getString("Cluster icon configuration"));
+                getTabelaCluster().setCluster((Cluster) icone, usuarios);
+                jScrollPane1.setViewportView(Tcluster);
+            }
         }
         else if(escolha == 1){
             if (!escalonadores.listarRemovidos().isEmpty()) {
@@ -159,12 +168,13 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 getTabelaMaquinaIaaS().setMaquina((Machine)icone, usuarios);
                 jScrollPane1.setViewportView(TmachineIaaS);
             }
+            if (icone instanceof Cluster) {
+                jLabelTitle.setText(palavras.getString("Cluster icon configuration"));
+                getTabelaClusterIaaS().setCluster((Cluster) icone, usuarios);
+                jScrollPane1.setViewportView(TclusterIaaS);
+            }
         }
-        if (icone instanceof Cluster) {
-            jLabelTitle.setText(palavras.getString("Cluster icon configuration"));
-            getTabelaCluster().setCluster((Cluster) icone, usuarios);
-            jScrollPane1.setViewportView(Tcluster);
-        }
+        
     }
 
     public String getTitle() {
@@ -182,6 +192,10 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
     public ClusterTable getTabelaCluster() {
         return (ClusterTable) Tcluster.getModel();
     }
+    
+    public ClusterTableIaaS getTabelaClusterIaaS(){
+        return (ClusterTableIaaS) TclusterIaaS.getModel();
+    }
 
     public LinkTable getTabelaLink() {
         return (LinkTable) Tlink.getModel();
@@ -192,6 +206,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         ((MachineTable) Tmachine.getModel()).setPalavras(palavras);
         ((MachineTableIaaS) TmachineIaaS.getModel()).setPalavras(palavras);
         ((ClusterTable) Tcluster.getModel()).setPalavras(palavras);
+        ((ClusterTableIaaS) TclusterIaaS.getModel()).setPalavras(palavras);
         ((LinkTable) Tlink.getModel()).setPalavras(palavras);
     }
 }
