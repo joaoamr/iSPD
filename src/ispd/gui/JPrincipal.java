@@ -851,6 +851,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNovoActionPerformed
         // TODO add your handling code here:
+        int escolha = JOptionPane.YES_OPTION;
+        if (modificado) {
+            escolha = savarAlteracao();
+        } 
         ChooseClass = new EscolherClasse(this, true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
