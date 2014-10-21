@@ -851,6 +851,10 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNovoActionPerformed
         // TODO add your handling code here:
+        int escolha = JOptionPane.YES_OPTION;
+        if (modificado) {
+            escolha = savarAlteracao();
+        } 
         ChooseClass = new EscolherClasse(this, true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
@@ -866,6 +870,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         //novo modelo não salvo ainda
         modificar();
         this.tipoModelo = ChooseClass.getEscolha();
+        aDesenho.setTipoModelo(tipoModelo);
         switch (tipoModelo) {
 
             case EscolherClasse.GRID:
@@ -907,7 +912,20 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                             //Carregar na aDesenho
                             aDesenho = new DesenhoGrade(1500, 1500);
                             aDesenho.setGrade(descricao);
+                            this.tipoModelo = aDesenho.getTipoModelo();
                             this.maquinasVirtuais = aDesenho.getMaquinasVirtuais();
+                            switch (tipoModelo) {
+                                case EscolherClasse.GRID:
+                                    jButtonConfigVM.setVisible(false);
+                                    break;
+                                case EscolherClasse.IAAS:
+                                    jButtonConfigVM.setVisible(true);
+                                    break;
+                                case EscolherClasse.PAAS:
+                                    jButtonConfigVM.setVisible(false);
+                                    break;
+                            }
+
                         } else {
                             //Realiza leitura do arquivo da outra versão
                             FileInputStream arquivo = new FileInputStream(file);
@@ -1402,25 +1420,25 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     }//GEN-LAST:event_jMenuItemToGridSimActionPerformed
 
     private void jButtonConfigVMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigVMActionPerformed
-        if (aDesenho.getNosEscalonadores().isEmpty()){
+        if (aDesenho.getNosEscalonadores().isEmpty()) {
             JOptionPane.showMessageDialog( // Caixa de mensagem  
-            null, // Janela da aplicação (opcional, pode ser null)  
-            "One or more VMMs need to be configurated", // Mensagem  
-            "WARNING!", // Título da caixa de mensagem  
-            JOptionPane.PLAIN_MESSAGE // Ícone da caixa de mensagem  
-        );  
+                    null, // Janela da aplicação (opcional, pode ser null)  
+                    "One or more VMMs need to be configurated", // Mensagem  
+                    "WARNING!", // Título da caixa de mensagem  
+                    JOptionPane.PLAIN_MESSAGE // Ícone da caixa de mensagem  
+            );
         } else {
-        JanelaVM = new ConfigurarVMs(this, true,
-                aDesenho.getUsuarios().toArray(),
-                aDesenho.getNosEscalonadores().toArray(), 
-                maquinasVirtuais);
-        JanelaVM.setLocationRelativeTo(this);
-        JanelaVM.setVisible(true);
-        //depois que a janela fechou..
-        maquinasVirtuais = JanelaVM.getMaqVirtuais();
-        aDesenho.setUsuarios(JanelaVM.atualizaUsuarios());
-        aDesenho.setMaquinasVirtuais(maquinasVirtuais);
-        modificar();
+            JanelaVM = new ConfigurarVMs(this, true,
+                    aDesenho.getUsuarios().toArray(),
+                    aDesenho.getNosEscalonadores().toArray(),
+                    maquinasVirtuais);
+            JanelaVM.setLocationRelativeTo(this);
+            JanelaVM.setVisible(true);
+            //depois que a janela fechou..
+            maquinasVirtuais = JanelaVM.getMaqVirtuais();
+            aDesenho.setUsuarios(JanelaVM.atualizaUsuarios());
+            aDesenho.setMaquinasVirtuais(maquinasVirtuais);
+            modificar();
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConfigVMActionPerformed
@@ -1693,7 +1711,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     public void setSelectedIcon(ItemGrade icon, String Texto) {
         if (icon != null) {
             if (icon instanceof ispd.gui.iconico.grade.Machine || icon instanceof ispd.gui.iconico.grade.Cluster) {
-                this.jPanelConfiguracao.setIcone(icon, aDesenho.getUsuarios());
+                this.jPanelConfiguracao.setIcone(icon, aDesenho.getUsuarios(), tipoModelo);
             } else {
                 this.jPanelConfiguracao.setIcone(icon);
             }

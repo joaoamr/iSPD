@@ -2,6 +2,7 @@
 package ispd.arquivo.interpretador.simgrid;
 
 import ispd.arquivo.xml.IconicoXML;
+import ispd.gui.EscolherClasse;
 import java.io.*;
 import java.lang.SecurityException;
 import java.util.Formatter;
@@ -269,7 +270,7 @@ public class SimGrid implements SimGridConstants {
     }
 
     public IconicoXML getModelo() {
-        IconicoXML xml = new IconicoXML();
+        IconicoXML xml = new IconicoXML(EscolherClasse.GRID);
         int x = 100, y = 100, local = 0, global = 0;
         HashMap<String, Integer> maq = new HashMap<String, Integer>();
         for (Server s : servers) {

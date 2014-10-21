@@ -5,6 +5,7 @@
 package ispd.arquivo.xml;
 
 import ispd.ValidaValores;
+import ispd.gui.EscolherClasse;
 import ispd.gui.iconico.Aresta;
 import ispd.gui.iconico.grade.Cluster;
 import ispd.gui.iconico.grade.Internet;
@@ -57,11 +58,28 @@ public class IconicoXML {
     private Document descricao;
     private Element system;
     private Element load;
+    private int tipoModelo;
 
-    public IconicoXML() {
+    public IconicoXML(int tipoModelo) {
+        this.tipoModelo = tipoModelo;    
         descricao = ManipuladorXML.novoDocumento();
+        
+        /**
+         * o número da versão define se o tipo de modelo que está sendo salvo, desta forma:
+         *  2.1 -> modelo de grade
+         *  2.2 -> modelo de nuvem IaaS
+         *  2.3 .> modelo de nuvem PaaS
+         * 
+         * author: Diogo Tavares
+         */
         system = descricao.createElement("system");
-        system.setAttribute("version", "2");
+        if (tipoModelo == EscolherClasse.GRID)
+            system.setAttribute("version", "2.1");
+        else if (tipoModelo == EscolherClasse.IAAS)
+            system.setAttribute("version", "2.2");
+        else if(tipoModelo == EscolherClasse.PAAS)
+                system.setAttribute("version", "2.3");
+    
         load = null;
         descricao.appendChild(system);
     }
@@ -424,6 +442,8 @@ public class IconicoXML {
         }
         return cargasConfiguracao;
     }
+    
+    
 
     private static void setCaracteristicas(ItemGrade item, NodeList elementsByTagName) {
         Machine maq = null;
@@ -442,6 +462,12 @@ public class IconicoXML {
             clust.setMemoriaRAM(Double.valueOf(memory.getAttribute("size")));
             Element disk = (Element) caracteristicas.getElementsByTagName("hard_disk").item(0);
             clust.setDiscoRigido(Double.valueOf(disk.getAttribute("size")));
+            if(caracteristicas.getElementsByTagName("cost").getLength() > 0){
+                Element cost = (Element) caracteristicas.getElementsByTagName("cost").item(0);
+                clust.setCostperprocessing(Double.valueOf(cost.getAttribute("cost_proc")));
+                clust.setCostpermemory(Double.valueOf(cost.getAttribute("cost_mem")));
+                clust.setCostperdisk(Double.valueOf(cost.getAttribute("cost_disk")));
+            }
         } else if (elementsByTagName.getLength() > 0 && maq != null) {
             Element caracteristicas = (Element) elementsByTagName.item(0);
             Element process = (Element) caracteristicas.getElementsByTagName("process").item(0);
@@ -451,6 +477,13 @@ public class IconicoXML {
             maq.setMemoriaRAM(Double.valueOf(memory.getAttribute("size")));
             Element disk = (Element) caracteristicas.getElementsByTagName("hard_disk").item(0);
             maq.setDiscoRigido(Double.valueOf(disk.getAttribute("size")));
+            if(caracteristicas.getElementsByTagName("cost").getLength() > 0){
+                Element cost = (Element) caracteristicas.getElementsByTagName("cost").item(0);
+                maq.setCostperprocessing(Double.valueOf(cost.getAttribute("cost_proc")));
+                maq.setCostpermemory(Double.valueOf(cost.getAttribute("cost_mem")));
+                maq.setCostperdisk(Double.valueOf(cost.getAttribute("cost_disk")));
+            }
+            
         }
     }
 
@@ -698,7 +731,39 @@ public class IconicoXML {
         aux.setAttribute("id", nome);
         aux.appendChild(posicao);
         aux.appendChild(icon_id);
-        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido));
+        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido,0.0,0.0,0.0));
+        system.appendChild(aux);
+    }
+    
+    public void addClusterIaaS(Integer x, Integer y, Integer idLocal, Integer idGlobal, String nome,
+            Integer numeroEscravos, Double poderComputacional, Integer numeroNucleos,
+            Double memoriaRAM, Double discoRigido,
+            Double banda, Double latencia,
+            String algoritmo, Double CostperProcessing,
+            Double Costpermemory, Double CostperDisk,
+            String proprietario, Boolean mestre) {
+        Element aux;
+        Element posicao = descricao.createElement("position");
+        posicao.setAttribute("x", x.toString());
+        posicao.setAttribute("y", y.toString());
+        Element icon_id = descricao.createElement("icon_id");
+        icon_id.setAttribute("global", idGlobal.toString());
+        icon_id.setAttribute("local", idLocal.toString());
+
+        aux = descricao.createElement("cluster");
+        aux.setAttribute("nodes", numeroEscravos.toString());
+        aux.setAttribute("power", poderComputacional.toString());
+        aux.setAttribute("bandwidth", banda.toString());
+        aux.setAttribute("latency", latencia.toString());
+        aux.setAttribute("scheduler", algoritmo);
+        aux.setAttribute("owner", proprietario);
+        aux.setAttribute("master", mestre.toString());
+
+        aux.setAttribute("id", nome);
+        aux.appendChild(posicao);
+        aux.appendChild(icon_id);
+        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido,
+        CostperProcessing, Costpermemory, CostperDisk));
         system.appendChild(aux);
     }
 
@@ -732,10 +797,49 @@ public class IconicoXML {
         aux.setAttribute("id", nome);
         aux.appendChild(posicao);
         aux.appendChild(icon_id);
-        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido));
+        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido,0.0,0.0,0.0));
         system.appendChild(aux);
     }
+    
+    public void addMachineIaaS(Integer x, Integer y, Integer idLocal, Integer idGlobal, String nome,
+            Double poderComputacional, Double ocupacao, String algoritmo, String proprietario,
+            Integer numeroNucleos, Double memoriaRAM, Double discoRigido, Double CostperProcessing,
+            Double Costpermemory, Double CostperDisk,
+            boolean mestre, Collection<Integer> escravos) {
+        Element aux;
+        Element posicao = descricao.createElement("position");
+        posicao.setAttribute("x", x.toString());
+        posicao.setAttribute("y", y.toString());
+        Element icon_id = descricao.createElement("icon_id");
+        icon_id.setAttribute("global", idGlobal.toString());
+        icon_id.setAttribute("local", idLocal.toString());
 
+        aux = descricao.createElement("machine");
+        aux.setAttribute("power", Double.toString(poderComputacional));
+        aux.setAttribute("load", Double.toString(ocupacao));
+        aux.setAttribute("owner", proprietario);
+        //aux.setAttribute("cost_proc", CostperProcessing.toString());
+        //aux.setAttribute("cost_mem", Costpermemory.toString());
+        //aux.setAttribute("cost_disk", CostperDisk.toString());
+        
+        if (mestre) {
+            //preenche escravos
+            Element master = descricao.createElement("VMM");
+            master.setAttribute("scheduler", algoritmo);
+            for (Integer escravo : escravos) {
+                Element slave = descricao.createElement("slave");
+                slave.setAttribute("id", escravo.toString());
+                master.appendChild(slave);
+            }
+            aux.appendChild(master);
+        }
+        aux.setAttribute("id", nome);
+        aux.appendChild(posicao);
+        aux.appendChild(icon_id);
+        aux.appendChild(newCharacteristic(poderComputacional, numeroNucleos, memoriaRAM, discoRigido,
+        CostperProcessing, Costpermemory, CostperDisk));
+        system.appendChild(aux);
+    }
     public void addLink(int x0, int y0, int x1, int y1, int idLocal, int idGlobal, String nome,
             double banda, double taxaOcupacao, double latencia, int origem, int destino) {
         Element aux = null;
@@ -848,7 +952,7 @@ public class IconicoXML {
         return descricao;
     }
 
-    private Node newCharacteristic(Double poderComputacional, Integer numeroNucleos, Double memoriaRAM, Double discoRigido) {
+    private Node newCharacteristic(Double poderComputacional, Integer numeroNucleos, Double memoriaRAM, Double discoRigido, Double costperProcessing, Double costperMemory, Double costperDisk) {
         Element characteristic = descricao.createElement("characteristic");
         Element process = descricao.createElement("process");
         process.setAttribute("power", poderComputacional.toString());
@@ -857,9 +961,17 @@ public class IconicoXML {
         memory.setAttribute("size", memoriaRAM.toString());
         Element hard_disk = descricao.createElement("hard_disk");
         hard_disk.setAttribute("size", discoRigido.toString());
+        Element cost = descricao.createElement("cost");
+        cost.setAttribute("cost_proc", costperProcessing.toString());
+        Element cost_mem = descricao.createElement("cost_mem");
+        cost.setAttribute("cost_mem", costperMemory.toString());
+        Element cost_disk = descricao.createElement("cost_disk");
+        cost.setAttribute("cost_disk", costperDisk.toString());
+        
         characteristic.appendChild(process);
         characteristic.appendChild(memory);
         characteristic.appendChild(hard_disk);
+        characteristic.appendChild(cost);
         return characteristic;
     }
 }

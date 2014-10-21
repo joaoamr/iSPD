@@ -32,6 +32,10 @@ public class Cluster extends Vertice implements ItemGrade {
     private Double discoRigido;
     private boolean configurado;
     private String proprietario;
+    private Double costperprocessing;
+    private Double costpermemory; 
+    private Double costperdisk;
+    private String VMMallocpolicy;
 
     public Cluster(Integer x, Integer y, int idLocal, int idGlobal) {
         super(x, y);
@@ -46,6 +50,10 @@ public class Cluster extends Vertice implements ItemGrade {
         this.memoriaRAM = 0.0;
         this.discoRigido = 0.0;
         this.mestre = true;
+        this.costperprocessing=0.0;
+        this.costpermemory = 0.0;
+        this.costperdisk = 0.0;
+        this.VMMallocpolicy = "---";
         this.conexoesEntrada = new HashSet<ItemGrade>();
         this.conexoesSaida = new HashSet<ItemGrade>();
     }
@@ -216,6 +224,39 @@ public class Cluster extends Vertice implements ItemGrade {
 
     public void setDiscoRigido(Double discoRigido) {
         this.discoRigido = discoRigido;
+    }
+    
+    public Double getCostperprocessing() {
+        return costperprocessing;
+    }
+
+
+    public void setCostperprocessing(Double costperprocessing) {
+        this.costperprocessing = costperprocessing;
+    }
+    
+    public Double getCostpermemory() {
+        return costpermemory;
+    }
+
+    public void setCostpermemory(Double costpermemory) {
+        this.costpermemory = costpermemory;
+    }
+    
+    public Double getCostperdisk() {
+        return costperdisk;
+    }
+
+    public void setCostperdisk(Double costperdisk) {
+        this.costperdisk = costperdisk;
+    }
+    
+    public String getVMMallocpolicy() {
+        return VMMallocpolicy;
+    }
+
+    public void setVMMallocpolicy(String VMMallocpolicy) {
+        this.VMMallocpolicy = VMMallocpolicy;
     }
 
     private void verificaConfiguracao() {

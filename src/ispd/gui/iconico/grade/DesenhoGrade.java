@@ -6,6 +6,7 @@ package ispd.gui.iconico.grade;
 
 import ispd.ValidaValores;
 import ispd.arquivo.xml.IconicoXML;
+import ispd.gui.EscolherClasse;
 import ispd.gui.JPrincipal;
 import ispd.gui.iconico.AreaDesenho;
 import ispd.gui.iconico.Aresta;
@@ -35,6 +36,9 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -52,6 +56,15 @@ public class DesenhoGrade extends AreaDesenho {
     public static final int CLUSTER = 3;
     public static final int INTERNET = 4;
     private ResourceBundle palavras;
+    private int tipoModelo; //tipo de serviço que o modelo vai simular (GRID, IAAS ou PAAS)
+
+    public int getTipoModelo() {
+        return tipoModelo;
+    }
+
+    public void setTipoModelo(int tipoModelo) {
+        this.tipoModelo = tipoModelo;
+    }
     //Objetos principais da classe
     /**
      * Lista com os usuarios/proprietarios do modelo criado
@@ -106,6 +119,7 @@ public class DesenhoGrade extends AreaDesenho {
         imprimeNosIndiretos = false;
         imprimeNosEscalonaveis = true;
         maquinasVirtuais = null;
+        this.tipoModelo = EscolherClasse.GRID;
     }
 
     public void setPaineis(JPrincipal janelaPrincipal) {
@@ -451,7 +465,7 @@ public class DesenhoGrade extends AreaDesenho {
      * Transforma os icones da area de desenho em um Document xml dom
      */
     public Document getGrade() {
-        IconicoXML xml = new IconicoXML();
+        IconicoXML xml = new IconicoXML(tipoModelo);
         xml.addUsers(usuarios);
         for (Vertice vertice : vertices) {
             if (vertice instanceof Machine) {
@@ -462,19 +476,40 @@ public class DesenhoGrade extends AreaDesenho {
                         escravos.add(slv.getId().getIdGlobal());
                     }
                 }
-                xml.addMachine(I.getX(), I.getY(),
-                        I.getId().getIdLocal(), I.getId().getIdGlobal(), I.getId().getNome(),
-                        I.getPoderComputacional(), I.getTaxaOcupacao(), I.getAlgoritmo(), I.getProprietario(),
-                        I.getNucleosProcessador(), I.getMemoriaRAM(), I.getDiscoRigido(),
-                        I.isMestre(), escravos);
+                if(tipoModelo == EscolherClasse.GRID){
+                    xml.addMachine(I.getX(), I.getY(),
+                            I.getId().getIdLocal(), I.getId().getIdGlobal(), I.getId().getNome(),
+                            I.getPoderComputacional(), I.getTaxaOcupacao(), I.getAlgoritmo(), I.getProprietario(),
+                            I.getNucleosProcessador(), I.getMemoriaRAM(), I.getDiscoRigido(),
+                            I.isMestre(), escravos);
+                }
+                else if(tipoModelo == EscolherClasse.IAAS){
+                    xml.addMachineIaaS(I.getX(), I.getY(), I.getId().getIdLocal(),I.getId().getIdGlobal(), I.getId().getNome(),
+                            I.getPoderComputacional(), I.getTaxaOcupacao(), I.getAlgoritmo(), I.getProprietario(), I.getNucleosProcessador(), I.getMemoriaRAM(),
+                            I.getDiscoRigido(), I.getCostperprocessing(), I.getCostpermemory(), I.getCostperdisk(), I.isMestre(), escravos);
+                }
             } else if (vertice instanceof Cluster) {
-                Cluster I = (Cluster) vertice;
-                xml.addCluster(I.getX(), I.getY(),
-                        I.getId().getIdLocal(), I.getId().getIdGlobal(), I.getId().getNome(),
-                        I.getNumeroEscravos(), I.getPoderComputacional(), I.getNucleosProcessador(),
-                        I.getMemoriaRAM(), I.getDiscoRigido(),
-                        I.getBanda(), I.getLatencia(),
-                        I.getAlgoritmo(), I.getProprietario(), I.isMestre());
+                if(tipoModelo == EscolherClasse.GRID){
+                    Cluster I = (Cluster) vertice;
+                    xml.addCluster(I.getX(), I.getY(),
+                            I.getId().getIdLocal(), I.getId().getIdGlobal(), I.getId().getNome(),
+                            I.getNumeroEscravos(), I.getPoderComputacional(), I.getNucleosProcessador(),
+                            I.getMemoriaRAM(), I.getDiscoRigido(),
+                            I.getBanda(), I.getLatencia(),
+                            I.getAlgoritmo(), I.getProprietario(), I.isMestre());
+                }
+                else if(tipoModelo == EscolherClasse.IAAS){
+                    Cluster I = (Cluster) vertice;
+                    xml.addClusterIaaS(I.getX(), I.getY(),
+                            I.getId().getIdLocal(), I.getId().getIdGlobal(),
+                            I.getId().getNome(), I.getNumeroEscravos(),
+                            I.getPoderComputacional(), I.getNucleosProcessador(),
+                            I.getMemoriaRAM(), I.getDiscoRigido(),
+                            I.getBanda(), I.getLatencia(),
+                            I.getAlgoritmo(), I.getCostperprocessing(),
+                            I.getCostpermemory(), I.getCostperdisk(),
+                            I.getProprietario(), I.isMestre());
+                }
             } else if (vertice instanceof Internet) {
                 Internet I = (Internet) vertice;
                 xml.addInternet(
@@ -735,7 +770,7 @@ public class DesenhoGrade extends AreaDesenho {
     public void showActionIcon(MouseEvent me, ispd.gui.iconico.Icone icon) {
         this.janelaPrincipal.modificar();
         if (icon instanceof Machine || icon instanceof Cluster) {
-            this.janelaPrincipal.getjPanelConfiguracao().setIcone((ItemGrade) icon, usuarios);
+            this.janelaPrincipal.getjPanelConfiguracao().setIcone((ItemGrade) icon, usuarios, tipoModelo);
             JOptionPane.showMessageDialog(
                     janelaPrincipal,
                     this.janelaPrincipal.getjPanelConfiguracao(),
@@ -779,6 +814,14 @@ public class DesenhoGrade extends AreaDesenho {
         //Realiza leitura dos usuários/proprietários do modelo
         this.usuarios = IconicoXML.newSetUsers(descricao);
         this.maquinasVirtuais = IconicoXML.newListVirtualMachines(descricao);
+        Element aux = (Element) descricao.getElementsByTagName("system").item(0);
+        String versao = aux.getAttribute("version");
+        if(versao.contentEquals("2.1"))
+            tipoModelo = EscolherClasse.GRID;
+        else if(versao.contentEquals("2.2"))
+            tipoModelo = EscolherClasse.IAAS;
+        else if(versao.contentEquals("2.3"))
+            tipoModelo = EscolherClasse.PAAS;
         //Realiza leitura dos icones
         IconicoXML.newGrade(descricao, vertices, arestas);
         //Realiza leitura da configuração de carga do modelo
