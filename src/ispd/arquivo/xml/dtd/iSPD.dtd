@@ -29,6 +29,7 @@ and open the template in the editor.
 <!ATTLIST slave id CDATA #REQUIRED>
 
 <!ELEMENT master (slave*)>
+<!ATTLIST master vm_alloc CDATA "---">
 <!ATTLIST master scheduler CDATA "---">
 
 <!ELEMENT machine (master?,position,icon_id,characteristic?)>
