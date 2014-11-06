@@ -44,23 +44,29 @@ public class SimulacaoSequencial extends Simulacao {
         }
         janela.print("Creating routing.");
         janela.print(" -> ");
+        /**
+         * Trecho de código que implementa o roteamento entre os mestres e os seus respectivos escravos
+         */
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             Mestre temp = (Mestre) mst;
             //Cede acesso ao mestre a fila de eventos futuros
             temp.setSimulacao(this);
             //Encontra menor caminho entre o mestre e seus escravos
-            mst.determinarCaminhos();
+            mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
+        
         janela.incProgresso(5);
         janela.println("OK", Color.green);
+        
         if (redeDeFilas.getMaquinas() == null || redeDeFilas.getMaquinas().isEmpty()) {
             janela.println("The model has no processing slaves.", Color.orange);
         } else {
             for (CS_Maquina maq : redeDeFilas.getMaquinas()) {
                 //Encontra menor caminho entre o escravo e seu mestre
-                maq.determinarCaminhos();
+                maq.determinarCaminhos();//escravo encontra caminhos para seu mestre
             }
         }
+        //fim roteamento
         janela.incProgresso(5);
     }
 
@@ -130,6 +136,7 @@ public class SimulacaoSequencial extends Simulacao {
         return false;
     }
 
+    
     private void realizarSimulacao() {
         while (!eventos.isEmpty()) {
         //recupera o próximo evento e o executa.
