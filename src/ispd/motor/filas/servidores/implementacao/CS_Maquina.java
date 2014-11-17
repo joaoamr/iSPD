@@ -34,6 +34,16 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
     private List<Double> recuperacao = new ArrayList<Double>();
     private boolean erroRecuperavel;
     private boolean falha = false;
+    //TO DO: INCLUIR INFORMAÇÕES DE MEMÓRIA E DISCO
+    
+    /**
+     * 
+     * @param id
+     * @param proprietario
+     * @param PoderComputacional
+     * @param numeroProcessadores
+     * @param Ocupacao 
+     */
 
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
