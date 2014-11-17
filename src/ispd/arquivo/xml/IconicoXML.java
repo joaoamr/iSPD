@@ -157,6 +157,7 @@ public class IconicoXML {
         NodeList docinternet = modelo.getElementsByTagName("internet");
         NodeList doclinks = modelo.getElementsByTagName("link");
         NodeList owners = modelo.getElementsByTagName("owner");
+        
 
         HashMap<Integer, CentroServico> centroDeServicos = new HashMap<Integer, CentroServico>();
         HashMap<CentroServico, List<CS_Maquina>> escravosCluster = new HashMap<CentroServico, List<CS_Maquina>>();
@@ -647,7 +648,7 @@ public class IconicoXML {
             VirtualMachine mac = new VirtualMachine(owner.getAttribute("id"), 
                        owner.getAttribute("owner"), 
                        owner.getAttribute("vmm"),
-                       Double.parseDouble(owner.getAttribute("power")),
+                       Integer.parseInt(owner.getAttribute("power")),
                        Double.parseDouble(owner.getAttribute("mem_alloc")), 
                        Double.parseDouble(owner.getAttribute("disk_alloc")),
                        owner.getAttribute("op_system"));
