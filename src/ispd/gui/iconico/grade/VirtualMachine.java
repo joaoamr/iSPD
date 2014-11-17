@@ -15,7 +15,7 @@ public class VirtualMachine {
     private String nome;
     private String proprietario;
     private String VMM;
-    private double poderComputacional;
+    private int numProcessadores;
     private double memoriaAlocada;
     private double discoAlocado;
     private String OS;
@@ -31,11 +31,11 @@ public class VirtualMachine {
      * @param OS
      
      */
-    public VirtualMachine(String id, String proprietario, String VMM, double poderComputacional, double memoriaAlocada, double discoAlocado, String OS){
+    public VirtualMachine(String id, String proprietario, String VMM, int poderComputacional, double memoriaAlocada, double discoAlocado, String OS){
         this.nome = id;
         this.proprietario = proprietario;
         this.VMM = VMM;
-        this.poderComputacional = poderComputacional;
+        this.numProcessadores = poderComputacional;
         this.memoriaAlocada = memoriaAlocada;
         this.discoAlocado = discoAlocado;
         this.OS = OS;
@@ -58,11 +58,11 @@ public class VirtualMachine {
     }
 
     public double getPoderComputacional() {
-        return poderComputacional;
+        return numProcessadores;
     }
 
-    public void setPoderComputacional(double poderComputacional) {
-        this.poderComputacional = poderComputacional;
+    public void setPoderComputacional(int poderComputacional) {
+        this.numProcessadores = poderComputacional;
     }
 
     public double getMemoriaAlocada() {
