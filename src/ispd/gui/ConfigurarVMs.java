@@ -139,7 +139,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
 
         jLabelVMM.setText("VMM:");
 
-        jLabel2.setText("Processing Allocated (GFLops)");
+        jLabel2.setText("Number of virtual processors:");
 
         jLabel3.setText("Memory Allocated (GB):");
 
@@ -338,7 +338,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         HashSet<VirtualMachine> aux = new HashSet<VirtualMachine>(); 
         for(Vector linha : tabelaLinha){
             
-            VirtualMachine VM = new VirtualMachine(linha.get(0).toString(), linha.get(1).toString(), linha.get(2).toString(), Double.parseDouble( linha.get(3).toString()), Double.parseDouble(linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), linha.get(6).toString());
+            VirtualMachine VM = new VirtualMachine(linha.get(0).toString(), linha.get(1).toString(), linha.get(2).toString(), Integer.parseInt(linha.get(3).toString()), Double.parseDouble(linha.get(4).toString()), Double.parseDouble(linha.get(5).toString()), linha.get(6).toString());
             aux.add(VM);
         }
         setMaqVirtuais(aux); //adicionando as máquinas virtuais já configuradas..
