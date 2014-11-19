@@ -36,6 +36,9 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     private boolean falha = false;
     private double memoriaDisponivel;
     private double discoDisponivel;
+    private double custoProc;
+    private double custoMemoria;
+    private double custoDisco;
     //lista de máquinas virtuais
     private List<CS_VirtualMac> VMs;
     
@@ -52,7 +55,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
      * @param disco 
      */
 
-    public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, double memoria, double disco) {
+    public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, double memoria, double disco, double custoProc, double custoMem, double custoDisco) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
@@ -62,15 +65,23 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.memoriaDisponivel = memoria;
         this.discoDisponivel = disco;
+        this.custoProc = custoProc;
+        this.custoMemoria = custoMem;
+        this.custoDisco = custoDisco;
     }
 
-    public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
+    public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double memoria, double disco, double custoProc, double custoMem, double custoDisco, double Ocupacao, int numeroMaquina) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, numeroMaquina);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
+        this.memoriaDisponivel = memoria;
+        this.discoDisponivel = disco;
+        this.custoProc = custoProc;
+        this.custoMemoria = custoMem;
+        this.custoDisco = custoDisco;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
     }
 
