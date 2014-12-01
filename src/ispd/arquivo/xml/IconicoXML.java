@@ -29,6 +29,7 @@ import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.filas.servidores.implementacao.CS_Switch;
+import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import ispd.motor.filas.servidores.implementacao.Vertice;
 import ispd.motor.metricas.MetricasUsuarios;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.swing.text.html.CSS;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -375,7 +377,7 @@ public class IconicoXML {
 
         HashMap<Integer, CentroServico> centroDeServicos = new HashMap<Integer, CentroServico>();
         HashMap<CentroServico, List<CS_MaquinaCloud>> escravosCluster = new HashMap<CentroServico, List<CS_MaquinaCloud>>();
-        List<CS_Processamento> mestres = new ArrayList<CS_Processamento>();
+        List<CS_Processamento> VMMs = new ArrayList<CS_Processamento>();
         List<CS_MaquinaCloud> maqs = new ArrayList<CS_MaquinaCloud>();
         List<CS_VirtualMac> vms = new ArrayList<CS_VirtualMac>();
         List<CS_Comunicacao> links = new ArrayList<CS_Comunicacao>();
@@ -394,13 +396,21 @@ public class IconicoXML {
             int global = Integer.parseInt(id.getAttribute("global"));
             if (maquina.getElementsByTagName("master").getLength() > 0) {
                 Element master = (Element) maquina.getElementsByTagName("master").item(0);
-                CS_Mestre mestre = new CS_Mestre(
+                Element carac = (Element) maquina.getElementsByTagName("characteristic");
+                Element proc = (Element) carac.getElementsByTagName("process");
+                Element memoria = (Element) carac.getElementsByTagName("memory");
+                Element disco = (Element) carac.getElementsByTagName("hard_disc");
+                Element custo = (Element) carac.getElementsByTagName("cost");
+                CS_VMM mestre = new CS_VMM(
                         maquina.getAttribute("id"),
                         maquina.getAttribute("owner"),
-                        Double.parseDouble(maquina.getAttribute("power")),
+                        Double.parseDouble(proc.getAttribute("power")),
+                        Double.parseDouble(memoria.getAttribute("size")),
+                        Double.parseDouble(disco.getAttribute("size")),
                         Double.parseDouble(maquina.getAttribute("load")),
-                        master.getAttribute("scheduler")/*Escalonador*/);
-                mestres.add(mestre);
+                        master.getAttribute("scheduler")/*Escalonador*/,
+                        master.getAttribute("vm_alloc"));
+                VMMs.add(mestre);
                 centroDeServicos.put(global, mestre);
                 //Contabiliza para o usuario poder computacional do mestre
                 usuarios.put(mestre.getProprietario(), usuarios.get(mestre.getProprietario()) + mestre.getPoderComputacional());
@@ -432,15 +442,23 @@ public class IconicoXML {
         for (int i = 0; i < docclusters.getLength(); i++) {
             Element cluster = (Element) docclusters.item(i);
             Element id = (Element) cluster.getElementsByTagName("icon_id").item(0);
+            Element carac = (Element) cluster.getElementsByTagName("characteristic");
+            Element proc = (Element) carac.getElementsByTagName("process");
+            Element mem = (Element) carac.getElementsByTagName("memory");
+            Element disc = (Element) carac.getElementsByTagName("hard_disc");
+            
             int global = Integer.parseInt(id.getAttribute("global"));
             if (Boolean.parseBoolean(cluster.getAttribute("master"))) {
-                CS_Mestre clust = new CS_Mestre(
+                CS_VMM clust = new CS_VMM(
                         cluster.getAttribute("id"),
                         cluster.getAttribute("owner"),
-                        Double.parseDouble(cluster.getAttribute("power")),
+                        Double.parseDouble(proc.getAttribute("power")),
+                        Double.parseDouble(mem.getAttribute("size")),
+                        Double.parseDouble(disc.getAttribute("size")),
                         0.0,
-                        cluster.getAttribute("scheduler")/*Escalonador*/);
-                mestres.add(clust);
+                        cluster.getAttribute("scheduler")/*Escalonador*/,
+                        cluster.getAttribute("vm_alloc"));
+                VMMs.add(clust);
                 centroDeServicos.put(global, clust);
                 //Contabiliza para o usuario poder computacional do mestre
                 int numeroEscravos = Integer.parseInt(cluster.getAttribute("nodes"));
@@ -528,8 +546,14 @@ public class IconicoXML {
 
         //Realiza leitura dos ícones de máquina virtual
         for (int i = 0; i < docVMs.getLength(); i++) {
-            Element vm = (Element) docVMs.item(i);
-
+            Element virtualMac = (Element) docVMs.item(i);
+            CS_VirtualMac VM = new CS_VirtualMac(virtualMac.getAttribute("id"), 
+                    virtualMac.getAttribute("owner"), 
+                    Integer.parseInt(virtualMac.getAttribute("power")), 
+                    Double.parseDouble(virtualMac.getAttribute("mem_alloc")),
+                    Double.parseDouble(virtualMac.getAttribute("disk_alloc")),
+                    virtualMac.getAttribute("oo_system"));
+            vms.add(VM);
         }
 
         //Realiza leitura dos icones de internet
@@ -573,7 +597,7 @@ public class IconicoXML {
             if (maquina.getElementsByTagName("master").getLength() > 0) {
                 Element master = (Element) maquina.getElementsByTagName("master").item(0);
                 NodeList slaves = master.getElementsByTagName("slave");
-                CS_Mestre mestre = (CS_Mestre) centroDeServicos.get(global);
+                CS_VMM mestre = (CS_VMM) centroDeServicos.get(global);
                 for (int j = 0; j < slaves.getLength(); j++) {
                     Element slave = (Element) slaves.item(j);
                     CentroServico maq = centroDeServicos.get(Integer.parseInt(slave.getAttribute("id")));
@@ -600,13 +624,13 @@ public class IconicoXML {
             poderComp.add(usuarios.get(user));
         }
         //cria as métricas de usuarios para cada mestre
-        for (CS_Processamento mestre : mestres) {
-            CS_Mestre mst = (CS_Mestre) mestre;
+        for (CS_Processamento mestre : VMMs) {
+            CS_VMM mst = (CS_VMM) mestre;
             MetricasUsuarios mu = new MetricasUsuarios();
             mu.addAllUsuarios(proprietarios, poderComp);
             mst.getEscalonador().setMetricaUsuarios(mu);
         }
-        RedeDeFilasCloud rdf = new RedeDeFilasCloud(mestres, maqs, vms, links, nets);
+        RedeDeFilasCloud rdf = new RedeDeFilasCloud(VMMs, maqs, vms, links, nets);
         //cria as métricas de usuarios globais da rede de filas
         MetricasUsuarios mu = new MetricasUsuarios();
         mu.addAllUsuarios(proprietarios, poderComp);
