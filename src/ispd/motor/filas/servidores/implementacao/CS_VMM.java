@@ -4,6 +4,7 @@
  */
 package ispd.motor.filas.servidores.implementacao;
 
+import ispd.AlocacaoVM.Alocacao;
 import ispd.escalonador.Carregar;
 import ispd.escalonador.Escalonador;
 import ispd.escalonador.Mestre;
@@ -27,6 +28,7 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
     private List<CS_Comunicacao> conexoesEntrada;
     private List<CS_Comunicacao> conexoesSaida;
     private Escalonador escalonador;
+    private Alocacao alocadorVM;
     private List<Tarefa> filaTarefas;
     private boolean maqDisponivel;
     private boolean escDisponivel;
@@ -38,8 +40,9 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
     private List<List> caminhoEscravo;
     private Simulacao simulacao;
 
-    public CS_VMM(String id, String proprietario, double PoderComputacional, double Ocupacao, String Escalonador) {
+    public CS_VMM(String id, String proprietario, double PoderComputacional, double memoria, double disco, double Ocupacao, String Escalonador, String Alocador) {
         super(id, proprietario, PoderComputacional, 1, Ocupacao, 0);
+        //inicializar a política de alocação
         this.escalonador = Carregar.getNewEscalonador(Escalonador);
         escalonador.setMestre(this);
         this.filaTarefas = new ArrayList<Tarefa>();
@@ -182,6 +185,7 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
                 this.enviarMensagem(mensagem.getTarefa(), (CS_Processamento) mensagem.getTarefa().getLocalProcessamento(), mensagem.getTipo());
             }
         }
+        //deve incluir requisição para alocar..
     }
 
     //métodos do Mestre
@@ -264,7 +268,11 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
         return escalonador;
     }
 
-    @Override
+    public Alocacao getAlocadorVM() {
+        return alocadorVM;
+    }
+    
+        @Override
     public void addConexoesSaida(CS_Link link) {
         conexoesSaida.add(link);
     }
@@ -284,6 +292,10 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
 
     public void addEscravo(CS_Processamento maquina) {
         escalonador.addEscravo(maquina);
+    }
+    
+    public void addVM(CS_VirtualMac vm){
+        alocadorVM.addVM(vm);
     }
 
     @Override

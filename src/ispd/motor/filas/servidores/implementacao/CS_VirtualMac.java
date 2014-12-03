@@ -21,11 +21,15 @@ import java.util.List;
 public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagens {
 
     //Lista de atributos
-    private List<Tarefa> filaTarefas;
+    private CS_VMM vmmResponsavel;
     private int processadoresDisponiveis;
-    private List<Tarefa> tarefaEmExecucao;
+    private double poderProcessamento;
     private double memoriaDisponivel;
     private double discoDisponivel;
+    private String OS;
+    private CS_MaquinaCloud maquinaHospedeira;
+    private List<List> caminhoVMM;
+    
     
     
     
@@ -42,12 +46,72 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
      * @param disco 
      */ 
     
-    public CS_VirtualMac(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina, double memoria, double disco) {
-        super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, numeroMaquina);
-        
+    public CS_VirtualMac(String id, String proprietario, int numeroProcessadores, double memoria, double disco, String OS) {
+        super(id, proprietario, 0, numeroProcessadores, 0, 0);
+        this.memoriaDisponivel = memoria;
+        this.discoDisponivel = disco;
+        this.OS = OS;
+        this.maquinaHospedeira = null;
+        this.caminhoVMM = null;
     }
 
-    
+    public CS_VMM getVmmResponsavel() {
+        return vmmResponsavel;
+    }
+
+       public int getProcessadoresDisponiveis() {
+        return processadoresDisponiveis;
+    }
+
+    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
+        this.processadoresDisponiveis = processadoresDisponiveis;
+    }
+
+    public double getPoderProcessamento() {
+        return poderProcessamento;
+    }
+
+    public void setPoderProcessamento(double poderProcessamento) {
+        this.poderProcessamento = poderProcessamento;
+    }
+
+    public double getMemoriaDisponivel() {
+        return memoriaDisponivel;
+    }
+
+    public void setMemoriaDisponivel(double memoriaDisponivel) {
+        this.memoriaDisponivel = memoriaDisponivel;
+    }
+
+    public double getDiscoDisponivel() {
+        return discoDisponivel;
+    }
+
+    public void setDiscoDisponivel(double discoDisponivel) {
+        this.discoDisponivel = discoDisponivel;
+    }
+
+    public CS_MaquinaCloud getMaquinaHospedeira() {
+        return maquinaHospedeira;
+    }
+
+    public void setMaquinaHospedeira(CS_MaquinaCloud maquinaHospedeira) {
+        this.maquinaHospedeira = maquinaHospedeira;
+    }
+
+    public List<List> getCaminhoVMM() {
+        return caminhoVMM;
+    }
+
+    public void setCaminhoVMM() {
+        this.caminhoVMM = this.maquinaHospedeira.getCaminhoMestre();
+        //verificar se precisa inserir a máquina hospedeira no caminho até o VMM
+    }
+
+     public void addVMM(CS_VMM vmmResponsavel) {
+        this.vmmResponsavel = vmmResponsavel;
+    }
+
     
     
     

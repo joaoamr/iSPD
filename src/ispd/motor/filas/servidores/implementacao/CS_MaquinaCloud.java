@@ -61,6 +61,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
+        this.VMs = new ArrayList<CS_VirtualMac>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.memoriaDisponivel = memoria;
@@ -68,6 +69,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoProc = custoProc;
         this.custoMemoria = custoMem;
         this.custoDisco = custoDisco;
+        
     }
 
     public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double memoria, double disco, double custoProc, double custoMem, double custoDisco, double Ocupacao, int numeroMaquina) {
@@ -85,6 +87,11 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
     }
 
+    public List<List> getCaminhoMestre() {
+        return caminhoMestre;
+    }
+    
+        
     public double getMemoriaDisponivel() {
         return memoriaDisponivel;
     }
@@ -122,7 +129,15 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void addMestre(CS_Processamento mestre) {
         this.mestres.add(mestre);
     }
-
+    
+    public void addVM(CS_VirtualMac vm){
+        this.VMs.add(vm);
+    }
+    
+    public void removeVM(CS_VirtualMac vm){
+        this.VMs.remove(vm);
+    }
+    
     @Override
     public List<CS_Comunicacao> getConexoesSaida() {
         return this.conexoesSaida;
