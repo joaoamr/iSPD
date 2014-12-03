@@ -6,10 +6,12 @@ package ispd.motor;
 
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.RedeDeFilas;
+import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
+import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.metricas.Metricas;
 import java.awt.Color;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 public abstract class Simulacao {
 
     private RedeDeFilas redeDeFilas;
+    private RedeDeFilasCloud redeDeFilasCloud;
     private List<Tarefa> tarefas;
     private ProgressoSimulacao janela;
     
@@ -29,11 +32,21 @@ public abstract class Simulacao {
         this.redeDeFilas = redeDeFilas;
         this.janela = janela;
     }
+    
+    public Simulacao(ProgressoSimulacao janela, RedeDeFilasCloud redeDeFilas, List<Tarefa> tarefas){
+        this.tarefas = tarefas;
+        this.redeDeFilasCloud = redeDeFilas;
+        this.janela = janela;
+    }
 
     public ProgressoSimulacao getJanela() {
         return janela;
     }
-
+    
+    public RedeDeFilasCloud getRedeDeFilasCloud(){
+        return redeDeFilasCloud;
+    }
+    
     public RedeDeFilas getRedeDeFilas() {
         return redeDeFilas;
     }
@@ -41,7 +54,8 @@ public abstract class Simulacao {
     public List<Tarefa> getTarefas() {
         return tarefas;
     }
-
+    
+        
     public abstract void simular();
 
     public abstract double getTime(Object origem);
@@ -57,6 +71,16 @@ public abstract class Simulacao {
     public void iniciarEscalonadores() {
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             CS_Mestre mestre = (CS_Mestre) mst;
+            //utilisa a classe de escalonamento diretamente 
+            //pode ser modificado para gerar um evento 
+            //mas deve ser o primeiro evento executado nos mestres
+            mestre.getEscalonador().iniciar();
+        }
+    }
+    
+    public void iniciarEscalonadoresCloud() {
+        for (CS_Processamento mst : redeDeFilas.getMestres()) {
+            CS_VMM mestre = (CS_VMM) mst;
             //utilisa a classe de escalonamento diretamente 
             //pode ser modificado para gerar um evento 
             //mas deve ser o primeiro evento executado nos mestres
