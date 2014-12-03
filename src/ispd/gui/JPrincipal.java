@@ -842,7 +842,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jButtonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSimularActionPerformed
         // TODO add your handling code here:
-        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho.getGrade(), aDesenho.toString(), palavras);
+        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho.getGrade(), aDesenho.toString(), palavras, tipoModelo);
         janelaSimulacao.iniciarSimulacao();
         janelaSimulacao.setLocationRelativeTo(this);
         janelaSimulacao.setVisible(true);

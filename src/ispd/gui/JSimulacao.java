@@ -5,6 +5,7 @@ import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
 import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.RedeDeFilas;
+import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.metricas.Metricas;
 import java.awt.Color;
@@ -28,13 +29,14 @@ import javax.swing.text.StyleConstants;
  * @author denison_usuario
  */
 public class JSimulacao extends javax.swing.JDialog implements Runnable {
-    
+
     /**
      * Creates new form AguardaSimulacao
      */
-    public JSimulacao(java.awt.Frame parent, boolean modal, Document modelo, String modeloTexto, ResourceBundle plavras) {
+    public JSimulacao(java.awt.Frame parent, boolean modal, Document modelo, String modeloTexto, ResourceBundle plavras, int tipoModelo) {
         super(parent, modal);
         this.palavras = plavras;
+        this.tipoModelo = tipoModelo;
         this.progrSim = new ProgressoSimulacao() {
             @Override
             public void incProgresso(int n) {
@@ -77,6 +79,14 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
                 dispose();
             }
         });
+    }
+
+    public int getTipoModelo() {
+        return tipoModelo;
+    }
+
+    public void setTipoModelo(int tipoModelo) {
+        this.tipoModelo = tipoModelo;
     }
 
     /**
@@ -153,12 +163,14 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     private SimpleAttributeSet configuraCor = new SimpleAttributeSet();
     private Thread threadSim;
     private RedeDeFilas redeDeFilas;
+    private RedeDeFilasCloud redeDeFilasCloud;
     private List<Tarefa> tarefas;
     private String modeloTexto;
     private Document modelo;
     private ResourceBundle palavras;
     private double porcentagem = 0;
     private ProgressoSimulacao progrSim;
+    private int tipoModelo; //define se o modelo simulado é de grid, cloud iaas ou cloud paas
 
     public void setRedeDeFilas(RedeDeFilas redeDeFilas) {
         this.redeDeFilas = redeDeFilas;
@@ -204,40 +216,79 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
             //criar grade
             progrSim.print("Mounting network queue.");
             progrSim.print(" -> ");
-            this.redeDeFilas = IconicoXML.newRedeDeFilas(modelo);
-            incProgresso(10);//[10%] --> 35%
-            progrSim.println("OK", Color.green);
-            //criar tarefas
-            progrSim.print("Creating tasks.");
-            progrSim.print(" -> ");
-            this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
-            incProgresso(10);//[10%] --> 45%
-            progrSim.println("OK", Color.green);
-            //Verifica recursos do modelo e define roteamento
-            Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
-            //Realiza asimulação
-            progrSim.println("Simulating.");
-            //recebe instante de tempo em milissegundos ao iniciar a simulação
-            double t1 = System.currentTimeMillis();
+            if (tipoModelo == EscolherClasse.GRID) {
+                this.redeDeFilas = IconicoXML.newRedeDeFilas(modelo);
+                incProgresso(10);//[10%] --> 35%
+                progrSim.println("OK", Color.green);
+                //criar tarefas
+                progrSim.print("Creating tasks.");
+                progrSim.print(" -> ");
+                this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
+                incProgresso(10);//[10%] --> 45%
+                progrSim.println("OK", Color.green);
+                //Verifica recursos do modelo e define roteamento
+                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                //Realiza asimulação
+                progrSim.println("Simulating.");
+                //recebe instante de tempo em milissegundos ao iniciar a simulação
+                double t1 = System.currentTimeMillis();
 
-            sim.simular();//[30%] --> 85%
+                sim.simular();//[30%] --> 85%
 
-            //Recebe instnte de tempo em milissegundos ao fim da execução da simulação
-            double t2 = System.currentTimeMillis();
-            //Calcula tempo de simulação em segundos
-            double tempototal = (t2 - t1) / 1000;
-            //Obter Resultados
-            Metricas metrica = sim.getMetricas();
-            //[5%] --> 90%
-            //Apresentar resultados
-            progrSim.print("Showing results.");
-            progrSim.print(" -> ");
-            JResultados janelaResultados = new JResultados(null, metrica, redeDeFilas, tarefas);
-            incProgresso(10);//[10%] --> 100%
-            progrSim.println("OK", Color.green);
-            progrSim.println("Simulation Execution Time = " + tempototal + "seconds");
-            janelaResultados.setLocationRelativeTo(this);
-            janelaResultados.setVisible(true);
+                //Recebe instnte de tempo em milissegundos ao fim da execução da simulação
+                double t2 = System.currentTimeMillis();
+                //Calcula tempo de simulação em segundos
+                double tempototal = (t2 - t1) / 1000;
+                //Obter Resultados
+                Metricas metrica = sim.getMetricas();
+                //[5%] --> 90%
+                //Apresentar resultados
+                progrSim.print("Showing results.");
+                progrSim.print(" -> ");
+                JResultados janelaResultados = new JResultados(null, metrica, redeDeFilas, tarefas);
+                incProgresso(10);//[10%] --> 100%
+                progrSim.println("OK", Color.green);
+                progrSim.println("Simulation Execution Time = " + tempototal + "seconds");
+                janelaResultados.setLocationRelativeTo(this);
+                janelaResultados.setVisible(true);
+
+            } else if (tipoModelo == EscolherClasse.IAAS) {
+                this.redeDeFilasCloud = IconicoXML.newRedeDeFilasCloud(modelo);
+                incProgresso(10);//[10%] --> 35%
+                progrSim.println("OK", Color.green);
+                //criar tarefas
+                progrSim.print("Creating tasks.");
+                progrSim.print(" -> ");
+                this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
+                incProgresso(10);//[10%] --> 45%
+                progrSim.println("OK", Color.green);
+                //Verifica recursos do modelo e define roteamento
+                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                //Realiza asimulação
+                progrSim.println("Simulating.");
+                //recebe instante de tempo em milissegundos ao iniciar a simulação
+                double t1 = System.currentTimeMillis();
+
+                sim.simular();//[30%] --> 85%
+
+                //Recebe instnte de tempo em milissegundos ao fim da execução da simulação
+                double t2 = System.currentTimeMillis();
+                //Calcula tempo de simulação em segundos
+                double tempototal = (t2 - t1) / 1000;
+                //Obter Resultados
+                Metricas metrica = sim.getMetricas();
+                //[5%] --> 90%
+                //Apresentar resultados
+                progrSim.print("Showing results.");
+                progrSim.print(" -> ");
+                JResultados janelaResultados = new JResultados(null, metrica, redeDeFilas, tarefas);
+                incProgresso(10);//[10%] --> 100%
+                progrSim.println("OK", Color.green);
+                progrSim.println("Simulation Execution Time = " + tempototal + "seconds");
+                janelaResultados.setLocationRelativeTo(this);
+                janelaResultados.setVisible(true);
+            }
+
         } catch (IllegalArgumentException erro) {
             Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, erro);
             progrSim.println(erro.getMessage(), Color.red);
