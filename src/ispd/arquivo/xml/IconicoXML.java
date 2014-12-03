@@ -543,19 +543,7 @@ public class IconicoXML {
                 escravosCluster.put(Switch, maqTemp);
             }
         }
-
-        //Realiza leitura dos ícones de máquina virtual
-        for (int i = 0; i < docVMs.getLength(); i++) {
-            Element virtualMac = (Element) docVMs.item(i);
-            CS_VirtualMac VM = new CS_VirtualMac(virtualMac.getAttribute("id"), 
-                    virtualMac.getAttribute("owner"), 
-                    Integer.parseInt(virtualMac.getAttribute("power")), 
-                    Double.parseDouble(virtualMac.getAttribute("mem_alloc")),
-                    Double.parseDouble(virtualMac.getAttribute("disk_alloc")),
-                    virtualMac.getAttribute("oo_system"));
-            vms.add(VM);
-        }
-
+       
         //Realiza leitura dos icones de internet
         for (int i = 0; i < docinternet.getLength(); i++) {
             Element inet = (Element) docinternet.item(i);
@@ -616,6 +604,31 @@ public class IconicoXML {
                 }
             }
         }
+        
+         //Realiza leitura dos ícones de máquina virtual
+        for (int i = 0; i < docVMs.getLength(); i++) {
+            Element virtualMac = (Element) docVMs.item(i);
+            CS_VirtualMac VM = new CS_VirtualMac(virtualMac.getAttribute("id"), 
+                    virtualMac.getAttribute("owner"), 
+                    Integer.parseInt(virtualMac.getAttribute("power")), 
+                    Double.parseDouble(virtualMac.getAttribute("mem_alloc")),
+                    Double.parseDouble(virtualMac.getAttribute("disk_alloc")),
+                    virtualMac.getAttribute("os_system"));
+            //adicionando VMM responsável pela VM
+            for(CS_Processamento aux :  VMMs){
+                if(virtualMac.getAttribute("vmm").equals(aux.getId())){
+                    //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado la tabela das vms
+                    VM.addVMM((CS_VMM) aux);
+                    //adicionando VM para o VMM
+                    CS_VMM vmm = (CS_VMM) aux;
+                    vmm.addVM(VM);
+                        
+                }
+                
+            }
+            vms.add(VM);
+        }
+        
         //verifica se há usuarios sem nenhum recurso
         ArrayList<String> proprietarios = new ArrayList<String>();
         ArrayList<Double> poderComp = new ArrayList<Double>();
