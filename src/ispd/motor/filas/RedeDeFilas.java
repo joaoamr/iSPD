@@ -41,7 +41,7 @@ public class RedeDeFilas {
      * Mantem lista dos usuarios da rede de filas
      */
     private List<String> usuarios;
-
+    
     /**
      * Armazena listas com a arquitetura de todo o sistema modelado, utilizado
      * para buscas das métricas e pelo motor de simulação
