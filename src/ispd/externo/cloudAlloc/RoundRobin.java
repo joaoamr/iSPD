@@ -59,13 +59,13 @@ public class RoundRobin extends Alocacao {
     @Override
     public void escalonar() {
 
-        while(true) {
+        while(!(maquinasVirtuais.isEmpty())) {
             int num_escravos;
             num_escravos = maquinasFisicas.size();
 
             CS_VirtualMac auxVM = escalonarVM();
 
-            while (num_escravos <= 0) {
+            while (num_escravos >= 0) {
                 if (num_escravos > 0) { //caso existam máquinas livres
                     CS_Processamento auxMaq = escalonarRecurso(); //escalona o recurso
 
@@ -85,7 +85,6 @@ public class RoundRobin extends Alocacao {
                         auxVM.setCaminho(escalonarRota(auxMaq));
                         auxVM.setStatus(CS_VirtualMac.ALOCADA);
                         VMM.enviarVM(auxVM);
-                        maq.addVM(auxVM);
                         break;
                     } else {
                         num_escravos--;

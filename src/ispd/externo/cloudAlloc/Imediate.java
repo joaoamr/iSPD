@@ -60,13 +60,13 @@ public class Imediate extends Alocacao {
     @Override
     public void escalonar() {
 
-        while (true) {
+        while (!(maquinasVirtuais.isEmpty())) {
             int num_escravos;
             num_escravos = maquinasFisicas.size();
 
             CS_VirtualMac auxVM = escalonarVM();
 
-            while (num_escravos <= 0) {
+            while (num_escravos >= 0) {
                 if (num_escravos > 0) { //caso existam máquinas livres
                     CS_Processamento auxMaq = escalonarRecurso(); //escalona o recurso
                     maqIndex++;
@@ -78,29 +78,25 @@ public class Imediate extends Alocacao {
                     int maqProc = maq.getProcessadoresDisponiveis();
                     int procVM = auxVM.getProcessadoresDisponiveis();
 
-                    
-
-                        if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && maqProc <= procVM)) {
-                            maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);
-                            maq.setDiscoDisponivel(discoMaq - discoNecessario);
-                            maq.setProcessadoresDisponiveis(maqProc - procVM);
-                            auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
-                            auxVM.setCaminho(escalonarRota(auxMaq));
-                            auxVM.setStatus(CS_VirtualMac.ALOCADA);
-                            VMM.enviarVM(auxVM);
-                            maq.addVM(auxVM);
-                            maqIndex=0;
-                            fit=true;
-                            break;
-                        } else {
-                            num_escravos--;
-                            fit=false;
-                        }
-                    
+                    if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && maqProc <= procVM)) {
+                        maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);
+                        maq.setDiscoDisponivel(discoMaq - discoNecessario);
+                        maq.setProcessadoresDisponiveis(maqProc - procVM);
+                        auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
+                        auxVM.setCaminho(escalonarRota(auxMaq));
+                        auxVM.setStatus(CS_VirtualMac.ALOCADA);
+                        VMM.enviarVM(auxVM);
+                        maqIndex = 0;
+                        fit = true;
+                        break;
+                    } else {
+                        num_escravos--;
+                        fit = false;
+                    }
                 } else {
                     auxVM.setStatus(CS_VirtualMac.REJEITADA);
                     VMsRejeitadas.add(auxVM);
-                    maqIndex=0;
+                    maqIndex = 0;
                 }
             }
         }
