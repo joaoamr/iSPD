@@ -4,7 +4,7 @@
  */
 package ispd.arquivo;
 
-import ispd.escalonador.ManipularArquivos;
+import ispd.alocacaoVM.ManipularArquivosAlloc;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,18 +38,18 @@ import javax.tools.ToolProvider;
  *
  * @author denison_usuario
  */
-public class Escalonadores implements ManipularArquivos {
+public class Alocadores implements  ManipularArquivosAlloc{
 
-    private final String DIRETORIO = "ispd/externo/gridSchedulers";
+    private final String DIRETORIO = "ispd/externo/cloudAlloc";
     /**
      * guarda a lista de escalonadores implementados no iSPD, e que já estão
      * disponiveis para o usuario por padrão
      */
-    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF", "M_OSEP", "OSEP"};
+    public final static String[] ALOCACAO = {"---", "RoundRobin", "Imediate"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
-    private ArrayList<String> escalonadores;
+    private ArrayList<String> alocadores;
     /**
      * mantem o caminho do pacote escalonador
      */
@@ -69,26 +69,26 @@ public class Escalonadores implements ManipularArquivos {
      * Atribui o caminho do pacote escalonador e os escalonadores (.class)
      * contidos nele
      */
-    public Escalonadores() {
+    public Alocadores() {
         diretorio = new File(DIRETORIO);
-        escalonadores = new ArrayList<String>();
+        alocadores = new ArrayList<String>();
         adicionados = new ArrayList<String>();
         removidos = new ArrayList<String>();
         //Verifica se pacote existe caso não exista cria ele
         if (!diretorio.exists()) {
             diretorio.mkdirs();
             //executando a partir de um jar
-            if (getClass().getResource("Escalonadores.class").toString().startsWith("jar:")) {
+            if (getClass().getResource("Alocadores.class").toString().startsWith("jar:")) {
                 File jar = new File(System.getProperty("java.class.path"));
                 //carrega dependencias para compilação
                 try {
-                    extrairDiretorioJar(jar, "escalonador");
+                    extrairDiretorioJar(jar, "alocacaoVM");
                     //extrairDiretorioJar(jar, "externo");
                     extrairDiretorioJar(jar, "motor");
                 } catch (ZipException ex) {
-                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }//else{
             //diretorio.mkdirs();
@@ -110,35 +110,35 @@ public class Escalonadores implements ManipularArquivos {
             for (int i = 0; i < aux.length; i++) {
                 //remove o .class da string
                 aux[i] = aux[i].substring(0, aux[i].length() - 6);
-                escalonadores.add(aux[i]);
+                alocadores.add(aux[i]);
             }
         }
     }
 
     /**
-     * Método responsável por listar os escalonadores existentes no simulador
-     * ele retorna o nome de cada escalonador contido no pacote com arquivo
+     * Método responsável por listar os alocadores existentes no simulador
+     * ele retorna o nome de cada alocador contido no pacote com arquivo
      * .class
      */
     @Override
     public ArrayList<String> listar() {
-        return escalonadores;
+        return alocadores;
     }
 
     /**
-     * Método responsável por remover um escalonador no simulador ele recebe o
-     * nome do escalonador e remove do pacote a classe .java e .class
+     * Método responsável por remover um alocador no simulador ele recebe o
+     * nome do alocador e remove do pacote a classe .java e .class
      */
     @Override
-    public boolean remover(String nomeEscalonador) {
+    public boolean remover(String nomeAlocador) {
         boolean deletado = false;
-        File escalonador = new File(diretorio, nomeEscalonador + ".class");
+        File escalonador = new File(diretorio, nomeAlocador + ".class");
         if (escalonador.exists()) {
             escalonador.delete();
-            removerLista(nomeEscalonador);
+            removerLista(nomeAlocador);
             deletado = true;
         }
-        escalonador = new File(diretorio, nomeEscalonador + ".java");
+        escalonador = new File(diretorio, nomeAlocador + ".java");
         if (escalonador.exists()) {
             escalonador.delete();
             deletado = true;
@@ -167,7 +167,7 @@ public class Escalonadores implements ManipularArquivos {
             }
             return buffer.toString();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -185,7 +185,7 @@ public class Escalonadores implements ManipularArquivos {
             arquivoFonte.write(conteudo); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -220,7 +220,7 @@ public class Escalonadores implements ManipularArquivos {
                 errosStr = errosdoComando.toString();
             } catch (IOException ex) {
                 errosStr = "Não foi possível compilar";
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             OutputStream erros = new ByteArrayOutputStream();
@@ -230,7 +230,7 @@ public class Escalonadores implements ManipularArquivos {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
         }
         File test = new File(diretorio, escalonador + ".class");
         if (test.exists()) {
@@ -245,10 +245,10 @@ public class Escalonadores implements ManipularArquivos {
     /**
      * recebe nome do escalonar e remove ele da lista de escalonadores
      */
-    private void removerLista(String nomeEscalonador) {
-        if (escalonadores.contains(nomeEscalonador)) {
-            escalonadores.remove(nomeEscalonador);
-            removidos.add(nomeEscalonador);
+    private void removerLista(String nomeAlocador) {
+        if (alocadores.contains(nomeAlocador)) {
+            alocadores.remove(nomeAlocador);
+            removidos.add(nomeAlocador);
         }
     }
 
@@ -256,8 +256,8 @@ public class Escalonadores implements ManipularArquivos {
      * recebe nome do escalonar e adiciona ele na lista de escalonadores
      */
     private void inserirLista(String nome) {
-        if (!escalonadores.contains(nome)) {
-            escalonadores.add(nome);
+        if (!alocadores.contains(nome)) {
+            alocadores.add(nome);
             adicionados.add(nome);
         }
     }
@@ -268,7 +268,7 @@ public class Escalonadores implements ManipularArquivos {
     private void criarRoundRobin() {
         String codigoFonte =
                 "package ispd.externo;\n\n"
-                + "import ispd.escalonador.Escalonador;\n"
+                + "import ispd.escalonador.Alocador;\n"
                 + "import ispd.escalonador.Mestre;\n"
                 + "import ispd.motor.filas.Tarefa;\n"
                 + "import ispd.motor.filas.servidores.CS_Processamento;\n"
@@ -279,7 +279,7 @@ public class Escalonadores implements ManipularArquivos {
                 + " * Atribui a proxima tarefa da fila (FIFO)\n"
                 + " * para o proximo recurso de uma fila circular de recursos\n"
                 + " * @author denison_usuario\n */\n"
-                + "public class RoundRobin extends Escalonador{\n"
+                + "public class RoundRobin extends Alocador{\n"
                 + "    private int escravoAtual = -1;\n\n"
                 + "    public RoundRobin(){\n"
                 + "        this.tarefas = new ArrayList<Tarefa>();\n"
@@ -315,7 +315,7 @@ public class Escalonadores implements ManipularArquivos {
             arquivoFonte.write(codigoFonte); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -324,17 +324,17 @@ public class Escalonadores implements ManipularArquivos {
      * @return conteudo básico para criar uma classe que implemente um
      * escalonador
      */
-    public static String getEscalonadorJava(String escalonador) {
+    public static String getAlocadorJava(String escalonador) {
         String saida =
                 "package ispd.externo;"
-                + "\n" + "import ispd.escalonador.Escalonador;"
+                + "\n" + "import ispd.escalonador.Alocador;"
                 + "\n" + "import ispd.motor.filas.Tarefa;"
                 + "\n" + "import ispd.motor.filas.servidores.CS_Processamento;"
                 + "\n" + "import ispd.motor.filas.servidores.CentroServico;"
                 + "\n" + "import java.util.ArrayList;"
                 + "\n" + "import java.util.List;"
                 + "\n"
-                + "\n" + "public class " + escalonador + " extends Escalonador{"
+                + "\n" + "public class " + escalonador + " extends Alocador{"
                 + "\n"
                 + "\n" + "    @Override"
                 + "\n" + "    public void iniciar() {"
@@ -437,7 +437,7 @@ public class Escalonadores implements ManipularArquivos {
      * processo
      */
     @Override
-    public boolean importarEscalonadorJava(File nomeArquivoJava) {
+    public boolean importarAlocadoresJava(File nomeArquivoJava) {
         //streams
         File localDestino = new File(diretorio, nomeArquivoJava.getName());
         String errosStr;
@@ -461,7 +461,7 @@ public class Escalonadores implements ManipularArquivos {
                 errosStr = errosdoComando.toString();
             } catch (IOException ex) {
                 return false;
-                //Logger.getLogger(GerenciaPacoteEscalonadorJar.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(GerenciaPacoteAlocadorJar.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             OutputStream erros = new ByteArrayOutputStream();
@@ -498,9 +498,9 @@ public class Escalonadores implements ManipularArquivos {
                 origem.close();
                 destino.close();
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Alocadores.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

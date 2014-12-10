@@ -4,7 +4,7 @@
  */
 package ispd.arquivo;
 
-import ispd.escalonador.ManipularArquivos;
+import ispd.escalonadorCloud.ManipularArquivosCloud;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,14 +38,14 @@ import javax.tools.ToolProvider;
  *
  * @author denison_usuario
  */
-public class Escalonadores implements ManipularArquivos {
+public class EscalonadoresCloud implements ManipularArquivosCloud {
 
-    private final String DIRETORIO = "ispd/externo/gridSchedulers";
+    private final String DIRETORIO = "ispd/externo/cloudSchedulers";
     /**
      * guarda a lista de escalonadores implementados no iSPD, e que já estão
      * disponiveis para o usuario por padrão
      */
-    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue", "WQR", "DynamicFPLTF", "M_OSEP", "OSEP"};
+    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
@@ -69,7 +69,7 @@ public class Escalonadores implements ManipularArquivos {
      * Atribui o caminho do pacote escalonador e os escalonadores (.class)
      * contidos nele
      */
-    public Escalonadores() {
+    public EscalonadoresCloud() {
         diretorio = new File(DIRETORIO);
         escalonadores = new ArrayList<String>();
         adicionados = new ArrayList<String>();
@@ -78,17 +78,17 @@ public class Escalonadores implements ManipularArquivos {
         if (!diretorio.exists()) {
             diretorio.mkdirs();
             //executando a partir de um jar
-            if (getClass().getResource("Escalonadores.class").toString().startsWith("jar:")) {
+            if (getClass().getResource("EscalonadoresCloud.class").toString().startsWith("jar:")) {
                 File jar = new File(System.getProperty("java.class.path"));
                 //carrega dependencias para compilação
                 try {
-                    extrairDiretorioJar(jar, "escalonador");
+                    extrairDiretorioJar(jar, "escalonadorCloud");
                     //extrairDiretorioJar(jar, "externo");
                     extrairDiretorioJar(jar, "motor");
                 } catch (ZipException ex) {
-                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }//else{
             //diretorio.mkdirs();
@@ -167,7 +167,7 @@ public class Escalonadores implements ManipularArquivos {
             }
             return buffer.toString();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -185,7 +185,7 @@ public class Escalonadores implements ManipularArquivos {
             arquivoFonte.write(conteudo); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -220,7 +220,7 @@ public class Escalonadores implements ManipularArquivos {
                 errosStr = errosdoComando.toString();
             } catch (IOException ex) {
                 errosStr = "Não foi possível compilar";
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             OutputStream erros = new ByteArrayOutputStream();
@@ -230,7 +230,7 @@ public class Escalonadores implements ManipularArquivos {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
         }
         File test = new File(diretorio, escalonador + ".class");
         if (test.exists()) {
@@ -315,7 +315,7 @@ public class Escalonadores implements ManipularArquivos {
             arquivoFonte.write(codigoFonte); //grava no arquivo o codigo-fonte Java
             arquivoFonte.close();
         } catch (IOException ex) {
-            Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -498,9 +498,9 @@ public class Escalonadores implements ManipularArquivos {
                 origem.close();
                 destino.close();
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Escalonadores.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EscalonadoresCloud.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
