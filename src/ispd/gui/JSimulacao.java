@@ -4,6 +4,7 @@ import ispd.arquivo.xml.IconicoXML;
 import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
 import ispd.motor.SimulacaoSequencial;
+import ispd.motor.SimulacaoSequencialCloud;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
@@ -69,6 +70,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
         this.modeloTexto = modeloTexto;
         this.tarefas = null;
         this.redeDeFilas = null;
+        this.redeDeFilasCloud = null;
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -259,11 +261,11 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
                 //criar tarefas
                 progrSim.print("Creating tasks.");
                 progrSim.print(" -> ");
-                this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
+                this.tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilasCloud);
                 incProgresso(10);//[10%] --> 45%
                 progrSim.println("OK", Color.green);
                 //Verifica recursos do modelo e define roteamento
-                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                Simulacao sim = new SimulacaoSequencialCloud(progrSim, redeDeFilasCloud, tarefas);//[10%] --> 55 %
                 //Realiza asimulação
                 progrSim.println("Simulating.");
                 //recebe instante de tempo em milissegundos ao iniciar a simulação
