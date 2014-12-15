@@ -4,10 +4,11 @@
  */
 package ispd.motor.filas.servidores.implementacao;
 
-import ispd.AlocacaoVM.Alocacao;
-import ispd.escalonador.Carregar;
-import ispd.escalonador.Escalonador;
-import ispd.escalonador.Mestre;
+import ispd.alocacaoVM.Alocacao;
+import ispd.alocacaoVM.VMM;
+import ispd.escalonadorCloud.CarregarCloud;
+import ispd.escalonadorCloud.EscalonadorCloud;
+import ispd.escalonadorCloud.MestreCloud;
 import ispd.motor.EventoFuturo;
 import ispd.motor.Mensagens;
 import ispd.motor.Simulacao;
@@ -18,21 +19,25 @@ import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
 import java.util.List;
+import ispd.alocacaoVM.CarregarAlloc;
 
 /**
  *
  * @author denison_usuario
  */
-public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Vertice {
+public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensagens, Vertice {
 
     private List<CS_Comunicacao> conexoesEntrada;
     private List<CS_Comunicacao> conexoesSaida;
-    private Escalonador escalonador;
+    private EscalonadorCloud escalonador;
     private Alocacao alocadorVM;
     private List<Tarefa> filaTarefas;
     private boolean maqDisponivel;
     private boolean escDisponivel;
+    private boolean alocDisponível;
     private int tipoEscalonamento;
+    private int tipoAlocacao;
+    
     
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
@@ -42,15 +47,33 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
 
     public CS_VMM(String id, String proprietario, double PoderComputacional, double memoria, double disco, double Ocupacao, String Escalonador, String Alocador) {
         super(id, proprietario, PoderComputacional, 1, Ocupacao, 0);
-        //inicializar a política de alocação
-        this.escalonador = Carregar.getNewEscalonador(Escalonador);
+        //inicializar a pocalítica de alocação
+        this.alocadorVM = CarregarAlloc.getNewAlocadorVM(Alocador);
+        alocadorVM.setVMM(this);
+        this.escalonador = CarregarCloud.getNewEscalonadorCloud(Escalonador);
         escalonador.setMestre(this);
         this.filaTarefas = new ArrayList<Tarefa>();
         this.maqDisponivel = true;
         this.escDisponivel = true;
+        this.alocDisponível = true;
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.tipoEscalonamento = ENQUANTO_HOUVER_TAREFAS;
+        this.tipoAlocacao = ENQUANTO_HOUVER_VMS;
+    }
+    
+    
+    //sobrecarga de métodos para atender a alocação de máquinas virtuais
+    public void chegadaDeCliente(Simulacao simulacao, CS_VirtualMac cliente){
+        
+    }
+    
+    public void atendimento(Simulacao simulacao, CS_VirtualMac cliente){
+        
+    }
+    
+    public void saidaDeCliente(Simulacao simulacao, CS_VirtualMac cliente){
+        
     }
 
     //Métodos do centro de serviços
@@ -220,7 +243,7 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
         //Event adicionado a lista de evntos futuros
         simulacao.addEventoFuturo(evtFut);
     }
-
+    
     @Override
     public void enviarMensagem(Tarefa tarefa, CS_Processamento escravo, int tipo) {
         Mensagem msg = new Mensagem(this, tipo, tarefa);
@@ -264,7 +287,7 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
         this.simulacao = simulacao;
     }
 
-    public Escalonador getEscalonador() {
+    public EscalonadorCloud getEscalonador() {
         return escalonador;
     }
 
@@ -504,5 +527,50 @@ public class CS_VMM extends CS_Processamento implements Mestre, Mensagens, Verti
     @Override
     public Integer getCargaTarefas() {
         return (escalonador.getFilaTarefas().size() + filaTarefas.size());
+    }
+
+    @Override
+    public void enviarVM(CS_VirtualMac vm) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void processarVM(CS_VirtualMac vm) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void executarAlocacao() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void enviarMensagemAlloc(Tarefa tarefa, CS_Processamento maquina, int tipo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void atualizarAlloc(CS_Processamento maquina) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSimulacaoAlloc(Simulacao simulacao) {
+        this.simulacao = simulacao;
+    }
+
+    @Override
+    public int getTipoAlocacao() {
+       return this.tipoAlocacao;
+    }
+
+    @Override
+    public void setTipoAlocacao(int tipo) {
+        this.tipoAlocacao = tipo;
+    }
+
+    @Override
+    public Simulacao getSimulacaoAlloc() {
+        return this.simulacao;
     }
 }

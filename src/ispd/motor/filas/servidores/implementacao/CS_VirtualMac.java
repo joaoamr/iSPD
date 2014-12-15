@@ -19,7 +19,11 @@ import java.util.List;
  * @author Diogo Tavares
  */
 public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagens {
-
+    
+    public static final int LIVRE = 1;
+    public static final int ALOCADA = 2;
+    public static final int REJEITADA = 3;
+    
     //Lista de atributos
     private CS_VMM vmmResponsavel;
     private int processadoresDisponiveis;
@@ -29,6 +33,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private String OS;
     private CS_MaquinaCloud maquinaHospedeira;
     private List<List> caminhoVMM;
+    private int status;
     
     
     
@@ -53,6 +58,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.OS = OS;
         this.maquinaHospedeira = null;
         this.caminhoVMM = null;
+        this.status = LIVRE;
     }
 
     public CS_VMM getVmmResponsavel() {
@@ -105,11 +111,19 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     public void setCaminhoVMM() {
         this.caminhoVMM = this.maquinaHospedeira.getCaminhoMestre();
-        //verificar se precisa inserir a máquina hospedeira no caminho até o VMM
+        
     }
 
      public void addVMM(CS_VMM vmmResponsavel) {
         this.vmmResponsavel = vmmResponsavel;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     

@@ -107,7 +107,40 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void setDiscoDisponivel(double discoDisponivel) {
         this.discoDisponivel = discoDisponivel;
     }
+
+    public int getProcessadoresDisponiveis() {
+        return processadoresDisponiveis;
+    }
+
+    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
+        this.processadoresDisponiveis = processadoresDisponiveis;
+    }
+
+    public double getCustoProc() {
+        return custoProc;
+    }
+
+    public void setCustoProc(double custoProc) {
+        this.custoProc = custoProc;
+    }
+
+    public double getCustoMemoria() {
+        return custoMemoria;
+    }
+
+    public void setCustoMemoria(double custoMemoria) {
+        this.custoMemoria = custoMemoria;
+    }
+
+    public double getCustoDisco() {
+        return custoDisco;
+    }
+
+    public void setCustoDisco(double custoDisco) {
+        this.custoDisco = custoDisco;
+    }
     
+      
     @Override
     public void addConexoesEntrada(CS_Link conexao) {
         this.conexoesEntrada.add(conexao);
