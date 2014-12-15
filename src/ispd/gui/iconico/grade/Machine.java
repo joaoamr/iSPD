@@ -100,6 +100,7 @@ public class Machine extends Vertice implements ItemGrade {
             texto = texto
                     + "<br>" + palavras.getString("Master")
                     + "<br>" + palavras.getString("Scheduling algorithm") + ": " + getAlgoritmo();
+                    
         } else {
             texto = texto
                     + "<br>" + palavras.getString("Slave");
@@ -111,6 +112,7 @@ public class Machine extends Vertice implements ItemGrade {
     public Machine criarCopia(int posicaoMouseX, int posicaoMouseY, int idGlobal, int idLocal) {
         Machine temp = new Machine(posicaoMouseX, posicaoMouseY, idGlobal, idLocal);
         temp.algoritmo = this.algoritmo;
+        //temp.VMMallocpolicy = this.VMMallocpolicy;
         temp.poderComputacional = this.poderComputacional;
         temp.ocupacao = this.ocupacao;
         temp.mestre = this.mestre;
@@ -292,6 +294,7 @@ public class Machine extends Vertice implements ItemGrade {
 
     public void setVMMallocpolicy(String VMMallocpolicy) {
         this.VMMallocpolicy = VMMallocpolicy;
+        verificaConfiguracao();
     }
     
    
@@ -299,7 +302,7 @@ public class Machine extends Vertice implements ItemGrade {
     private void verificaConfiguracao() {
         if (poderComputacional > 0) {
             configurado = true;
-            if (mestre && "---".equals(algoritmo)) {
+            if (mestre && ("---".equals(algoritmo) || "---".equals(VMMallocpolicy))) {
                 configurado = false;
             }
         } else {
