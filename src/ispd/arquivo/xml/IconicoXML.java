@@ -617,7 +617,8 @@ public class IconicoXML {
             //adicionando VMM responsável pela VM
             for(CS_Processamento aux :  VMMs){
                 if(virtualMac.getAttribute("vmm").equals(aux.getId())){
-                    //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado la tabela das vms
+                    //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado na tabela das vms
+                    //To do: corrigir problema futuramente
                     VM.addVMM((CS_VMM) aux);
                     //adicionando VM para o VMM
                     CS_VMM vmm = (CS_VMM) aux;
