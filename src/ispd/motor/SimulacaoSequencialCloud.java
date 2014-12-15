@@ -4,7 +4,7 @@
  */
 package ispd.motor;
 
-import ispd.AlocacaoVM.VMM;
+import ispd.alocacaoVM.VMM;
 import ispd.escalonador.Mestre;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.Mensagem;
@@ -57,7 +57,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             VMM temp = (VMM) mst;
             //Cede acesso ao mestre a fila de eventos futuros
-            temp.setSimulacao(this);
+            temp.setSimulacaoAlloc(this);
             //Encontra menor caminho entre o mestre e seus escravos
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
@@ -65,10 +65,10 @@ public class SimulacaoSequencialCloud extends Simulacao {
         janela.incProgresso(5);
         janela.println("OK", Color.green);
         
-        if (redeDeFilas.getMaquinas() == null || redeDeFilas.getMaquinas().isEmpty()) {
-            janela.println("The model has no processing slaves.", Color.orange);
+        if (redeDeFilas.getMaquinasCloud() == null || redeDeFilas.getMaquinasCloud().isEmpty()) {
+            janela.println("The model has no phisical machines.", Color.orange);
         } else {
-            for (CS_MaquinaCloud maq : redeDeFilas.getMaquinas()) {
+            for (CS_MaquinaCloud maq : redeDeFilas.getMaquinasCloud()) {
                 //Encontra menor caminho entre o escravo e seu mestre
                 maq.determinarCaminhos();//escravo encontra caminhos para seu mestre
             }
@@ -80,13 +80,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
     @Override
     public void simular() {
         //inicia os escalonadores
-        iniciarEscalonadores();
-        /**
-         * deve incluir algo para iniciar a alocação aqui
-         *  ----> iniciarAlocacaoVMs();
-         * 
-         */
-        //adiciona máquinas virtuais e chegada das tarefas na lista de eventos futuros
+        iniciarEscalonadoresAlocadoresCloud();
         addEventosCloud(getTarefas(), getRedeDeFilasCloud().getVMs() );
         
         
