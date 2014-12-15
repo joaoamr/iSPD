@@ -40,12 +40,12 @@ import javax.tools.ToolProvider;
  */
 public class EscalonadoresCloud implements ManipularArquivosCloud {
 
-    private final String DIRETORIO = "ispd/externo/cloudSchedulers";
+    private final String DIRETORIO = "ispd.externo.cloudSchedulers";
     /**
      * guarda a lista de escalonadores implementados no iSPD, e que já estão
      * disponiveis para o usuario por padrão
      */
-    public final static String[] ESCALONADORES = {"---", "RoundRobin", "Workqueue"};
+    public final static String[] ESCALONADORES = {"---", "RoundRobin"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
