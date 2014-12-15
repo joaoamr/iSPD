@@ -4,7 +4,8 @@
  */
 package ispd.gui.configuracao;
 
-import ispd.arquivo.Escalonadores;
+import ispd.arquivo.Alocadores;
+import ispd.arquivo.EscalonadoresCloud;
 import ispd.gui.iconico.grade.ItemGrade;
 import ispd.gui.iconico.grade.Machine;
 import java.util.ArrayList;
@@ -89,14 +90,15 @@ public class MachineTableIaaS extends AbstractTableModel {
                 }
             }
         });
-        escalonador = new JComboBox(Escalonadores.ESCALONADORES);
+        escalonador = new JComboBox(EscalonadoresCloud.ESCALONADORES);
         usuarios = new JComboBox();
-        VMMPolicy = new JComboBox();
+        VMMPolicy = new JComboBox(Alocadores.ALOCACAO);
     }
 
     public void setMaquina(Machine maquina, HashSet users) {
         this.maquina = maquina;
         this.escalonador.setSelectedItem(this.maquina.getAlgoritmo());
+        this.VMMPolicy.setSelectedItem(this.maquina.getVMMallocpolicy());
         this.usuarios.removeAllItems();
         for (Object object : users) {
             this.usuarios.addItem(object);
@@ -137,6 +139,10 @@ public class MachineTableIaaS extends AbstractTableModel {
 
     public JComboBox getEscalonadores() {
         return escalonador;
+    }
+    
+    public JComboBox getAlocadores(){
+        return VMMPolicy;
     }
 
     @Override
@@ -181,7 +187,7 @@ public class MachineTableIaaS extends AbstractTableModel {
                     maquina.setCostperdisk(Double.valueOf(aValue.toString()));
                     break;
                 case VMMP:
-                    maquina.setVMMallocpolicy("---");
+                    maquina.setVMMallocpolicy(VMMPolicy.getSelectedItem().toString());
                     break;
             }
             fireTableCellUpdated(rowIndex, columnIndex); // Notifica a atualização da célula

@@ -4,7 +4,9 @@
  */
 package ispd.gui.configuracao;
 
+import ispd.alocacaoVM.ManipularArquivosAlloc;
 import ispd.escalonador.ManipularArquivos;
+import ispd.escalonadorCloud.ManipularArquivosCloud;
 import ispd.gui.iconico.grade.Cluster;
 import ispd.gui.iconico.grade.Internet;
 import ispd.gui.iconico.grade.ItemGrade;
@@ -31,13 +33,15 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
     private VariedRowTable Tlink;
     private ResourceBundle palavras;
     private ManipularArquivos escalonadores;
+    private ManipularArquivosCloud escalonadoresCloud;
+    private ManipularArquivosAlloc alocadores;
 
     public JPanelConfigIcon() {
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", new Locale("en", "US"));
         Tmachine = new VariedRowTable();
         Tmachine.setModel(new MachineTable(palavras));
         Tmachine.setRowHeight(20);
-        TmachineIaaS=new VariedRowTable();
+        TmachineIaaS = new VariedRowTable();
         TmachineIaaS.setModel(new MachineTableIaaS(palavras));
         TmachineIaaS.setRowHeight(20);
         Tcluster = new VariedRowTable();
@@ -110,6 +114,20 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         }
     }
 
+    public void setEscalonadoresCloud(ManipularArquivosCloud escalonadoresCloud) {
+        this.escalonadoresCloud = escalonadoresCloud;
+        for (Object escal : escalonadoresCloud.listar()) {
+            getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
+        }
+    }
+
+    public void setAlocadores(ManipularArquivosAlloc alocadores) {
+        this.alocadores = alocadores;
+        for (Object alloc : alocadores.listar()) {
+            getTabelaMaquinaIaaS().getAlocadores().addItem(alloc);
+        }
+    }
+
     public void setIcone(ItemGrade icone) {
         if (icone instanceof Link) {
             jLabelTitle.setText(palavras.getString("Network icon configuration"));
@@ -123,17 +141,17 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
     }
 
     public void setIcone(ItemGrade icone, HashSet<String> usuarios, int escolha) {
-        if(escolha == 0){
+        if (escolha == EscolherClasse.GRID) {
             if (!escalonadores.listarRemovidos().isEmpty()) {
                 for (Object escal : escalonadores.listarRemovidos()) {
                     getTabelaMaquina().getEscalonadores().removeItem(escal);
-                
+
                 }
                 escalonadores.listarRemovidos().clear();
             }
             if (!escalonadores.listarAdicionados().isEmpty()) {
                 for (Object escal : escalonadores.listarAdicionados()) {
-                    getTabelaMaquina().getEscalonadores().addItem(escal);              
+                    getTabelaMaquina().getEscalonadores().addItem(escal);
                 }
                 escalonadores.listarAdicionados().clear();
             }
@@ -148,24 +166,37 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 getTabelaCluster().setCluster((Cluster) icone, usuarios);
                 jScrollPane1.setViewportView(Tcluster);
             }
-        }
-        else if(escolha == 1){
-            if (!escalonadores.listarRemovidos().isEmpty()) {
-                for (Object escal : escalonadores.listarRemovidos()) {
-                        getTabelaMaquinaIaaS().getEscalonadores().removeItem(escal);
+        } else if (escolha == EscolherClasse.IAAS) {
+        /*    if (!escalonadoresCloud.listarRemovidos().isEmpty()) {
+                for (Object escal : escalonadoresCloud.listarRemovidos()) {
+                    getTabelaMaquinaIaaS().getEscalonadores().removeItem(escal);
                 }
-                escalonadores.listarRemovidos().clear();
-                }
-            if (!escalonadores.listarAdicionados().isEmpty()) {
-                for (Object escal : escalonadores.listarAdicionados()) {
-                    getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
-                    }
-                escalonadores.listarAdicionados().clear();
+                escalonadoresCloud.listarRemovidos().clear();
             }
+            if (!escalonadoresCloud.listarAdicionados().isEmpty()) {
+                for (Object escal : escalonadoresCloud.listarAdicionados()) {
+                    getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
+                }
+                escalonadoresCloud.listarAdicionados().clear();
+            }
+
+            if (!alocadores.listarRemovidos().isEmpty()) {
+                for (Object alloc : alocadores.listarRemovidos()) {
+                    getTabelaMaquinaIaaS().getAlocadores().removeItem(alloc);
+                }
+                alocadores.listarRemovidos().clear();
+            }
+            if (!alocadores.listarAdicionados().isEmpty()){
+                for (Object alloc : alocadores.listarAdicionados()){
+                    getTabelaMaquinaIaaS().getAlocadores().addItem(alloc);
+                }
+                alocadores.listarAdicionados().clear();
+            }
+        */
             jLabelIconName.setText(palavras.getString("Configuration for the icon") + "#: " + icone.getId().getIdGlobal());
             if (icone instanceof Machine) {
                 jLabelTitle.setText(palavras.getString("Machine icon configuration"));
-                getTabelaMaquinaIaaS().setMaquina((Machine)icone, usuarios);
+                getTabelaMaquinaIaaS().setMaquina((Machine) icone, usuarios);
                 jScrollPane1.setViewportView(TmachineIaaS);
             }
             if (icone instanceof Cluster) {
@@ -174,7 +205,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 jScrollPane1.setViewportView(TclusterIaaS);
             }
         }
-        
+
     }
 
     public String getTitle() {
@@ -184,16 +215,16 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
     public MachineTable getTabelaMaquina() {
         return (MachineTable) Tmachine.getModel();
     }
-    
-    public MachineTableIaaS getTabelaMaquinaIaaS(){
+
+    public MachineTableIaaS getTabelaMaquinaIaaS() {
         return (MachineTableIaaS) TmachineIaaS.getModel();
     }
 
     public ClusterTable getTabelaCluster() {
         return (ClusterTable) Tcluster.getModel();
     }
-    
-    public ClusterTableIaaS getTabelaClusterIaaS(){
+
+    public ClusterTableIaaS getTabelaClusterIaaS() {
         return (ClusterTableIaaS) TclusterIaaS.getModel();
     }
 
