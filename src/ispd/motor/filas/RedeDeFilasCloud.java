@@ -21,7 +21,7 @@ import java.util.Random;
  *
  * @author denison_usuario
  */
-public class RedeDeFilasCloud {
+public class RedeDeFilasCloud extends RedeDeFilas{
     /**
      * Todos os mestres existentes no sistema incluindo o front-node dos
      * clusters
@@ -30,7 +30,7 @@ public class RedeDeFilasCloud {
     /**
      * Todas as máquinas que não são mestres
      */
-    private List<CS_MaquinaCloud> maquinas;
+    private List<CS_MaquinaCloud> maquinasCloud;
     /**
      * Todas as conexões
      */
@@ -58,53 +58,19 @@ public class RedeDeFilasCloud {
      * @param internets
      */
     public RedeDeFilasCloud(List<CS_Processamento> mestres, List<CS_MaquinaCloud> maquinas, List<CS_VirtualMac> vms, List<CS_Comunicacao> links, List<CS_Internet> internets) {
-        this.mestres = mestres;
-        this.maquinas = maquinas;
-        this.links = links;
-        this.internets = internets;
+        super(mestres,null,links, internets);
+        this.maquinasCloud = maquinas;
         this.VMs = vms;
     }
 
-    public List<CS_Internet> getInternets() {
-        return internets;
+    public List<CS_MaquinaCloud> getMaquinasCloud() {
+        return maquinasCloud;
     }
 
-    public void setInternets(List<CS_Internet> internets) {
-        this.internets = internets;
+    public void setMaquinasCloud(List<CS_MaquinaCloud> maquinasCloud) {
+        this.maquinasCloud = maquinasCloud;
     }
-
-    public List<CS_Comunicacao> getLinks() {
-        return links;
-    }
-
-    public void setLinks(List<CS_Comunicacao> links) {
-        this.links = links;
-    }
-
-    public List<CS_MaquinaCloud> getMaquinas() {
-        return maquinas;
-    }
-
-    public void setMaquinas(List<CS_MaquinaCloud> maquinas) {
-        this.maquinas = maquinas;
-    }
-
-    public List<CS_Processamento> getMestres() {
-        return mestres;
-    }
-
-    public void setMestres(List<CS_Processamento> mestres) {
-        this.mestres = mestres;
-    }
-
-    public void setUsuarios(List<String> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    public List<String> getUsuarios() {
-        return this.usuarios;
-    }
-
+    
     public List<CS_VirtualMac> getVMs() {
         return VMs;
     }
@@ -127,6 +93,7 @@ public class RedeDeFilasCloud {
      * @param recMax tempo máximo para recuperação do recurso que falhou
      * @param recuperavel indica se a falha tem recuperação automática
      */
+    @Override
     public void setFalhas(int min, int max, double scale, double shape, double recMin, double recMax, boolean recuperavel) {
         Random rd = new Random();
         int numFalhas = min + rd.nextInt(max - min);
@@ -136,9 +103,9 @@ public class RedeDeFilasCloud {
         }
         Collections.sort(falhas);
         while(!falhas.isEmpty()){
-            int next = rd.nextInt(maquinas.size());
-            System.out.println("Falha "+falhas.get(0)+" no "+maquinas.get(next).getId());
-            maquinas.get(next).addFalha(falhas.remove(0), recMin, recuperavel);
+            int next = rd.nextInt(maquinasCloud.size());
+            System.out.println("Falha "+falhas.get(0)+" no "+maquinasCloud.get(next).getId());
+            maquinasCloud.get(next).addFalha(falhas.remove(0), recMin, recuperavel);
         }
     }
 }
