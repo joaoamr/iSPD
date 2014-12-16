@@ -5,6 +5,8 @@
 package ispd.gui.configuracao;
 
 import ispd.alocacaoVM.ManipularArquivosAlloc;
+import ispd.arquivo.Alocadores;
+import ispd.arquivo.EscalonadoresCloud;
 import ispd.escalonador.ManipularArquivos;
 import ispd.escalonadorCloud.ManipularArquivosCloud;
 import ispd.gui.iconico.grade.Cluster;
@@ -53,6 +55,8 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         Tlink = new VariedRowTable();
         Tlink.setModel(new LinkTable(palavras));
         Tlink.setRowHeight(20);
+        escalonadoresCloud = new EscalonadoresCloud();
+        alocadores = new Alocadores();
         initComponents();
     }
 
@@ -167,7 +171,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 jScrollPane1.setViewportView(Tcluster);
             }
         } else if (escolha == EscolherClasse.IAAS) {
-        /*    if (!escalonadoresCloud.listarRemovidos().isEmpty()) {
+            if (!escalonadoresCloud.listarRemovidos().isEmpty()) {
                 for (Object escal : escalonadoresCloud.listarRemovidos()) {
                     getTabelaMaquinaIaaS().getEscalonadores().removeItem(escal);
                 }
@@ -192,7 +196,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                 }
                 alocadores.listarAdicionados().clear();
             }
-        */
+            
             jLabelIconName.setText(palavras.getString("Configuration for the icon") + "#: " + icone.getId().getIdGlobal());
             if (icone instanceof Machine) {
                 jLabelTitle.setText(palavras.getString("Machine icon configuration"));

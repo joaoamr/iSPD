@@ -258,7 +258,7 @@ public class MachineTableIaaS extends AbstractTableModel {
                         case CPDK:
                             return maquina.getCostperdisk();
                         case VMMP:
-                            return maquina.getVMMallocpolicy();
+                            return VMMPolicy;
                     }
                 } else {
                     switch (rowIndex) {
@@ -268,6 +268,8 @@ public class MachineTableIaaS extends AbstractTableModel {
                             return escalonador;
                         case SLAVE:
                             return escravos;
+                        case VMMP:
+                            return VMMPolicy;
                         default:
                             return "null";
                     }
