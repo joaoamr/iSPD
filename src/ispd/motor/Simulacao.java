@@ -78,6 +78,7 @@ public abstract class Simulacao {
         }
     }
     
+    
     public void iniciarEscalonadoresAlocadoresCloud() {
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             CS_VMM mestre = (CS_VMM) mst;

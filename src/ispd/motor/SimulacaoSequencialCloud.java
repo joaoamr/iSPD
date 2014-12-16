@@ -6,6 +6,7 @@ package ispd.motor;
 
 import ispd.alocacaoVM.VMM;
 import ispd.escalonador.Mestre;
+import ispd.escalonadorCloud.MestreCloud;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
@@ -56,7 +57,9 @@ public class SimulacaoSequencialCloud extends Simulacao {
          */
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             VMM temp = (VMM) mst;
+            MestreCloud aux = (MestreCloud) mst;
             //Cede acesso ao mestre a fila de eventos futuros
+            aux.setSimulacao(this);
             temp.setSimulacaoAlloc(this);
             //Encontra menor caminho entre o mestre e seus escravos
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
@@ -81,7 +84,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
     public void simular() {
         //inicia os escalonadores
         iniciarEscalonadoresAlocadoresCloud();
-        addEventosCloud(getTarefas(), getRedeDeFilasCloud().getVMs() );
+        addEventos(this.getTarefas());
         
         
         if (atualizarEscalonadores()) {
@@ -101,11 +104,11 @@ public class SimulacaoSequencialCloud extends Simulacao {
         //janela.println(redeDeFilas.getMetricasUsuarios().toString());
     }
 
-    public void addEventosCloud(List<Tarefa> tarefas, List<CS_VirtualMac> VMs) {
-        for (CS_VirtualMac vm : VMs){
+    public void addEventos(List<Tarefa> tarefas) {
+        /*for (CS_VirtualMac vm : VMs){
             EventoFuturo evt = new EventoFuturo(0.0, EventoFuturo.CHEGADA, vm.getVmmResponsavel(), vm);
             eventos.add(evt);
-        }
+        }*/
         for (Tarefa tarefa : tarefas) {
             EventoFuturo evt = new EventoFuturo(tarefa.getTimeCriacao(), EventoFuturo.CHEGADA, tarefa.getOrigem(), tarefa);
             eventos.add(evt);
