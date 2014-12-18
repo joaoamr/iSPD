@@ -6,6 +6,7 @@
 package ispd.externo.cloudAlloc;
 
 import ispd.alocacaoVM.Alocacao;
+import ispd.motor.filas.TarefaVM;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
@@ -33,6 +34,9 @@ public class RoundRobin extends Alocacao {
     public void iniciar() {
         maqFisica = maquinasFisicas.listIterator(0);
         VMsRejeitadas = new ArrayList<CS_VirtualMac>();
+        if(!maquinasFisicas.isEmpty() && !maquinasVirtuais.isEmpty()){
+            escalonar();
+        }
     }
 
     @Override

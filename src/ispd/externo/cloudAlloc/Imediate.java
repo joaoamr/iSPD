@@ -35,6 +35,9 @@ public class Imediate extends Alocacao {
         fit = true;
         maqIndex = 0;
         VMsRejeitadas = new ArrayList<CS_VirtualMac>();
+        if(!maquinasFisicas.isEmpty() && !maquinasVirtuais.isEmpty()){
+            escalonar();
+        }
     }
 
     @Override
