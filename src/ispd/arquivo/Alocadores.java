@@ -324,17 +324,18 @@ public class Alocadores implements  ManipularArquivosAlloc{
      * @return conteudo básico para criar uma classe que implemente um
      * escalonador
      */
-    public static String getAlocadorJava(String escalonador) {
+    public static String getAlocadorJava(String alocador) {
         String saida =
                 "package ispd.externo;"
-                + "\n" + "import ispd.escalonador.Alocador;"
-                + "\n" + "import ispd.motor.filas.Tarefa;"
+                + "\n" + "import ispd.alocacaoVM.Alocacao;"
+                + "\n" + "import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;"
                 + "\n" + "import ispd.motor.filas.servidores.CS_Processamento;"
                 + "\n" + "import ispd.motor.filas.servidores.CentroServico;"
-                + "\n" + "import java.util.ArrayList;"
+                + "\n" + "import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;"
+                + "\n" + "import ispd.motor.filas.servidores.implementacao.CS_VMM;"
                 + "\n" + "import java.util.List;"
                 + "\n"
-                + "\n" + "public class " + escalonador + " extends Alocador{"
+                + "\n" + "public abstract class " + alocador + " extends Alocacao{"
                 + "\n"
                 + "\n" + "    @Override"
                 + "\n" + "    public void iniciar() {"
@@ -342,7 +343,7 @@ public class Alocadores implements  ManipularArquivosAlloc{
                 + "\n" + "    }"
                 + "\n"
                 + "\n" + "    @Override"
-                + "\n" + "    public Tarefa escalonarTarefa() {"
+                + "\n" + "    public CS_VirtualMac escalonarVM() {"
                 + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
                 + "\n" + "    }"
                 + "\n"
@@ -350,17 +351,21 @@ public class Alocadores implements  ManipularArquivosAlloc{
                 + "\n" + "    public CS_Processamento escalonarRecurso() {"
                 + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
                 + "\n" + "    }"
-                + "\n"
+                + "\n" 
                 + "\n" + "    @Override"
                 + "\n" + "    public List<CentroServico> escalonarRota(CentroServico destino) {"
                 + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
                 + "\n" + "    }"
-                + "\n"
+                + "\n" 
                 + "\n" + "    @Override"
                 + "\n" + "    public void escalonar() {"
                 + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
                 + "\n" + "    }"
-                + "\n"
+                + "\n" + "    @Override"
+                + "\n" + "    public void migrarVM() {"
+                + "\n" + "        throw new UnsupportedOperationException(\"Not supported yet.\");"
+                + "\n" + "    }"
+                + "\n" 
                 + "\n" + "}";
         return saida;
     }
