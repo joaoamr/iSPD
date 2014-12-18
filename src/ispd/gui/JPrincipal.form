@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Component class="ispd.gui.GerenciarEscalonador" name="jFrameGerenciador">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="JPrincipal_jFrameGerenciador"/>
+      </AuxValues>
+    </Component>
+    <Component class="ispd.gui.GerenciarEscalonadorCloud" name="jFrameGerenciadorCloud">
+    </Component>
+    <Component class="ispd.gui.GerenciarAlocadores" name="jFrameGerenciadorAlloc">
     </Component>
     <Component class="ispd.gui.configuracao.JPanelSimples" name="jPanelSimples">
       <AuxValues>
@@ -22,7 +29,7 @@
     </Component>
     <Component class="ispd.gui.configuracao.JPanelConfigIcon" name="jPanelConfiguracao">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelConfiguracao.setEscalonadores(jFrameGerenciador.getEscalonadores());"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jPanelConfiguracao.setEscalonadores(jFrameGerenciador.getEscalonadores());&#xa;jPanelConfiguracao.setEscalonadoresCloud(jFrameGerenciadorCloud.getEscalonadores());&#xa;jPanelConfiguracao.setAlocadores(jFrameGerenciadorAlloc.getAlocadores());"/>
       </AuxValues>
     </Component>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar">
@@ -476,6 +483,9 @@
               <ResourceString bundle="ispd/idioma/Idioma_en_US.properties" key="Tools" replaceFormat="palavras.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuFerramentasActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemGerenciar">
               <Properties>
@@ -495,6 +505,22 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemGerarActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemGerenciarCloud">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Manage Scheduler Cloud"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemGerenciarCloudActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemGerenciarAllocation">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Manage Allocation Policies"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemGerenciarAllocationActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

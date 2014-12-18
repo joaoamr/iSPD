@@ -66,7 +66,7 @@ public abstract class Alocacao {
     }
 
     public void setVMM(CS_VMM hypervisor) {
-        this.VMM = hypervisor;
+        this.VMM = (ispd.alocacaoVM.VMM) hypervisor;
     }
 
     public List<List> getCaminhoMaquinas() {

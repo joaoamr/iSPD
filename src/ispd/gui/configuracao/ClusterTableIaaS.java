@@ -4,7 +4,9 @@
  */
 package ispd.gui.configuracao;
 
+import ispd.arquivo.Alocadores;
 import ispd.arquivo.Escalonadores;
+import ispd.arquivo.EscalonadoresCloud;
 import ispd.gui.iconico.grade.Cluster;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -46,13 +48,15 @@ public class ClusterTableIaaS extends AbstractTableModel {
 
     public ClusterTableIaaS(ResourceBundle palavras) {
         this.palavras = palavras;
-        escalonador = new JComboBox(Escalonadores.ESCALONADORES);
+        escalonador = new JComboBox(EscalonadoresCloud.ESCALONADORES);
         usuarios = new JComboBox();
+        VMMPolicy = new JComboBox(Alocadores.ALOCACAO);
     }
 
     public void setCluster(Cluster cluster, HashSet users) {
         this.cluster = cluster;
         this.escalonador.setSelectedItem(this.cluster.getAlgoritmo());
+        this.VMMPolicy.setSelectedItem(this.cluster.getVMMallocpolicy());
         this.usuarios.removeAllItems();
         for (Object object : users) {
             this.usuarios.addItem(object);
@@ -91,6 +95,10 @@ public class ClusterTableIaaS extends AbstractTableModel {
 
     public JComboBox getEscalonadores() {
         return escalonador;
+    }
+    
+    public JComboBox getAlocadores(){
+        return VMMPolicy;
     }
 
     @Override
@@ -140,7 +148,8 @@ public class ClusterTableIaaS extends AbstractTableModel {
                     cluster.setAlgoritmo(escalonador.getSelectedItem().toString());
                     break;
                 case VMMP:
-                    cluster.setVMMallocpolicy("---");
+                    cluster.setVMMallocpolicy(VMMPolicy.getSelectedItem().toString());
+                    break;
             }
             fireTableCellUpdated(rowIndex, columnIndex); // Notifica a atualização da célula
         }
@@ -214,7 +223,7 @@ public class ClusterTableIaaS extends AbstractTableModel {
                         case CPDK:
                             return cluster.getCostperdisk();
                         case VMMP:
-                            return cluster.getVMMallocpolicy();
+                            return VMMPolicy;
                     }
                 } else {
                     switch (rowIndex) {
@@ -222,6 +231,8 @@ public class ClusterTableIaaS extends AbstractTableModel {
                             return usuarios;
                         case SCHED:
                             return escalonador;
+                        case VMMP:
+                            return VMMPolicy;
                         default:
                             return "null";
                     }

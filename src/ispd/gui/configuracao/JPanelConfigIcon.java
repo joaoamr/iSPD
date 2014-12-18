@@ -55,8 +55,6 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         Tlink = new VariedRowTable();
         Tlink.setModel(new LinkTable(palavras));
         Tlink.setRowHeight(20);
-        escalonadoresCloud = new EscalonadoresCloud();
-        alocadores = new Alocadores();
         initComponents();
     }
 
