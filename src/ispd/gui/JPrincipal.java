@@ -125,11 +125,15 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private void initComponents() {
 
         jFrameGerenciador = new ispd.gui.GerenciarEscalonador();
+        jFrameGerenciadorCloud = new ispd.gui.GerenciarEscalonadorCloud();
+        jFrameGerenciadorAlloc = new ispd.gui.GerenciarAlocadores();
         jPanelSimples = new ispd.gui.configuracao.JPanelSimples();
         jPanelSimples.setjLabelTexto(palavras.getString("No icon selected."));
         jFileChooser = new javax.swing.JFileChooser();
         jPanelConfiguracao = new ispd.gui.configuracao.JPanelConfigIcon();
         jPanelConfiguracao.setEscalonadores(jFrameGerenciador.getEscalonadores());
+        jPanelConfiguracao.setEscalonadoresCloud(jFrameGerenciadorCloud.getEscalonadores());
+        jPanelConfiguracao.setAlocadores(jFrameGerenciadorAlloc.getAlocadores());
         jScrollPaneAreaDesenho = new javax.swing.JScrollPane();
         jScrollPaneBarraLateral = new javax.swing.JScrollPane();
         jScrollPaneBarraNotifica = new javax.swing.JScrollPane();
@@ -184,6 +188,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jMenuFerramentas = new javax.swing.JMenu();
         jMenuItemGerenciar = new javax.swing.JMenuItem();
         jMenuItemGerar = new javax.swing.JMenuItem();
+        jMenuItemGerenciarCloud = new javax.swing.JMenuItem();
+        jMenuItemGerenciarAllocation = new javax.swing.JMenuItem();
         jMenuAjuda = new javax.swing.JMenu();
         jMenuItemAjuda = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator3 = new javax.swing.JPopupMenu.Separator();
@@ -629,6 +635,11 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             jMenuBar.add(jMenuExibir);
 
             jMenuFerramentas.setText(palavras.getString("Tools")); // NOI18N
+            jMenuFerramentas.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuFerramentasActionPerformed(evt);
+                }
+            });
 
             jMenuItemGerenciar.setText(palavras.getString("Manage Schedulers")); // NOI18N
             jMenuItemGerenciar.addActionListener(new java.awt.event.ActionListener() {
@@ -645,6 +656,22 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jMenuFerramentas.add(jMenuItemGerar);
+
+            jMenuItemGerenciarCloud.setText("Manage Scheduler Cloud");
+            jMenuItemGerenciarCloud.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemGerenciarCloudActionPerformed(evt);
+                }
+            });
+            jMenuFerramentas.add(jMenuItemGerenciarCloud);
+
+            jMenuItemGerenciarAllocation.setText("Manage Allocation Policies");
+            jMenuItemGerenciarAllocation.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItemGerenciarAllocationActionPerformed(evt);
+                }
+            });
+            jMenuFerramentas.add(jMenuItemGerenciarAllocation);
 
             jMenuBar.add(jMenuFerramentas);
 
@@ -854,7 +881,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         int escolha = JOptionPane.YES_OPTION;
         if (modificado) {
             escolha = savarAlteracao();
-        } 
+        }
         ChooseClass = new EscolherClasse(this, true);
         ChooseClass.setLocationRelativeTo(this);
         ChooseClass.setVisible(true);
@@ -1186,13 +1213,34 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jMenuItemGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerarActionPerformed
         // TODO add your handling code here:
-        GerarEscalonador ge = new GerarEscalonador(this, true, jFrameGerenciador.getEscalonadores().getDiretorio().getAbsolutePath(), palavras);
-        ge.setEscalonadores(jFrameGerenciador.getEscalonadores());
-        ge.setLocationRelativeTo(this);
-        ge.setVisible(true);
-        if (ge.getParse() != null) {
-            jFrameGerenciador.atualizarEscalonadores();
+        if (tipoModelo == EscolherClasse.GRID) {
+            GerarEscalonador ge = new GerarEscalonador(this, true, jFrameGerenciador.getEscalonadores().getDiretorio().getAbsolutePath(), palavras);
+            ge.setEscalonadores(jFrameGerenciador.getEscalonadores());
+            ge.setLocationRelativeTo(this);
+            ge.setVisible(true);
+            if (ge.getParse() != null) {
+                jFrameGerenciador.atualizarEscalonadores();
+            }
         }
+        else if (tipoModelo == EscolherClasse.IAAS){
+            GerarEscalonador ge = new GerarEscalonador(this, true, jFrameGerenciadorCloud.getEscalonadores().getDiretorio().getAbsolutePath(), palavras);
+            ge.setEscalonadoresCloud(jFrameGerenciadorCloud.getEscalonadores());
+            ge.setLocationRelativeTo(this);
+            ge.setVisible(true);
+            if (ge.getParse() != null) {
+                jFrameGerenciadorCloud.atualizarEscalonadores();
+            }
+            
+            GerarEscalonador ga = new GerarEscalonador(this, true, jFrameGerenciadorAlloc.getAlocadores().getDiretorio().getAbsolutePath(), palavras);
+            ga.setAlocadores(jFrameGerenciadorAlloc.getAlocadores());
+            ga.setLocationRelativeTo(this);
+            ga.setVisible(true);
+            if (ga.getParse() != null) {
+                jFrameGerenciadorAlloc.atualizarAlocadores();
+            }
+            
+        }
+     
     }//GEN-LAST:event_jMenuItemGerarActionPerformed
 
     private void jMenuItemAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAjudaActionPerformed
@@ -1443,6 +1491,23 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonConfigVMActionPerformed
 
+    private void jMenuItemGerenciarCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerenciarCloudActionPerformed
+        jFrameGerenciadorCloud.setLocationRelativeTo(this);
+        jFrameGerenciadorCloud.setVisible(true);
+
+    }//GEN-LAST:event_jMenuItemGerenciarCloudActionPerformed
+
+    private void jMenuItemGerenciarAllocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGerenciarAllocationActionPerformed
+        jFrameGerenciadorAlloc.setLocationRelativeTo(this);
+        jFrameGerenciadorAlloc.setVisible(true);
+
+
+    }//GEN-LAST:event_jMenuItemGerenciarAllocationActionPerformed
+
+    private void jMenuFerramentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuFerramentasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuFerramentasActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonConfigVM;
     private javax.swing.JButton jButtonSimular;
@@ -1455,6 +1520,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemRegua;
     private javax.swing.JFileChooser jFileChooser;
     private ispd.gui.GerenciarEscalonador jFrameGerenciador;
+    private ispd.gui.GerenciarAlocadores jFrameGerenciadorAlloc;
+    private ispd.gui.GerenciarEscalonadorCloud jFrameGerenciadorCloud;
     private javax.swing.JMenu jMenuAjuda;
     private javax.swing.JMenu jMenuArquivo;
     private javax.swing.JMenuBar jMenuBar;
@@ -1473,6 +1540,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JMenuItem jMenuItemFechar;
     private javax.swing.JMenuItem jMenuItemGerar;
     private javax.swing.JMenuItem jMenuItemGerenciar;
+    private javax.swing.JMenuItem jMenuItemGerenciarAllocation;
+    private javax.swing.JMenuItem jMenuItemGerenciarCloud;
     private javax.swing.JMenuItem jMenuItemGridSim;
     private javax.swing.JMenuItem jMenuItemIngles;
     private javax.swing.JMenuItem jMenuItemNovo;

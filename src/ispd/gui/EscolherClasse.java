@@ -52,7 +52,6 @@ public class EscolherClasse extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Escolher tipo de serviço");
         setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         jRadioGrid.setText("Grid");
