@@ -23,7 +23,7 @@ public interface VMM {
     public static final int DOISCASOS = 3;
     //Métodos que geram eventos
     public void enviarVM(CS_VirtualMac vm);
-    public void processarVM(CS_VirtualMac vm);
+    
     public void executarAlocacao();
     public void enviarMensagemAlloc(Tarefa tarefa, CS_Processamento maquina, int tipo); //tarefa com VM encapsulada
     public void atualizarAlloc(CS_Processamento maquina);    
