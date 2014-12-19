@@ -9,7 +9,9 @@ import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import ispd.motor.metricas.MetricasUsuarios;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +35,7 @@ public abstract class EscalonadorCloud {
 
     public abstract Tarefa escalonarTarefa();
 
-    public abstract CS_Processamento escalonarRecurso(String usuario);
+    public abstract CS_Processamento escalonarRecurso();
 
     public abstract List<CentroServico> escalonarRota(CentroServico destino);
 
@@ -85,10 +87,11 @@ public abstract class EscalonadorCloud {
         return caminhoEscravo;
     }
     
-    public List<CS_Processamento> getEscravosUsuario(String usuario, List<CS_Processamento> Escravos){
-        List<CS_Processamento> escravosUsuario = null;
+    public List<CS_Processamento> getVMsAdequadas(String usuario, List<CS_Processamento> Escravos){
+        ArrayList<CS_Processamento> escravosUsuario = new ArrayList<CS_Processamento>();
         for(CS_Processamento slave : Escravos){
-            if (slave.getProprietario().equals(usuario)) {
+            CS_VirtualMac slaveVM = (CS_VirtualMac) slave;
+            if (slave.getProprietario().equals(usuario) || slaveVM.getStatus()==CS_VirtualMac.ALOCADA) {
                 escravosUsuario.add(slave);
             } 
         }
