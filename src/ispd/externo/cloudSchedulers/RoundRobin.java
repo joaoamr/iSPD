@@ -9,6 +9,7 @@ import ispd.escalonadorCloud.EscalonadorCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,11 +45,8 @@ public class RoundRobin extends EscalonadorCloud{
     }
 
     @Override
-    public CS_Processamento escalonarRecurso(String usuario) {
-        
-        this.EscravosUsuario = (LinkedList<CS_Processamento>) getEscravosUsuario(usuario, escravos);
-       
-        if (recursos.hasNext()) {
+    public CS_Processamento escalonarRecurso() {
+         if (recursos.hasNext()) {
             return recursos.next();
         }else{
             recursos = EscravosUsuario.listIterator(0);
@@ -59,10 +57,14 @@ public class RoundRobin extends EscalonadorCloud{
     @Override
     public void escalonar() {
         Tarefa trf = escalonarTarefa();
-        CS_Processamento rec = escalonarRecurso(trf.getProprietario());
+        usuario = trf.getProprietario();
+        EscravosUsuario = (LinkedList<CS_Processamento>) getVMsAdequadas(usuario, escravos);
+        if(!EscravosUsuario.isEmpty()){
+        CS_Processamento rec = escalonarRecurso();
         trf.setLocalProcessamento(rec);
         trf.setCaminho(escalonarRota(rec));
         mestre.enviarTarefa(trf);
+        }
     }
 
     @Override
