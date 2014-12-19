@@ -97,7 +97,7 @@ public class IconicoXML {
      * @return indica se arquivo foi salvo corretamente
      */
     public static boolean escrever(Document documento, File arquivo) {
-        return ManipuladorXML.escrever(documento, arquivo, "iSPD.dtd");
+            return ManipuladorXML.escrever(documento, arquivo, "iSPD.dtd");
     }
 
     /**
@@ -876,6 +876,7 @@ public class IconicoXML {
                 maq.setProprietario(maquina.getAttribute("owner"));
                 Element master = (Element) maquina.getElementsByTagName("master").item(0);
                 maq.setAlgoritmo(master.getAttribute("scheduler"));
+                maq.setVMMallocpolicy(master.getAttribute("vm_alloc"));
                 maq.setMestre(true);
                 NodeList slaves = master.getElementsByTagName("slave");
                 List<ItemGrade> escravos = new ArrayList<ItemGrade>(slaves.getLength());
@@ -1094,7 +1095,7 @@ public class IconicoXML {
     }
 
     public void addMachineIaaS(Integer x, Integer y, Integer idLocal, Integer idGlobal, String nome,
-            Double poderComputacional, Double ocupacao, String algoritmo, String proprietario,
+            Double poderComputacional, Double ocupacao, String alloc, String algoritmo, String proprietario,
             Integer numeroNucleos, Double memoriaRAM, Double discoRigido, Double CostperProcessing,
             Double Costpermemory, Double CostperDisk,
             boolean mestre, Collection<Integer> escravos) {
@@ -1116,8 +1117,9 @@ public class IconicoXML {
 
         if (mestre) {
             //preenche escravos
-            Element master = descricao.createElement("VMM");
+            Element master = descricao.createElement("master");
             master.setAttribute("scheduler", algoritmo);
+            master.setAttribute("vm_alloc",alloc);
             for (Integer escravo : escravos) {
                 Element slave = descricao.createElement("slave");
                 slave.setAttribute("id", escravo.toString());
@@ -1162,14 +1164,14 @@ public class IconicoXML {
         system.appendChild(aux);
     }
 
-    public void addVirtualMachines(String id, String user, String VMM, double poderComputacional,
+    public void addVirtualMachines(String id, String user, String VMM, int poderComputacional,
             double memAlocada, double discoAlocado, String OS) {
         Element aux;
         aux = descricao.createElement("virtualMac");
         aux.setAttribute("id", id);
         aux.setAttribute("owner", user);
         aux.setAttribute("vmm", VMM);
-        aux.setAttribute("power", Double.toString(poderComputacional));
+        aux.setAttribute("power", Integer.toString( poderComputacional));
         aux.setAttribute("mem_alloc", Double.toString(memAlocada));
         aux.setAttribute("disk_alloc", Double.toString(discoAlocado));
         aux.setAttribute("op_system", OS);
