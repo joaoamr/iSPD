@@ -87,6 +87,8 @@ public abstract class Simulacao {
             //mas deve ser o primeiro evento executado nos mestres
             mestre.getAlocadorVM().iniciar();
             mestre.getEscalonador().iniciar();
+            mestre.instanciarCaminhosVMs();
+            
         }
     }
 
