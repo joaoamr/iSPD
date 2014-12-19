@@ -221,7 +221,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        //Incrementa o número de Mbits transmitido por este link
+        /* //Incrementa o número de Mbits transmitido por este link
         this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
         //Incrementa o tempo de processamento
         double tempoProc = this.tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
@@ -231,7 +231,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         tarefaEmExecucao.remove(cliente);
         //eficiencia calculada apenas nas classes CS_Maquina
         cliente.calcEficiencia(this.getPoderComputacional());
-        //Devolve tarefa para o mestre
+        //Devolve tarefa para o mestre*/
         if (mestres.contains(cliente.getOrigem())) {
             int index = mestres.indexOf(cliente.getOrigem());
             List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
@@ -261,19 +261,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             //Event adicionado a lista de evntos futuros
             simulacao.addEventoFuturo(evtFut);
         }
-        if (filaTarefas.isEmpty()) {
-            //Indica que está livre
-            this.processadoresDisponiveis++;
-        } else {
-            //Gera evento para atender proximo cliente da lista
-            Tarefa proxCliente = filaTarefas.remove(0);
-            EventoFuturo evtFut = new EventoFuturo(
-                    simulacao.getTime(this),
-                    EventoFuturo.ATENDIMENTO,
-                    this, proxCliente);
-            //Event adicionado a lista de evntos futuros
-            simulacao.addEventoFuturo(evtFut);
-        }
+        
     }
 
     @Override

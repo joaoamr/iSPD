@@ -5,6 +5,7 @@
  */
 package ispd.motor.filas.servidores.implementacao;
 
+import ispd.motor.EventoFuturo;
 import ispd.motor.Mensagens;
 import ispd.motor.Simulacao;
 import ispd.motor.filas.Cliente;
@@ -12,6 +13,7 @@ import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,13 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private CS_MaquinaCloud maquinaHospedeira;
     private List caminhoVMM;
     private int status;
+    private List<Tarefa> filaTarefas;
+    private List<Tarefa> tarefaEmExecucao;
+    
+    private List<Double> falhas = new ArrayList<Double>();
+    private List<Double> recuperacao = new ArrayList<Double>();
+    private boolean erroRecuperavel;
+    private boolean falha = false;
     
     
     
@@ -53,6 +62,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     
     public CS_VirtualMac(String id, String proprietario, int numeroProcessadores, double memoria, double disco, String OS) {
         super(id, proprietario, 0, numeroProcessadores, 0, 0);
+        this.processadoresDisponiveis = numeroProcessadores;
         this.memoriaDisponivel = memoria;
         this.discoDisponivel = disco;
         this.OS = OS;
@@ -125,7 +135,123 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.status = status;
     }
 
-    
+     @Override
+    public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        if (cliente.getEstado() != Tarefa.CANCELADO) {
+            cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
+            if (processadoresDisponiveis != 0) {
+                //indica que recurso está ocupado
+                processadoresDisponiveis--;
+                //cria evento para iniciar o atendimento imediatamente
+                EventoFuturo novoEvt = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.ATENDIMENTO,
+                        this,
+                        cliente);
+                simulacao.addEventoFuturo(novoEvt);
+            } else {
+                filaTarefas.add(cliente);
+            }
+        }
+    }
+
+    @Override
+    public void atendimento(Simulacao simulacao, Tarefa cliente) {
+        cliente.finalizarEsperaProcessamento(simulacao.getTime(this));
+        cliente.iniciarAtendimentoProcessamento(simulacao.getTime(this));
+        tarefaEmExecucao.add(cliente);
+        Double next = simulacao.getTime(this) + tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
+        if (!falhas.isEmpty() && next > falhas.get(0)) {
+            Double tFalha = falhas.remove(0);
+            if (tFalha < simulacao.getTime(this)) {
+                tFalha = simulacao.getTime(this);
+            }
+            Mensagem msg = new Mensagem(this, Mensagens.FALHAR, cliente);
+            EventoFuturo evt = new EventoFuturo(
+                    tFalha,
+                    EventoFuturo.MENSAGEM,
+                    this,
+                    msg);
+            simulacao.addEventoFuturo(evt);
+        } else {
+            falha = false;
+            //Gera evento para atender proximo cliente da lista
+            EventoFuturo evtFut = new EventoFuturo(
+                    next,
+                    EventoFuturo.SAÍDA,
+                    this, cliente);
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+        }
+    }
+
+    @Override
+    public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        //Incrementa o número de Mbits transmitido por este link
+        this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
+        //Incrementa o tempo de processamento
+        double tempoProc = this.tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
+        this.getMetrica().incSegundosDeProcessamento(tempoProc);
+        //Incrementa o tempo de transmissão no pacote
+        cliente.finalizarAtendimentoProcessamento(simulacao.getTime(this));
+        tarefaEmExecucao.remove(cliente);
+        //eficiencia calculada apenas nas classes CS_Maquina
+        cliente.calcEficiencia(this.getPoderComputacional());
+        //Devolve tarefa para o mestre
+        if (vmmResponsavel.equals(cliente.getOrigem())) {
+            List<CentroServico> caminho =  caminhoVMM;
+            cliente.setCaminho(caminho);
+            //Gera evento para chegada da tarefa no proximo servidor
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(this),
+                    EventoFuturo.CHEGADA,
+                    cliente.getCaminho().remove(0),
+                    cliente);
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+        } 
+        if (filaTarefas.isEmpty()) {
+            //Indica que está livre
+            this.processadoresDisponiveis++;
+        } else {
+            //Gera evento para atender proximo cliente da lista
+            Tarefa proxCliente = filaTarefas.remove(0);
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(this),
+                    EventoFuturo.ATENDIMENTO,
+                    this, proxCliente);
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+        }
+    }
+
+    @Override
+    public void requisicao(Simulacao simulacao, Mensagem mensagem, int tipo) {
+        if (mensagem != null) {
+            if (mensagem.getTipo() == Mensagens.ATUALIZAR) {
+                atenderAtualizacao(simulacao, mensagem);
+            } else if (mensagem.getTarefa() != null && mensagem.getTarefa().getLocalProcessamento().equals(this)) {
+                switch (mensagem.getTipo()) {
+                    case Mensagens.PARAR:
+                        atenderParada(simulacao, mensagem);
+                        break;
+                    case Mensagens.CANCELAR:
+                        atenderCancelamento(simulacao, mensagem);
+                        break;
+                    case Mensagens.DEVOLVER:
+                        atenderDevolucao(simulacao, mensagem);
+                        break;
+                    case Mensagens.DEVOLVER_COM_PREEMPCAO:
+                        atenderDevolucaoPreemptiva(simulacao, mensagem);
+                        break;
+                    case Mensagens.FALHAR:
+                        atenderFalha(simulacao, mensagem);
+                        break;
+                }
+            }
+        }
+    }
+
     
     
     
@@ -137,25 +263,6 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void atendimento(Simulacao simulacao, Tarefa cliente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void requisicao(Simulacao simulacao, Mensagem cliente, int tipo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     @Override
     public Object getConexoesSaida() {
