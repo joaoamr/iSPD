@@ -87,8 +87,8 @@ public class RoundRobin extends Alocacao {
                         maq.setProcessadoresDisponiveis(maqProc - procVM);
                         auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
                         auxVM.setCaminho(escalonarRota(auxMaq));
-                        auxVM.setStatus(CS_VirtualMac.ALOCADA);
                         VMM.enviarVM(auxVM);
+                        
                         break;
                     } else {
                         num_escravos--;
