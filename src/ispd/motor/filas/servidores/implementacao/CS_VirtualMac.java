@@ -32,7 +32,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private double discoDisponivel;
     private String OS;
     private CS_MaquinaCloud maquinaHospedeira;
-    private List<List> caminhoVMM;
+    private List caminhoVMM;
     private int status;
     
     
@@ -109,9 +109,8 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         return caminhoVMM;
     }
 
-    public void setCaminhoVMM() {
-        this.caminhoVMM = this.maquinaHospedeira.getCaminhoMestre();
-        
+    public void setCaminhoVMM(List<CentroServico> caminhoMestre) {
+        this.caminhoVMM = caminhoMestre;        
     }
 
      public void addVMM(CS_VMM vmmResponsavel) {

@@ -43,6 +43,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
     private List<List> caminhoEscravo;
+    private List<List> caminhoVMs;
     private Simulacao simulacao;
 
     public CS_VMM(String id, String proprietario, double PoderComputacional, double memoria, double disco, double Ocupacao, String Escalonador, String Alocador) {
@@ -60,6 +61,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.tipoEscalonamento = ENQUANTO_HOUVER_TAREFAS;
         this.tipoAlocacao = ENQUANTO_HOUVER_VMS;
+       
     }
 
     //Métodos do centro de serviços
@@ -313,7 +315,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
      */
     @Override
     public void determinarCaminhos() throws LinkageError {
-        List<CS_Processamento> escravos = escalonador.getEscravos();
+        List<CS_Processamento> escravos = alocadorVM.getMaquinasFisicas();
         //Instancia objetos
         caminhoEscravo = new ArrayList<List>(escravos.size());
         //Busca pelo melhor caminho
@@ -328,6 +330,8 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         }
         escalonador.setCaminhoEscravo(caminhoEscravo);
     }
+    
+    
 
     @Override
     public int getTipoEscalonamento() {
@@ -513,6 +517,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
 
     @Override
     public void enviarVM(CS_VirtualMac vm) {
+        determinarCaminhoVM(vm);
         TarefaVM tarefa = new TarefaVM(vm.getVmmResponsavel(), vm, vm.getDiscoDisponivel(), 0.0);
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
@@ -561,4 +566,16 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     public Simulacao getSimulacaoAlloc() {
         return this.simulacao;
     }
+
+    public void instanciarCaminhosVMs(){
+        caminhoVMs = new ArrayList<List>(alocadorVM.getMaquinasVirtuais().size());
+    }
+    
+    public void determinarCaminhoVM(CS_VirtualMac vm){
+        int indVM = alocadorVM.getMaquinasVirtuais().indexOf(vm);
+        CS_MaquinaCloud aux = vm.getMaquinaHospedeira();
+        int indMaq = alocadorVM.getMaquinasFisicas().indexOf(aux);
+        caminhoVMs.add(indVM, caminhoEscravo.get(indMaq));
+    }
+    
 }

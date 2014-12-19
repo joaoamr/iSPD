@@ -9,6 +9,7 @@ import ispd.motor.Mensagens;
 import ispd.motor.Simulacao;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
+import ispd.motor.filas.TarefaVM;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
@@ -41,20 +42,17 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     private double custoDisco;
     //lista de máquinas virtuais
     private List<CS_VirtualMac> VMs;
-    
-    
-    
+
     /**
-     * 
+     *
      * @param id
      * @param proprietario
      * @param PoderComputacional
      * @param numeroProcessadores
-     * @param Ocupacao 
-     * @param memoria 
-     * @param disco 
+     * @param Ocupacao
+     * @param memoria
+     * @param disco
      */
-
     public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, double memoria, double disco, double custoProc, double custoMem, double custoDisco) {
         super(id, proprietario, PoderComputacional, numeroProcessadores, Ocupacao, 0);
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
@@ -69,7 +67,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoProc = custoProc;
         this.custoMemoria = custoMem;
         this.custoDisco = custoDisco;
-        
+
     }
 
     public CS_MaquinaCloud(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double memoria, double disco, double custoProc, double custoMem, double custoDisco, double Ocupacao, int numeroMaquina) {
@@ -90,8 +88,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public List<List> getCaminhoMestre() {
         return caminhoMestre;
     }
-    
-        
+
     public double getMemoriaDisponivel() {
         return memoriaDisponivel;
     }
@@ -139,8 +136,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void setCustoDisco(double custoDisco) {
         this.custoDisco = custoDisco;
     }
-    
-      
+
     @Override
     public void addConexoesEntrada(CS_Link conexao) {
         this.conexoesEntrada.add(conexao);
@@ -162,15 +158,15 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void addMestre(CS_Processamento mestre) {
         this.mestres.add(mestre);
     }
-    
-    public void addVM(CS_VirtualMac vm){
+
+    public void addVM(CS_VirtualMac vm) {
         this.VMs.add(vm);
     }
-    
-    public void removeVM(CS_VirtualMac vm){
+
+    public void removeVM(CS_VirtualMac vm) {
         this.VMs.remove(vm);
     }
-    
+
     @Override
     public List<CS_Comunicacao> getConexoesSaida() {
         return this.conexoesSaida;
@@ -178,51 +174,48 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        if (cliente.getEstado() != Tarefa.CANCELADO) {
-            cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
-            if (processadoresDisponiveis != 0) {
-                //indica que recurso está ocupado
-                processadoresDisponiveis--;
-                //cria evento para iniciar o atendimento imediatamente
-                EventoFuturo novoEvt = new EventoFuturo(
+        if (cliente instanceof TarefaVM) {
+            TarefaVM trf = (TarefaVM) cliente;
+            if (trf.getVM_enviada().getMaquinaHospedeira().equals(this)) {
+                EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.ATENDIMENTO,
                         this,
                         cliente);
-                simulacao.addEventoFuturo(novoEvt);
-            } else {
-                filaTarefas.add(cliente);
+                simulacao.addEventoFuturo(evtFut);
+            }
+        } else if (cliente instanceof Tarefa) {
+            CS_VirtualMac vm = (CS_VirtualMac) cliente.getLocalProcessamento();
+            boolean achou = false;
+            for(CS_VirtualMac aux : VMs){
+                if (aux.equals(vm)){
+                    EventoFuturo evtFut = new EventoFuturo(
+                            simulacao.getTime(this),
+                            EventoFuturo.CHEGADA,
+                            aux,
+                            cliente);
+                    simulacao.addEventoFuturo(evtFut);
+                    break;
+                }
             }
         }
+
     }
 
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
-        cliente.finalizarEsperaProcessamento(simulacao.getTime(this));
-        cliente.iniciarAtendimentoProcessamento(simulacao.getTime(this));
-        tarefaEmExecucao.add(cliente);
-        Double next = simulacao.getTime(this) + tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
-        if (!falhas.isEmpty() && next > falhas.get(0)) {
-            Double tFalha = falhas.remove(0);
-            if (tFalha < simulacao.getTime(this)) {
-                tFalha = simulacao.getTime(this);
-            }
-            Mensagem msg = new Mensagem(this, Mensagens.FALHAR, cliente);
-            EventoFuturo evt = new EventoFuturo(
-                    tFalha,
-                    EventoFuturo.MENSAGEM,
-                    this,
-                    msg);
-            simulacao.addEventoFuturo(evt);
-        } else {
-            falha = false;
-            //Gera evento para atender proximo cliente da lista
-            EventoFuturo evtFut = new EventoFuturo(
-                    next,
-                    EventoFuturo.SAÍDA,
-                    this, cliente);
-            //Event adicionado a lista de evntos futuros
-            simulacao.addEventoFuturo(evtFut);
+        if(cliente instanceof TarefaVM){
+            TarefaVM trf = (TarefaVM) cliente;
+            CS_VirtualMac vm = trf.getVM_enviada();
+            //incluir a VM na lista de VMs
+            vm.setStatus(CS_VirtualMac.ALOCADA);
+            addVM(vm);
+            //setar o caminho da vm para o mestre
+            CS_VMM vmm = vm.getVmmResponsavel();
+            int index = this.caminhoMestre.indexOf(vmm);
+            vm.setCaminhoVMM(caminhoMestre.get(index));
+          
+            
         }
     }
 
