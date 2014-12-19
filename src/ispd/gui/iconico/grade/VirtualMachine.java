@@ -57,7 +57,7 @@ public class VirtualMachine {
         this.VMM = VMM;
     }
 
-    public double getPoderComputacional() {
+    public int getPoderComputacional() {
         return numProcessadores;
     }
 

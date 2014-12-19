@@ -485,7 +485,7 @@ public class DesenhoGrade extends AreaDesenho {
                 }
                 else if(tipoModelo == EscolherClasse.IAAS){
                     xml.addMachineIaaS(I.getX(), I.getY(), I.getId().getIdLocal(),I.getId().getIdGlobal(), I.getId().getNome(),
-                            I.getPoderComputacional(), I.getTaxaOcupacao(), I.getAlgoritmo(), I.getProprietario(), I.getNucleosProcessador(), I.getMemoriaRAM(),
+                            I.getPoderComputacional(), I.getTaxaOcupacao(),I.getVMMallocpolicy(), I.getAlgoritmo(), I.getProprietario(), I.getNucleosProcessador(), I.getMemoriaRAM(),
                             I.getDiscoRigido(), I.getCostperprocessing(), I.getCostpermemory(), I.getCostperdisk(), I.isMestre(), escravos);
                 }
             } else if (vertice instanceof Cluster) {
@@ -529,7 +529,7 @@ public class DesenhoGrade extends AreaDesenho {
         if(maquinasVirtuais != null){
             for(VirtualMachine vm : maquinasVirtuais){
                 VirtualMachine I = vm;
-                xml.addVirtualMachines(I.getNome(),I.getProprietario(),I.getVMM(),I.getPoderComputacional(),
+                xml.addVirtualMachines(I.getNome(),I.getProprietario(),I.getVMM(), I.getPoderComputacional(),
                         I.getMemoriaAlocada(),I.getDiscoAlocado(),I.getOS());
             }
         }
