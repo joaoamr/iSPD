@@ -11,7 +11,7 @@ and open the template in the editor.
 -->
 
 <!-- TODO define your own vocabulary/syntax. Example follows:  -->
-<!ELEMENT system (owner*,(machine|link|cluster|internet|VirtualMac)*,load?,file_system?)>
+<!ELEMENT system (owner*,(machine|link|cluster|internet|virtualMac)*,load?,file_system?)>
 <!ATTLIST system version CDATA #REQUIRED>
 
 <!ELEMENT owner EMPTY>
@@ -83,13 +83,13 @@ and open the template in the editor.
 <!ATTLIST link latency CDATA "0.0">
 
 <!ELEMENT virtualMac EMPTY>
-<!ATTLIST VirtualMac id ID #REQUIRED>
-<!ATTLIST VirtualMac owner CDATA "0.0">
-<!ATTLIST VirtualMac vmm CDATA "0.0">
-<!ATTLIST VirtualMac power CDATA "0.0">
-<!ATTLIST VirtualMac mem_alloc CDATA "0.0">
-<!ATTLIST VirtualMac disk_alloc CDATA "0.0">
-<!ATTLIST VirtualMac op_system CDATA "0.0" >
+<!ATTLIST virtualMac id ID #REQUIRED>
+<!ATTLIST virtualMac owner CDATA "0.0">
+<!ATTLIST virtualMac vmm CDATA "0.0">
+<!ATTLIST virtualMac power CDATA "0.0">
+<!ATTLIST virtualMac mem_alloc CDATA "0.0">
+<!ATTLIST virtualMac disk_alloc CDATA "0.0">
+<!ATTLIST virtualMac op_system CDATA "0.0" >
 
 <!ELEMENT load (trace|random|node+|dag+)>
 
