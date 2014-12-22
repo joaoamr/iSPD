@@ -20,7 +20,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
     /**
      * Creates new form ConfigurarVMs
      */
-    public ConfigurarVMs(java.awt.Frame parent, boolean modal, Object[] users, Object[] vmms, HashSet<VirtualMachine>vmList) {
+    public ConfigurarVMs(java.awt.Frame parent, boolean modal, Object[] users, Object[] vmms, HashSet<VirtualMachine> vmList) {
         super(parent, modal);
         
         this.usuarios = new Vector<String>();
