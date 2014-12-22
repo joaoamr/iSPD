@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class CarregarCloud {
     private static final String DIRETORIO = ".";
-    private static final String CAMINHO_CLASSE = "ispd.externo.cloudSchedulers";
+    private static final String CAMINHO_CLASSE = "ispd.externo.cloudSchedulers.";
     private static URLClassLoader loader = null;
 
     /**
