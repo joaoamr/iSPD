@@ -87,7 +87,6 @@ public class Imediate extends Alocacao {
                         maq.setProcessadoresDisponiveis(maqProc - procVM);
                         auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
                         auxVM.setCaminho(escalonarRota(auxMaq));
-                        auxVM.setStatus(CS_VirtualMac.ALOCADA);
                         VMM.enviarVM(auxVM);
                         maqIndex = 0;
                         fit = true;
