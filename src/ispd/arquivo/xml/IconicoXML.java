@@ -97,7 +97,7 @@ public class IconicoXML {
      * @return indica se arquivo foi salvo corretamente
      */
     public static boolean escrever(Document documento, File arquivo) {
-            return ManipuladorXML.escrever(documento, arquivo, "iSPD.dtd");
+        return ManipuladorXML.escrever(documento, arquivo, "iSPD.dtd");
     }
 
     /**
@@ -396,11 +396,14 @@ public class IconicoXML {
             int global = Integer.parseInt(id.getAttribute("global"));
             if (maquina.getElementsByTagName("master").getLength() > 0) {
                 Element master = (Element) maquina.getElementsByTagName("master").item(0);
-                Element carac = (Element) maquina.getElementsByTagName("characteristic");
-                Element proc = (Element) carac.getElementsByTagName("process");
-                Element memoria = (Element) carac.getElementsByTagName("memory");
-                Element disco = (Element) carac.getElementsByTagName("hard_disc");
-                Element custo = (Element) carac.getElementsByTagName("cost");
+                Element carac = (Element) maquina.getElementsByTagName("characteristic").item(0);
+                Element proc = (Element) carac.getElementsByTagName("process").item(0);
+                Element memoria = (Element) carac.getElementsByTagName("memory").item(0);
+                Element disco = (Element) carac.getElementsByTagName("hard_disk").item(0);
+                Element custo = (Element) carac.getElementsByTagName("cost").item(0);
+                
+          
+                
                 CS_VMM mestre = new CS_VMM(
                         maquina.getAttribute("id"),
                         maquina.getAttribute("owner"),
@@ -416,11 +419,14 @@ public class IconicoXML {
                 usuarios.put(mestre.getProprietario(), usuarios.get(mestre.getProprietario()) + mestre.getPoderComputacional());
             } else {
                 //acessa as características do máquina
-                Element caracteristica = (Element) maquina.getElementsByTagName("characteristic");
-                Element custo = (Element) caracteristica.getElementsByTagName("cost");
-                Element processamento = (Element) caracteristica.getElementsByTagName("process");
-                Element memoria = (Element) caracteristica.getElementsByTagName("memory");
-                Element disco = (Element) caracteristica.getElementsByTagName("hard_disc");
+                Element caracteristica = (Element) maquina.getElementsByTagName("characteristic").item(0);
+                Element custo = (Element) caracteristica.getElementsByTagName("cost").item(0);
+                Element processamento = (Element) caracteristica.getElementsByTagName("process").item(0);
+                Element memoria = (Element) caracteristica.getElementsByTagName("memory").item(0);
+                Element disco = (Element) caracteristica.getElementsByTagName("hard_disk").item(0);
+
+                
+
                 CS_MaquinaCloud maq = new CS_MaquinaCloud(
                         maquina.getAttribute("id"),
                         maquina.getAttribute("owner"),
@@ -442,11 +448,12 @@ public class IconicoXML {
         for (int i = 0; i < docclusters.getLength(); i++) {
             Element cluster = (Element) docclusters.item(i);
             Element id = (Element) cluster.getElementsByTagName("icon_id").item(0);
-            Element carac = (Element) cluster.getElementsByTagName("characteristic");
-            Element proc = (Element) carac.getElementsByTagName("process");
-            Element mem = (Element) carac.getElementsByTagName("memory");
-            Element disc = (Element) carac.getElementsByTagName("hard_disc");
-            
+            Element carac = (Element) cluster.getElementsByTagName("characteristic").item(0);
+            Element proc = (Element) carac.getElementsByTagName("process").item(0);
+
+            Element mem = (Element) carac.getElementsByTagName("memory").item(0);
+            Element disc = (Element) carac.getElementsByTagName("hard_disk").item(0);
+
             int global = Integer.parseInt(id.getAttribute("global"));
             if (Boolean.parseBoolean(cluster.getAttribute("master"))) {
                 CS_VMM clust = new CS_VMM(
@@ -479,7 +486,7 @@ public class IconicoXML {
                     Element custo = (Element) caracteristica.getElementsByTagName("cost");
                     Element processamento = (Element) caracteristica.getElementsByTagName("process");
                     Element memoria = (Element) caracteristica.getElementsByTagName("memory");
-                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disc");
+                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disk");
                     CS_MaquinaCloud maq = new CS_MaquinaCloud(
                             cluster.getAttribute("id"),
                             cluster.getAttribute("owner"),
@@ -520,7 +527,7 @@ public class IconicoXML {
                     Element custo = (Element) caracteristica.getElementsByTagName("cost");
                     Element processamento = (Element) caracteristica.getElementsByTagName("process");
                     Element memoria = (Element) caracteristica.getElementsByTagName("memory");
-                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disc");
+                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disk");
                     CS_MaquinaCloud maq = new CS_MaquinaCloud(
                             cluster.getAttribute("id"),
                             cluster.getAttribute("owner"),
@@ -543,7 +550,7 @@ public class IconicoXML {
                 escravosCluster.put(Switch, maqTemp);
             }
         }
-       
+
         //Realiza leitura dos icones de internet
         for (int i = 0; i < docinternet.getLength(); i++) {
             Element inet = (Element) docinternet.item(i);
@@ -604,32 +611,32 @@ public class IconicoXML {
                 }
             }
         }
-        
-         //Realiza leitura dos ícones de máquina virtual
+
+        //Realiza leitura dos ícones de máquina virtual
         for (int i = 0; i < docVMs.getLength(); i++) {
             Element virtualMac = (Element) docVMs.item(i);
-            CS_VirtualMac VM = new CS_VirtualMac(virtualMac.getAttribute("id"), 
-                    virtualMac.getAttribute("owner"), 
-                    Integer.parseInt(virtualMac.getAttribute("power")), 
+            CS_VirtualMac VM = new CS_VirtualMac(virtualMac.getAttribute("id"),
+                    virtualMac.getAttribute("owner"),
+                    Integer.parseInt(virtualMac.getAttribute("power")),
                     Double.parseDouble(virtualMac.getAttribute("mem_alloc")),
                     Double.parseDouble(virtualMac.getAttribute("disk_alloc")),
-                    virtualMac.getAttribute("os_system"));
+                    virtualMac.getAttribute("op_system"));
             //adicionando VMM responsável pela VM
-            for(CS_Processamento aux :  VMMs){
-                if(virtualMac.getAttribute("vmm").equals(aux.getId())){
+            for (CS_Processamento aux : VMMs) {
+                if (virtualMac.getAttribute("vmm").equals(aux.getId())) {
                     //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado na tabela das vms
                     //To do: corrigir problema futuramente
                     VM.addVMM((CS_VMM) aux);
                     //adicionando VM para o VMM
                     CS_VMM vmm = (CS_VMM) aux;
                     vmm.addVM(VM);
-                        
+
                 }
-                
+
             }
             vms.add(VM);
         }
-        
+
         //verifica se há usuarios sem nenhum recurso
         ArrayList<String> proprietarios = new ArrayList<String>();
         ArrayList<Double> poderComp = new ArrayList<Double>();
@@ -1119,7 +1126,7 @@ public class IconicoXML {
             //preenche escravos
             Element master = descricao.createElement("master");
             master.setAttribute("scheduler", algoritmo);
-            master.setAttribute("vm_alloc",alloc);
+            master.setAttribute("vm_alloc", alloc);
             for (Integer escravo : escravos) {
                 Element slave = descricao.createElement("slave");
                 slave.setAttribute("id", escravo.toString());
@@ -1171,7 +1178,7 @@ public class IconicoXML {
         aux.setAttribute("id", id);
         aux.setAttribute("owner", user);
         aux.setAttribute("vmm", VMM);
-        aux.setAttribute("power", Integer.toString( poderComputacional));
+        aux.setAttribute("power", Integer.toString(poderComputacional));
         aux.setAttribute("mem_alloc", Double.toString(memAlocada));
         aux.setAttribute("disk_alloc", Double.toString(discoAlocado));
         aux.setAttribute("op_system", OS);
