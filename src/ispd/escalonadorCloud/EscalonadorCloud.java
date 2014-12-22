@@ -12,6 +12,7 @@ import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -88,7 +89,7 @@ public abstract class EscalonadorCloud {
     }
     
     public List<CS_Processamento> getVMsAdequadas(String usuario, List<CS_Processamento> Escravos){
-        ArrayList<CS_Processamento> escravosUsuario = new ArrayList<CS_Processamento>();
+        LinkedList<CS_Processamento> escravosUsuario = new LinkedList<CS_Processamento>();
         for(CS_Processamento slave : Escravos){
             CS_VirtualMac slaveVM = (CS_VirtualMac) slave;
             if (slave.getProprietario().equals(usuario) || slaveVM.getStatus()==CS_VirtualMac.ALOCADA) {
