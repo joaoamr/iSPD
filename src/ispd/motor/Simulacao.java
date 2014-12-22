@@ -80,7 +80,7 @@ public abstract class Simulacao {
     
     
     public void iniciarEscalonadoresAlocadoresCloud() {
-        for (CS_Processamento mst : redeDeFilas.getMestres()) {
+        for (CS_Processamento mst : redeDeFilasCloud.getMestres()) {
             CS_VMM mestre = (CS_VMM) mst;
             //utiliza a classe de escalonamento diretamente 
             //pode ser modificado para gerar um evento 

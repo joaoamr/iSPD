@@ -142,7 +142,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
     }
 
     private boolean atualizarEscalonadores() {
-        for (CS_Processamento mst : getRedeDeFilas().getMestres()) {
+        for (CS_Processamento mst : getRedeDeFilasCloud().getMestres()) {
             CS_VMM mestre = (CS_VMM) mst;
             if (mestre.getEscalonador().getTempoAtualizar() != null) {
                 return true;
