@@ -62,6 +62,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
             aux.setSimulacao(this);
             temp.setSimulacaoAlloc(this);
             //Encontra menor caminho entre o mestre e seus escravos
+            System.out.println("Mestre" + mst.getId() + "escontrando seus escravos");
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
         
@@ -74,6 +75,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
             for (CS_MaquinaCloud maq : redeDeFilas.getMaquinasCloud()) {
                 //Encontra menor caminho entre o escravo e seu mestre
                 maq.determinarCaminhos();//escravo encontra caminhos para seu mestre
+                System.out.println("Maquina" + maq.getId() + "encontrando seus mestres");
             }
         }
         //fim roteamento
