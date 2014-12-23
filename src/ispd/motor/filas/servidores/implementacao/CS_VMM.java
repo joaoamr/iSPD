@@ -38,6 +38,8 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     private boolean alocDisponivel;
     private int tipoEscalonamento;
     private int tipoAlocacao;
+    private List<CS_VirtualMac> maquinasVirtuais;
+    
 
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
@@ -81,8 +83,8 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
             } else {//se não for ele a origem ele precisa encaminhá-la
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
-                        EventoFuturo.CHEGADA,
-                        cliente.getCaminho().remove(0),
+                        EventoFuturo.SAÍDA,
+                        this,
                         cliente);
                 simulacao.addEventoFuturo(evtFut);
             }
@@ -110,7 +112,9 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
                         executarEscalonamento();
                     }
                 }
-            } else if (escDisponivel) {
+            } 
+            //se a tarefa ainda tiver que executar
+            else if (escDisponivel) {
                 this.escDisponivel = false;
                 //escalonador decide qual ação tomar na chegada de uma tarefa
                 escalonador.adicionarTarefa(cliente);
@@ -197,6 +201,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     @Override
     public void enviarTarefa(Tarefa tarefa) {
         //Gera evento para atender proximo cliente da lista
+        System.out.println("Tarefa:" + tarefa.getIdentificador() + "escalonada para vm:" + tarefa.getLocalProcessamento().getId());
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
                 EventoFuturo.SAÍDA,
@@ -315,7 +320,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
      */
     @Override
     public void determinarCaminhos() throws LinkageError {
-        List<CS_Processamento> escravos = alocadorVM.getMaquinasFisicas();
+        List<CS_Processamento> escravos = alocadorVM.getMaquinasFisicas(); //lista de maquinas fisicas
         //Instancia objetos
         caminhoEscravo = new ArrayList<List>(escravos.size());
         //Busca pelo melhor caminho
@@ -328,7 +333,9 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
                 throw new LinkageError();
             }
         }
+        escalonador.setMaqFisicas(escravos);
         escalonador.setCaminhoEscravo(caminhoEscravo);
+        alocadorVM.setCaminhoMaquinas(caminhoEscravo);
     }
     
     
@@ -484,7 +491,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         //atualiza metricas dos usuarios globais
         //simulacao.getRedeDeFilas().getMetricasUsuarios().addMetricasUsuarios(escalonador.getMetricaUsuarios());
         //enviar resultados
-        List<CentroServico> caminho = new ArrayList<CentroServico>(CS_Maquina.getMenorCaminhoIndireto(this, (CS_Processamento) mensagem.getOrigem()));
+        List<CentroServico> caminho = new ArrayList<CentroServico>(CS_MaquinaCloud.getMenorCaminhoIndireto(this, (CS_Processamento) mensagem.getOrigem()));
         Mensagem novaMensagem = new Mensagem(this, mensagem.getTamComunicacao(), Mensagens.RESULTADO_ATUALIZAR);
         //Obtem informações dinâmicas
         //novaMensagem.setProcessadorEscravo(new ArrayList<Tarefa>(tarefaEmExecucao));
@@ -517,8 +524,9 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
 
     @Override
     public void enviarVM(CS_VirtualMac vm) {
-        determinarCaminhoVM(vm);
+        System.out.println("alocando VM " + vm.getId() + "para maquina" + vm.getMaquinaHospedeira().getId());
         TarefaVM tarefa = new TarefaVM(vm.getVmmResponsavel(), vm, vm.getDiscoDisponivel(), 0.0);
+        tarefa.setCaminho(vm.getCaminho());
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
                 EventoFuturo.SAÍDA,

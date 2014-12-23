@@ -183,28 +183,39 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
                         this,
                         cliente);
                 simulacao.addEventoFuturo(evtFut);
+            } else {
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.SAÍDA,
+                        this,
+                        cliente);
+                simulacao.addEventoFuturo(evtFut);
             }
         } else if (cliente instanceof Tarefa) {
             CS_VirtualMac vm = (CS_VirtualMac) cliente.getLocalProcessamento();
-            boolean achou = false;
-            for(CS_VirtualMac aux : VMs){
-                if (aux.equals(vm)){
-                    EventoFuturo evtFut = new EventoFuturo(
-                            simulacao.getTime(this),
-                            EventoFuturo.CHEGADA,
-                            aux,
-                            cliente);
-                    simulacao.addEventoFuturo(evtFut);
-                    break;
-                }
+            if (vm.getMaquinaHospedeira().equals(this)) {
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.CHEGADA,
+                        vm,
+                        cliente);
+                simulacao.addEventoFuturo(evtFut);
+            } else {
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.SAÍDA,
+                        this,
+                        cliente);
+                simulacao.addEventoFuturo(evtFut);
             }
+
         }
 
     }
 
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
-        if(cliente instanceof TarefaVM){
+        if (cliente instanceof TarefaVM) {
             TarefaVM trf = (TarefaVM) cliente;
             CS_VirtualMac vm = trf.getVM_enviada();
             //incluir a VM na lista de VMs
@@ -212,56 +223,25 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             addVM(vm);
             //setar o caminho da vm para o mestre
             CS_VMM vmm = vm.getVmmResponsavel();
-            int index = this.caminhoMestre.indexOf(vmm);
+
+            //trecho de teste
+            System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
+            //fim teste
+            int index = mestres.indexOf(vmm);
+
+            System.out.println("indice do mestre:" + index);
             vm.setCaminhoVMM(caminhoMestre.get(index));
-          
-            
+
         }
     }
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        /* //Incrementa o número de Mbits transmitido por este link
-        this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
-        //Incrementa o tempo de processamento
-        double tempoProc = this.tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
-        this.getMetrica().incSegundosDeProcessamento(tempoProc);
-        //Incrementa o tempo de transmissão no pacote
-        cliente.finalizarAtendimentoProcessamento(simulacao.getTime(this));
-        tarefaEmExecucao.remove(cliente);
-        //eficiencia calculada apenas nas classes CS_Maquina
-        cliente.calcEficiencia(this.getPoderComputacional());
-        //Devolve tarefa para o mestre*/
-        if (mestres.contains(cliente.getOrigem())) {
-            int index = mestres.indexOf(cliente.getOrigem());
-            List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
-            cliente.setCaminho(caminho);
-            //Gera evento para chegada da tarefa no proximo servidor
-            EventoFuturo evtFut = new EventoFuturo(
-                    simulacao.getTime(this),
-                    EventoFuturo.CHEGADA,
-                    cliente.getCaminho().remove(0),
-                    cliente);
-            //Event adicionado a lista de evntos futuros
-            simulacao.addEventoFuturo(evtFut);
-        } else {
-            //buscar menor caminho!!!
-            CS_Processamento novoMestre = (CS_Processamento) cliente.getOrigem();
-            List<CentroServico> caminho = new ArrayList<CentroServico>(
-                    CS_MaquinaCloud.getMenorCaminhoIndireto(this, novoMestre));
-            this.addMestre(novoMestre);
-            this.caminhoMestre.add(caminho);
-            cliente.setCaminho(new ArrayList<CentroServico>(caminho));
-            //Gera evento para chegada da tarefa no proximo servidor
-            EventoFuturo evtFut = new EventoFuturo(
-                    simulacao.getTime(this),
-                    EventoFuturo.CHEGADA,
-                    cliente.getCaminho().remove(0),
-                    cliente);
-            //Event adicionado a lista de evntos futuros
-            simulacao.addEventoFuturo(evtFut);
-        }
-        
+        EventoFuturo evtFut = new EventoFuturo(
+                simulacao.getTime(this),
+                EventoFuturo.CHEGADA, 
+                cliente.getCaminho().remove(0),
+                cliente);       
     }
 
     @Override
@@ -295,9 +275,11 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void determinarCaminhos() throws LinkageError {
         //Instancia objetos
         caminhoMestre = new ArrayList<List>(mestres.size());
+        System.out.println("maquina" + getId() + " determinando caminhos para" + mestres.size() + "mestres");
         //Busca pelos caminhos
+
         for (int i = 0; i < mestres.size(); i++) {
-            caminhoMestre.add(i, CS_MaquinaCloud.getMenorCaminho(this, mestres.get(i)));
+            caminhoMestre.add(i, CS_MaquinaCloud.getMenorCaminhoCloud(this, mestres.get(i)));
         }
         //verifica se todos os mestres são alcansaveis
         for (int i = 0; i < mestres.size(); i++) {

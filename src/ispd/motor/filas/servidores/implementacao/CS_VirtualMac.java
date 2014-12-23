@@ -34,7 +34,8 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private double discoDisponivel;
     private String OS;
     private CS_MaquinaCloud maquinaHospedeira;
-    private List caminhoVMM;
+    private List<CentroServico> caminho;
+    private List<CentroServico> caminhoVMM;
     private int status;
     private List<Tarefa> filaTarefas;
     private List<Tarefa> tarefaEmExecucao;
@@ -69,6 +70,8 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.maquinaHospedeira = null;
         this.caminhoVMM = null;
         this.status = LIVRE;
+        this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        this.filaTarefas = new ArrayList<Tarefa>();
     }
 
     public CS_VMM getVmmResponsavel() {
@@ -115,7 +118,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.maquinaHospedeira = maquinaHospedeira;
     }
 
-    public List<List> getCaminhoVMM() {
+    public List<CentroServico> getCaminhoVMM() {
         return caminhoVMM;
     }
 
@@ -159,6 +162,10 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
         cliente.finalizarEsperaProcessamento(simulacao.getTime(this));
         cliente.iniciarAtendimentoProcessamento(simulacao.getTime(this));
+        if(cliente == null)
+            System.out.println("cliente nao existe");
+        else
+            System.out.println("cliente " + cliente);
         tarefaEmExecucao.add(cliente);
         Double next = simulacao.getTime(this) + tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
         if (!falhas.isEmpty() && next > falhas.get(0)) {
@@ -199,7 +206,8 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         cliente.calcEficiencia(this.getPoderComputacional());
         //Devolve tarefa para o mestre
         if (vmmResponsavel.equals(cliente.getOrigem())) {
-            List<CentroServico> caminho =  caminhoVMM;
+            ArrayList<CentroServico> caminho =  new ArrayList<CentroServico>(caminhoVMM);
+            System.out.println("Saida -"+ this.getId() +"- caminho size:" + caminho.size());
             cliente.setCaminho(caminho);
             //Gera evento para chegada da tarefa no proximo servidor
             EventoFuturo evtFut = new EventoFuturo(
@@ -271,18 +279,13 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     @Override
     public Integer getCargaTarefas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if (falha) {
+            return -100;
+        } else {
+            return (filaTarefas.size() + tarefaEmExecucao.size());
+        }
     }
-
-    @Override
-    public double getTamComunicacao() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getTamProcessamento() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 
     @Override
     public double getTimeCriacao() {
@@ -296,37 +299,160 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     @Override
     public List<CentroServico> getCaminho() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.caminho;
     }
 
     @Override
     public void setCaminho(List<CentroServico> caminho) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.caminho = caminho;
     }
 
     @Override
     public void atenderCancelamento(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            //remover evento de saida do cliente do servidor
+            simulacao.removeEventoFuturo(EventoFuturo.SAÍDA, this, mensagem.getTarefa());
+            tarefaEmExecucao.remove(mensagem.getTarefa());
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.addEventoFuturo(evtFut);
+            }
+        }
+        double inicioAtendimento = mensagem.getTarefa().cancelar(simulacao.getTime(this));
+        double tempoProc = simulacao.getTime(this) - inicioAtendimento;
+        double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+        //Incrementa o número de Mflops processados por este recurso
+        this.getMetrica().incMflopsProcessados(mflopsProcessados);
+        //Incrementa o tempo de processamento
+        this.getMetrica().incSegundosDeProcessamento(tempoProc);
+        //Incrementa porcentagem da tarefa processada
+        mensagem.getTarefa().setMflopsProcessado(mflopsProcessados);
     }
 
     @Override
     public void atenderParada(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+           if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            //remover evento de saida do cliente do servidor
+            boolean remover = simulacao.removeEventoFuturo(
+                    EventoFuturo.SAÍDA,
+                    this,
+                    mensagem.getTarefa());
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.addEventoFuturo(evtFut);
+            }
+            double inicioAtendimento = mensagem.getTarefa().parar(simulacao.getTime(this));
+            double tempoProc = simulacao.getTime(this) - inicioAtendimento;
+            double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+            //Incrementa o número de Mflops processados por este recurso
+            this.getMetrica().incMflopsProcessados(mflopsProcessados);
+            //Incrementa o tempo de processamento
+            this.getMetrica().incSegundosDeProcessamento(tempoProc);
+            //Incrementa procentagem da tarefa processada
+            mensagem.getTarefa().setMflopsProcessado(mflopsProcessados);
+            tarefaEmExecucao.remove(mensagem.getTarefa());
+            filaTarefas.add(mensagem.getTarefa());
+        }
     }
 
     @Override
     public void atenderDevolucao(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean remover = filaTarefas.remove(mensagem.getTarefa());
+        if (remover) {
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(this),
+                    EventoFuturo.CHEGADA,
+                    mensagem.getTarefa().getOrigem(),
+                    mensagem.getTarefa());
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+        }
     }
 
     @Override
     public void atenderDevolucaoPreemptiva(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean remover = false;
+        if (mensagem.getTarefa().getEstado() == Tarefa.PARADO) {
+            remover = filaTarefas.remove(mensagem.getTarefa());
+        } else if (mensagem.getTarefa().getEstado() == Tarefa.PROCESSANDO) {
+            remover = simulacao.removeEventoFuturo(
+                    EventoFuturo.SAÍDA,
+                    this,
+                    mensagem.getTarefa());
+            //gerar evento para atender proximo cliente
+            if (filaTarefas.isEmpty()) {
+                //Indica que está livre
+                this.processadoresDisponiveis++;
+            } else {
+                //Gera evento para atender proximo cliente da lista
+                Tarefa proxCliente = filaTarefas.remove(0);
+                EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.ATENDIMENTO,
+                        this, proxCliente);
+                //Event adicionado a lista de evntos futuros
+                simulacao.addEventoFuturo(evtFut);
+            }
+            double inicioAtendimento = mensagem.getTarefa().parar(simulacao.getTime(this));
+            double tempoProc = simulacao.getTime(this) - inicioAtendimento;
+            double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+            //Incrementa o número de Mflops processados por este recurso
+            this.getMetrica().incMflopsProcessados(mflopsProcessados);
+            //Incrementa o tempo de processamento
+            this.getMetrica().incSegundosDeProcessamento(tempoProc);
+            //Incrementa procentagem da tarefa processada
+            int numCP = (int) (mflopsProcessados / mensagem.getTarefa().getCheckPoint());
+            mensagem.getTarefa().setMflopsProcessado(numCP * mensagem.getTarefa().getCheckPoint());
+            tarefaEmExecucao.remove(mensagem.getTarefa());
+        }
+        if (remover) {
+            EventoFuturo evtFut = new EventoFuturo(
+                    simulacao.getTime(this),
+                    EventoFuturo.CHEGADA,
+                    mensagem.getTarefa().getOrigem(),
+                    mensagem.getTarefa());
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+        }
     }
 
     @Override
     public void atenderAtualizacao(Simulacao simulacao, Mensagem mensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //enviar resultados
+        
+        List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoVMM);
+        Mensagem novaMensagem = new Mensagem(this, mensagem.getTamComunicacao(), Mensagens.RESULTADO_ATUALIZAR);
+        //Obtem informações dinâmicas
+        novaMensagem.setProcessadorEscravo(new ArrayList<Tarefa>(tarefaEmExecucao));
+        novaMensagem.setFilaEscravo(new ArrayList<Tarefa>(filaTarefas));
+        novaMensagem.setCaminho(caminho);
+        EventoFuturo evtFut = new EventoFuturo(
+                simulacao.getTime(this),
+                EventoFuturo.MENSAGEM,
+                novaMensagem.getCaminho().remove(0),
+                novaMensagem);
+        //Event adicionado a lista de evntos futuros
+        simulacao.addEventoFuturo(evtFut);
     }
 
     @Override
@@ -336,6 +462,49 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     @Override
     public void atenderFalha(Simulacao simulacao, Mensagem mensagem) {
+       double tempoRec = recuperacao.remove(0);
+        for (Tarefa tar : tarefaEmExecucao) {
+            if (tar.getEstado() == Tarefa.PROCESSANDO) {
+                falha = true;
+                double inicioAtendimento = tar.parar(simulacao.getTime(this));
+                double tempoProc = simulacao.getTime(this) - inicioAtendimento;
+                double mflopsProcessados = this.getMflopsProcessados(tempoProc);
+                //Incrementa o número de Mflops processados por este recurso
+                this.getMetrica().incMflopsProcessados(mflopsProcessados);
+                //Incrementa o tempo de processamento
+                this.getMetrica().incSegundosDeProcessamento(tempoProc);
+                //Incrementa procentagem da tarefa processada
+                int numCP = (int) (mflopsProcessados / tar.getCheckPoint());
+                tar.setMflopsProcessado(numCP * tar.getCheckPoint());
+                if (erroRecuperavel) {
+                    //Reiniciar atendimento da tarefa
+                    tar.iniciarEsperaProcessamento(simulacao.getTime(this));
+                    //cria evento para iniciar o atendimento imediatamente
+                    EventoFuturo novoEvt = new EventoFuturo(
+                            simulacao.getTime(this) + tempoRec,
+                            EventoFuturo.ATENDIMENTO,
+                            this,
+                            tar);
+                    simulacao.addEventoFuturo(novoEvt);
+                } else {
+                    tar.setEstado(Tarefa.FALHA);
+                }
+            }
+        }
+        if (!erroRecuperavel) {
+            processadoresDisponiveis += tarefaEmExecucao.size();
+            filaTarefas.clear();
+        }
+        tarefaEmExecucao.clear();
+    }
+
+    @Override
+    public double getTamComunicacao() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getTamProcessamento() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

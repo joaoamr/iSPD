@@ -95,9 +95,9 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
         if (cliente.getEstado() != Tarefa.CANCELADO) {
-            cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
+           cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
             if (processadoresDisponiveis != 0) {
-                //indica que recurso está ocupado
+               // indica que recurso está ocupado
                 processadoresDisponiveis--;
                 //cria evento para iniciar o atendimento imediatamente
                 EventoFuturo novoEvt = new EventoFuturo(
