@@ -598,8 +598,9 @@ public class IconicoXML {
                     CentroServico maq = centroDeServicos.get(Integer.parseInt(slave.getAttribute("id")));
                     if (maq instanceof CS_Processamento) {
                         mestre.addEscravo((CS_Processamento) maq);
-                        if (maq instanceof CS_Maquina) {
-                            CS_Maquina maqTemp = (CS_Maquina) maq;
+                        if (maq instanceof CS_MaquinaCloud) {
+                            CS_MaquinaCloud maqTemp = (CS_MaquinaCloud) maq;
+                            System.out.println(maqTemp.getId() + "adicionou como mestre:" + mestre.getId());
                             maqTemp.addMestre(mestre);
                         }
                     } else if (maq instanceof CS_Switch) {
@@ -623,14 +624,17 @@ public class IconicoXML {
                     virtualMac.getAttribute("op_system"));
             //adicionando VMM responsável pela VM
             for (CS_Processamento aux : VMMs) {
+                System.out.println("id vmm:" + aux.getId());
+                System.out.println("id do vmm na vm:" + virtualMac.getAttribute("vmm") );
                 if (virtualMac.getAttribute("vmm").equals(aux.getId())) {
                     //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado na tabela das vms
                     //To do: corrigir problema futuramente
                     VM.addVMM((CS_VMM) aux);
                     //adicionando VM para o VMM
+                    
                     CS_VMM vmm = (CS_VMM) aux;
                     vmm.addVM(VM);
-
+                    
                 }
 
             }
