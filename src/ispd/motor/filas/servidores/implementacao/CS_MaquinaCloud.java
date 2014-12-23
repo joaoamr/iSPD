@@ -220,6 +220,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             CS_VirtualMac vm = trf.getVM_enviada();
             //incluir a VM na lista de VMs
             vm.setStatus(CS_VirtualMac.ALOCADA);
+            vm.setPoderProcessamentoPorNucleo(this.getPoderComputacional());
             addVM(vm);
             //setar o caminho da vm para o mestre
             CS_VMM vmm = vm.getVmmResponsavel();
