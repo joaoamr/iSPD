@@ -20,6 +20,7 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.metricas.Metricas;
+import ispd.motor.metricas.MetricasCloud;
 import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasProcessamento;
@@ -160,7 +161,7 @@ public class JResultados extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPaneGrid = new javax.swing.JTabbedPane();
         jPanelGlobal = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         jButtonSalvar = new javax.swing.JButton();
@@ -190,6 +191,7 @@ public class JResultados extends javax.swing.JDialog {
         jButtonProcessamentoMaquina = new javax.swing.JButton();
         jButtonProcessamentoTarefa = new javax.swing.JButton();
         jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulation Results");
@@ -250,7 +252,7 @@ public class JResultados extends javax.swing.JDialog {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        jTabbedPane1.addTab("Global", jPanelGlobal);
+        jTabbedPaneGrid.addTab("Global", jPanelGlobal);
 
         jTextAreaTarefa.setColumns(20);
         jTextAreaTarefa.setEditable(false);
@@ -258,7 +260,7 @@ public class JResultados extends javax.swing.JDialog {
         jTextAreaTarefa.setRows(5);
         jScrollPaneTarefa.setViewportView(jTextAreaTarefa);
 
-        jTabbedPane1.addTab("Tasks", jScrollPaneTarefa);
+        jTabbedPaneGrid.addTab("Tasks", jScrollPaneTarefa);
 
         jTextAreaUsuario.setColumns(20);
         jTextAreaUsuario.setEditable(false);
@@ -266,12 +268,12 @@ public class JResultados extends javax.swing.JDialog {
         jTextAreaUsuario.setRows(5);
         jScrollPaneUsuario.setViewportView(jTextAreaUsuario);
 
-        jTabbedPane1.addTab("User", jScrollPaneUsuario);
+        jTabbedPaneGrid.addTab("User", jScrollPaneUsuario);
 
         jTableRecurso.setModel(new javax.swing.table.DefaultTableModel(tabelaRecurso,colunas));
         jScrollPaneRecurso.setViewportView(jTableRecurso);
 
-        jTabbedPane1.addTab("Resources", jScrollPaneRecurso);
+        jTabbedPaneGrid.addTab("Resources", jScrollPaneRecurso);
 
         jToolBarProcessamento.setRollover(true);
 
@@ -312,7 +314,7 @@ public class JResultados extends javax.swing.JDialog {
                 .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Chart of the processing", jPanelProcessamento);
+        jTabbedPaneGrid.addTab("Chart of the processing", jPanelProcessamento);
 
         jToolBarComunicacao.setRollover(true);
 
@@ -353,7 +355,7 @@ public class JResultados extends javax.swing.JDialog {
                 .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Chart of the communication", jPanelComunicacao);
+        jTabbedPaneGrid.addTab("Chart of the communication", jPanelComunicacao);
 
         jToolBarProcessamentoTempo.setRollover(true);
 
@@ -405,17 +407,27 @@ public class JResultados extends javax.swing.JDialog {
                 .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Use of computing power through time", jPanelProcessamentoTempo);
+        jTabbedPaneGrid.addTab("Use of computing power through time", jPanelProcessamentoTempo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPaneGrid)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+            .addComponent(jTabbedPaneGrid, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         pack();
@@ -508,7 +520,8 @@ public class JResultados extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPaneRecurso;
     private javax.swing.JScrollPane jScrollPaneTarefa;
     private javax.swing.JScrollPane jScrollPaneUsuario;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPaneGrid;
     private javax.swing.JTable jTableRecurso;
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
@@ -930,7 +943,7 @@ public class JResultados extends javax.swing.JDialog {
             }
             jTextAreaUsuario.setText(texto);
         } else {
-            jTabbedPane1.remove(jScrollPaneUsuario);
+            jTabbedPaneGrid.remove(jScrollPaneUsuario);
         }
     }
 
