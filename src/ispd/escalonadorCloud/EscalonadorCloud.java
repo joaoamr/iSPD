@@ -22,6 +22,7 @@ import java.util.List;
 public abstract class EscalonadorCloud {
 
     protected List<CS_Processamento> escravos;
+    protected List<CS_Processamento> maqFisicas;
     protected List<List> filaEscravo;
     protected List<Tarefa> tarefas;
     protected MetricasUsuarios metricaUsuarios;
@@ -84,6 +85,16 @@ public abstract class EscalonadorCloud {
         this.mestre = mestre;
     }
 
+    public List<CS_Processamento> getMaqFisicas() {
+        return maqFisicas;
+    }
+
+    public void setMaqFisicas(List<CS_Processamento> maqFisicas) {
+        this.maqFisicas = maqFisicas;
+    }
+    
+    
+    
     public List<List> getCaminhoEscravo() {
         return caminhoEscravo;
     }
