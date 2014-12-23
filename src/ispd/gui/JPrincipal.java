@@ -657,7 +657,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
             });
             jMenuFerramentas.add(jMenuItemGerar);
 
-            jMenuItemGerenciarCloud.setText("Manage Scheduler Cloud");
+            jMenuItemGerenciarCloud.setText("Manage Cloud Schedulers");
             jMenuItemGerenciarCloud.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     jMenuItemGerenciarCloudActionPerformed(evt);
