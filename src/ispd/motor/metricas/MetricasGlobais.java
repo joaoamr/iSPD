@@ -2,13 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ispd.motor.metricas;
 
 import ispd.motor.filas.RedeDeFilas;
+import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,14 +18,15 @@ import java.util.List;
  * @author denison_usuario
  */
 public class MetricasGlobais implements Serializable {
+
     private double tempoSimulacao;
     private double satisfacaoMedia;
     private double ociosidadeComputacao;
     private double ociosidadeComunicacao;
     private double eficiencia;
     private int total;
-    
-    public MetricasGlobais(RedeDeFilas redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas){
+
+    public MetricasGlobais(RedeDeFilas redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas) {
         this.tempoSimulacao = tempoSimulacao;
         this.satisfacaoMedia = 100;
         this.ociosidadeComputacao = getOciosidadeComputacao(redeDeFilas);
@@ -32,8 +34,17 @@ public class MetricasGlobais implements Serializable {
         this.eficiencia = getEficiencia(tarefas);
         this.total = 0;
     }
-    
-    public MetricasGlobais(){
+
+    public MetricasGlobais(RedeDeFilasCloud redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas) {
+        this.tempoSimulacao = tempoSimulacao;
+        this.satisfacaoMedia = 100;
+        this.ociosidadeComputacao = getOciosidadeComputacaoCloud(redeDeFilas);
+        this.ociosidadeComunicacao = getOciosidadeComunicacao(redeDeFilas);
+        this.eficiencia = getEficiencia(tarefas);
+        this.total = 0;
+    }
+
+    public MetricasGlobais() {
         this.tempoSimulacao = 0;
         this.satisfacaoMedia = 0;
         this.ociosidadeComputacao = 0;
@@ -53,7 +64,7 @@ public class MetricasGlobais implements Serializable {
     public double getOciosidadeComunicacao() {
         return ociosidadeComunicacao;
     }
-    
+
     public double getSatisfacaoMedia() {
         return satisfacaoMedia;
     }
@@ -74,7 +85,23 @@ public class MetricasGlobais implements Serializable {
         tempoLivreMedio = tempoLivreMedio / redeDeFilas.getMaquinas().size();
         return (tempoLivreMedio * 100) / getTempoSimulacao();
     }
-    
+
+    private double getOciosidadeComputacaoCloud(RedeDeFilasCloud redeDeFilas) {
+        double tempoLivreMedio = 0.0;
+        for (CS_Processamento auxVM : redeDeFilas.getVMs()) {
+            CS_VirtualMac vm = (CS_VirtualMac) auxVM;
+            if (vm.getStatus() == CS_VirtualMac.ALOCADA) {
+                double aux = auxVM.getMetrica().getSegundosDeProcessamento();
+                aux = (this.getTempoSimulacao() - aux);
+                tempoLivreMedio += aux;//tempo livre
+                aux = auxVM.getOcupacao() * aux;
+                tempoLivreMedio -= aux;
+            }
+        }
+        tempoLivreMedio = tempoLivreMedio / redeDeFilas.getVMs().size();
+        return (tempoLivreMedio * 100) / getTempoSimulacao();
+    }
+
     private double getOciosidadeComunicacao(RedeDeFilas redeDeFilas) {
         double tempoLivreMedio = 0.0;
         for (CS_Comunicacao link : redeDeFilas.getLinks()) {
@@ -90,22 +117,22 @@ public class MetricasGlobais implements Serializable {
 
     private double getEficiencia(List<Tarefa> tarefas) {
         double somaEfic = 0;
-        for(Tarefa tar : tarefas){
+        for (Tarefa tar : tarefas) {
             somaEfic += tar.getMetricas().getEficiencia();
         }
         return somaEfic / tarefas.size();
         /*
-        double tempoUtil = 0.0;
-        double tempoMedio = 0.0;
-        for (CS_Processamento maquina : redeDeFilas.getMaquinas()) {
-            double aux = maquina.getMetrica().getSegundosDeProcessamento();
-            aux = (this.getTempoSimulacao() - aux);//tempo livre
-            aux = maquina.getOcupacao() * aux;//tempo processando sem ser tarefa
-            tempoUtil = aux + maquina.getMetrica().getSegundosDeProcessamento();
-            tempoMedio += tempoUtil / this.getTempoSimulacao();
-        }
-        tempoMedio = tempoMedio / redeDeFilas.getMaquinas().size();
-        return tempoMedio; 
+         double tempoUtil = 0.0;
+         double tempoMedio = 0.0;
+         for (CS_Processamento maquina : redeDeFilas.getMaquinas()) {
+         double aux = maquina.getMetrica().getSegundosDeProcessamento();
+         aux = (this.getTempoSimulacao() - aux);//tempo livre
+         aux = maquina.getOcupacao() * aux;//tempo processando sem ser tarefa
+         tempoUtil = aux + maquina.getMetrica().getSegundosDeProcessamento();
+         tempoMedio += tempoUtil / this.getTempoSimulacao();
+         }
+         tempoMedio = tempoMedio / redeDeFilas.getMaquinas().size();
+         return tempoMedio; 
          */
     }
 
