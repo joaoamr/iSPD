@@ -4,6 +4,7 @@
  */
 package ispd.motor.filas.servidores;
 
+import ispd.alocacaoVM.VMM;
 import ispd.motor.filas.servidores.implementacao.CS_Link;
 import ispd.motor.filas.servidores.implementacao.CS_Switch;
 import ispd.motor.filas.servidores.implementacao.CS_Internet;
@@ -322,6 +323,186 @@ public abstract class CS_Processamento extends CentroServico {
         }
         return null;
     }
+    
+    public static List<CentroServico> getMenorCaminhoCloud(CS_Processamento origem, CS_Processamento destino) {
+        //cria vetor com distancia acumulada
+        List<CentroServico> nosExpandidos = new ArrayList<CentroServico>();
+        List<Object[]> caminho = new ArrayList<Object[]>();
+        CentroServico atual = origem;
+        //armazena valor acumulado até atingir o nó atual
+        Double acumulado = 0.0;
+        do {
+            //busca valores das conexões de saida do recurso atual e coloca no vetor caminho
+            if (atual instanceof CS_Link) {
+                Object caminhoItem[] = new Object[4];
+                caminhoItem[0] = atual;
+                if (atual.getConexoesSaida() instanceof CS_Processamento && atual.getConexoesSaida() != destino) {
+                    caminhoItem[1] = Double.MAX_VALUE;
+                    caminhoItem[2] = null;
+                } else if (atual.getConexoesSaida() instanceof CS_Comunicacao) {
+                    CS_Comunicacao cs = (CS_Comunicacao) atual.getConexoesSaida();
+                    caminhoItem[1] = cs.tempoTransmitir(10000) + acumulado;
+                    caminhoItem[2] = atual.getConexoesSaida();
+                } else {
+                    caminhoItem[1] = 0.0 + acumulado;
+                    caminhoItem[2] = atual.getConexoesSaida();
+                }
+                caminhoItem[3] = acumulado;
+                caminho.add(caminhoItem);
+            } else {
+                ArrayList<CentroServico> lista = (ArrayList<CentroServico>) atual.getConexoesSaida();
+                for (CentroServico cs : lista) {
+                    Object caminhoItem[] = new Object[4];
+                    caminhoItem[0] = atual;
+                    if (cs instanceof CS_Processamento && cs != destino) {
+                        caminhoItem[1] = Double.MAX_VALUE;
+                        caminhoItem[2] = null;
+                    } else if (cs instanceof CS_Comunicacao) {
+                        CS_Comunicacao comu = (CS_Comunicacao) cs;
+                        caminhoItem[1] = comu.tempoTransmitir(10000) + acumulado;
+                        caminhoItem[2] = cs;
+                    } else {
+                        caminhoItem[1] = 0.0 + acumulado;
+                        caminhoItem[2] = cs;
+                    }
+                    caminhoItem[3] = acumulado;
+                    caminho.add(caminhoItem);
+                }
+            }
+            //Marca que o nó atual foi expandido
+            nosExpandidos.add(atual);
+            //Inicia variavel de menor caminho com maior valor possivel
+            Object[] menorCaminho = new Object[4];
+            menorCaminho[0] = null;
+            menorCaminho[1] = Double.MAX_VALUE;
+            menorCaminho[2] = null;
+            menorCaminho[3] = Double.MAX_VALUE;
+            //busca menor caminho não expandido
+            for (Object[] obj : caminho) {
+                Double menor = (Double) menorCaminho[1];
+                Double objAtual = (Double) obj[1];
+                if (menor > objAtual && !nosExpandidos.contains(obj[2])) {
+                    menorCaminho = obj;
+                }
+            }
+            //atribui valor a atual com resultado da busca do menor caminho
+            atual = (CentroServico) menorCaminho[2];
+            acumulado = (Double) menorCaminho[1];
+        } while (atual != null && atual != destino);
+        if (atual == destino) {
+            List<CentroServico> menorCaminho = new ArrayList<CentroServico>();
+            List<CentroServico> inverso = new ArrayList<CentroServico>();
+            Object[] obj;
+            while (atual != origem) {
+                int i = 0;
+                do {
+                    obj = caminho.get(i);
+                    i++;
+                } while (obj[2] != atual);
+                inverso.add(atual);
+                atual = (CentroServico) obj[0];
+            }
+            for (int j = inverso.size() - 1; j >= 0; j--) {
+                menorCaminho.add(inverso.get(j));
+            }
+            return menorCaminho;
+        }
+        return null;
+    }
+
+    /**
+     * Retorna o menor caminho entre dois recursos de processamento indiretamente conectados
+     * passando por mestres no caminho
+     * @param origem recurso origem
+     * @param destino recurso destino
+     * @return caminho completo a partir do primeiro link até o recurso destino
+     */
+    public static List<CentroServico> getMenorCaminhoIndiretoCloud(CS_Processamento origem, CS_Processamento destino) {
+        //cria vetor com distancia acumulada
+        ArrayList<CentroServico> nosExpandidos = new ArrayList<CentroServico>();
+        ArrayList<Object[]> caminho = new ArrayList<Object[]>();
+        CentroServico atual = origem;
+        //armazena valor acumulado até atingir o nó atual
+        Double acumulado = 0.0;
+        do {
+            //busca valores das conexões de saida do recurso atual e coloca no vetor caminho
+            if (atual instanceof CS_Link) {
+                Object caminhoItem[] = new Object[4];
+                caminhoItem[0] = atual;
+                if (atual.getConexoesSaida() instanceof CS_Comunicacao) {
+                    CS_Comunicacao cs = (CS_Comunicacao) atual.getConexoesSaida();
+                    caminhoItem[1] = cs.tempoTransmitir(10000) + acumulado;
+                    caminhoItem[2] = atual.getConexoesSaida();
+                } else if (atual.getConexoesSaida() instanceof VMM || atual.getConexoesSaida() == destino) {
+                    caminhoItem[1] = 0.0 + acumulado;
+                    caminhoItem[2] = atual.getConexoesSaida();
+                } else {
+                    caminhoItem[1] = Double.MAX_VALUE;
+                    caminhoItem[2] = null;
+                }
+                caminhoItem[3] = acumulado;
+                caminho.add(caminhoItem);
+            } else {
+                ArrayList<CentroServico> lista = (ArrayList<CentroServico>) atual.getConexoesSaida();
+                for (CentroServico cs : lista) {
+                    Object caminhoItem[] = new Object[4];
+                    caminhoItem[0] = atual;
+                    if (cs instanceof CS_Comunicacao) {
+                        CS_Comunicacao comu = (CS_Comunicacao) cs;
+                        caminhoItem[1] = comu.tempoTransmitir(10000) + acumulado;
+                        caminhoItem[2] = cs;
+                    } else if (cs instanceof VMM || cs == destino) {
+                        caminhoItem[1] = 0.0 + acumulado;
+                        caminhoItem[2] = cs;
+                    } else {
+                        caminhoItem[1] = Double.MAX_VALUE;
+                        caminhoItem[2] = null;
+                    }
+                    caminhoItem[3] = acumulado;
+                    caminho.add(caminhoItem);
+                }
+            }
+            //Marca que o nó atual foi expandido
+            nosExpandidos.add(atual);
+            //Inicia variavel de menor caminho com maior valor possivel
+            Object[] menorCaminho = new Object[4];
+            menorCaminho[0] = null;
+            menorCaminho[1] = Double.MAX_VALUE;
+            menorCaminho[2] = null;
+            menorCaminho[3] = Double.MAX_VALUE;
+            //busca menor caminho não expandido
+            for (Object[] obj : caminho) {
+                Double menor = (Double) menorCaminho[1];
+                Double objAtual = (Double) obj[1];
+                if (menor > objAtual && !nosExpandidos.contains(obj[2])) {
+                    menorCaminho = obj;
+                }
+            }
+            //atribui valor a atual com resultado da busca do menor caminho
+            atual = (CentroServico) menorCaminho[2];
+            acumulado = (Double) menorCaminho[1];
+        } while (atual != null && atual != destino);
+        if (atual == destino) {
+            List<CentroServico> menorCaminho = new ArrayList<CentroServico>();
+            List<CentroServico> inverso = new ArrayList<CentroServico>();
+            Object[] obj;
+            while (atual != origem) {
+                int i = 0;
+                do {
+                    obj = caminho.get(i);
+                    i++;
+                } while (obj[2] != atual);
+                inverso.add(atual);
+                atual = (CentroServico) obj[0];
+            }
+            for (int j = inverso.size() - 1; j >= 0; j--) {
+                menorCaminho.add(inverso.get(j));
+            }
+            return menorCaminho;
+        }
+        return null;
+    }
+    
     
      public void setTempoProcessamento(double inicio, double fim){
         ParesOrdenadosUso par = new ParesOrdenadosUso(inicio,fim);
