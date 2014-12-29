@@ -63,6 +63,7 @@ and open the template in the editor.
 <!ATTLIST cluster bandwidth CDATA "0.0">
 <!ATTLIST cluster latency CDATA "0.0">
 <!ATTLIST cluster scheduler CDATA "---">
+<!ATTLIST cluster vm_alloc CDATA "---">
 <!ATTLIST cluster owner CDATA "user1">
 <!ATTLIST cluster master CDATA "true">
 
