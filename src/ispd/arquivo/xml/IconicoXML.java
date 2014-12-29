@@ -482,11 +482,11 @@ public class IconicoXML {
                 Switch.addConexoesEntrada(clust);
                 Switch.addConexoesSaida(clust);
                 for (int j = 0; j < numeroEscravos; j++) {
-                    Element caracteristica = (Element) cluster.getElementsByTagName("characteristic");
-                    Element custo = (Element) caracteristica.getElementsByTagName("cost");
-                    Element processamento = (Element) caracteristica.getElementsByTagName("process");
-                    Element memoria = (Element) caracteristica.getElementsByTagName("memory");
-                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disk");
+                    Element caracteristica = (Element) cluster.getElementsByTagName("characteristic").item(0);
+                    Element custo = (Element) caracteristica.getElementsByTagName("cost").item(0);
+                    Element processamento = (Element) caracteristica.getElementsByTagName("process").item(0);
+                    Element memoria = (Element) caracteristica.getElementsByTagName("memory").item(0);
+                    Element disco = (Element) caracteristica.getElementsByTagName("hard_disk").item(0);
                     CS_MaquinaCloud maq = new CS_MaquinaCloud(
                             cluster.getAttribute("id"),
                             cluster.getAttribute("owner"),
@@ -817,6 +817,7 @@ public class IconicoXML {
             clust.setBanda(Double.parseDouble(cluster.getAttribute("bandwidth")));
             clust.setLatencia(Double.parseDouble(cluster.getAttribute("latency")));
             clust.setAlgoritmo(cluster.getAttribute("scheduler"));
+            clust.setVMMallocpolicy(cluster.getAttribute("vm_alloc"));
             clust.setProprietario(cluster.getAttribute("owner"));
             clust.setMestre(Boolean.parseBoolean(cluster.getAttribute("master")));
         }
@@ -1043,7 +1044,7 @@ public class IconicoXML {
             Integer numeroEscravos, Double poderComputacional, Integer numeroNucleos,
             Double memoriaRAM, Double discoRigido,
             Double banda, Double latencia,
-            String algoritmo, Double CostperProcessing,
+            String algoritmo,String alloc, Double CostperProcessing,
             Double Costpermemory, Double CostperDisk,
             String proprietario, Boolean mestre) {
         Element aux;
@@ -1060,6 +1061,7 @@ public class IconicoXML {
         aux.setAttribute("bandwidth", banda.toString());
         aux.setAttribute("latency", latencia.toString());
         aux.setAttribute("scheduler", algoritmo);
+        aux.setAttribute("vm_alloc", alloc);
         aux.setAttribute("owner", proprietario);
         aux.setAttribute("master", mestre.toString());
 
