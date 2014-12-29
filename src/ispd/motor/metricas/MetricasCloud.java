@@ -4,7 +4,6 @@
  */
 package ispd.motor.metricas;
 
-import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -18,7 +17,7 @@ import java.util.Map;
  *
  * @author denison
  */
-public class Metricas implements Serializable {
+public class MetricasCloud implements Serializable {
 
     private int numeroDeSimulacoes;
     /**
@@ -38,7 +37,7 @@ public class Metricas implements Serializable {
     private int numTarefasCanceladas;
     private int numTarefas;
 
-    public Metricas(List<String> usuarios) {
+    public MetricasCloud(List<String> usuarios) {
         this.numeroDeSimulacoes = 0;
         this.metricasGlobais = new MetricasGlobais();
         this.usuarios = usuarios;
@@ -51,7 +50,7 @@ public class Metricas implements Serializable {
         numTarefas = 0;
     }
 
-    public Metricas(RedeDeFilas redeDeFilas, double time, List<Tarefa> tarefas) {
+    public MetricasCloud(RedeDeFilasCloud redeDeFilas, double time, List<Tarefa> tarefas) {
         this.numeroDeSimulacoes = 1;
         this.metricasGlobais = new MetricasGlobais(redeDeFilas, time, tarefas);
         metricasSatisfacao = new HashMap<String, Double>();
@@ -67,25 +66,8 @@ public class Metricas implements Serializable {
 
 
     }
-    
-    public Metricas(RedeDeFilasCloud redeDeFilas, double time, List<Tarefa> tarefas) {
-        this.numeroDeSimulacoes = 1;
-        this.metricasGlobais = new MetricasGlobais(redeDeFilas, time, tarefas);
-        metricasSatisfacao = new HashMap<String, Double>();
-        tarefasConcluidas = new HashMap<String, Integer>();
-        this.usuarios = redeDeFilas.getUsuarios();
-        for (String user : usuarios) {
-            metricasSatisfacao.put(user, 0.0);
-            tarefasConcluidas.put(user, 0);
-        }
-        getMetricaFilaTarefaCloud(tarefas, redeDeFilas);
-        getMetricaComunicacao(redeDeFilas);
-        getMetricaProcessamentoCloud(redeDeFilas);
 
-
-    }
-
-    public void addMetrica(Metricas metrica) {
+    public void addMetrica(MetricasCloud metrica) {
         addMetricasGlobais(metrica.getMetricasGlobais());
         addMetricaFilaTarefa(metrica);
         addMetricaComunicacao(metrica.getMetricasComunicacao());
@@ -182,7 +164,7 @@ public class Metricas implements Serializable {
         }
     }
 
-    private void getMetricaFilaTarefa(List<Tarefa> tarefas, RedeDeFilas rede) {
+    private void getMetricaFilaTarefa(List<Tarefa> tarefas, RedeDeFilasCloud rede) {
         this.tempoMedioFilaComunicacao = 0;
         this.tempoMedioComunicacao = 0;
         this.tempoMedioFilaProcessamento = 0;
@@ -192,10 +174,10 @@ public class Metricas implements Serializable {
         this.numTarefas = 0;
 
         Double mediaPoder = 0.0;
-        for (int i = 0; i < rede.getMaquinas().size(); i++) {
-            mediaPoder += rede.getMaquinas().get(i).getPoderComputacional();
+        for (int i = 0; i < rede.getVMs().size(); i++) {
+            mediaPoder += rede.getVMs().get(i).getPoderComputacional();
         }
-        mediaPoder = mediaPoder / rede.getMaquinas().size();
+        mediaPoder = mediaPoder / rede.getVMs().size();
         for (Tarefa no : tarefas) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
 
@@ -237,74 +219,8 @@ public class Metricas implements Serializable {
         tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
         tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
     }
-    
-    private void getMetricaFilaTarefaCloud(List<Tarefa> tarefas, RedeDeFilasCloud rede) {
-        this.tempoMedioFilaComunicacao = 0;
-        this.tempoMedioComunicacao = 0;
-        this.tempoMedioFilaProcessamento = 0;
-        this.tempoMedioProcessamento = 0;
-        this.numTarefasCanceladas = 0;
-        this.MflopsDesperdicio = 0;
-        this.numTarefas = 0;
 
-        Double mediaPoder = 0.0;
-        for (int i = 0; i < rede.getVMs().size(); i++) {
-            mediaPoder += rede.getVMs().get(i).getPoderComputacional();
-        }
-        mediaPoder = mediaPoder / rede.getVMs().size();
-        for (Tarefa no : tarefas) {
-            if (no.getEstado() == Tarefa.CONCLUIDO) {
-
-                Double suij;
-                CS_Processamento vm = (CS_Processamento) no.getHistoricoProcessamento().get(0);
-                suij = (no.getTamProcessamento() / mediaPoder / (no.getTempoFinal().get(no.getTempoFinal().size() - 1) - no.getTimeCriacao())) * (100);
-                metricasSatisfacao.put(no.getProprietario(), suij + metricasSatisfacao.get(no.getProprietario()));
-                tarefasConcluidas.put(no.getProprietario(), 1 + tarefasConcluidas.get(no.getProprietario()));
-
-            }
-            if (no.getEstado() == Tarefa.CONCLUIDO) {
-                tempoMedioFilaComunicacao += no.getMetricas().getTempoEsperaComu();
-                tempoMedioComunicacao += no.getMetricas().getTempoComunicacao();
-                tempoMedioFilaProcessamento = no.getMetricas().getTempoEsperaProc();
-                tempoMedioProcessamento = no.getMetricas().getTempoProcessamento();
-                numTarefas++;
-            } else if (no.getEstado() == Tarefa.CANCELADO) {
-                MflopsDesperdicio += no.getTamProcessamento() * no.getMflopsProcessado();
-                numTarefasCanceladas++;
-            }
-            //Rever, se for informação pertinente adicionar nas métricas da tarefa ou CS_Processamento e calcula durante a simulação
-            CS_Processamento temp = (CS_Processamento) no.getLocalProcessamento();
-            if (temp != null) {
-                for (int i = 0; i < no.getTempoInicial().size(); i++) {
-                    temp.setTempoProcessamento(no.getTempoInicial().get(i), no.getTempoFinal().get(i));
-                }
-            }
-        }
-
-        for (Map.Entry<String, Double> entry : metricasSatisfacao.entrySet()) {
-
-            String string = entry.getKey();
-            entry.setValue(entry.getValue() / tarefasConcluidas.get(string));
-
-        }
-
-        tempoMedioFilaComunicacao = tempoMedioFilaComunicacao / numTarefas;
-        tempoMedioComunicacao = tempoMedioComunicacao / numTarefas;
-        tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
-        tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
-    }
-
-    private void getMetricaProcessamento(RedeDeFilas redeDeFilas) {
-        metricasProcessamento = new HashMap<String, MetricasProcessamento>();
-        for (CS_Processamento maq : redeDeFilas.getMestres()) {
-            metricasProcessamento.put(maq.getId() + maq.getnumeroMaquina(), maq.getMetrica());
-        }
-        for (CS_Processamento maq : redeDeFilas.getMaquinas()) {
-            metricasProcessamento.put(maq.getId() + maq.getnumeroMaquina(), maq.getMetrica());
-        }
-    }
-    
-    private void getMetricaProcessamentoCloud(RedeDeFilasCloud redeDeFilas) {
+    private void getMetricaComunicacao(RedeDeFilasCloud redeDeFilas) {
         metricasProcessamento = new HashMap<String, MetricasProcessamento>();
         for (CS_Processamento maq : redeDeFilas.getMestres()) {
             metricasProcessamento.put(maq.getId() + maq.getnumeroMaquina(), maq.getMetrica());
@@ -314,7 +230,7 @@ public class Metricas implements Serializable {
         }
     }
 
-    private void getMetricaComunicacao(RedeDeFilas redeDeFilas) {
+    private void getMetricaProcessamento(RedeDeFilasCloud redeDeFilas) {
         metricasComunicacao = new HashMap<String, MetricasComunicacao>();
         for (CS_Comunicacao link : redeDeFilas.getInternets()) {
             metricasComunicacao.put(link.getId(), link.getMetrica());
@@ -360,7 +276,7 @@ public class Metricas implements Serializable {
         }
     }
 
-    private void addMetricaFilaTarefa(Metricas metrica) {
+    private void addMetricaFilaTarefa(MetricasCloud metrica) {
         this.tempoMedioFilaComunicacao += metrica.tempoMedioFilaComunicacao;
         this.tempoMedioComunicacao += metrica.tempoMedioComunicacao;
         this.tempoMedioFilaProcessamento += metrica.tempoMedioFilaProcessamento;

@@ -102,4 +102,13 @@ public abstract class Simulacao {
         janela.println("OK", Color.green);
         return metrica;
     }
+    
+    public Metricas getMetricasCloud() {
+        janela.print("Getting Results.");
+        janela.print(" -> ");
+        Metricas metrica = new Metricas(redeDeFilasCloud, getTime(null), tarefas);
+        janela.incProgresso(5);
+        janela.println("OK", Color.green);
+        return metrica;
+    }
 }

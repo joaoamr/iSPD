@@ -43,6 +43,8 @@ public abstract class CS_Processamento extends CentroServico {
                 / this.numeroProcessadores;
     }
     
+    
+    
     public int getnumeroMaquina(){
         return metrica.getnumeroMaquina();
     }
@@ -81,6 +83,17 @@ public abstract class CS_Processamento extends CentroServico {
     public MetricasProcessamento getMetrica() {
         return metrica;
     }
+
+    public void setPoderComputacionalDisponivelPorProcessador(double PoderComputacionalDisponivelPorProcessador) {
+        this.PoderComputacionalDisponivelPorProcessador = PoderComputacionalDisponivelPorProcessador;
+    }
+
+    public void setPoderComputacional(double poderComputacional) {
+        this.poderComputacional = poderComputacional;
+    }
+    
+    
+    
 
     /**
      * Utilizado para buscar as rotas entre os recursos e armazenar em uma tabela,

@@ -278,12 +278,12 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
                 //Calcula tempo de simulação em segundos
                 double tempototal = (t2 - t1) / 1000;
                 //Obter Resultados
-                Metricas metrica = sim.getMetricas();
+                Metricas metrica = sim.getMetricasCloud();
                 //[5%] --> 90%
                 //Apresentar resultados
                 progrSim.print("Showing results.");
                 progrSim.print(" -> ");
-                JResultados janelaResultados = new JResultados(null, metrica, redeDeFilas, tarefas);
+                JResultados janelaResultados = new JResultados(null, metrica, redeDeFilasCloud, tarefas);
                 incProgresso(10);//[10%] --> 100%
                 progrSim.println("OK", Color.green);
                 progrSim.println("Simulation Execution Time = " + tempototal + "seconds");

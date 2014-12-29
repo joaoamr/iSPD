@@ -90,8 +90,9 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         return poderProcessamento;
     }
 
-    public void setPoderProcessamento(double poderProcessamento) {
-        this.poderProcessamento = poderProcessamento;
+    public void setPoderProcessamentoPorNucleo(double poderProcessamento) {
+        super.setPoderComputacionalDisponivelPorProcessador(poderProcessamento);
+        super.setPoderComputacional(poderProcessamento);
     }
 
     public double getMemoriaDisponivel() {
