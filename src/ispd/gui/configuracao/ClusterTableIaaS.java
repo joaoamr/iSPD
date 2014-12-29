@@ -32,9 +32,9 @@ public class ClusterTableIaaS extends AbstractTableModel {
     private static final int CPP = 7; //cost processing
     private static final int CPM = 8; //cost memory
     private static final int CPDK = 9; //cost disk
-    private static final int VMM = 10;
-    private static final int BANDW = 11;
-    private static final int LATEN = 12;
+    private static final int BANDW = 10;
+    private static final int LATEN = 11;
+    private static final int VMM = 12;
     private static final int SCHED = 13;
     private static final int VMMP = 14;
     private static final int NUMLINHAS = 15;
@@ -96,8 +96,8 @@ public class ClusterTableIaaS extends AbstractTableModel {
     public JComboBox getEscalonadores() {
         return escalonador;
     }
-    
-    public JComboBox getAlocadores(){
+
+    public JComboBox getAlocadores() {
         return VMMPolicy;
     }
 
@@ -118,6 +118,9 @@ public class ClusterTableIaaS extends AbstractTableModel {
                 case PROCS:
                     cluster.setPoderComputacional(Double.valueOf(aValue.toString()));
                     break;
+                case CORES:
+                    cluster.setNucleosProcessador(Integer.valueOf(aValue.toString()));
+                    break;
                 case MERAM:
                     cluster.setMemoriaRAM(Double.valueOf(aValue.toString()));
                     break;
@@ -132,8 +135,7 @@ public class ClusterTableIaaS extends AbstractTableModel {
                     break;
                 case CPDK:
                     cluster.setCostperdisk(Double.valueOf(aValue.toString()));
-                case CORES:
-                    cluster.setNucleosProcessador(Integer.valueOf(aValue.toString()));
+
                     break;
                 case BANDW:
                     cluster.setBanda(Double.valueOf(aValue.toString()));
@@ -168,12 +170,12 @@ public class ClusterTableIaaS extends AbstractTableModel {
                         return palavras.getString("Number of nodes");
                     case PROCS:
                         return palavras.getString("Computing power");
+                    case CORES:
+                        return "Cores";
                     case MERAM:
                         return "Primary Storage";
                     case HDISK:
                         return "Secondary Storage";
-                    case CORES:
-                        return "Cores";
                     case BANDW:
                         return palavras.getString("Bandwidth");
                     case LATEN:
