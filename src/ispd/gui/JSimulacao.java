@@ -283,15 +283,15 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
                 //Apresentar resultados
                 progrSim.print("Showing results.");
                 progrSim.print(" -> ");
-                JResultados janelaResultados = new JResultados(null, metrica, redeDeFilasCloud, tarefas);
+                JResultadosCloud janelaResultados = new JResultadosCloud(null, metrica, redeDeFilasCloud, tarefas);
                 incProgresso(10);//[10%] --> 100%
                 progrSim.println("OK", Color.green);
                 progrSim.println("Simulation Execution Time = " + tempototal + "seconds");
                 janelaResultados.setLocationRelativeTo(this);
                 janelaResultados.setVisible(true);
             }
-
         } catch (IllegalArgumentException erro) {
+
             Logger.getLogger(JSimulacao.class.getName()).log(Level.SEVERE, null, erro);
             progrSim.println(erro.getMessage(), Color.red);
             progrSim.print("Simulation Aborted", Color.red);
