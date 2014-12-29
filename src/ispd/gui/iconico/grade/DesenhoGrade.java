@@ -506,7 +506,7 @@ public class DesenhoGrade extends AreaDesenho {
                             I.getPoderComputacional(), I.getNucleosProcessador(),
                             I.getMemoriaRAM(), I.getDiscoRigido(),
                             I.getBanda(), I.getLatencia(),
-                            I.getAlgoritmo(), I.getCostperprocessing(),
+                            I.getAlgoritmo(),I.getVMMallocpolicy(), I.getCostperprocessing(),
                             I.getCostpermemory(), I.getCostperdisk(),
                             I.getProprietario(), I.isMestre());
                 }
