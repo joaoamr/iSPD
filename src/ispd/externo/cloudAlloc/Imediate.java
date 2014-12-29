@@ -81,7 +81,7 @@ public class Imediate extends Alocacao {
                     int maqProc = maq.getProcessadoresDisponiveis();
                     int procVM = auxVM.getProcessadoresDisponiveis();
 
-                    if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && maqProc <= procVM)) {
+                    if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && procVM <= maqProc)) {
                         maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);
                         maq.setDiscoDisponivel(discoMaq - discoNecessario);
                         maq.setProcessadoresDisponiveis(maqProc - procVM);
