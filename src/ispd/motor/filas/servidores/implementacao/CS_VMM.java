@@ -81,6 +81,8 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
                     alocadorVM.addVM(trf.getVM_enviada());
                 }
             } else {//se não for ele a origem ele precisa encaminhá-la
+                TarefaVM trf = (TarefaVM) cliente;
+                
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.SAÍDA,
@@ -524,7 +526,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
 
     @Override
     public void enviarVM(CS_VirtualMac vm) {
-        System.out.println("alocando VM " + vm.getId() + "para maquina" + vm.getMaquinaHospedeira().getId());
+        //System.out.println("alocando VM " + vm.getId() + "para maquina" + vm.getMaquinaHospedeira().getId());
         TarefaVM tarefa = new TarefaVM(vm.getVmmResponsavel(), vm, vm.getDiscoDisponivel(), 0.0);
         tarefa.setCaminho(vm.getCaminho());
         EventoFuturo evtFut = new EventoFuturo(
