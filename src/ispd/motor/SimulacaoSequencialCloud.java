@@ -63,6 +63,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
             temp.setSimulacaoAlloc(this);
             //Encontra menor caminho entre o mestre e seus escravos
             System.out.println("Mestre" + mst.getId() + "escontrando seus escravos");
+            
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
         
