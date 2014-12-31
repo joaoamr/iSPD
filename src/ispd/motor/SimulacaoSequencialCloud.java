@@ -55,6 +55,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
         /**
          * Trecho de código que implementa o roteamento entre os mestres e os seus respectivos escravos
          */
+         System.out.println("---------------------------------------");
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             VMM temp = (VMM) mst;
             MestreCloud aux = (MestreCloud) mst;
@@ -62,7 +63,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
             aux.setSimulacao(this);
             temp.setSimulacaoAlloc(this);
             //Encontra menor caminho entre o mestre e seus escravos
-            System.out.println("Mestre" + mst.getId() + "escontrando seus escravos");
+            System.out.println("Mestre " + mst.getId() + " escontrando seus escravos");
             
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
@@ -73,10 +74,11 @@ public class SimulacaoSequencialCloud extends Simulacao {
         if (redeDeFilas.getMaquinasCloud() == null || redeDeFilas.getMaquinasCloud().isEmpty()) {
             janela.println("The model has no phisical machines.", Color.orange);
         } else {
+             System.out.println("---------------------------------------");
             for (CS_MaquinaCloud maq : redeDeFilas.getMaquinasCloud()) {
                 //Encontra menor caminho entre o escravo e seu mestre
                 maq.determinarCaminhos();//escravo encontra caminhos para seu mestre
-                System.out.println("Maquina" + maq.getId() + "encontrando seus mestres");
+                //System.out.println("Maquina " + maq.getId() + " encontrando seus mestres");
             }
         }
         //fim roteamento
@@ -86,8 +88,13 @@ public class SimulacaoSequencialCloud extends Simulacao {
     @Override
     public void simular() {
         //inicia os escalonadores
-        iniciarEscalonadoresAlocadoresCloud();
+         System.out.println("---------------------------------------");
+        iniciarAlocadoresCloud();
+         System.out.println("---------------------------------------");
+        iniciarEscalonadoresCloud();
+         System.out.println("---------------------------------------");
         addEventos(this.getTarefas());
+         System.out.println("---------------------------------------");
         
         
         if (atualizarEscalonadores()) {
@@ -112,6 +119,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
             EventoFuturo evt = new EventoFuturo(0.0, EventoFuturo.CHEGADA, vm.getVmmResponsavel(), vm);
             eventos.add(evt);
         }*/
+        System.out.println("Tarefas sendo adicionadas na lista de eventos futuros");
         for (Tarefa tarefa : tarefas) {
             EventoFuturo evt = new EventoFuturo(tarefa.getTimeCriacao(), EventoFuturo.CHEGADA, tarefa.getOrigem(), tarefa);
             eventos.add(evt);

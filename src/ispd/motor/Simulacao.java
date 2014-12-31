@@ -79,17 +79,24 @@ public abstract class Simulacao {
     }
     
     
-    public void iniciarEscalonadoresAlocadoresCloud() {
+    public void iniciarAlocadoresCloud() {
         for (CS_Processamento mst : redeDeFilasCloud.getMestres()) {
             CS_VMM mestre = (CS_VMM) mst;
             //utiliza a classe de escalonamento diretamente 
             //pode ser modificado para gerar um evento 
             //mas deve ser o primeiro evento executado nos mestres
+            System.out.println("VMM " +  mst.getId()+ " iniciando o alocador" + mestre.getAlocadorVM().toString());
             mestre.getAlocadorVM().iniciar();
-            System.out.println("VMM" +  mst.getId()+ "iniciando o alocador" + mestre.getAlocadorVM().toString());
-            mestre.getEscalonador().iniciar();
-            System.out.println("VMM" + mst.getId() + "iniciando escalonador" + mestre.getEscalonador().toString());
             mestre.instanciarCaminhosVMs();
+            
+        }
+    }
+    
+    public void iniciarEscalonadoresCloud(){
+        for (CS_Processamento mst : redeDeFilasCloud.getMestres()){
+            CS_VMM mestre = (CS_VMM) mst;
+            System.out.println("VMM " + mst.getId() + " iniciando escalonador" + mestre.getEscalonador().toString());
+            mestre.getEscalonador().iniciar();
             
         }
     }
