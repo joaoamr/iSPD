@@ -33,13 +33,14 @@ public class RoundRobin extends Alocacao {
 
     @Override
     public void iniciar() {
+         System.out.println("---------------------------------------");
         System.out.println("Alocador RR iniciado");
 
         //trecho de teste.. excluir depois
         if (maquinasVirtuais.isEmpty()) {
             System.out.println("sem vms setadas");
         }
-
+        System.out.println("Lista de VMs");
         for (CS_VirtualMac aux : maquinasVirtuais) {
             System.out.println(aux.getId());
         }
@@ -70,9 +71,9 @@ public class RoundRobin extends Alocacao {
 
     @Override
     public List<CentroServico> escalonarRota(CentroServico destino) {
-        System.out.println("entrei no escalonar rota");
+        System.out.println("Escalonando rota da vm para hospedeiro");
         int index = maquinasFisicas.indexOf(destino);
-        System.out.println("indice da maquina é:" + index);
+        //System.out.println("indice da maquina é:" + index);
         return new ArrayList<CentroServico>((List<CentroServico>) caminhoMaquina.get(index));
     }
 
@@ -89,36 +90,43 @@ public class RoundRobin extends Alocacao {
                 if (num_escravos > 0) {//caso existam máquinas livres
                     CS_Processamento auxMaq = escalonarRecurso(); //escalona o recurso
                     if (auxMaq instanceof CS_VMM) {
+                         System.out.println("---------------------------------------");
+                        System.out.println(auxMaq.getId() + " é um VMM, a VM será redirecionada");
                         auxVM.setCaminho(escalonarRota(auxMaq));
-                        System.out.println("Rota escalonada para " + auxVM.getId());
+                        System.out.println( auxVM.getId() + " enviada para " + auxMaq.getId());
                         VMM.enviarVM(auxVM);
+                         System.out.println("---------------------------------------");
                         break;
                     } else {
+                        System.out.println("---------------------------------------");
                         CS_MaquinaCloud maq = (CS_MaquinaCloud) auxMaq;
                         double memoriaMaq = maq.getMemoriaDisponivel();
-                        System.out.println("memoriaMaq:" + memoriaMaq);
+                        System.out.println("memoriaMaq: " + memoriaMaq);
                         double memoriaNecessaria = auxVM.getMemoriaDisponivel();
-                        System.out.println("memorianecessaria:" + memoriaNecessaria);
+                        System.out.println("memorianecessaria: " + memoriaNecessaria);
                         double discoMaq = maq.getDiscoDisponivel();
-                        System.out.println("discoMaq:" + discoMaq);
+                        System.out.println("discoMaq: " + discoMaq);
                         double discoNecessario = auxVM.getDiscoDisponivel();
-                        System.out.println("disconecessario" + discoNecessario);
+                        System.out.println("disconecessario: " + discoNecessario);
                         int maqProc = maq.getProcessadoresDisponiveis();
-                        System.out.println("ProcMaq:" + maqProc);
+                        System.out.println("ProcMaq: " + maqProc);
                         int procVM = auxVM.getProcessadoresDisponiveis();
-                        System.out.println("ProcVM:" + procVM);
+                        System.out.println("ProcVM: " + procVM);
+                         System.out.println("---------------------------------------");
 
                         if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && procVM <= maqProc)) {
                             maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);
-                            System.out.println("memoria atual da maq" + (memoriaMaq - memoriaNecessaria));
+                             System.out.println("Realizando o controle de recurso:");
+                            System.out.println("memoria atual da maq: " + (memoriaMaq - memoriaNecessaria));
                             maq.setDiscoDisponivel(discoMaq - discoNecessario);
-                            System.out.println("disco atual maq" + (discoMaq - discoNecessario));
+                            System.out.println("disco atual maq: " + (discoMaq - discoNecessario));
                             maq.setProcessadoresDisponiveis(maqProc - procVM);
-                            System.out.println("proc atual" + (maqProc - procVM));
+                            System.out.println("proc atual: " + (maqProc - procVM));
                             auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
                             auxVM.setCaminho(escalonarRota(auxMaq));
-                            System.out.println("Rota escalonada para " + auxVM.getId());
+                            System.out.println( auxVM.getId() + " enviada para " + auxMaq.getId());
                             VMM.enviarVM(auxVM);
+                             System.out.println("---------------------------------------");
 
                             break;
 
@@ -132,6 +140,7 @@ public class RoundRobin extends Alocacao {
                     VMsRejeitadas.add(auxVM);
                     System.out.println("Adicionada na lista de rejeitadas");
                     num_escravos--;
+                     System.out.println("---------------------------------------");
                 }
             }
         }
