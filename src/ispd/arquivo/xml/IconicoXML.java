@@ -600,7 +600,9 @@ public class IconicoXML {
                         mestre.addEscravo((CS_Processamento) maq);
                         if (maq instanceof CS_MaquinaCloud) {
                             CS_MaquinaCloud maqTemp = (CS_MaquinaCloud) maq;
-                            System.out.println(maqTemp.getId() + "adicionou como mestre:" + mestre.getId());
+                            //trecho de debbuging
+                            System.out.println(maqTemp.getId() + " adicionou como mestre: " + mestre.getId());
+                            //fim dbg
                             maqTemp.addMestre(mestre);
                         }
                     } else if (maq instanceof CS_Switch) {
@@ -612,7 +614,7 @@ public class IconicoXML {
                 }
             }
         }
-
+        
         //Realiza leitura dos ícones de máquina virtual
         for (int i = 0; i < docVMs.getLength(); i++) {
             Element virtualMac = (Element) docVMs.item(i);
@@ -624,8 +626,8 @@ public class IconicoXML {
                     virtualMac.getAttribute("op_system"));
             //adicionando VMM responsável pela VM
             for (CS_Processamento aux : VMMs) {
-                System.out.println("id vmm:" + aux.getId());
-                System.out.println("id do vmm na vm:" + virtualMac.getAttribute("vmm") );
+                //System.out.println("id vmm:" + aux.getId());
+                //System.out.println("id do vmm na vm:" + virtualMac.getAttribute("vmm") );
                 if (virtualMac.getAttribute("vmm").equals(aux.getId())) {
                     //atentar ao fato de que a solução falha se o nome do vmm for alterado e não atualizado na tabela das vms
                     //To do: corrigir problema futuramente
