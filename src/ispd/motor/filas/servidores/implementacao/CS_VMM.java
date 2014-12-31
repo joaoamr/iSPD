@@ -69,15 +69,20 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     //Métodos do centro de serviços
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        System.out.println("Evento de chegada no vmm " + this.getId());
         if (cliente instanceof TarefaVM) {
-            if (cliente.getOrigem().equals(this)) {
+            if (cliente.getCaminho().isEmpty()) {
+                TarefaVM trf = (TarefaVM) cliente;
+                //trecho dbg
+                System.out.println("vm " + trf.getVM_enviada().getId() + " adicionada no VMM " + this.getId() );
+                 System.out.println("------------------------------------------");
                 if (alocDisponivel) {
                     this.alocDisponivel = false;
-                    TarefaVM trf = (TarefaVM) cliente;
+                    
                     alocadorVM.addVM(trf.getVM_enviada());
                     executarAlocacao();
                 } else {
-                    TarefaVM trf = (TarefaVM) cliente;
+                    
                     alocadorVM.addVM(trf.getVM_enviada());
                 }
             } else {//se não for ele a origem ele precisa encaminhá-la
@@ -90,6 +95,11 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
                         cliente);
                 simulacao.addEventoFuturo(evtFut);
             }
+        }
+        //trecho de dbg
+        if(!(cliente instanceof TarefaVM)){
+        System.out.println("cliente é retorno de uma tarefa");
+        System.out.println("-----------------------------------");
         }
         if (cliente.getEstado() != Tarefa.CANCELADO) {
             //Tarefas concluida possuem tratamento diferencial
@@ -137,6 +147,14 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        //trecho de debbuging
+        System.out.println("Evento de saída no vmm " + this.getId());
+        if(cliente instanceof TarefaVM){
+            TarefaVM trf = (TarefaVM) cliente;
+            System.out.println("cliente é a vm " + trf.getVM_enviada().getId());
+        }else{
+            System.out.println("cliente é uma tarefa");
+        }//fim dbg
 
         //Gera evento para chegada da tarefa no proximo servidor
         EventoFuturo evtFut = new EventoFuturo(

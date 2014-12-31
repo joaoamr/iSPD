@@ -276,7 +276,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void determinarCaminhos() throws LinkageError {
         //Instancia objetos
         caminhoMestre = new ArrayList<List>(mestres.size());
-        System.out.println("maquina" + getId() + " determinando caminhos para" + mestres.size() + "mestres");
+        System.out.println("maquina " + getId() + " determinando caminhos para " + mestres.size() + " mestres");
         //Busca pelos caminhos
 
         for (int i = 0; i < mestres.size(); i++) {
