@@ -25,8 +25,10 @@ public interface MestreCloud {
     public void processarTarefa(Tarefa tarefa);
     public void executarEscalonamento();
     public void enviarMensagem(Tarefa tarefa, CS_Processamento escravo, int tipo);
-    public void atualizar(CS_Processamento escravo);    
+    public void atualizar(CS_Processamento escravo);
+    
     //Get e Set
+    public void liberarEscalonador();
     public void setSimulacao(Simulacao simulacao);
     public int getTipoEscalonamento();
     public void setTipoEscalonamento(int tipo);

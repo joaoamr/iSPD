@@ -95,6 +95,8 @@ public abstract class EscalonadorCloud {
     
     
     
+    
+    
     public List<List> getCaminhoEscravo() {
         return caminhoEscravo;
     }
@@ -103,7 +105,8 @@ public abstract class EscalonadorCloud {
         LinkedList<CS_Processamento> escravosUsuario = new LinkedList<CS_Processamento>();
         for(CS_Processamento slave : Escravos){
             CS_VirtualMac slaveVM = (CS_VirtualMac) slave;
-            if (slave.getProprietario().equals(usuario) || slaveVM.getStatus()==CS_VirtualMac.ALOCADA) {
+            
+            if (slave.getProprietario().equals(usuario) && slaveVM.getStatus()==CS_VirtualMac.ALOCADA) {
                 escravosUsuario.add(slave);
             } 
         }

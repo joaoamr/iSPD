@@ -147,6 +147,16 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.conexoesSaida.add(conexao);
     }
 
+    public List<CS_Processamento> getMestres() {
+        return mestres;
+    }
+
+    public void setMestres(List<CS_Processamento> mestres) {
+        this.mestres = mestres;
+    }
+    
+    
+
     public void addConexoesEntrada(CS_Switch conexao) {
         this.conexoesEntrada.add(conexao);
     }
@@ -174,9 +184,13 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        System.out.println("Chegada de evento na "+ this.getId());
         if (cliente instanceof TarefaVM) {
+            
             TarefaVM trf = (TarefaVM) cliente;
+            System.out.println(trf.getVM_enviada().getId() + " Chegou e será atendida");
             if (trf.getVM_enviada().getMaquinaHospedeira().equals(this)) {
+                
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.ATENDIMENTO,
@@ -194,6 +208,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         } else if (cliente instanceof Tarefa) {
             CS_VirtualMac vm = (CS_VirtualMac) cliente.getLocalProcessamento();
             if (vm.getMaquinaHospedeira().equals(this)) {
+                 System.out.println("Tarefa " + cliente.getIdentificador() + " sendo enviada para execução na vm " + vm.getId());
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.CHEGADA,
@@ -229,9 +244,15 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
             //fim teste
             int index = mestres.indexOf(vmm);
+            if (index == -1){
+                List<CentroServico> caminhoVMM = getMenorCaminhoCloud(this, vmm);
+                vm.setCaminhoVMM(caminhoVMM);
+            }else{
+                vm.setCaminhoVMM(caminhoMestre.get(index));
+            }
 
             System.out.println("indice do mestre:" + index);
-            vm.setCaminhoVMM(caminhoMestre.get(index));
+            //vm.setCaminhoVMM(caminhoMestre.get(index));
 
         }
     }

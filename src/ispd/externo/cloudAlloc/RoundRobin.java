@@ -27,6 +27,7 @@ public class RoundRobin extends Alocacao {
     private ArrayList<CS_VirtualMac> VMsRejeitadas;
 
     public RoundRobin() {
+        
         this.maquinasVirtuais = new ArrayList<CS_VirtualMac>();
         this.maquinasFisicas = new LinkedList<CS_Processamento>();
     }
@@ -93,6 +94,13 @@ public class RoundRobin extends Alocacao {
                          System.out.println("---------------------------------------");
                         System.out.println(auxMaq.getId() + " é um VMM, a VM será redirecionada");
                         auxVM.setCaminho(escalonarRota(auxMaq));
+                        //salvando uma lista de VMMs intermediarios no caminho da vm e seus respectivos caminhos
+                        //CS_VMM maq = (CS_VMM) auxMaq;
+                        //auxVM.addIntermediario(maq);
+                        //List<CS_VMM> inter = auxVM.getVMMsIntermediarios();
+                        //int index = inter.indexOf((CS_VMM) auxMaq);
+                        //ArrayList<CentroServico> caminhoInter = new ArrayList<CentroServico>(escalonarRota(auxMaq));
+                        //auxVM.addCaminhoIntermediario(index, caminhoInter);
                         System.out.println( auxVM.getId() + " enviada para " + auxMaq.getId());
                         VMM.enviarVM(auxVM);
                          System.out.println("---------------------------------------");

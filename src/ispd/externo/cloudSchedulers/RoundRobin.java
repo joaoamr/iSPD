@@ -10,6 +10,7 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
+import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -59,17 +60,24 @@ public class RoundRobin extends EscalonadorCloud{
 
     @Override
     public void escalonar() {
+        System.out.println("---------------------------");
         Tarefa trf = escalonarTarefa();
         usuario = trf.getProprietario();
         EscravosUsuario = (LinkedList<CS_Processamento>) getVMsAdequadas(usuario, escravos);
         if(!EscravosUsuario.isEmpty()){
+        
         CS_Processamento rec = escalonarRecurso();
-        System.out.println("escalonando tarefa para:" + rec.getId());
+        System.out.println("escalonando tarefa " + trf.getIdentificador() + " para:" + rec.getId());
         trf.setLocalProcessamento(rec);
         trf.setCaminho(escalonarRota(rec));
         mestre.enviarTarefa(trf);
-        
         }
+        else{
+        System.out.println("Não existem VMs alocadas ainda, devolvendo tarefa " + trf.getIdentificador());    
+        adicionarTarefa(trf);
+        mestre.liberarEscalonador();
+        }
+        System.out.println("---------------------------");
     }
 
     @Override
@@ -77,6 +85,12 @@ public class RoundRobin extends EscalonadorCloud{
         CS_VirtualMac auxVM = (CS_VirtualMac) destino;
         CS_MaquinaCloud auxMaq = auxVM.getMaquinaHospedeira();
         int index = maqFisicas.indexOf(auxMaq);
+        //if(index == -1){
+        //    List<CS_VMM> inter = auxVM.getVMMsIntermediarios();
+        //    List<List> caminhosInter = auxVM.getCaminhoIntermediarios();
+        //    for()
+            
+        //}
         System.out.println("caminho escalonador" + caminhoEscravo.get(index));
         return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));
         

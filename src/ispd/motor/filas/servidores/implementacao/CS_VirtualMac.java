@@ -36,9 +36,11 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private CS_MaquinaCloud maquinaHospedeira;
     private List<CentroServico> caminho;
     private List<CentroServico> caminhoVMM;
+    private List<List> caminhoIntermediarios;
     private int status;
     private List<Tarefa> filaTarefas;
     private List<Tarefa> tarefaEmExecucao;
+    private List<CS_VMM> VMMsIntermediarios;
     
     private List<Double> falhas = new ArrayList<Double>();
     private List<Double> recuperacao = new ArrayList<Double>();
@@ -69,6 +71,9 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.OS = OS;
         this.maquinaHospedeira = null;
         this.caminhoVMM = null;
+        this.VMMsIntermediarios = new ArrayList<CS_VMM>();
+        this.caminhoIntermediarios =null;
+        
         this.status = LIVRE;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.filaTarefas = new ArrayList<Tarefa>();
@@ -76,6 +81,24 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     public CS_VMM getVmmResponsavel() {
         return vmmResponsavel;
+    }
+    
+    public List<CS_VMM> getVMMsIntermediarios(){
+        return this.VMMsIntermediarios;
+    }
+
+    public List<List> getCaminhoIntermediarios() {
+        return caminhoIntermediarios;
+    }
+    
+    public void addIntermediario(CS_VMM aux){
+       System.out.println(aux.getId());
+              
+       this.VMMsIntermediarios.add(aux);
+    }
+    
+    public void addCaminhoIntermediario(int i, List<CentroServico> caminho){
+        this.caminhoIntermediarios.add(i, caminho);
     }
 
        public int getProcessadoresDisponiveis() {

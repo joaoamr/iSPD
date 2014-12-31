@@ -73,6 +73,8 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         if (cliente instanceof TarefaVM) {
             if (cliente.getCaminho().isEmpty()) {
                 TarefaVM trf = (TarefaVM) cliente;
+                CS_VirtualMac vm = trf.getVM_enviada();
+                
                 //trecho dbg
                 System.out.println("vm " + trf.getVM_enviada().getId() + " adicionada no VMM " + this.getId() );
                  System.out.println("------------------------------------------");
@@ -98,12 +100,13 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         }
         //trecho de dbg
         if(!(cliente instanceof TarefaVM)){
-        System.out.println("cliente é retorno de uma tarefa");
-        System.out.println("-----------------------------------");
+        System.out.println("cliente é a tarefa " + cliente.getIdentificador() + " com status " + cliente.getEstado());
+        
         }
         if (cliente.getEstado() != Tarefa.CANCELADO) {
             //Tarefas concluida possuem tratamento diferencial
             if (cliente.getEstado() == Tarefa.CONCLUIDO) {
+                System.out.println("cliente é um retorno de tarefa");
                 //se não for origem da tarefa ela deve ser encaminhada
                 if (!cliente.getOrigem().equals(this)) {
                     //encaminhar tarefa!
@@ -127,6 +130,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
             } 
             //se a tarefa ainda tiver que executar
             else if (escDisponivel) {
+                System.out.println("Tarefa " + cliente.getIdentificador() + " chegando para ser escalonada");
                 this.escDisponivel = false;
                 //escalonador decide qual ação tomar na chegada de uma tarefa
                 escalonador.adicionarTarefa(cliente);
@@ -186,6 +190,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     @Override
     public void requisicao(Simulacao simulacao, Mensagem mensagem, int tipo) {
         if (tipo == EventoFuturo.ESCALONAR) {
+            System.out.println("iniciando escalonamento...");
             escalonador.escalonar();
         } else if (tipo == EventoFuturo.ALOCAR_VMS) {
             alocadorVM.escalonar();//realizar a rotina de alocar a máquina virtual
@@ -243,6 +248,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
 
     @Override
     public void executarEscalonamento() {
+        System.out.println(this.getId() + " solicitando escalonamento");
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
                 EventoFuturo.ESCALONAR,
@@ -604,6 +610,11 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
         CS_MaquinaCloud aux = vm.getMaquinaHospedeira();
         int indMaq = alocadorVM.getMaquinasFisicas().indexOf(aux);
         caminhoVMs.add(indVM, caminhoEscravo.get(indMaq));
+    }
+
+    @Override
+    public void liberarEscalonador() {
+        escDisponivel = true;
     }
     
 }

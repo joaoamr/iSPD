@@ -113,6 +113,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         for (Object escal : escalonadores.listar()) {
             getTabelaMaquina().getEscalonadores().addItem(escal);
             //getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
+            getTabelaCluster().getEscalonadores().addItem(escal);
         }
     }
 
@@ -120,6 +121,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         this.escalonadoresCloud = escalonadoresCloud;
         for (Object escal : escalonadoresCloud.listar()) {
             getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
+            getTabelaClusterIaaS().getEscalonadores().addItem(escal);
         }
     }
 
@@ -127,6 +129,7 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
         this.alocadores = alocadores;
         for (Object alloc : alocadores.listar()) {
             getTabelaMaquinaIaaS().getAlocadores().addItem(alloc);
+            getTabelaClusterIaaS().getAlocadores().addItem(alloc);
         }
     }
 
@@ -172,12 +175,14 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
             if (!escalonadoresCloud.listarRemovidos().isEmpty()) {
                 for (Object escal : escalonadoresCloud.listarRemovidos()) {
                     getTabelaMaquinaIaaS().getEscalonadores().removeItem(escal);
+                    getTabelaClusterIaaS().getEscalonadores().removeItem(escal);
                 }
                 escalonadoresCloud.listarRemovidos().clear();
             }
             if (!escalonadoresCloud.listarAdicionados().isEmpty()) {
                 for (Object escal : escalonadoresCloud.listarAdicionados()) {
                     getTabelaMaquinaIaaS().getEscalonadores().addItem(escal);
+                    getTabelaClusterIaaS().getEscalonadores().addItem(escal);
                 }
                 escalonadoresCloud.listarAdicionados().clear();
             }
@@ -185,12 +190,14 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
             if (!alocadores.listarRemovidos().isEmpty()) {
                 for (Object alloc : alocadores.listarRemovidos()) {
                     getTabelaMaquinaIaaS().getAlocadores().removeItem(alloc);
+                    getTabelaClusterIaaS().getAlocadores().removeItem(alloc);
                 }
                 alocadores.listarRemovidos().clear();
             }
             if (!alocadores.listarAdicionados().isEmpty()){
                 for (Object alloc : alocadores.listarAdicionados()){
                     getTabelaMaquinaIaaS().getAlocadores().addItem(alloc);
+                    getTabelaClusterIaaS().getAlocadores().addItem(alloc);
                 }
                 alocadores.listarAdicionados().clear();
             }
