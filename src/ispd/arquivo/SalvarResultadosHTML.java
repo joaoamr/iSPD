@@ -110,6 +110,9 @@ public class SalvarResultadosHTML {
         } else {
             this.globais += "<li><span style=\"color:#ff0000;\"><strong>Efficiency BAD</strong></span></li>\n";
         }
+        this.globais += "<li><strong>Cost Total Processing</strong> = " + globais.getCustoTotalProc() + "</li>\n"
+                + "<li><strong>Cost Total Memory</strong> = " + globais.getCustoTotalMem()+ "</li>\n"
+                + "<li><strong>Cost Total Disk</strong> = " + globais.getCustoTotalDisco()+ "</li>\n";
     }
 
     /**
