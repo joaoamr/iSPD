@@ -142,7 +142,6 @@ public class JResultadosCloud extends javax.swing.JDialog {
         //graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
         //graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
         //graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
-
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
@@ -559,6 +558,9 @@ public class JResultadosCloud extends javax.swing.JDialog {
         } else {
             texto += "\tEfficiency BAD\n ";
         }
+        texto += String.format("\tCost Total Processing = %g $\n", globais.getCustoTotalProc());
+        texto += String.format("\tCost Total Memory = %g $\n", globais.getCustoTotalMem());
+        texto += String.format("\tCost Total Disk = %g $\n", globais.getCustoTotalDisco());
         return texto;
     }
 
