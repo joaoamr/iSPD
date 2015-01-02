@@ -16,6 +16,7 @@ import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  *
  * @author denison_usuario
@@ -40,6 +41,9 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     private double custoProc;
     private double custoMemoria;
     private double custoDisco;
+    private double custoTotalDisco;
+    private double custoTotalMemoria;
+    private double custoTotalProc;
     //lista de máquinas virtuais
     private List<CS_VirtualMac> VMs;
 
@@ -67,6 +71,11 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoProc = custoProc;
         this.custoMemoria = custoMem;
         this.custoDisco = custoDisco;
+        this.custoTotalProc = 0;
+        this.custoTotalMemoria = 0;
+        this.custoTotalDisco = 0;
+    
+        
 
     }
 
@@ -82,8 +91,18 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoProc = custoProc;
         this.custoMemoria = custoMem;
         this.custoDisco = custoDisco;
+        this.custoTotalProc = 0;
+        this.custoTotalMemoria = 0;
+        this.custoTotalDisco = 0;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        
+       
+        
     }
+    
+    //manda o custo total para as metricas
+    
+    
 
     public List<List> getCaminhoMestre() {
         return caminhoMestre;
@@ -135,6 +154,19 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
     public void setCustoDisco(double custoDisco) {
         this.custoDisco = custoDisco;
+    }
+    
+     public double getCustoTotalDisco() {
+        return custoTotalDisco;
+    }
+    
+
+    public double getCustoTotalMemoria() {
+        return custoTotalMemoria;
+    }
+
+    public double getCustoTotalProc() {
+        return custoTotalProc;
     }
 
     @Override
@@ -235,6 +267,9 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             CS_VirtualMac vm = trf.getVM_enviada();
             //incluir a VM na lista de VMs
             vm.setStatus(CS_VirtualMac.ALOCADA);
+            custoTotalProc = custoTotalProc + (vm.getProcessadoresDisponiveis() * custoProc);
+            custoTotalMemoria = custoTotalMemoria + (vm.getMemoriaDisponivel() * custoMemoria);
+            custoTotalDisco = custoTotalDisco + (vm.getDiscoDisponivel() * custoDisco);
             vm.setPoderProcessamentoPorNucleo(this.getPoderComputacional());
             addVM(vm);
             //setar o caminho da vm para o mestre
