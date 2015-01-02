@@ -9,6 +9,7 @@ import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
 import java.util.List;
@@ -24,6 +25,21 @@ public class MetricasGlobais implements Serializable {
     private double ociosidadeComputacao;
     private double ociosidadeComunicacao;
     private double eficiencia;
+    private double custoTotalDisco;
+    private double custoTotalProc;
+    private double custoTotalMem;
+
+    public MetricasGlobais(double tempoSimulacao, double satisfacaoMedia, double ociosidadeComputacao, double ociosidadeComunicacao, double eficiencia, double custoTotalDisco, double custoTotalProc, double custoTotalMem, int total) {
+        this.tempoSimulacao = tempoSimulacao;
+        this.satisfacaoMedia = satisfacaoMedia;
+        this.ociosidadeComputacao = ociosidadeComputacao;
+        this.ociosidadeComunicacao = ociosidadeComunicacao;
+        this.eficiencia = eficiencia;
+        this.custoTotalDisco = custoTotalDisco;
+        this.custoTotalProc = custoTotalProc;
+        this.custoTotalMem = custoTotalMem;
+        this.total = total;
+    }
     private int total;
 
     public MetricasGlobais(RedeDeFilas redeDeFilas, double tempoSimulacao, List<Tarefa> tarefas) {
@@ -41,6 +57,9 @@ public class MetricasGlobais implements Serializable {
         this.ociosidadeComputacao = getOciosidadeComputacaoCloud(redeDeFilas);
         this.ociosidadeComunicacao = getOciosidadeComunicacao(redeDeFilas);
         this.eficiencia = getEficiencia(tarefas);
+        this.custoTotalDisco = getCustoTotalDisco(redeDeFilas);
+        this.custoTotalMem = getCustoTotalMem(redeDeFilas);
+        this.custoTotalProc = getCustoTotalProc(redeDeFilas);
         this.total = 0;
     }
 
@@ -51,6 +70,54 @@ public class MetricasGlobais implements Serializable {
         this.ociosidadeComunicacao = 0;
         this.eficiencia = 0;
         this.total = 0;
+        this.custoTotalDisco = 0;
+        this.custoTotalMem = 0;
+        this.custoTotalProc = 0;
+    }
+
+    public double getCustoTotalDisco(RedeDeFilasCloud redeDeFilas) {
+        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
+            custoTotalDisco = custoTotalDisco + auxMaq.getCustoTotalDisco();
+        }
+        return custoTotalDisco;
+    }
+    
+    public double getCustoTotalDisco(){
+        return custoTotalDisco;
+    }
+
+    public void setCustoTotalDisco(double custoTotalDisco) {
+        this.custoTotalDisco = custoTotalDisco;
+    }
+
+    public double getCustoTotalProc(RedeDeFilasCloud redeDeFilas) {
+        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
+            custoTotalProc = custoTotalProc + auxMaq.getCustoTotalProc();
+        }
+        return custoTotalProc;
+    }
+    
+    public double getCustoTotalProc(){
+         return custoTotalProc;
+    }
+
+    public void setCustoTotalProc(double custoTotalProc) {
+        this.custoTotalProc = custoTotalProc;
+    }
+
+    public double getCustoTotalMem(RedeDeFilasCloud redeDeFilas) {
+        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
+            custoTotalMem = custoTotalMem + auxMaq.getCustoTotalMemoria();
+        }
+        return custoTotalMem;
+    }
+    
+    public double getCustoTotalMem() {
+        return custoTotalMem;
+    }
+
+    public void setCustoTotalMem(double custoTotalMem) {
+        this.custoTotalMem = custoTotalMem;
     }
 
     public double getEficiencia() {
@@ -180,6 +247,9 @@ public class MetricasGlobais implements Serializable {
         } else {
             texto += "\tEfficiency BAD\n ";
         }
+        texto += String.format("\tCost Total de Processing = %g %%\n", custoTotalProc);
+        texto += String.format("\tCost Total de Memory = %g %%\n", custoTotalMem);
+        texto += String.format("\tCost Total de Disk = %g %%\n", custoTotalDisco);
         return texto;
     }
 }
