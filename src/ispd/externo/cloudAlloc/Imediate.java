@@ -99,6 +99,7 @@ public class Imediate extends Alocacao {
                     auxVM.setStatus(CS_VirtualMac.REJEITADA);
                     VMsRejeitadas.add(auxVM);
                     maqIndex = 0;
+                    num_escravos--;
                 }
             }
         }
