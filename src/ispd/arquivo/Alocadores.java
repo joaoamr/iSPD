@@ -45,7 +45,7 @@ public class Alocadores implements  ManipularArquivosAlloc{
      * guarda a lista de escalonadores implementados no iSPD, e que já estão
      * disponiveis para o usuario por padrão
      */
-    public final static String[] ALOCACAO = {"---", "RoundRobin", "Imediate"};
+    public final static String[] ALOCACAO = {"---", "RoundRobin", "Imediate", "ModRR"};
     /**
      * guarda a lista de escalonadores disponiveis
      */
