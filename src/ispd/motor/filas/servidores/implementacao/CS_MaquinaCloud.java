@@ -266,12 +266,31 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
             TarefaVM trf = (TarefaVM) cliente;
             CS_VirtualMac vm = trf.getVM_enviada();
             //incluir a VM na lista de VMs
-            vm.setStatus(CS_VirtualMac.ALOCADA);
+            if(vm.getStatus() != CS_VirtualMac.ALOCADA){
+                vm.setStatus(CS_VirtualMac.ALOCADA);
+                addVM(vm);
+                //setar o caminho da vm para o mestre
+            CS_VMM vmm = vm.getVmmResponsavel();
+
+            //trecho de teste
+            //System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
+            //fim teste
+            int index = mestres.indexOf(vmm);
+            if (index == -1){
+                List<CentroServico> caminhoVMM = getMenorCaminhoCloud(this, vmm);
+                vm.setCaminhoVMM(caminhoVMM);
+            }else{
+                vm.setCaminhoVMM(caminhoMestre.get(index));
+            }
+
+            System.out.println("indice do mestre:" + index);
+            //vm.setCaminhoVMM(caminhoMestre.get(index));
+            }
             custoTotalProc = custoTotalProc + (vm.getProcessadoresDisponiveis() * custoProc);
             custoTotalMemoria = custoTotalMemoria + (vm.getMemoriaDisponivel() * custoMemoria);
             custoTotalDisco = custoTotalDisco + (vm.getDiscoDisponivel() * custoDisco);
             vm.setPoderProcessamentoPorNucleo(this.getPoderComputacional());
-            addVM(vm);
+            /*
             //setar o caminho da vm para o mestre
             CS_VMM vmm = vm.getVmmResponsavel();
 
@@ -288,7 +307,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
             System.out.println("indice do mestre:" + index);
             //vm.setCaminhoVMM(caminhoMestre.get(index));
-
+            */
         }
     }
 
