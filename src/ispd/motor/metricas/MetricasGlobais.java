@@ -10,6 +10,7 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
+import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
 import java.util.List;
@@ -28,6 +29,8 @@ public class MetricasGlobais implements Serializable {
     private double custoTotalDisco;
     private double custoTotalProc;
     private double custoTotalMem;
+    private int totaldeVMs;
+    private int numVMsRejeitadas;
 
     public MetricasGlobais(double tempoSimulacao, double satisfacaoMedia, double ociosidadeComputacao, double ociosidadeComunicacao, double eficiencia, double custoTotalDisco, double custoTotalProc, double custoTotalMem, int total) {
         this.tempoSimulacao = tempoSimulacao;
@@ -60,6 +63,8 @@ public class MetricasGlobais implements Serializable {
         this.custoTotalDisco = getCustoTotalDisco(redeDeFilas);
         this.custoTotalMem = getCustoTotalMem(redeDeFilas);
         this.custoTotalProc = getCustoTotalProc(redeDeFilas);
+        this.totaldeVMs = getTotalVMs(redeDeFilas);
+        this.numVMsRejeitadas = getNumVMsRejeitadas(redeDeFilas);
         this.total = 0;
     }
 
@@ -138,6 +143,24 @@ public class MetricasGlobais implements Serializable {
 
     public double getTempoSimulacao() {
         return tempoSimulacao;
+    }
+    
+    private int getNumVMsRejeitadas(RedeDeFilasCloud redeDeFilas) {
+        int totalRejeitadas = 0;
+        for(CS_Processamento aux : redeDeFilas.getMestres()){
+            CS_VMM auxVMM = (CS_VMM) aux;
+            //totalRejeitadas += auxVMM.getAlocadorVM().getVMsRejeitadas().size();
+        }
+        return totalRejeitadas;
+    }
+    
+    private int getTotalVMs(RedeDeFilasCloud redeDeFilas){
+        int total = 0;
+        for(CS_Processamento aux : redeDeFilas.getMestres()){
+            CS_VMM auxVMM = (CS_VMM) aux;
+            total += auxVMM.getEscalonador().getEscravos().size();
+        }
+        return total;
     }
 
     private double getOciosidadeComputacao(RedeDeFilas redeDeFilas) {
@@ -222,7 +245,19 @@ public class MetricasGlobais implements Serializable {
     public void setEficiencia(double eficiencia) {
         this.eficiencia = eficiencia;
     }
-
+    
+    public int getNumVMsAlocadas(){
+        return totaldeVMs-numVMsRejeitadas;
+    }
+    
+    public int getNumVMsRejeitadas(){
+        return numVMsRejeitadas;
+    }
+    
+    public int getTotaldeVMs(){
+        return totaldeVMs;
+    }
+    
     public void add(MetricasGlobais global) {
         tempoSimulacao += global.getTempoSimulacao();
         satisfacaoMedia += global.getSatisfacaoMedia();
@@ -234,7 +269,7 @@ public class MetricasGlobais implements Serializable {
 
     @Override
     public String toString() {
-        String texto = "\t\tSimulation Results\n\n";
+        String texto = "\t\tSimulation Results:\n\n";
         texto += String.format("\tTotal Simulated Time = %g \n", tempoSimulacao / total);
         texto += String.format("\tSatisfaction = %g %%\n", satisfacaoMedia / total);
         texto += String.format("\tIdleness of processing resources = %g %%\n", ociosidadeComputacao / total);
@@ -247,9 +282,14 @@ public class MetricasGlobais implements Serializable {
         } else {
             texto += "\tEfficiency BAD\n ";
         }
+        texto += "\t\tCost Results:\n\n";
         texto += String.format("\tCost Total de Processing = %g %%\n", custoTotalProc);
         texto += String.format("\tCost Total de Memory = %g %%\n", custoTotalMem);
         texto += String.format("\tCost Total de Disk = %g %%\n", custoTotalDisco);
+        texto += "\t\tVM Alocation results:";
+        texto +=String.format("\tTotal of VMs alocated = %g %%\n", (totaldeVMs-numVMsRejeitadas));
+        texto +=String.format("\tTotal of VMs rejected = %g %%\n", numVMsRejeitadas);
         return texto;
     }
+
 }

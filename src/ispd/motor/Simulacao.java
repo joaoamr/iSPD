@@ -87,7 +87,7 @@ public abstract class Simulacao {
             //mas deve ser o primeiro evento executado nos mestres
             System.out.println("VMM " +  mst.getId()+ " iniciando o alocador" + mestre.getAlocadorVM().toString());
             mestre.getAlocadorVM().iniciar();
-            mestre.instanciarCaminhosVMs();
+            
             
         }
     }
@@ -97,6 +97,7 @@ public abstract class Simulacao {
             CS_VMM mestre = (CS_VMM) mst;
             System.out.println("VMM " + mst.getId() + " iniciando escalonador" + mestre.getEscalonador().toString());
             mestre.getEscalonador().iniciar();
+            mestre.instanciarCaminhosVMs();
             
         }
     }

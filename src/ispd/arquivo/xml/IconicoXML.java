@@ -401,9 +401,7 @@ public class IconicoXML {
                 Element memoria = (Element) carac.getElementsByTagName("memory").item(0);
                 Element disco = (Element) carac.getElementsByTagName("hard_disk").item(0);
                 Element custo = (Element) carac.getElementsByTagName("cost").item(0);
-                
-          
-                
+                //instancia o CS_VMM         
                 CS_VMM mestre = new CS_VMM(
                         maquina.getAttribute("id"),
                         maquina.getAttribute("owner"),
@@ -424,9 +422,7 @@ public class IconicoXML {
                 Element processamento = (Element) caracteristica.getElementsByTagName("process").item(0);
                 Element memoria = (Element) caracteristica.getElementsByTagName("memory").item(0);
                 Element disco = (Element) caracteristica.getElementsByTagName("hard_disk").item(0);
-
-                
-
+                //instancia um CS_MaquinaCloud
                 CS_MaquinaCloud maq = new CS_MaquinaCloud(
                         maquina.getAttribute("id"),
                         maquina.getAttribute("owner"),
@@ -450,7 +446,6 @@ public class IconicoXML {
             Element id = (Element) cluster.getElementsByTagName("icon_id").item(0);
             Element carac = (Element) cluster.getElementsByTagName("characteristic").item(0);
             Element proc = (Element) carac.getElementsByTagName("process").item(0);
-
             Element mem = (Element) carac.getElementsByTagName("memory").item(0);
             Element disc = (Element) carac.getElementsByTagName("hard_disk").item(0);
 
@@ -472,7 +467,7 @@ public class IconicoXML {
                 double total = clust.getPoderComputacional() + (clust.getPoderComputacional() * numeroEscravos);
                 usuarios.put(clust.getProprietario(), total + usuarios.get(clust.getProprietario()));
                 CS_Switch Switch = new CS_Switch(
-                        cluster.getAttribute("id"),
+                        (cluster.getAttribute("id") + "switch"),
                         Double.parseDouble(cluster.getAttribute("bandwidth")),
                         0.0,
                         Double.parseDouble(cluster.getAttribute("latency")));
@@ -488,7 +483,7 @@ public class IconicoXML {
                     Element memoria = (Element) caracteristica.getElementsByTagName("memory").item(0);
                     Element disco = (Element) caracteristica.getElementsByTagName("hard_disk").item(0);
                     CS_MaquinaCloud maq = new CS_MaquinaCloud(
-                            cluster.getAttribute("id"),
+                            (cluster.getAttribute("id") + "." + j),
                             cluster.getAttribute("owner"),
                             Double.parseDouble(processamento.getAttribute("power")),
                             Integer.parseInt(processamento.getAttribute("number")),
@@ -510,7 +505,7 @@ public class IconicoXML {
                 }
             } else {
                 CS_Switch Switch = new CS_Switch(
-                        cluster.getAttribute("id"),
+                        (cluster.getAttribute("id") + "switch"),
                         Double.parseDouble(cluster.getAttribute("bandwidth")),
                         0.0,
                         Double.parseDouble(cluster.getAttribute("latency")));
@@ -529,7 +524,7 @@ public class IconicoXML {
                     Element memoria = (Element) caracteristica.getElementsByTagName("memory");
                     Element disco = (Element) caracteristica.getElementsByTagName("hard_disk");
                     CS_MaquinaCloud maq = new CS_MaquinaCloud(
-                            cluster.getAttribute("id"),
+                            (cluster.getAttribute("id") + "." + j),
                             cluster.getAttribute("owner"),
                             Double.parseDouble(processamento.getAttribute("power")),
                             Integer.parseInt(processamento.getAttribute("number")),

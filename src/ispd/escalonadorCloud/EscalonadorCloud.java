@@ -31,6 +31,8 @@ public abstract class EscalonadorCloud {
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
     protected List<List> caminhoEscravo;
+    protected List<List> caminhoMaquinas;
+    
 
     //Métodos
     public abstract void iniciar();
@@ -59,8 +61,8 @@ public abstract class EscalonadorCloud {
         this.caminhoEscravo = caminhoEscravo;
     }
 
-    public void addEscravo(CS_Processamento maquina) {
-        this.escravos.add(maquina);
+    public void addEscravo(CS_Processamento vm) {
+        this.escravos.add(vm);
     }
 
     public void addTarefaConcluida(Tarefa tarefa) {
@@ -88,9 +90,17 @@ public abstract class EscalonadorCloud {
     public List<CS_Processamento> getMaqFisicas() {
         return maqFisicas;
     }
-
+   
     public void setMaqFisicas(List<CS_Processamento> maqFisicas) {
         this.maqFisicas = maqFisicas;
+    }
+
+    public List<List> getCaminhoMaquinas() {
+        return caminhoMaquinas;
+    }
+
+    public void setCaminhoMaquinas(List<List> caminhoMaquinas) {
+        this.caminhoMaquinas = caminhoMaquinas;
     }
     
     

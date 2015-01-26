@@ -72,99 +72,17 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.maquinaHospedeira = null;
         this.caminhoVMM = null;
         this.VMMsIntermediarios = new ArrayList<CS_VMM>();
-        this.caminhoIntermediarios =null;
+        this.caminhoIntermediarios = new ArrayList<List>();
         
         this.status = LIVRE;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.filaTarefas = new ArrayList<Tarefa>();
     }
 
-    public CS_VMM getVmmResponsavel() {
-        return vmmResponsavel;
-    }
     
-    public List<CS_VMM> getVMMsIntermediarios(){
-        return this.VMMsIntermediarios;
-    }
-
-    public List<List> getCaminhoIntermediarios() {
-        return caminhoIntermediarios;
-    }
-    
-    public void addIntermediario(CS_VMM aux){
-       System.out.println(aux.getId());
-              
-       this.VMMsIntermediarios.add(aux);
-    }
-    
-    public void addCaminhoIntermediario(int i, List<CentroServico> caminho){
-        this.caminhoIntermediarios.add(i, caminho);
-    }
-
-       public int getProcessadoresDisponiveis() {
-        return processadoresDisponiveis;
-    }
-
-    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
-        this.processadoresDisponiveis = processadoresDisponiveis;
-    }
-
-    public double getPoderProcessamento() {
-        return poderProcessamento;
-    }
-
-    public void setPoderProcessamentoPorNucleo(double poderProcessamento) {
-        super.setPoderComputacionalDisponivelPorProcessador(poderProcessamento);
-        super.setPoderComputacional(poderProcessamento);
-    }
-
-    public double getMemoriaDisponivel() {
-        return memoriaDisponivel;
-    }
-
-    public void setMemoriaDisponivel(double memoriaDisponivel) {
-        this.memoriaDisponivel = memoriaDisponivel;
-    }
-
-    public double getDiscoDisponivel() {
-        return discoDisponivel;
-    }
-
-    public void setDiscoDisponivel(double discoDisponivel) {
-        this.discoDisponivel = discoDisponivel;
-    }
-
-    public CS_MaquinaCloud getMaquinaHospedeira() {
-        return maquinaHospedeira;
-    }
-
-    public void setMaquinaHospedeira(CS_MaquinaCloud maquinaHospedeira) {
-        this.maquinaHospedeira = maquinaHospedeira;
-    }
-
-    public List<CentroServico> getCaminhoVMM() {
-        return caminhoVMM;
-    }
-
-    public void setCaminhoVMM(List<CentroServico> caminhoMestre) {
-        this.caminhoVMM = caminhoMestre;        
-    }
-
-     public void addVMM(CS_VMM vmmResponsavel) {
-        this.vmmResponsavel = vmmResponsavel;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
      @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        if (cliente.getEstado() != Tarefa.CANCELADO) {
+        if (cliente.getEstado() != Tarefa.CANCELADO) { //se a tarefa estiver parada ou executando
             cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
             if (processadoresDisponiveis != 0) {
                 //indica que recurso está ocupado
@@ -189,7 +107,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         if(cliente == null)
             System.out.println("cliente nao existe");
         else
-            System.out.println("cliente " + cliente);
+            System.out.println("cliente é a tarefa " + cliente.getIdentificador());
         tarefaEmExecucao.add(cliente);
         Double next = simulacao.getTime(this) + tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
         if (!falhas.isEmpty() && next > falhas.get(0)) {
@@ -229,10 +147,30 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         //eficiencia calculada apenas nas classes CS_Maquina
         cliente.calcEficiencia(this.getPoderComputacional());
         //Devolve tarefa para o mestre
-        if (vmmResponsavel.equals(cliente.getOrigem())) {
-            ArrayList<CentroServico> caminho =  new ArrayList<CentroServico>(caminhoVMM);
-            System.out.println("Saida -"+ this.getId() +"- caminho size:" + caminho.size());
+        
+        CentroServico Origem = cliente.getOrigem();
+        ArrayList<CentroServico> caminho;
+        if(Origem.equals(this.vmmResponsavel)){
+            caminho =  new ArrayList<CentroServico>(caminhoVMM);
+            
+        }else{
+            System.out.println("A tarefa não saiu do vmm desta vm!!!!!");
+            int index = VMMsIntermediarios.indexOf((CS_VMM) Origem);
+            if(index == -1){
+                CS_MaquinaCloud auxMaq = this.getMaquinaHospedeira();
+                ArrayList<CentroServico> caminhoInter = new ArrayList<CentroServico>(getMenorCaminhoIndiretoCloud(auxMaq, (CS_Processamento) Origem));
+                caminho = new ArrayList<CentroServico>(caminhoInter);
+                VMMsIntermediarios.add((CS_VMM) Origem);
+                int idx = VMMsIntermediarios.indexOf((CS_VMM) Origem);
+                caminhoIntermediarios.add(idx, caminhoInter);
+                
+            }else{
+                caminho = new ArrayList<CentroServico>(caminhoIntermediarios.get(index));
+            }
+        }
             cliente.setCaminho(caminho);
+            System.out.println("Saida -"+ this.getId() +"- caminho size:" + caminho.size());
+           
             //Gera evento para chegada da tarefa no proximo servidor
             EventoFuturo evtFut = new EventoFuturo(
                     simulacao.getTime(this),
@@ -241,19 +179,19 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
                     cliente);
             //Event adicionado a lista de evntos futuros
             simulacao.addEventoFuturo(evtFut);
-        } 
+        
         if (filaTarefas.isEmpty()) {
             //Indica que está livre
             this.processadoresDisponiveis++;
         } else {
             //Gera evento para atender proximo cliente da lista
             Tarefa proxCliente = filaTarefas.remove(0);
-            EventoFuturo evtFut = new EventoFuturo(
+            EventoFuturo NovoEvt = new EventoFuturo(
                     simulacao.getTime(this),
                     EventoFuturo.ATENDIMENTO,
                     this, proxCliente);
             //Event adicionado a lista de evntos futuros
-            simulacao.addEventoFuturo(evtFut);
+            simulacao.addEventoFuturo(NovoEvt);
         }
     }
 
@@ -282,53 +220,6 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
                 }
             }
         }
-    }
-
-    
-    
-    
-    
-    
-    
-    @Override
-    public void determinarCaminhos() throws LinkageError {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
-    @Override
-    public Object getConexoesSaida() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Integer getCargaTarefas() {
-         if (falha) {
-            return -100;
-        } else {
-            return (filaTarefas.size() + tarefaEmExecucao.size());
-        }
-    }
-    
-
-    @Override
-    public double getTimeCriacao() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public CentroServico getOrigem() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CentroServico> getCaminho() {
-        return this.caminho;
-    }
-
-    @Override
-    public void setCaminho(List<CentroServico> caminho) {
-        this.caminho = caminho;
     }
 
     @Override
@@ -522,6 +413,131 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         tarefaEmExecucao.clear();
     }
 
+    public CS_VMM getVmmResponsavel() {
+        return vmmResponsavel;
+    }
+    
+    public List<CS_VMM> getVMMsIntermediarios(){
+        return this.VMMsIntermediarios;
+    }
+
+    public List<List> getCaminhoIntermediarios() {
+        return caminhoIntermediarios;
+    }
+    
+    public void addIntermediario(CS_VMM aux){
+       System.out.println(aux.getId());
+              
+       this.VMMsIntermediarios.add(aux);
+    }
+    
+    public void addCaminhoIntermediario(int i, List<CentroServico> caminho){
+        this.caminhoIntermediarios.add(i, caminho);
+    }
+
+       public int getProcessadoresDisponiveis() {
+        return processadoresDisponiveis;
+    }
+
+    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
+        this.processadoresDisponiveis = processadoresDisponiveis;
+    }
+
+    public double getPoderProcessamento() {
+        return poderProcessamento;
+    }
+
+    public void setPoderProcessamentoPorNucleo(double poderProcessamento) {
+        super.setPoderComputacionalDisponivelPorProcessador(poderProcessamento);
+        super.setPoderComputacional(poderProcessamento);
+    }
+
+    public double getMemoriaDisponivel() {
+        return memoriaDisponivel;
+    }
+
+    public void setMemoriaDisponivel(double memoriaDisponivel) {
+        this.memoriaDisponivel = memoriaDisponivel;
+    }
+
+    public double getDiscoDisponivel() {
+        return discoDisponivel;
+    }
+
+    public void setDiscoDisponivel(double discoDisponivel) {
+        this.discoDisponivel = discoDisponivel;
+    }
+
+    public CS_MaquinaCloud getMaquinaHospedeira() {
+        return maquinaHospedeira;
+    }
+
+    public void setMaquinaHospedeira(CS_MaquinaCloud maquinaHospedeira) {
+        this.maquinaHospedeira = maquinaHospedeira;
+    }
+
+    public List<CentroServico> getCaminhoVMM() {
+        return caminhoVMM;
+    }
+
+    public void setCaminhoVMM(List<CentroServico> caminhoMestre) {
+        this.caminhoVMM = caminhoMestre;        
+    }
+
+     public void addVMM(CS_VMM vmmResponsavel) {
+        this.vmmResponsavel = vmmResponsavel;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    
+    @Override
+    public void determinarCaminhos() throws LinkageError {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
+    public Object getConexoesSaida() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Integer getCargaTarefas() {
+         if (falha) {
+            return -100;
+        } else {
+            return (filaTarefas.size() + tarefaEmExecucao.size());
+        }
+    }
+    
+
+    @Override
+    public double getTimeCriacao() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public CentroServico getOrigem() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<CentroServico> getCaminho() {
+        return this.caminho;
+    }
+
+    @Override
+    public void setCaminho(List<CentroServico> caminho) {
+        this.caminho = caminho;
+    }
+
     @Override
     public double getTamComunicacao() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -529,6 +545,11 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
 
     @Override
     public double getTamProcessamento() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

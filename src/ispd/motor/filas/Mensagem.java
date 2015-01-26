@@ -6,6 +6,7 @@ package ispd.motor.filas;
 
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class Mensagem implements Cliente {
         this.tipo = tipo;
         this.tamComunicacao = 0.011444091796875;
         this.tarefa = tarefa;
+        this.caminho = new ArrayList<CentroServico>();
     }
     
     public Mensagem(CS_Processamento origem, double tamComunicacao, int tipo) {

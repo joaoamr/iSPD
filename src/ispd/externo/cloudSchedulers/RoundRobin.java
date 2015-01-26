@@ -83,15 +83,9 @@ public class RoundRobin extends EscalonadorCloud{
     @Override
     public List<CentroServico> escalonarRota(CentroServico destino) {
         CS_VirtualMac auxVM = (CS_VirtualMac) destino;
-        CS_MaquinaCloud auxMaq = auxVM.getMaquinaHospedeira();
-        int index = maqFisicas.indexOf(auxMaq);
-        //if(index == -1){
-        //    List<CS_VMM> inter = auxVM.getVMMsIntermediarios();
-        //    List<List> caminhosInter = auxVM.getCaminhoIntermediarios();
-        //    for()
-            
-        //}
-        System.out.println("caminho escalonador" + caminhoEscravo.get(index));
+        int index = escravos.indexOf(auxVM);
+        
+        System.out.println("traçando rota para a VM: "+ auxVM.getId());
         return new ArrayList<CentroServico>((List<CentroServico>) caminhoEscravo.get(index));
         
     }

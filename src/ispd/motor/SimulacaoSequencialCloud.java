@@ -89,9 +89,10 @@ public class SimulacaoSequencialCloud extends Simulacao {
     public void simular() {
         //inicia os escalonadores
          System.out.println("---------------------------------------");
-        iniciarAlocadoresCloud();
-         System.out.println("---------------------------------------");
         iniciarEscalonadoresCloud();
+         System.out.println("---------------------------------------");
+        
+        iniciarAlocadoresCloud();
          System.out.println("---------------------------------------");
         addEventos(this.getTarefas());
          System.out.println("---------------------------------------");

@@ -545,22 +545,27 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private SalvarResultadosHTML html = new SalvarResultadosHTML();
 
     private String getResultadosGlobais(MetricasGlobais globais) {
-        String texto = "\t\tSimulation Results\n\n";
+        String texto = "\t\tSimulation Results:\n\n";
         texto += String.format("\tTotal Simulated Time = %g \n", globais.getTempoSimulacao());
         texto += String.format("\tSatisfaction = %g %%\n", globais.getSatisfacaoMedia());
         texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeComputacao());
         texto += String.format("\tIdleness of communication resources = %g %%\n", globais.getOciosidadeComunicacao());
         texto += String.format("\tEfficiency = %g %%\n", globais.getEficiencia());
         if (globais.getEficiencia() > 70.0) {
-            texto += "\tEfficiency GOOD\n ";
+            texto += "\tEfficiency GOOD\n\n ";
         } else if (globais.getEficiencia() > 40.0) {
-            texto += "\tEfficiency MEDIA\n ";
+            texto += "\tEfficiency MEDIA\n\n ";
         } else {
-            texto += "\tEfficiency BAD\n ";
+            texto += "\tEfficiency BAD\n\n ";
         }
+        texto += "\t\tCost Results:\n\n";
         texto += String.format("\tCost Total Processing = %g $\n", globais.getCustoTotalProc());
         texto += String.format("\tCost Total Memory = %g $\n", globais.getCustoTotalMem());
-        texto += String.format("\tCost Total Disk = %g $\n", globais.getCustoTotalDisco());
+        texto += String.format("\tCost Total Disk = %g $\n\n", globais.getCustoTotalDisco());
+        texto += "\t\tVM Alocation Results:\n\n";
+        texto +=String.format("\tTotal of VMs alocated = %d \n", globais.getNumVMsAlocadas());
+        texto +=String.format("\tTotal of VMs rejected = %d \n", globais.getNumVMsRejeitadas());
+        
         return texto;
     }
 

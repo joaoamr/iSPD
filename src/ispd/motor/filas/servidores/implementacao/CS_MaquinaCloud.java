@@ -16,10 +16,9 @@ import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
- * @author denison_usuario
+ * @author Diogo Tavares
  */
 public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vertice {
 
@@ -74,8 +73,6 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoTotalProc = 0;
         this.custoTotalMemoria = 0;
         this.custoTotalDisco = 0;
-    
-        
 
     }
 
@@ -85,6 +82,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
+        this.VMs = new ArrayList<CS_VirtualMac>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.memoriaDisponivel = memoria;
         this.discoDisponivel = disco;
@@ -95,152 +93,45 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoTotalMemoria = 0;
         this.custoTotalDisco = 0;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
-        
-       
-        
-    }
-    
-    //manda o custo total para as metricas
-    
-    
 
-    public List<List> getCaminhoMestre() {
-        return caminhoMestre;
-    }
-
-    public double getMemoriaDisponivel() {
-        return memoriaDisponivel;
-    }
-
-    public void setMemoriaDisponivel(double memoriaDisponivel) {
-        this.memoriaDisponivel = memoriaDisponivel;
-    }
-
-    public double getDiscoDisponivel() {
-        return discoDisponivel;
-    }
-
-    public void setDiscoDisponivel(double discoDisponivel) {
-        this.discoDisponivel = discoDisponivel;
-    }
-
-    public int getProcessadoresDisponiveis() {
-        return processadoresDisponiveis;
-    }
-
-    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
-        this.processadoresDisponiveis = processadoresDisponiveis;
-    }
-
-    public double getCustoProc() {
-        return custoProc;
-    }
-
-    public void setCustoProc(double custoProc) {
-        this.custoProc = custoProc;
-    }
-
-    public double getCustoMemoria() {
-        return custoMemoria;
-    }
-
-    public void setCustoMemoria(double custoMemoria) {
-        this.custoMemoria = custoMemoria;
-    }
-
-    public double getCustoDisco() {
-        return custoDisco;
-    }
-
-    public void setCustoDisco(double custoDisco) {
-        this.custoDisco = custoDisco;
-    }
-    
-     public double getCustoTotalDisco() {
-        return custoTotalDisco;
-    }
-    
-
-    public double getCustoTotalMemoria() {
-        return custoTotalMemoria;
-    }
-
-    public double getCustoTotalProc() {
-        return custoTotalProc;
-    }
-
-    @Override
-    public void addConexoesEntrada(CS_Link conexao) {
-        this.conexoesEntrada.add(conexao);
-    }
-
-    @Override
-    public void addConexoesSaida(CS_Link conexao) {
-        this.conexoesSaida.add(conexao);
-    }
-
-    public List<CS_Processamento> getMestres() {
-        return mestres;
-    }
-
-    public void setMestres(List<CS_Processamento> mestres) {
-        this.mestres = mestres;
-    }
-    
-    
-
-    public void addConexoesEntrada(CS_Switch conexao) {
-        this.conexoesEntrada.add(conexao);
-    }
-
-    public void addConexoesSaida(CS_Switch conexao) {
-        this.conexoesSaida.add(conexao);
-    }
-
-    public void addMestre(CS_Processamento mestre) {
-        this.mestres.add(mestre);
-    }
-
-    public void addVM(CS_VirtualMac vm) {
-        this.VMs.add(vm);
-    }
-
-    public void removeVM(CS_VirtualMac vm) {
-        this.VMs.remove(vm);
-    }
-
-    @Override
-    public List<CS_Comunicacao> getConexoesSaida() {
-        return this.conexoesSaida;
     }
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
-        System.out.println("Chegada de evento na "+ this.getId());
+        System.out.println("----------------------------------------------");
+        System.out.println("Chegada de evento na  máquina " + this.getId());
         if (cliente instanceof TarefaVM) {
-            
             TarefaVM trf = (TarefaVM) cliente;
-            System.out.println(trf.getVM_enviada().getId() + " Chegou e será atendida");
-            if (trf.getVM_enviada().getMaquinaHospedeira().equals(this)) {
-                
-                EventoFuturo evtFut = new EventoFuturo(
-                        simulacao.getTime(this),
-                        EventoFuturo.ATENDIMENTO,
-                        this,
-                        cliente);
-                simulacao.addEventoFuturo(evtFut);
+            CS_VirtualMac vm = trf.getVM_enviada();
+            if (vm.getMaquinaHospedeira().equals(this)) {
+                if (this.VMs.contains(vm)) {
+                    System.out.println("Cliente duplicado!");
+                } else {
+                    System.out.println(vm.getId() + " enviada para evento de atendimento nesta máquina");
+                    System.out.println("----------------------------------------------");
+                    EventoFuturo evtFut = new EventoFuturo(
+                            simulacao.getTime(this),
+                            EventoFuturo.ATENDIMENTO,
+                            this,
+                            cliente);
+                    simulacao.addEventoFuturo(evtFut);
+                }
             } else {
+                System.out.println(vm.getId() + " encaminhada para seu destino, esta máquina é intermediária");
+                System.out.println("----------------------------------------------");
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
-                        EventoFuturo.SAÍDA,
-                        this,
+                        EventoFuturo.CHEGADA,
+                        cliente.getCaminho().remove(0),
                         cliente);
                 simulacao.addEventoFuturo(evtFut);
             }
-        } else if (cliente instanceof Tarefa) {
+        } else {
+            //procedimento caso cliente seja uma tarefa!
             CS_VirtualMac vm = (CS_VirtualMac) cliente.getLocalProcessamento();
-            if (vm.getMaquinaHospedeira().equals(this)) {
-                 System.out.println("Tarefa " + cliente.getIdentificador() + " sendo enviada para execução na vm " + vm.getId());
+            if (vm.getMaquinaHospedeira().equals(this)) {//se a tarefa é endereçada pra uma VM qu está alocada nessa máquina
+                System.out.println(this.getId() + ": Tarefa " + cliente.getIdentificador() + " sendo enviada para execução na vm " + vm.getId());
+                System.out.println("----------------------------------------------");
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.CHEGADA,
@@ -248,6 +139,8 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
                         cliente);
                 simulacao.addEventoFuturo(evtFut);
             } else {
+                System.out.println(this.getId() + ": Tarefa " + cliente.getIdentificador() + " sendo encaminhada para próximo CS");
+                System.out.println("----------------------------------------------");
                 EventoFuturo evtFut = new EventoFuturo(
                         simulacao.getTime(this),
                         EventoFuturo.SAÍDA,
@@ -262,62 +155,91 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
-        if (cliente instanceof TarefaVM) {
-            TarefaVM trf = (TarefaVM) cliente;
-            CS_VirtualMac vm = trf.getVM_enviada();
-            //incluir a VM na lista de VMs
-            if(vm.getStatus() != CS_VirtualMac.ALOCADA){
-                vm.setStatus(CS_VirtualMac.ALOCADA);
-                addVM(vm);
-                //setar o caminho da vm para o mestre
-            CS_VMM vmm = vm.getVmmResponsavel();
 
+        TarefaVM trf = (TarefaVM) cliente;
+        CS_VirtualMac vm = trf.getVM_enviada();
+        System.out.println("--------------------------------------------------");
+        System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + this.getId());
+
+            //vm.setStatus(CS_VirtualMac.ALOCADA);
+        this.addVM(vm); //incluir a VM na lista de VMs
+        //Setar o caminho da vm para o VMM e o caminho do ACK da mensagem >>>
+        CS_VMM vmm = vm.getVmmResponsavel();
             //trecho de teste
-            //System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
-            //fim teste
-            int index = mestres.indexOf(vmm);
-            if (index == -1){
-                List<CentroServico> caminhoVMM = getMenorCaminhoCloud(this, vmm);
-                vm.setCaminhoVMM(caminhoVMM);
-            }else{
-                vm.setCaminhoVMM(caminhoMestre.get(index));
+        //
+        //fim teste
+        int index = mestres.indexOf(vmm);
+        Mensagem msg = new Mensagem(this, Mensagens.ALOCAR_ACK, cliente);
+
+        if (index == -1) {
+            ArrayList<CentroServico> caminhoVMM = new ArrayList<CentroServico>(getMenorCaminhoIndiretoCloud(this, vmm));
+            ArrayList<CentroServico> caminhoMsg = new ArrayList<CentroServico>(getMenorCaminhoIndiretoCloud(this, vmm));
+
+            System.out.println("Imprimindo caminho para o mestre:");
+            for (CentroServico cs : caminhoVMM) {
+                System.out.println(cs.getId());
             }
 
-            System.out.println("indice do mestre:" + index);
-            //vm.setCaminhoVMM(caminhoMestre.get(index));
-            }
-            custoTotalProc = custoTotalProc + (vm.getProcessadoresDisponiveis() * custoProc);
-            custoTotalMemoria = custoTotalMemoria + (vm.getMemoriaDisponivel() * custoMemoria);
-            custoTotalDisco = custoTotalDisco + (vm.getDiscoDisponivel() * custoDisco);
-            vm.setPoderProcessamentoPorNucleo(this.getPoderComputacional());
-            /*
-            //setar o caminho da vm para o mestre
-            CS_VMM vmm = vm.getVmmResponsavel();
+            vm.setCaminhoVMM(caminhoVMM);
+            msg.setCaminho(caminhoMsg);
+        } else {
+            ArrayList<CentroServico> caminhoVMM = new ArrayList<CentroServico>(caminhoMestre.get(index));
+            ArrayList<CentroServico> caminhoMsg = new ArrayList<CentroServico>(caminhoMestre.get(index));
 
-            //trecho de teste
-            System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
-            //fim teste
-            int index = mestres.indexOf(vmm);
-            if (index == -1){
-                List<CentroServico> caminhoVMM = getMenorCaminhoCloud(this, vmm);
-                vm.setCaminhoVMM(caminhoVMM);
-            }else{
-                vm.setCaminhoVMM(caminhoMestre.get(index));
+            System.out.println("Imprimindo caminho para o mestre:");
+            for (CentroServico cs : caminhoVMM) {
+                System.out.println(cs.getId());
             }
-
-            System.out.println("indice do mestre:" + index);
-            //vm.setCaminhoVMM(caminhoMestre.get(index));
-            */
+            vm.setCaminhoVMM(caminhoVMM);
+            msg.setCaminho(caminhoMsg);
         }
+
+        //enviar mensagem de ACK para o VMM
+        EventoFuturo NovoEvt = new EventoFuturo(
+                simulacao.getTime(this),
+                EventoFuturo.MENSAGEM,
+                this,
+                msg);
+        simulacao.addEventoFuturo(NovoEvt);
+
+        //Gerenciamento de custos
+        custoTotalProc = custoTotalProc + (vm.getProcessadoresDisponiveis() * custoProc);
+        custoTotalMemoria = custoTotalMemoria + (vm.getMemoriaDisponivel() * custoMemoria);
+        custoTotalDisco = custoTotalDisco + (vm.getDiscoDisponivel() * custoDisco);
+        //setar o poder de processamento da VM.
+        vm.setPoderProcessamentoPorNucleo(this.getPoderComputacional());
+        System.out.println("----------------------------------------------------");
+        /*
+         //setar o caminho da vm para o mestre
+         CS_VMM vmm = vm.getVmmResponsavel();
+
+         //trecho de teste
+         System.out.println("atendimento da vm:" + vm.getId() + "na maquina:" + vm.getMaquinaHospedeira().getId());
+         //fim teste
+         int index = mestres.indexOf(vmm);
+         if (index == -1){
+         List<CentroServico> caminhoVMM = getMenorCaminhoCloud(this, vmm);
+         vm.setCaminhoVMM(caminhoVMM);
+         }else{
+         vm.setCaminhoVMM(caminhoMestre.get(index));
+         }
+
+         System.out.println("indice do mestre:" + index);
+         //vm.setCaminhoVMM(caminhoMestre.get(index));
+         */
+
     }
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        System.out.println("--------------------------------------");
+        System.out.println(this.getId() + ": Saída de cliente");
+        System.out.println("--------------------------------------");
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
-                EventoFuturo.CHEGADA, 
+                EventoFuturo.CHEGADA,
                 cliente.getCaminho().remove(0),
-                cliente);       
+                cliente);
     }
 
     @Override
@@ -325,6 +247,10 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         if (mensagem != null) {
             if (mensagem.getTipo() == Mensagens.ATUALIZAR) {
                 atenderAtualizacao(simulacao, mensagem);
+            } else if (mensagem.getTipo() == Mensagens.ALOCAR_ACK) { //a máquina é só um intermediário
+                //esse tipo de mensagem só é atendido por um VMM
+                atenderAckAlocacao(simulacao, mensagem);
+
             } else if (mensagem.getTarefa() != null && mensagem.getTarefa().getLocalProcessamento().equals(this)) {
                 switch (mensagem.getTipo()) {
                     case Mensagens.PARAR:
@@ -342,6 +268,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
                     case Mensagens.FALHAR:
                         atenderFalha(simulacao, mensagem);
                         break;
+
                 }
             }
         }
@@ -363,6 +290,20 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
                 throw new LinkageError();
             }
         }
+    }
+
+    @Override
+    public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem) {
+        //quem deve resolver esse método é o VMM de origem
+        //portanto as maquinas só encaminham pro próximo centro de serviço.
+        System.out.println("--------------------------------------");
+        System.out.println("Encaminhando ACK de alocação para " + mensagem.getOrigem().getId());
+        EventoFuturo evt = new EventoFuturo(
+                simulacao.getTime(this),
+                EventoFuturo.MENSAGEM,
+                mensagem.getCaminho().remove(0),
+                mensagem);
+        simulacao.addEventoFuturo(evt);
     }
 
     @Override
@@ -570,4 +511,113 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         recuperacao.add(tRec);
         erroRecuperavel = recuperavel;
     }
+
+    //manda o custo total para as metricas
+    public List<List> getCaminhoMestre() {
+        return caminhoMestre;
+    }
+
+    public double getMemoriaDisponivel() {
+        return memoriaDisponivel;
+    }
+
+    public void setMemoriaDisponivel(double memoriaDisponivel) {
+        this.memoriaDisponivel = memoriaDisponivel;
+    }
+
+    public double getDiscoDisponivel() {
+        return discoDisponivel;
+    }
+
+    public void setDiscoDisponivel(double discoDisponivel) {
+        this.discoDisponivel = discoDisponivel;
+    }
+
+    public int getProcessadoresDisponiveis() {
+        return processadoresDisponiveis;
+    }
+
+    public void setProcessadoresDisponiveis(int processadoresDisponiveis) {
+        this.processadoresDisponiveis = processadoresDisponiveis;
+    }
+
+    public double getCustoProc() {
+        return custoProc;
+    }
+
+    public void setCustoProc(double custoProc) {
+        this.custoProc = custoProc;
+    }
+
+    public double getCustoMemoria() {
+        return custoMemoria;
+    }
+
+    public void setCustoMemoria(double custoMemoria) {
+        this.custoMemoria = custoMemoria;
+    }
+
+    public double getCustoDisco() {
+        return custoDisco;
+    }
+
+    public void setCustoDisco(double custoDisco) {
+        this.custoDisco = custoDisco;
+    }
+
+    public double getCustoTotalDisco() {
+        return custoTotalDisco;
+    }
+
+    public double getCustoTotalMemoria() {
+        return custoTotalMemoria;
+    }
+
+    public double getCustoTotalProc() {
+        return custoTotalProc;
+    }
+
+    @Override
+    public void addConexoesEntrada(CS_Link conexao) {
+        this.conexoesEntrada.add(conexao);
+    }
+
+    @Override
+    public void addConexoesSaida(CS_Link conexao) {
+        this.conexoesSaida.add(conexao);
+    }
+
+    public List<CS_Processamento> getMestres() {
+        return mestres;
+    }
+
+    public void setMestres(List<CS_Processamento> mestres) {
+        this.mestres = mestres;
+    }
+
+    public void addConexoesEntrada(CS_Switch conexao) {
+        this.conexoesEntrada.add(conexao);
+    }
+
+    public void addConexoesSaida(CS_Switch conexao) {
+        this.conexoesSaida.add(conexao);
+    }
+
+    public void addMestre(CS_Processamento mestre) {
+        this.mestres.add(mestre);
+    }
+
+    public void addVM(CS_VirtualMac vm) {
+        this.VMs.add(vm);
+    }
+
+    public void removeVM(CS_VirtualMac vm) {
+        this.VMs.remove(vm);
+    }
+
+    @Override
+    public List<CS_Comunicacao> getConexoesSaida() {
+        return this.conexoesSaida;
+    }
+
 }

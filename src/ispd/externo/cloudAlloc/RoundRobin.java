@@ -24,12 +24,13 @@ import java.util.ListIterator;
 public class RoundRobin extends Alocacao {
 
     private ListIterator<CS_Processamento> maqFisica;
-    private ArrayList<CS_VirtualMac> VMsRejeitadas;
+   
 
     public RoundRobin() {
         
         this.maquinasVirtuais = new ArrayList<CS_VirtualMac>();
         this.maquinasFisicas = new LinkedList<CS_Processamento>();
+        this.VMsRejeitadas = new ArrayList<CS_VirtualMac>();
     }
 
     @Override
@@ -48,7 +49,6 @@ public class RoundRobin extends Alocacao {
 
         //fim do trecho de teste
         maqFisica = maquinasFisicas.listIterator(0);
-        VMsRejeitadas = new ArrayList<CS_VirtualMac>();
         if (!maquinasVirtuais.isEmpty()) {
 
             escalonar();
@@ -72,7 +72,7 @@ public class RoundRobin extends Alocacao {
 
     @Override
     public List<CentroServico> escalonarRota(CentroServico destino) {
-        System.out.println("Escalonando rota da vm para hospedeiro");
+        //System.out.println("Escalonando rota da vm para hospedeiro");
         int index = maquinasFisicas.indexOf(destino);
         //System.out.println("indice da maquina é:" + index);
         return new ArrayList<CentroServico>((List<CentroServico>) caminhoMaquina.get(index));
@@ -80,10 +80,13 @@ public class RoundRobin extends Alocacao {
 
     @Override
     public void escalonar() {
+        
 
         while (!(maquinasVirtuais.isEmpty())) {
+            System.out.println("------------------------------------------");
             int num_escravos;
             num_escravos = maquinasFisicas.size();
+            
 
             CS_VirtualMac auxVM = escalonarVM();
 
@@ -91,7 +94,7 @@ public class RoundRobin extends Alocacao {
                 if (num_escravos > 0) {//caso existam máquinas livres
                     CS_Processamento auxMaq = escalonarRecurso(); //escalona o recurso
                     if (auxMaq instanceof CS_VMM) {
-                         System.out.println("---------------------------------------");
+                        
                         System.out.println(auxMaq.getId() + " é um VMM, a VM será redirecionada");
                         auxVM.setCaminho(escalonarRota(auxMaq));
                         //salvando uma lista de VMMs intermediarios no caminho da vm e seus respectivos caminhos
@@ -103,10 +106,10 @@ public class RoundRobin extends Alocacao {
                         //auxVM.addCaminhoIntermediario(index, caminhoInter);
                         System.out.println( auxVM.getId() + " enviada para " + auxMaq.getId());
                         VMM.enviarVM(auxVM);
-                         System.out.println("---------------------------------------");
+                        System.out.println("---------------------------------------");
                         break;
                     } else {
-                        System.out.println("---------------------------------------");
+                        System.out.println("Checagem de recursos:");
                         CS_MaquinaCloud maq = (CS_MaquinaCloud) auxMaq;
                         double memoriaMaq = maq.getMemoriaDisponivel();
                         System.out.println("memoriaMaq: " + memoriaMaq);
@@ -120,7 +123,7 @@ public class RoundRobin extends Alocacao {
                         System.out.println("ProcMaq: " + maqProc);
                         int procVM = auxVM.getProcessadoresDisponiveis();
                         System.out.println("ProcVM: " + procVM);
-                         System.out.println("---------------------------------------");
+                        //System.out.println("---------------------------------------");
 
                         if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && procVM <= maqProc)) {
                             maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);

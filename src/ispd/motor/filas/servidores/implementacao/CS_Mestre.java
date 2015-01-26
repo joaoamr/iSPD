@@ -493,4 +493,9 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
     public Integer getCargaTarefas() {
         return (escalonador.getFilaTarefas().size() + filaTarefas.size());
     }
+
+    @Override
+    public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

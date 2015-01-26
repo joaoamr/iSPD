@@ -23,18 +23,19 @@ public class Imediate extends Alocacao {
 
     private boolean fit;
     private int maqIndex;
-    private ArrayList<CS_VirtualMac> VMsRejeitadas;
+    
 
     public Imediate() {
         this.maquinasVirtuais = new ArrayList<CS_VirtualMac>();
         this.maquinasFisicas = new ArrayList<CS_Processamento>();
+        this.VMsRejeitadas = new ArrayList<CS_VirtualMac>();
     }
 
     @Override
     public void iniciar() {
         fit = true;
         maqIndex = 0;
-        VMsRejeitadas = new ArrayList<CS_VirtualMac>();
+        
         if(!maquinasFisicas.isEmpty() && !maquinasVirtuais.isEmpty()){
             escalonar();
         }
