@@ -10,6 +10,7 @@ import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public abstract class Alocacao {
     protected List<List> infoMaquinas; // lista de informações armazenada sobre cada máquina física
     protected List<CS_VirtualMac> maquinasVirtuais; //lista de vms "tarefas"
     protected VMM VMM; //vmm responsável por implementar a política de alocação
-    
+    protected List<CS_VirtualMac> VMsRejeitadas;    
     protected List<List> caminhoMaquina;
     
     //iniciar a alocação
@@ -76,6 +77,11 @@ public abstract class Alocacao {
     public void setCaminhoMaquinas(List<List> caminhoMaquinas) {
         this.caminhoMaquina = caminhoMaquinas;
     }
+
+    public List<CS_VirtualMac> getVMsRejeitadas() {
+        return VMsRejeitadas;
+    }
+    
     
     
     
