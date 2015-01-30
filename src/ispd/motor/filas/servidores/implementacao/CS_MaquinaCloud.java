@@ -21,7 +21,11 @@ import java.util.List;
  * @author Diogo Tavares
  */
 public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vertice {
-
+    
+    public static final int DORMINDO = 0;
+    public static final int LIGADO = 1;
+    public static final int DESLIGADO = 2;
+    
     private List<CS_Comunicacao> conexoesEntrada;
     private List<CS_Comunicacao> conexoesSaida;
     private List<Tarefa> filaTarefas;
