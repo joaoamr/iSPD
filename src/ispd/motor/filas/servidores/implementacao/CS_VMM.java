@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ispd.alocacaoVM.CarregarAlloc;
 import ispd.motor.filas.TarefaVM;
+
 import sun.awt.geom.Crossings;
 
 /**
@@ -284,7 +285,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
     public void enviarVM(CS_VirtualMac vm) {
         System.out.println("Enviar VM: alocando VM " + vm.getId());
         System.out.println("------------------------------------------");
-        TarefaVM tarefa = new TarefaVM(vm.getVmmResponsavel(), vm, vm.getDiscoDisponivel(), 0.0);
+        TarefaVM tarefa = new TarefaVM(vm.getVmmResponsavel(), vm, 300.0, 0.0);
         tarefa.setCaminho(vm.getCaminho());
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
