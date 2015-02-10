@@ -853,15 +853,15 @@ public class DesenhoGrade extends AreaDesenho {
 
     private static void criarImagens() {
         if (IMACHINE == null) {
-            ImageIcon maq = new ImageIcon(Machine.class.getResource("./../../imagens/botao_no.gif"));
+            ImageIcon maq = new ImageIcon(JPrincipal.class.getResource("imagens/botao_no.gif"));
             IMACHINE = maq.getImage();
-            ImageIcon clt = new ImageIcon(Machine.class.getResource("./../../imagens/botao_cluster.gif"));
+            ImageIcon clt = new ImageIcon(JPrincipal.class.getResource("imagens/botao_cluster.gif"));
             ICLUSTER = clt.getImage();
-            ImageIcon net = new ImageIcon(Machine.class.getResource("./../../imagens/botao_internet.gif"));
+            ImageIcon net = new ImageIcon(JPrincipal.class.getResource("imagens/botao_internet.gif"));
             IINTERNET = net.getImage();
-            ImageIcon verd = new ImageIcon(Machine.class.getResource("./../../imagens/verde.png"));
+            ImageIcon verd = new ImageIcon(JPrincipal.class.getResource("imagens/verde.png"));
             IVERDE = verd.getImage();
-            ImageIcon verm = new ImageIcon(Machine.class.getResource("./../../imagens/vermelho.png"));
+            ImageIcon verm = new ImageIcon(JPrincipal.class.getResource("imagens/vermelho.png"));
             IVERMELHO = verm.getImage();
         }
     }
