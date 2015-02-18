@@ -8,16 +8,20 @@ import ispd.arquivo.Alocadores;
 import ispd.arquivo.Escalonadores;
 import ispd.arquivo.EscalonadoresCloud;
 import ispd.gui.iconico.grade.Cluster;
+import java.awt.Component;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import javax.swing.JComboBox;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
  * @author denison
  */
-public class ClusterTableIaaS extends AbstractTableModel {
+public class ClusterTableIaaS extends AbstractTableModel{
 
     // Constantes representando o índice das colunas
     private static final int TYPE = 0;
@@ -49,8 +53,11 @@ public class ClusterTableIaaS extends AbstractTableModel {
     public ClusterTableIaaS(ResourceBundle palavras) {
         this.palavras = palavras;
         escalonador = new JComboBox(EscalonadoresCloud.ESCALONADORES);
+        escalonador.setToolTipText("Select the task scheduling policy");
         usuarios = new JComboBox();
+        usuarios.setToolTipText("Select the resource owner");
         VMMPolicy = new JComboBox(Alocadores.ALOCACAO);
+        VMMPolicy.setToolTipText("Select the virtual machine allocation policy");
     }
 
     public void setCluster(Cluster cluster, HashSet users) {
@@ -249,4 +256,6 @@ public class ClusterTableIaaS extends AbstractTableModel {
         this.palavras = palavras;
         fireTableStructureChanged();
     }
+
+  
 }

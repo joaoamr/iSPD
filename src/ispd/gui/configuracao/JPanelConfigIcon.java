@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import ispd.gui.EscolherClasse;
+import java.awt.event.MouseEvent;
 
 /**
  *
@@ -40,19 +41,222 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
 
     public JPanelConfigIcon() {
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", new Locale("en", "US"));
-        Tmachine = new VariedRowTable();
+        Tmachine = new VariedRowTable(){
+            //Implementa as dicas para cada célula da tabela          
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    if(colIndex==1){
+                        if(rowIndex==0){
+                            tip = "Insert the label name of the resource";
+                        }else if(rowIndex==1){
+                            tip = "Select the resource owner";
+                        }else if(rowIndex==2){
+                            tip = "Insert the amount of computing power of the resource in MFlops";
+                        }else if(rowIndex==3){
+                            tip = "Insert the percentage of background computing in decimal notation";
+                        }else if(rowIndex==4){
+                            tip = "Insert the number of precessing cores of the resource";
+                        }else if(rowIndex==5){
+                            tip = "Insert the amount of memory of the resource in MBytes";
+                        }else if(rowIndex==6){
+                            tip = "Insert the amount of hard disk of the resource in GBytes";
+                        }else if(rowIndex==7){
+                            tip = "Select if the resource is master node";
+                        }else if(rowIndex==8){
+                            tip = "Select the task scheduling policy of the master";
+                        }else if(rowIndex==9){
+                            tip = "Select the slave nodes that will be coordinated by this master";
+                        }
+                    }
+                } catch (RuntimeException e1) {
+                    //catch null pointer exception if mouse is over an empty line
+                }
+
+                return tip;
+            }
+        };
         Tmachine.setModel(new MachineTable(palavras));
         Tmachine.setRowHeight(20);
-        TmachineIaaS = new VariedRowTable();
+        TmachineIaaS = new VariedRowTable(){
+            //Implementa as dicas para cada célula da tabela          
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    if(colIndex==1){
+                        if(rowIndex==0){
+                            tip = "Insert the label name of the resource";
+                        }else if(rowIndex==1){
+                            tip = "Select the resource owner";
+                        }else if(rowIndex==2){
+                            tip = "Insert the amount of computing power of the resource in MFlops";
+                        }else if(rowIndex==3){
+                            tip = "Insert the percentage of background computing in decimal notation";
+                        }else if(rowIndex==4){
+                            tip = "Insert the number of precessing cores of the resource";
+                        }else if(rowIndex==5){
+                            tip = "Insert the amount of memory of the resource in MBytes";
+                        }else if(rowIndex==6){
+                            tip = "Insert the amount of hard disk of the resource in GBytes";
+                        }else if(rowIndex==7){
+                            tip = "Insert the cost of processing utilization ($/cores/seconds)";
+                        }else if(rowIndex==8){
+                            tip = "Insert the cost of memory utilization ($/MB/seconds)";
+                        }else if(rowIndex==9){
+                            tip = "Insert the cost of disk utilization ($/GB/seconds)";
+                        }else if(rowIndex==10){
+                            tip = "Select if the resource is a virtual machine monitor";
+                        }else if(rowIndex==11){
+                            tip = "Select the task scheduling policy of the VMM";
+                        }else if(rowIndex==12){
+                            tip = "Select the virtual machine allocation policy of the VMM";
+                        }else if(rowIndex==13){
+                            tip = "Select the nodes that will be coordinated by this VMM";
+                        }
+                    }
+                } catch (RuntimeException e1) {
+                    //catch null pointer exception if mouse is over an empty line
+                }
+
+                return tip;
+            }
+        };
+
         TmachineIaaS.setModel(new MachineTableIaaS(palavras));
         TmachineIaaS.setRowHeight(20);
-        Tcluster = new VariedRowTable();
+        Tcluster = new VariedRowTable(){
+            //Implementa as dicas para cada célula da tabela          
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    if(colIndex==1){
+                        if(rowIndex==0){
+                            tip = "Insert the label name of the resource";
+                        }else if(rowIndex==1){
+                            tip = "Select the resource owner";
+                        }else if(rowIndex==2){
+                            tip = "Insert the number of nodes that composes the cluster";
+                        }else if(rowIndex==3){
+                             tip = "Insert the amount of computing power of the resource in MFlops";
+                        }else if(rowIndex==4){
+                            tip = "Insert the number of precessing cores of the resource";
+                        }else if(rowIndex==5){
+                            tip = "Insert the amount of memory of the resource in MBytes";
+                        }else if(rowIndex==6){
+                            tip = "Insert the amount of hard disk of the resource in GBytes";
+                        }else if(rowIndex==7){
+                            tip = "Insert the amount of bandwidth that connect the cluster nodes in Mbps";
+                        }else if(rowIndex==8){
+                            tip = "Insert the latency time of the links that connect the cluster nodes in seconds";
+                        }else if(rowIndex==9){
+                            tip = "Select if the resource is a master node";
+                        }else if(rowIndex==10){
+                            tip = "Select the task scheduling policy of the master node";
+                        }else if(rowIndex==11){
+                            tip = "Select the slave nodes that will be coordinated by this master";
+                        }
+                    }
+                } catch (RuntimeException e1) {
+                    //catch null pointer exception if mouse is over an empty line
+                }
+
+                return tip;
+            }
+        };
         Tcluster.setModel(new ClusterTable(palavras));
         Tcluster.setRowHeight(20);
-        TclusterIaaS = new VariedRowTable();
+        TclusterIaaS = new VariedRowTable(){
+            //Implementa as dicas para cada célula da tabela          
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    if(colIndex==1){
+                        if(rowIndex==0){
+                            tip = "Insert the label name of the resource";
+                        }else if(rowIndex==1){
+                            tip = "Select the resource owner";
+                        }else if(rowIndex==2){
+                            tip = "Insert the number of nodes that composes the cluster";
+                        }else if(rowIndex==3){
+                             tip = "Insert the amount of computing power of the resource in MFlops";
+                        }else if(rowIndex==4){
+                            tip = "Insert the number of precessing cores of the resource";
+                        }else if(rowIndex==5){
+                            tip = "Insert the amount of memory of the resource in MBytes";
+                        }else if(rowIndex==6){
+                            tip = "Insert the amount of hard disk of the resource in GBytes";
+                        }else if(rowIndex==7){
+                            tip = "Insert the cost of processing utilization ($/cores/seconds)";
+                        }else if(rowIndex==8){
+                            tip = "Insert the cost of memory utilization ($/MB/seconds)";
+                        }else if(rowIndex==9){
+                            tip = "Insert the cost of disk utilization ($/GB/seconds)";
+                        }else if(rowIndex==10){
+                            tip = "Insert the amount of bandwidth that connect the cluster nodes in Mbps";
+                        }else if(rowIndex==11){
+                            tip = "Insert the latency time of the links that connect the cluster nodes in seconds";
+                        }else if(rowIndex==12){
+                            tip = "Select if the resource is a virtual machine monitor";
+                        }else if(rowIndex==13){
+                            tip = "Select the task scheduling policy of the VMM";
+                        }else if(rowIndex==14){
+                            tip = "Select the virtual machine allocation policy of the VMM";
+                        }else if(rowIndex==15){
+                            tip = "Select the nodes that will be coordinated by this VMM";
+                        }
+                    }
+                } catch (RuntimeException e1) {
+                    //catch null pointer exception if mouse is over an empty line
+                }
+
+                return tip;
+            }
+        };
         TclusterIaaS.setModel(new ClusterTableIaaS(palavras));
         TclusterIaaS.setRowHeight(20);
-        Tlink = new VariedRowTable();
+        Tlink = new VariedRowTable(){
+            //Implementa as dicas para cada célula da tabela          
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    if(colIndex==1){
+                        if(rowIndex==0){
+                            tip = "Insert the label name of the resource";
+                        }else if(rowIndex==1){
+                             tip = "Insert the latency time of the resource in seconds";
+                        }else if(rowIndex==2){
+                            tip = "Insert the percentage of background communication in decimal notation";
+                        }else if(rowIndex==3){
+                            tip = "Insert the amount of bandwidth of the resource in seconds";
+                        }
+                    }
+                } catch (RuntimeException e1) {
+                    //catch null pointer exception if mouse is over an empty line
+                }
+
+                return tip;
+            }
+        };
         Tlink.setModel(new LinkTable(palavras));
         Tlink.setRowHeight(20);
         initComponents();

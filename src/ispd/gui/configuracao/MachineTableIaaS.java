@@ -90,9 +90,13 @@ public class MachineTableIaaS extends AbstractTableModel {
                 }
             }
         });
+        escravos.setToolTipText("Select the nodes that will be coordinated by this VMM");
         escalonador = new JComboBox(EscalonadoresCloud.ESCALONADORES);
+        escalonador.setToolTipText("Select the task scheduling policy");
         usuarios = new JComboBox();
+        usuarios.setToolTipText("Select the resource owner");
         VMMPolicy = new JComboBox(Alocadores.ALOCACAO);
+        VMMPolicy.setToolTipText("Select the virtual machine allocation policy");
     }
 
     public void setMaquina(Machine maquina, HashSet users) {
