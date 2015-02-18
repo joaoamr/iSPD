@@ -150,6 +150,7 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new DefaultComboBoxModel(usuarios)&#xd;&#xa;" type="code"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Select the virtual machine owner"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jUserComboBoxActionPerformed"/>
@@ -160,6 +161,7 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new DefaultComboBoxModel(VMMs)&#xd;&#xa;" type="code"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Select the VMM that coorditates the virtual machine"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jVMMComboBoxActionPerformed"/>
@@ -176,19 +178,28 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="jSpinnerProc">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Insert the number of virtual cores that VM allocates in the resource&apos;s physical processor"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Number of virtual processors:"/>
+            <Property name="text" type="java.lang.String" value="Number of virtual cores:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="jSpinnerMem">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Insert the amount of  memory that VM allocates in the  resource&apos;s primary storage"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="jSpinnerDisc">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Insert the amount of disk that VM allocates in resource&apos;s hard disk"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Memory Allocated (GB):"/>
+            <Property name="text" type="java.lang.String" value="Memory Allocated (MB):"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
@@ -210,6 +221,7 @@
                 <StringItem index="2" value="Windows"/>
               </StringArray>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Select the operational system hosted in the virtual machine"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jSOComboBoxActionPerformed"/>
@@ -218,6 +230,7 @@
         <Component class="javax.swing.JButton" name="jButtonAddVM">
           <Properties>
             <Property name="text" type="java.lang.String" value="Add VM"/>
+            <Property name="toolTipText" type="java.lang.String" value="Add the configured virtual machine"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAddVMActionPerformed"/>
@@ -226,6 +239,7 @@
         <Component class="javax.swing.JButton" name="jButtonRemoveVM">
           <Properties>
             <Property name="text" type="java.lang.String" value="Remove VM"/>
+            <Property name="toolTipText" type="java.lang.String" value="Remove the virtual machine selected in the table below"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonRemoveVMActionPerformed"/>
@@ -250,6 +264,7 @@
         <Component class="javax.swing.JButton" name="jButtonAddUser">
           <Properties>
             <Property name="text" type="java.lang.String" value="Add User"/>
+            <Property name="toolTipText" type="java.lang.String" value="Add a new user"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAddUserActionPerformed"/>
@@ -258,6 +273,7 @@
         <Component class="javax.swing.JButton" name="jButtonOKVm">
           <Properties>
             <Property name="text" type="java.lang.String" value="OK!"/>
+            <Property name="toolTipText" type="java.lang.String" value="Apply configurations"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonOKVmActionPerformed"/>

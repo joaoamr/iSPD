@@ -121,6 +121,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
 
         jUserComboBox.setModel(new DefaultComboBoxModel(usuarios)
         );
+        jUserComboBox.setToolTipText("Select the virtual machine owner");
         jUserComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jUserComboBoxActionPerformed(evt);
@@ -129,6 +130,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
 
         jVMMComboBox.setModel(new DefaultComboBoxModel(VMMs)
         );
+        jVMMComboBox.setToolTipText("Select the VMM that coorditates the virtual machine");
         jVMMComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jVMMComboBoxActionPerformed(evt);
@@ -139,15 +141,22 @@ public class ConfigurarVMs extends javax.swing.JDialog {
 
         jLabelVMM.setText("VMM:");
 
-        jLabel2.setText("Number of virtual processors:");
+        jSpinnerProc.setToolTipText("Insert the number of virtual cores that VM allocates in the resource's physical processor");
 
-        jLabel3.setText("Memory Allocated (GB):");
+        jLabel2.setText("Number of virtual cores:");
+
+        jSpinnerMem.setToolTipText("Insert the amount of  memory that VM allocates in the  resource's primary storage");
+
+        jSpinnerDisc.setToolTipText("Insert the amount of disk that VM allocates in resource's hard disk");
+
+        jLabel3.setText("Memory Allocated (MB):");
 
         jLabel4.setText("Disk Allocated (GB):");
 
         jLabel5.setText("Operational System:");
 
         jSOComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Linux", "Macintosh", "Windows" }));
+        jSOComboBox.setToolTipText("Select the operational system hosted in the virtual machine");
         jSOComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jSOComboBoxActionPerformed(evt);
@@ -155,6 +164,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         });
 
         jButtonAddVM.setText("Add VM");
+        jButtonAddVM.setToolTipText("Add the configured virtual machine");
         jButtonAddVM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAddVMActionPerformed(evt);
@@ -162,6 +172,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         });
 
         jButtonRemoveVM.setText("Remove VM");
+        jButtonRemoveVM.setToolTipText("Remove the virtual machine selected in the table below");
         jButtonRemoveVM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRemoveVMActionPerformed(evt);
@@ -172,6 +183,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         jScrollPaneTabela.setViewportView(jTableVMs);
 
         jButtonAddUser.setText("Add User");
+        jButtonAddUser.setToolTipText("Add a new user");
         jButtonAddUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAddUserActionPerformed(evt);
@@ -179,6 +191,7 @@ public class ConfigurarVMs extends javax.swing.JDialog {
         });
 
         jButtonOKVm.setText("OK!");
+        jButtonOKVm.setToolTipText("Apply configurations");
         jButtonOKVm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonOKVmActionPerformed(evt);
