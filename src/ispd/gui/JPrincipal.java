@@ -768,7 +768,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 + "                Gabriel Covello Furlanetto\n"
                 + "                Rafael Stabile \n"
                 + "                Danilo Costa Marim Segura\n"
-                + "                Arthur Jorge\n";
+                + "                Arthur Jorge\n"
+                + "                João Antonio Magri Rodrigues";
         JOptionPane.showOptionDialog(this, sobre, palavras.getString("About") + " \"" + palavras.getString("nomePrograma") + "\"", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, icone, null, null);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
