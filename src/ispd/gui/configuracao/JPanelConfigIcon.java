@@ -107,11 +107,11 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                         }else if(rowIndex==6){
                             tip = "Insert the amount of hard disk of the resource in GBytes";
                         }else if(rowIndex==7){
-                            tip = "Insert the cost of processing utilization ($/cores/seconds)";
+                            tip = "Insert the cost of processing utilization ($/cores/h)";
                         }else if(rowIndex==8){
-                            tip = "Insert the cost of memory utilization ($/MB/seconds)";
+                            tip = "Insert the cost of memory utilization ($/MB/h)";
                         }else if(rowIndex==9){
-                            tip = "Insert the cost of disk utilization ($/GB/seconds)";
+                            tip = "Insert the cost of disk utilization ($/GB/h)";
                         }else if(rowIndex==10){
                             tip = "Select if the resource is a virtual machine monitor";
                         }else if(rowIndex==11){
@@ -202,11 +202,11 @@ public class JPanelConfigIcon extends javax.swing.JPanel {
                         }else if(rowIndex==6){
                             tip = "Insert the amount of hard disk of the resource in GBytes";
                         }else if(rowIndex==7){
-                            tip = "Insert the cost of processing utilization ($/cores/seconds)";
+                            tip = "Insert the cost of processing utilization ($/cores/h)";
                         }else if(rowIndex==8){
-                            tip = "Insert the cost of memory utilization ($/MB/seconds)";
+                            tip = "Insert the cost of memory utilization ($/MB/h)";
                         }else if(rowIndex==9){
-                            tip = "Insert the cost of disk utilization ($/GB/seconds)";
+                            tip = "Insert the cost of disk utilization ($/GB/h)";
                         }else if(rowIndex==10){
                             tip = "Insert the amount of bandwidth that connect the cluster nodes in Mbps";
                         }else if(rowIndex==11){
