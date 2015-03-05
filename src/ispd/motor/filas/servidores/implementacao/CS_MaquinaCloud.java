@@ -47,6 +47,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     private double custoTotalDisco;
     private double custoTotalMemoria;
     private double custoTotalProc;
+    private int status;
     //lista de máquinas virtuais
     private List<CS_VirtualMac> VMs;
 
@@ -77,6 +78,8 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoTotalProc = 0;
         this.custoTotalMemoria = 0;
         this.custoTotalDisco = 0;
+        this.status = DESLIGADO;
+        
 
     }
 
@@ -97,6 +100,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.custoTotalMemoria = 0;
         this.custoTotalDisco = 0;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        this.status = DESLIGADO;
 
     }
 
@@ -516,6 +520,16 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         erroRecuperavel = recuperavel;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+    
+    
+
     //manda o custo total para as metricas
     public List<List> getCaminhoMestre() {
         return caminhoMestre;
@@ -622,6 +636,18 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     @Override
     public List<CS_Comunicacao> getConexoesSaida() {
         return this.conexoesSaida;
+    }
+
+    @Override
+    public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void desligar(Simulacao simulacao) {
+        for(CS_VirtualMac vm : VMs){
+            vm.setStatus(CS_VirtualMac.DESTRUIDA);
+            vm.setTempoDeExec(simulacao.getTime(this));
+        }
     }
 
 }

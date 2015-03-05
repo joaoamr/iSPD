@@ -25,6 +25,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     public static final int LIVRE = 1;
     public static final int ALOCADA = 2;
     public static final int REJEITADA = 3;
+    public static final int DESTRUIDA = 4;
     
     //Lista de atributos
     private CS_VMM vmmResponsavel;
@@ -32,6 +33,8 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private double poderProcessamento;
     private double memoriaDisponivel;
     private double discoDisponivel;
+    private double instanteAloc;
+    private double tempoDeExec;
     private String OS;
     private CS_MaquinaCloud maquinaHospedeira;
     private List<CentroServico> caminho;
@@ -41,7 +44,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private List<Tarefa> filaTarefas;
     private List<Tarefa> tarefaEmExecucao;
     private List<CS_VMM> VMMsIntermediarios;
-    
+  
     private List<Double> falhas = new ArrayList<Double>();
     private List<Double> recuperacao = new ArrayList<Double>();
     private boolean erroRecuperavel;
@@ -552,5 +555,28 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public double getInstanteAloc() {
+        return instanteAloc;
+    }
+
+    public void setInstanteAloc(double instanteAloc) {
+        this.instanteAloc = instanteAloc;
+    }
+
+    public double getTempoDeExec() {
+        return tempoDeExec;
+    }
+
+    public void setTempoDeExec(double tempoDestruir) {
+        this.tempoDeExec = tempoDestruir - getInstanteAloc();
+    }
+    
+    
     
 }

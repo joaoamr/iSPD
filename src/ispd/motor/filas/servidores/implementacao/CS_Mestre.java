@@ -498,4 +498,9 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
     public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

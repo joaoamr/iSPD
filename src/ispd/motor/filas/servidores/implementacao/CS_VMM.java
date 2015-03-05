@@ -580,6 +580,7 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
             determinarCaminhoVM(auxVM, caminho);
             System.out.println(auxVM.getId() + " Alocada");
             auxVM.setStatus(CS_VirtualMac.ALOCADA);
+            auxVM.setInstanteAloc(simulacao.getTime(this));
             if (this.vmsAlocadas == false) {
                 this.vmsAlocadas = true;
                 this.escDisponivel = true;
@@ -604,6 +605,11 @@ public class CS_VMM extends CS_Processamento implements VMM, MestreCloud, Mensag
                     mensagem);
             simulacao.addEventoFuturo(evt);
         }
+    }
+
+    @Override
+    public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
