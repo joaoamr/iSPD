@@ -21,6 +21,7 @@ public interface Mensagens {
     public static final int RESULTADO_ATUALIZAR = 6;
     public static final int FALHAR = 7;
     public static final int ALOCAR_ACK = 8;
+    public static final int DESLIGAR = 9; 
 
     public void atenderCancelamento(Simulacao simulacao, Mensagem mensagem);
     public void atenderParada(Simulacao simulacao, Mensagem mensagem);
@@ -30,4 +31,5 @@ public interface Mensagens {
     public void atenderRetornoAtualizacao(Simulacao simulacao, Mensagem mensagem);
     public void atenderFalha(Simulacao simulacao, Mensagem mensagem);
     public void atenderAckAlocacao(Simulacao simulacao, Mensagem mensagem);
+    public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem);
 }

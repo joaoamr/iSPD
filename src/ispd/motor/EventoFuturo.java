@@ -21,6 +21,7 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
     public static final int SAIDA_MENSAGEM = 6;
     public static final int ALOCAR_VMS = 7;
     
+    
     private Double tempoOcorrencia;
     private int tipoDeEvento;
     private CentroServico recurso;

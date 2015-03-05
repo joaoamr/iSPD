@@ -77,6 +77,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
              System.out.println("---------------------------------------");
             for (CS_MaquinaCloud maq : redeDeFilas.getMaquinasCloud()) {
                 //Encontra menor caminho entre o escravo e seu mestre
+                maq.setStatus(CS_MaquinaCloud.LIGADO);
                 maq.determinarCaminhos();//escravo encontra caminhos para seu mestre
                 //System.out.println("Maquina " + maq.getId() + " encontrando seus mestres");
             }
@@ -103,6 +104,8 @@ public class SimulacaoSequencialCloud extends Simulacao {
         } else {
             realizarSimulacao();
         }
+        
+        desligarMaquinas(this, this.getRedeDeFilasCloud());
         getJanela().incProgresso(30);
         getJanela().println("Simulation completed.", Color.green);
         //Centralizando métricas de usuários
@@ -249,6 +252,14 @@ public class SimulacaoSequencialCloud extends Simulacao {
             }
         }
         
+        
+    }
+
+    private void desligarMaquinas(Simulacao simulacao, RedeDeFilasCloud rdfCloud) {
+        for(CS_MaquinaCloud aux : rdfCloud.getMaquinasCloud()){
+            aux.desligar(simulacao);
+            
+        }
         
     }
 }
