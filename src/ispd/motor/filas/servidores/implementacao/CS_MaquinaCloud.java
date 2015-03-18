@@ -13,6 +13,7 @@ import ispd.motor.filas.TarefaVM;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.metricas.MetricasAlocacao;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     private int status;
     //lista de máquinas virtuais
     private List<CS_VirtualMac> VMs;
+    private MetricasAlocacao metricaAloc;
 
     /**
      *
@@ -68,6 +70,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         this.filaTarefas = new ArrayList<Tarefa>();
         this.mestres = new ArrayList<CS_Processamento>();
         this.VMs = new ArrayList<CS_VirtualMac>();
+        this.metricaAloc = new MetricasAlocacao(id);
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.memoriaDisponivel = memoria;
@@ -171,6 +174,7 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
 
             //vm.setStatus(CS_VirtualMac.ALOCADA);
         this.addVM(vm); //incluir a VM na lista de VMs
+        getMetricaAloc().incVMsAlocadas();
         //Setar o caminho da vm para o VMM e o caminho do ACK da mensagem >>>
         CS_VMM vmm = vm.getVmmResponsavel();
             //trecho de teste
@@ -527,9 +531,11 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
     public void setStatus(int status) {
         this.status = status;
     }
-    
-    
 
+    public MetricasAlocacao getMetricaAloc() {
+        return metricaAloc;
+    }
+    
     //manda o custo total para as metricas
     public List<List> getCaminhoMestre() {
         return caminhoMestre;
@@ -647,6 +653,9 @@ public class CS_MaquinaCloud extends CS_Processamento implements Mensagens, Vert
         for(CS_VirtualMac vm : VMs){
             vm.setStatus(CS_VirtualMac.DESTRUIDA);
             vm.setTempoDeExec(simulacao.getTime(this));
+            vm.getMetricaCusto().setCustoDisco(custoDisco*vm.getDiscoDisponivel()*(vm.getTempoDeExec()/60));
+            vm.getMetricaCusto().setCustoMem(custoMemoria*(vm.getMemoriaDisponivel()/1024)*(vm.getTempoDeExec()/60));
+            vm.getMetricaCusto().setCustoProc(custoProc*vm.getProcessadoresDisponiveis()*(vm.getTempoDeExec()/60));
         }
     }
 

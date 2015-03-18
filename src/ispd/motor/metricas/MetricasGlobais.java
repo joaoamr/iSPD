@@ -9,7 +9,6 @@ import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
-import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
@@ -31,6 +30,7 @@ public class MetricasGlobais implements Serializable {
     private double custoTotalMem;
     private int totaldeVMs;
     private int numVMsRejeitadas;
+   
 
     public MetricasGlobais(double tempoSimulacao, double satisfacaoMedia, double ociosidadeComputacao, double ociosidadeComunicacao, double eficiencia, double custoTotalDisco, double custoTotalProc, double custoTotalMem, int total) {
         this.tempoSimulacao = tempoSimulacao;
@@ -80,14 +80,17 @@ public class MetricasGlobais implements Serializable {
         this.custoTotalProc = 0;
     }
 
+    //calcula o custo total de uso de disco na nuvem
     public double getCustoTotalDisco(RedeDeFilasCloud redeDeFilas) {
-        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
-            custoTotalDisco = custoTotalDisco + auxMaq.getCustoTotalDisco();
+        for (CS_VirtualMac auxVM : redeDeFilas.getVMs()) {
+            if (auxVM.getStatus() == CS_VirtualMac.DESTRUIDA) {
+                custoTotalDisco = custoTotalDisco + auxVM.getMetricaCusto().getCustoDisco();
+            }
         }
         return custoTotalDisco;
     }
-    
-    public double getCustoTotalDisco(){
+
+    public double getCustoTotalDisco() {
         return custoTotalDisco;
     }
 
@@ -95,28 +98,34 @@ public class MetricasGlobais implements Serializable {
         this.custoTotalDisco = custoTotalDisco;
     }
 
+    //calcula o custo total de uso de processamento da nuvem
     public double getCustoTotalProc(RedeDeFilasCloud redeDeFilas) {
-        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
-            custoTotalProc = custoTotalProc + auxMaq.getCustoTotalProc();
+        for (CS_VirtualMac auxVM : redeDeFilas.getVMs()) {
+            if (auxVM.getStatus() == CS_VirtualMac.DESTRUIDA) {
+                custoTotalProc = custoTotalProc + auxVM.getMetricaCusto().getCustoProc();
+            }
         }
         return custoTotalProc;
     }
-    
-    public double getCustoTotalProc(){
-         return custoTotalProc;
+
+    public double getCustoTotalProc() {
+        return custoTotalProc;
     }
 
     public void setCustoTotalProc(double custoTotalProc) {
         this.custoTotalProc = custoTotalProc;
     }
 
+    //calcula custo total de uso de memória pela nuvem
     public double getCustoTotalMem(RedeDeFilasCloud redeDeFilas) {
-        for(CS_MaquinaCloud auxMaq : redeDeFilas.getMaquinasCloud()){
-            custoTotalMem = custoTotalMem + auxMaq.getCustoTotalMemoria();
+        for (CS_VirtualMac auxVM : redeDeFilas.getVMs()) {
+            if (auxVM.getStatus() == CS_VirtualMac.DESTRUIDA) {
+                custoTotalMem = custoTotalMem + auxVM.getMetricaCusto().getCustoMem();
+            }
         }
         return custoTotalMem;
     }
-    
+
     public double getCustoTotalMem() {
         return custoTotalMem;
     }
@@ -144,19 +153,21 @@ public class MetricasGlobais implements Serializable {
     public double getTempoSimulacao() {
         return tempoSimulacao;
     }
-    
+
+    //calcula número de VMs rejeitadas
     private int getNumVMsRejeitadas(RedeDeFilasCloud redeDeFilas) {
         int totalRejeitadas = 0;
-        for(CS_Processamento aux : redeDeFilas.getMestres()){
+        for (CS_Processamento aux : redeDeFilas.getMestres()) {
             CS_VMM auxVMM = (CS_VMM) aux;
-            //totalRejeitadas += auxVMM.getAlocadorVM().getVMsRejeitadas().size();
+            totalRejeitadas += auxVMM.getAlocadorVM().getVMsRejeitadas().size();
         }
         return totalRejeitadas;
     }
-    
-    private int getTotalVMs(RedeDeFilasCloud redeDeFilas){
+
+    //calcula o total de vms do modelo
+    private int getTotalVMs(RedeDeFilasCloud redeDeFilas) {
         int total = 0;
-        for(CS_Processamento aux : redeDeFilas.getMestres()){
+        for (CS_Processamento aux : redeDeFilas.getMestres()) {
             CS_VMM auxVMM = (CS_VMM) aux;
             total += auxVMM.getEscalonador().getEscravos().size();
         }
@@ -245,19 +256,19 @@ public class MetricasGlobais implements Serializable {
     public void setEficiencia(double eficiencia) {
         this.eficiencia = eficiencia;
     }
-    
-    public int getNumVMsAlocadas(){
-        return totaldeVMs-numVMsRejeitadas;
+
+    public int getNumVMsAlocadas() {
+        return totaldeVMs - numVMsRejeitadas;
     }
-    
-    public int getNumVMsRejeitadas(){
+
+    public int getNumVMsRejeitadas() {
         return numVMsRejeitadas;
     }
-    
-    public int getTotaldeVMs(){
+
+    public int getTotaldeVMs() {
         return totaldeVMs;
     }
-    
+
     public void add(MetricasGlobais global) {
         tempoSimulacao += global.getTempoSimulacao();
         satisfacaoMedia += global.getSatisfacaoMedia();
@@ -287,8 +298,8 @@ public class MetricasGlobais implements Serializable {
         texto += String.format("\tCost Total de Memory = %g %%\n", custoTotalMem);
         texto += String.format("\tCost Total de Disk = %g %%\n", custoTotalDisco);
         texto += "\t\tVM Alocation results:";
-        texto +=String.format("\tTotal of VMs alocated = %g %%\n", (totaldeVMs-numVMsRejeitadas));
-        texto +=String.format("\tTotal of VMs rejected = %g %%\n", numVMsRejeitadas);
+        texto += String.format("\tTotal of VMs alocated = %g %%\n", (totaldeVMs - numVMsRejeitadas));
+        texto += String.format("\tTotal of VMs rejected = %g %%\n", numVMsRejeitadas);
         return texto;
     }
 

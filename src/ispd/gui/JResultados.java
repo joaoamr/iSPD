@@ -20,7 +20,6 @@ import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.metricas.Metricas;
-import ispd.motor.metricas.MetricasCloud;
 import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasProcessamento;

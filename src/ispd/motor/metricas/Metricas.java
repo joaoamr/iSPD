@@ -9,6 +9,9 @@ import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
+import ispd.motor.filas.servidores.implementacao.CS_VMM;
+import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,8 @@ public class Metricas implements Serializable {
     private List<String> usuarios;
     private Map<String, MetricasComunicacao> metricasComunicacao;
     private Map<String, MetricasProcessamento> metricasProcessamento;
+    private Map<String, MetricasAlocacao> metricasAlocacao;
+    private Map<String, MetricasCusto> metricasCusto;
     private Map<String, Double> metricasSatisfacao;
     private Map<String, Integer> tarefasConcluidas;
     private double tempoMedioFilaComunicacao;
@@ -65,9 +70,8 @@ public class Metricas implements Serializable {
         getMetricaComunicacao(redeDeFilas);
         getMetricaProcessamento(redeDeFilas);
 
-
     }
-    
+
     public Metricas(RedeDeFilasCloud redeDeFilas, double time, List<Tarefa> tarefas) {
         this.numeroDeSimulacoes = 1;
         this.metricasGlobais = new MetricasGlobais(redeDeFilas, time, tarefas);
@@ -81,7 +85,8 @@ public class Metricas implements Serializable {
         getMetricaFilaTarefaCloud(tarefas, redeDeFilas);
         getMetricaComunicacao(redeDeFilas);
         getMetricaProcessamentoCloud(redeDeFilas);
-
+        getMetricaAlocacao(redeDeFilas);
+        getMetricaCusto(redeDeFilas);
 
     }
 
@@ -112,6 +117,14 @@ public class Metricas implements Serializable {
 
     public Map<String, MetricasProcessamento> getMetricasProcessamento() {
         return metricasProcessamento;
+    }
+
+    public Map<String, MetricasAlocacao> getMetricasAlocacao() {
+        return metricasAlocacao;
+    }
+
+    public Map<String, MetricasCusto> getMetricasCusto() {
+        return metricasCusto;
     }
 
     public Map<String, Double> getMetricasSatisfacao() {
@@ -237,7 +250,7 @@ public class Metricas implements Serializable {
         tempoMedioFilaProcessamento = tempoMedioFilaProcessamento / numTarefas;
         tempoMedioProcessamento = tempoMedioProcessamento / numTarefas;
     }
-    
+
     private void getMetricaFilaTarefaCloud(List<Tarefa> tarefas, RedeDeFilasCloud rede) {
         this.tempoMedioFilaComunicacao = 0;
         this.tempoMedioComunicacao = 0;
@@ -303,7 +316,7 @@ public class Metricas implements Serializable {
             metricasProcessamento.put(maq.getId() + maq.getnumeroMaquina(), maq.getMetrica());
         }
     }
-    
+
     private void getMetricaProcessamentoCloud(RedeDeFilasCloud redeDeFilas) {
         metricasProcessamento = new HashMap<String, MetricasProcessamento>();
         for (CS_Processamento maq : redeDeFilas.getMestres()) {
@@ -382,5 +395,33 @@ public class Metricas implements Serializable {
 
             }
         }
+    }
+
+    private void getMetricaAlocacao(RedeDeFilasCloud redeDeFilas) {
+        metricasAlocacao = new HashMap<String, MetricasAlocacao>();
+        //percorre as máquinas recolhendo as métricas de alocação
+        for (CS_MaquinaCloud maq : redeDeFilas.getMaquinasCloud()) {
+            metricasAlocacao.put(maq.getId() + maq.getnumeroMaquina(), maq.getMetricaAloc());
+        }
+        //insere nas métricas as VMs que não foram alocadas
+        MetricasAlocacao mtRej = new MetricasAlocacao("Rejected");
+        for (CS_Processamento mst : redeDeFilas.getMestres()) {
+            CS_VMM aux = (CS_VMM) mst;
+            for (int i = 0; i < aux.getAlocadorVM().getVMsRejeitadas().size(); i++) {
+                mtRej.incVMsAlocadas();
+            }
+        }
+        metricasAlocacao.put("Rejected", mtRej);
+    }
+
+    private void getMetricaCusto(RedeDeFilasCloud redeDeFilas) {
+        metricasCusto = new HashMap<String, MetricasCusto>();
+        //percorre as vms inserindo as métricas de custo
+        for (CS_VirtualMac vm : redeDeFilas.getVMs()) {
+            if (vm.getStatus() == CS_VirtualMac.DESTRUIDA) {
+                metricasCusto.put(vm.getId() + vm.getnumeroMaquina(), vm.getMetricaCusto());
+            }
+        }
+
     }
 }

@@ -24,6 +24,8 @@ import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
 import ispd.motor.metricas.MetricasProcessamento;
 import ispd.motor.metricas.MetricasUsuarios;
+import ispd.motor.metricas.MetricasAlocacao;
+import ispd.motor.metricas.MetricasCusto;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -60,7 +62,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author denison_usuario
  */
 public class JResultadosCloud extends javax.swing.JDialog {
-
+   
     /**
      * Cria no JResultado sem carregar parte gráfica para utilizar no modo
      * terminal
@@ -72,6 +74,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
         html.setMetricasTarefas(metricas);
         gerarGraficosProcessamento(metricas.getMetricasProcessamento());
         gerarGraficosComunicacao(metricas.getMetricasComunicacao());
+        gerarGraficosAlocacao(metricas.getMetricasAlocacao());
+        gerarGraficosCusto(metricas.getMetricasCusto());
         if (rdf.getVMs().size() < 21) {
             graficoProcessamentoTempo = new ChartPanel(criarGraficoProcessamentoTempo(rdf));
         } else {
@@ -98,6 +102,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
         html.setMetricasTarefas(metricas);
         gerarGraficosProcessamento(metricas.getMetricasProcessamento());
         gerarGraficosComunicacao(metricas.getMetricasComunicacao());
+        gerarGraficosAlocacao(metricas.getMetricasAlocacao());
+        gerarGraficosCusto(metricas.getMetricasCusto());
     }
 
     /**
@@ -108,6 +114,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
         this.tarefas = tarefas;
         gerarGraficosProcessamento(metricas.getMetricasProcessamento());
         gerarGraficosComunicacao(metricas.getMetricasComunicacao());
+        gerarGraficosAlocacao(metricas.getMetricasAlocacao());
+        gerarGraficosCusto(metricas.getMetricasCusto());
         tabelaRecurso = setTabelaRecurso(metricas);
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(metricas.getMetricasGlobais()));
@@ -142,6 +150,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
         //graficoEstadoTarefa.setPreferredSize(new Dimension(600, 300));
         //graficoEstadoTarefa2 = new ChartPanel(criarGraficoEstadoTarefa2(tarefas, rdf));
         //graficoEstadoTarefa2.setPreferredSize(new Dimension(600, 300));
+        this.jScrollPaneAlocacao.setViewportView(this.graficoBarraAlocacao);
+        this.jScrollPaneCustos.setViewportView(this.graficoBarraCustoTotal);
         this.jScrollPaneProcessamento.setViewportView(this.graficoBarraProcessamento);
         this.jScrollPaneComunicacao.setViewportView(this.graficoBarraComunicacao);
         this.jScrollPaneProcessamentoTempo.setViewportView(this.graficoProcessamentoTempo);
@@ -189,6 +199,18 @@ public class JResultadosCloud extends javax.swing.JDialog {
         jButtonProcessamentoMaquina = new javax.swing.JButton();
         jButtonProcessamentoTarefa = new javax.swing.JButton();
         jScrollPaneProcessamentoTempo = new javax.swing.JScrollPane();
+        jPanelAlocacao = new javax.swing.JPanel();
+        jToolBarAlocacao = new javax.swing.JToolBar();
+        jButtonABarra = new javax.swing.JButton();
+        jButtonAPizza = new javax.swing.JButton();
+        jScrollPaneAlocacao = new javax.swing.JScrollPane();
+        jPanelCusto = new javax.swing.JPanel();
+        jToolBarCusto = new javax.swing.JToolBar();
+        jButtonTotal = new javax.swing.JButton();
+        jButtonDisc = new javax.swing.JButton();
+        jButtonMem = new javax.swing.JButton();
+        jButtonProc = new javax.swing.JButton();
+        jScrollPaneCustos = new javax.swing.JScrollPane();
         jTabbedPane2 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -245,7 +267,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
                 .addGap(0, 316, Short.MAX_VALUE))
             .addGroup(jPanelGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGlobalLayout.createSequentialGroup()
-                    .addContainerGap(31, Short.MAX_VALUE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPaneGobal, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -309,7 +331,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
             .addGroup(jPanelProcessamentoLayout.createSequentialGroup()
                 .addComponent(jToolBarProcessamento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+                .addComponent(jScrollPaneProcessamento, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
         );
 
         jTabbedPaneGrid.addTab("Chart of the processing", jPanelProcessamento);
@@ -350,7 +372,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
             .addGroup(jPanelComunicacaoLayout.createSequentialGroup()
                 .addComponent(jToolBarComunicacao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+                .addComponent(jScrollPaneComunicacao, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
         );
 
         jTabbedPaneGrid.addTab("Chart of the communication", jPanelComunicacao);
@@ -402,10 +424,114 @@ public class JResultadosCloud extends javax.swing.JDialog {
             .addGroup(jPanelProcessamentoTempoLayout.createSequentialGroup()
                 .addComponent(jToolBarProcessamentoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+                .addComponent(jScrollPaneProcessamentoTempo, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
         );
 
         jTabbedPaneGrid.addTab("Use of computing power through time", jPanelProcessamentoTempo);
+
+        jToolBarAlocacao.setRollover(true);
+
+        jButtonABarra.setText("Bar Chart");
+        jButtonABarra.setFocusable(false);
+        jButtonABarra.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonABarra.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonABarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonABarraActionPerformed(evt);
+            }
+        });
+        jToolBarAlocacao.add(jButtonABarra);
+
+        jButtonAPizza.setText("Pie Chat");
+        jButtonAPizza.setFocusable(false);
+        jButtonAPizza.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonAPizza.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonAPizza.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAPizzaActionPerformed(evt);
+            }
+        });
+        jToolBarAlocacao.add(jButtonAPizza);
+
+        javax.swing.GroupLayout jPanelAlocacaoLayout = new javax.swing.GroupLayout(jPanelAlocacao);
+        jPanelAlocacao.setLayout(jPanelAlocacaoLayout);
+        jPanelAlocacaoLayout.setHorizontalGroup(
+            jPanelAlocacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolBarAlocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(jScrollPaneAlocacao)
+        );
+        jPanelAlocacaoLayout.setVerticalGroup(
+            jPanelAlocacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelAlocacaoLayout.createSequentialGroup()
+                .addComponent(jToolBarAlocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPaneAlocacao, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
+        );
+
+        jTabbedPaneGrid.addTab("Chart of virtual machine allocation", jPanelAlocacao);
+
+        jToolBarCusto.setRollover(true);
+
+        jButtonTotal.setText("Total");
+        jButtonTotal.setFocusable(false);
+        jButtonTotal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonTotal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonTotalActionPerformed(evt);
+            }
+        });
+        jToolBarCusto.add(jButtonTotal);
+
+        jButtonDisc.setText("Per disk");
+        jButtonDisc.setFocusable(false);
+        jButtonDisc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonDisc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonDisc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDiscActionPerformed(evt);
+            }
+        });
+        jToolBarCusto.add(jButtonDisc);
+
+        jButtonMem.setText("Per Memory");
+        jButtonMem.setFocusable(false);
+        jButtonMem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonMem.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonMem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMemActionPerformed(evt);
+            }
+        });
+        jToolBarCusto.add(jButtonMem);
+
+        jButtonProc.setText("Per processing");
+        jButtonProc.setFocusable(false);
+        jButtonProc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonProc.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonProc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProcActionPerformed(evt);
+            }
+        });
+        jToolBarCusto.add(jButtonProc);
+
+        javax.swing.GroupLayout jPanelCustoLayout = new javax.swing.GroupLayout(jPanelCusto);
+        jPanelCusto.setLayout(jPanelCustoLayout);
+        jPanelCustoLayout.setHorizontalGroup(
+            jPanelCustoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolBarCusto, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(jScrollPaneCustos)
+        );
+        jPanelCustoLayout.setVerticalGroup(
+            jPanelCustoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelCustoLayout.createSequentialGroup()
+                .addComponent(jToolBarCusto, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPaneCustos, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
+        );
+
+        jTabbedPaneGrid.addTab("Chart of the cost of utilization", jPanelCusto);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -420,7 +546,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPaneGrid, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+            .addComponent(jTabbedPaneGrid, javax.swing.GroupLayout.PREFERRED_SIZE, 386, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -497,21 +623,62 @@ public class JResultadosCloud extends javax.swing.JDialog {
             interpret.geraTraceSim(tarefas);
         }
     }//GEN-LAST:event_jButtonSalvarTracesActionPerformed
+
+    private void jButtonABarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonABarraActionPerformed
+        // TODO add your
+        this.jScrollPaneAlocacao.setViewportView(this.graficoBarraAlocacao);
+    }//GEN-LAST:event_jButtonABarraActionPerformed
+
+    private void jButtonAPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAPizzaActionPerformed
+        // TODO add your handling code here:is
+        this.jScrollPaneAlocacao.setViewportView(this.graficoPizzaAlocacao);
+    }//GEN-LAST:event_jButtonAPizzaActionPerformed
+
+    private void jButtonTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTotalActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneCustos.setViewportView(this.graficoBarraCustoTotal);
+    }//GEN-LAST:event_jButtonTotalActionPerformed
+
+    private void jButtonMemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMemActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneCustos.setViewportView(this.graficoBarraCustoMem);
+    }//GEN-LAST:event_jButtonMemActionPerformed
+
+    private void jButtonDiscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDiscActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneCustos.setViewportView(this.graficoBarraCustoDisco);
+    }//GEN-LAST:event_jButtonDiscActionPerformed
+
+    private void jButtonProcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProcActionPerformed
+        // TODO add your handling code here:
+        this.jScrollPaneCustos.setViewportView(this.graficoBarraCustoProc);
+    }//GEN-LAST:event_jButtonProcActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonABarra;
+    private javax.swing.JButton jButtonAPizza;
     private javax.swing.JButton jButtonCBarra;
     private javax.swing.JButton jButtonCPizza;
+    private javax.swing.JButton jButtonDisc;
+    private javax.swing.JButton jButtonMem;
     private javax.swing.JButton jButtonPBarra;
     private javax.swing.JButton jButtonPPizza;
+    private javax.swing.JButton jButtonProc;
     private javax.swing.JButton jButtonProcessamentoMaquina;
     private javax.swing.JButton jButtonProcessamentoTarefa;
     private javax.swing.JButton jButtonProcessamentoUser;
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JButton jButtonSalvarTraces;
+    private javax.swing.JButton jButtonTotal;
+    private javax.swing.JPanel jPanelAlocacao;
     private javax.swing.JPanel jPanelComunicacao;
+    private javax.swing.JPanel jPanelCusto;
     private javax.swing.JPanel jPanelGlobal;
     private javax.swing.JPanel jPanelProcessamento;
     private javax.swing.JPanel jPanelProcessamentoTempo;
+    private javax.swing.JScrollPane jScrollPaneAlocacao;
     private javax.swing.JScrollPane jScrollPaneComunicacao;
+    private javax.swing.JScrollPane jScrollPaneCustos;
     private javax.swing.JScrollPane jScrollPaneGobal;
     private javax.swing.JScrollPane jScrollPaneProcessamento;
     private javax.swing.JScrollPane jScrollPaneProcessamentoTempo;
@@ -525,7 +692,9 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private javax.swing.JTextArea jTextAreaTarefa;
     private javax.swing.JTextArea jTextAreaUsuario;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBarAlocacao;
     private javax.swing.JToolBar jToolBarComunicacao;
+    private javax.swing.JToolBar jToolBarCusto;
     private javax.swing.JToolBar jToolBarProcessamento;
     private javax.swing.JToolBar jToolBarProcessamentoTempo;
     // End of variables declaration//GEN-END:variables
@@ -533,6 +702,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private Object[][] tabelaRecurso;
     private ChartPanel graficoBarraProcessamento;
     private ChartPanel graficoBarraComunicacao;
+    private ChartPanel graficoBarraAlocacao;
+    private ChartPanel graficoPizzaAlocacao;
     private ChartPanel graficoPizzaProcessamento;
     private ChartPanel graficoPizzaComunicacao;
     private ChartPanel graficoProcessamentoTempo;
@@ -541,6 +712,11 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private ChartPanel graficoProcessamentoTempoUser2;
     private ChartPanel graficoEstadoTarefa;
     private ChartPanel graficoEstadoTarefa2;
+    private ChartPanel graficoBarraCustoTotal;
+    private ChartPanel graficoBarraCustoDisco;
+    private ChartPanel graficoBarraCustoMem;
+    private ChartPanel graficoBarraCustoProc;
+
     private double poderComputacionalTotal = 0;
     private SalvarResultadosHTML html = new SalvarResultadosHTML();
 
@@ -1063,6 +1239,115 @@ public class JResultadosCloud extends javax.swing.JDialog {
             temp[i] = tabela.get(i);
         }
         return temp;
+    }
+
+    private void gerarGraficosAlocacao(Map<String, MetricasAlocacao> mAloc) {
+        DefaultCategoryDataset dadosGraficoAloc = new DefaultCategoryDataset();
+        DefaultPieDataset dadosGraficoPizzaAloc = new DefaultPieDataset();
+
+        if (mAloc != null) {
+            for (Map.Entry<String, MetricasAlocacao> entry : mAloc.entrySet()) {
+                MetricasAlocacao mt = entry.getValue();
+                dadosGraficoAloc.addValue(mt.getNumVMs(), "vermelho", mt.getId());
+                dadosGraficoPizzaAloc.insertValue(0, mt.getId(), mt.getNumVMs());
+            }
+        }
+
+        JFreeChart jfc = ChartFactory.createBarChart(
+                "Total of virtual machines allocated in each resource", //Titulo
+                "Resource", // Eixo X
+                "Number of VMs", //Eixo Y
+                dadosGraficoAloc, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if (mAloc.size() > 10) {
+            jfc.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
+        graficoBarraAlocacao = new ChartPanel(jfc);
+        graficoBarraAlocacao.setPreferredSize(new Dimension(600, 300));
+
+        jfc = ChartFactory.createPieChart(
+                "Total of virtual machines allocated in each resource", //Titulo
+                dadosGraficoPizzaAloc, // Dados para o grafico
+                true, false, false);
+        graficoPizzaAlocacao = new ChartPanel(jfc);
+        graficoPizzaAlocacao.setPreferredSize(new Dimension(600, 300));
+
+    }
+
+    private void gerarGraficosCusto(Map<String, MetricasCusto> mCusto) {
+        DefaultCategoryDataset dadosGraficoCustoTotal = new DefaultCategoryDataset();
+        DefaultCategoryDataset dadosGraficoCustoDisco = new DefaultCategoryDataset();
+        DefaultCategoryDataset dadosGraficoCustoMem = new DefaultCategoryDataset();
+        DefaultCategoryDataset dadosGraficoCustoProc = new DefaultCategoryDataset();
+
+        if (mCusto != null) {
+            for (Map.Entry<String, MetricasCusto> entry : mCusto.entrySet()) {
+                MetricasCusto mt = entry.getValue();
+                dadosGraficoCustoTotal.addValue(mt.getCustoDisco()+mt.getCustoMem()+mt.getCustoProc(), "vermelho", mt.getId());
+                dadosGraficoCustoDisco.addValue(mt.getCustoDisco(), "vermelho", mt.getId());
+                dadosGraficoCustoMem.addValue(mt.getCustoMem(), "vermelho", mt.getId());
+                dadosGraficoCustoProc.addValue(mt.getCustoProc(), "vermelho", mt.getId());
+            }
+        }
+
+        JFreeChart jfct = ChartFactory.createBarChart(
+                "Total cost of utilization per virtual machine", //Titulo
+                "Virtual machines", // Eixo X
+                "Cost ($)", //Eixo Y
+                dadosGraficoCustoTotal, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if (mCusto.size() > 10) {
+            jfct.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
+        graficoBarraCustoTotal = new ChartPanel(jfct);
+        graficoBarraAlocacao.setPreferredSize(new Dimension(600, 300));
+
+        JFreeChart jfcd = ChartFactory.createBarChart(
+                "Cost of disk utilization per virtual machine", //Titulo
+                "Virtual machines", // Eixo X
+                "Cost ($)", //Eixo Y
+                dadosGraficoCustoDisco, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if (mCusto.size() > 10) {
+            jfcd.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
+        graficoBarraCustoDisco = new ChartPanel(jfcd);
+        graficoBarraCustoDisco.setPreferredSize(new Dimension(600, 300));
+        
+        JFreeChart jfcm = ChartFactory.createBarChart(
+                "Cost of memory utilization per virtual machine", //Titulo
+                "Virtual machines", // Eixo X
+                "Cost ($)", //Eixo Y
+                dadosGraficoCustoMem, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if (mCusto.size() > 10) {
+            jfcm.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
+        graficoBarraCustoMem = new ChartPanel(jfcm);
+        graficoBarraCustoMem.setPreferredSize(new Dimension(600, 300));
+        
+        JFreeChart jfcp = ChartFactory.createBarChart(
+                "Cost of processing utilization per virtual machine", //Titulo
+                "Virtual machines", // Eixo X
+                "Cost ($)", //Eixo Y
+                dadosGraficoCustoProc, // Dados para o grafico
+                PlotOrientation.VERTICAL, //Orientacao do grafico
+                false, false, false); // exibir: legendas, tooltips, url
+        //Inclina nome da barra em 45 graus
+        if (mCusto.size() > 10) {
+            jfcp.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        }
+        graficoBarraCustoProc = new ChartPanel(jfcp);
+        graficoBarraCustoProc.setPreferredSize(new Dimension(600, 300));
+        
     }
 
     protected class tempo_uso_usuario implements Comparable<tempo_uso_usuario> {

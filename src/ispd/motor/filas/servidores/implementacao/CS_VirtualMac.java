@@ -13,6 +13,7 @@ import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.metricas.MetricasCusto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
     private List<Tarefa> filaTarefas;
     private List<Tarefa> tarefaEmExecucao;
     private List<CS_VMM> VMMsIntermediarios;
-  
+    private MetricasCusto metricaCusto;
     private List<Double> falhas = new ArrayList<Double>();
     private List<Double> recuperacao = new ArrayList<Double>();
     private boolean erroRecuperavel;
@@ -72,11 +73,12 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.memoriaDisponivel = memoria;
         this.discoDisponivel = disco;
         this.OS = OS;
+        this.metricaCusto = new MetricasCusto(id);
         this.maquinaHospedeira = null;
         this.caminhoVMM = null;
         this.VMMsIntermediarios = new ArrayList<CS_VMM>();
         this.caminhoIntermediarios = new ArrayList<List>();
-        
+        this.tempoDeExec = 0;
         this.status = LIVRE;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
         this.filaTarefas = new ArrayList<Tarefa>();
@@ -499,7 +501,11 @@ public class CS_VirtualMac extends CS_Processamento implements Cliente, Mensagen
         this.status = status;
     }
 
+    public MetricasCusto getMetricaCusto() {
+        return metricaCusto;
+    }
     
+        
     @Override
     public void determinarCaminhos() throws LinkageError {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
