@@ -5,6 +5,7 @@
 package ispd.motor;
 
 import ispd.escalonador.Mestre;
+import ispd.motor.falha.Falha;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
@@ -178,6 +179,11 @@ public class SimulacaoParalela extends Simulacao {
             }
         }
         return false;
+    }
+
+    @Override
+    public Falha getFalha() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private class ThreadTrabalhador implements Runnable {

@@ -6,6 +6,7 @@
 package ispd.motor.metricas;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Cada centro de serviço usado para processamento deve ter um objeto desta classe
@@ -24,6 +25,12 @@ public class MetricasProcessamento implements Serializable{
     private String id;
     private String proprietario;
     private int numeroMaquina;
+    private boolean falha;
+    private double tempoFalha;
+    private double tempoRecuperacao;
+    private String hostid;
+    private double fatorSLA = -1;
+    private HashMap<String, Double> mapaDados = new HashMap<String, Double>();
     
     public MetricasProcessamento(String id, int numeroMaquina, String proprietario) {
         this.MFlopsProcessados = 0;
@@ -31,6 +38,8 @@ public class MetricasProcessamento implements Serializable{
         this.id = id;
         this.numeroMaquina = numeroMaquina;
         this.proprietario = proprietario;
+        falha = false;
+        tempoFalha = -1;
     }
 
     public void incMflopsProcessados(double MflopsProcessados) {
@@ -68,4 +77,67 @@ public class MetricasProcessamento implements Serializable{
     void setSegundosDeProcessamento(double d) {
         this.SegundosDeProcessamento = d;
     }
+
+    public boolean isFalha() {
+        return falha;
+    }
+
+    public void setFalha(boolean falha) {
+        this.falha = falha;
+    }
+
+    public int getNumeroMaquina() {
+        return numeroMaquina;
+    }
+
+    public void setNumeroMaquina(int numeroMaquina) {
+        this.numeroMaquina = numeroMaquina;
+    }
+
+    public double getTempoFalha() {
+        return tempoFalha;
+    }
+
+    public void setTempoFalha(double tempoFalha) {
+        this.tempoFalha = tempoFalha;
+    }
+
+    public double getTempoRecuperacao() {
+        return tempoRecuperacao;
+    }
+
+    public void setTempoRecuperacao(double tempoRecuperacao) {
+        this.tempoRecuperacao = tempoRecuperacao;
+    }
+
+    public String getHostid() {
+        return hostid;
+    }
+
+    public void setHostid(String hostid) {
+        this.hostid = hostid;
+    }    
+
+    public double getFatorSLA() {
+        return fatorSLA;
+    }
+
+    public void setFatorSLA(double fatoSLA) {
+        this.fatorSLA = fatoSLA;
+    }
+    
+    public void atualizarMapaDados(String id, double incremento){
+        double dados = incremento;
+        
+        if(mapaDados.containsKey(id))
+            dados += mapaDados.get(id);
+        
+        mapaDados.put(id, dados);
+    }
+
+    public HashMap<String, Double> getMapaDados() {
+        return mapaDados;
+    }
+    
+    
 }

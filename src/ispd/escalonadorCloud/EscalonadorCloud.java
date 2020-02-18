@@ -12,6 +12,8 @@ import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import ispd.motor.metricas.MetricasUsuarios;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +34,19 @@ public abstract class EscalonadorCloud {
      */
     protected List<List> caminhoEscravo;
     protected List<List> caminhoMaquinas;
+    private HashSet<String> indices = new HashSet<String>();
+    protected HashMap<CentroServico, List<CentroServico>> mapaCaminhos = new HashMap<CentroServico, List<CentroServico>>();
     
+    public List<CentroServico> escalonarRota(CentroServico destino) {
+        if(mapaCaminhos.containsKey(destino))
+            return new ArrayList<CentroServico>((List<CentroServico>) mapaCaminhos.get(destino));
+        
+        List<CentroServico> caminho = CS_Processamento.getMenorCaminho((CS_Processamento)mestre, (CS_Processamento)destino);
+        
+        mapaCaminhos.put(destino, caminho);
+        
+        return new ArrayList<CentroServico>(caminho);
+    }
 
     //Métodos
     public abstract void iniciar();
@@ -41,7 +55,6 @@ public abstract class EscalonadorCloud {
 
     public abstract CS_Processamento escalonarRecurso();
 
-    public abstract List<CentroServico> escalonarRota(CentroServico destino);
 
     public abstract void escalonar();
 
@@ -62,13 +75,17 @@ public abstract class EscalonadorCloud {
     }
 
     public void addEscravo(CS_Processamento vm) {
-        this.escravos.add(vm);
+        if(!indices.contains(vm.getId())){
+            this.escravos.add(vm);
+            this.indices.add(vm.getId());
+        }
     }
 
     public void addTarefaConcluida(Tarefa tarefa) {
-        if (tarefa.getOrigem().equals(mestre)) {
+        //if (tarefa.getOrigem().equals(mestre)) {
             this.metricaUsuarios.incTarefasConcluidas(tarefa);
-        }
+        //}
+        //System.out.println("Tarefa concluida: " + tarefa.getIdentificador());
     }
 
     public List<Tarefa> getFilaTarefas() {
@@ -104,8 +121,13 @@ public abstract class EscalonadorCloud {
     }
     
     
+    public void addCaminhoEscravo(List caminho){
+        this.caminhoEscravo.add(caminho);
+    }
     
-    
+    public void addCaminhoEscravo(String id, List caminho){
+        this.caminhoEscravo.add(caminho);
+    }
     
     public List<List> getCaminhoEscravo() {
         return caminhoEscravo;

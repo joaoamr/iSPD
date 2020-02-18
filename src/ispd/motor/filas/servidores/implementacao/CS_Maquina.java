@@ -13,6 +13,7 @@ import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,6 +35,11 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
     private List<Double> recuperacao = new ArrayList<Double>();
     private boolean erroRecuperavel;
     private boolean falha = false;
+    private HashMap<String, CentroServico> maquinasfalhadas;
+    private HashMap<String, CentroServico> linksfalhados;
+    private double inicioFalha = - 1;
+    private double fimFalha = -1;
+    private int processadorestotal;
     //TO DO: INCLUIR INFORMAÇÕES DE MEMÓRIA E DISCO
     
     /**
@@ -53,6 +59,10 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        maquinasfalhadas = new HashMap<String, CentroServico>();
+        linksfalhados = new HashMap<String, CentroServico>();
+        inoperante = false;
+        this.processadorestotal = numeroProcessadores;
     }
 
     public CS_Maquina(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
@@ -63,6 +73,10 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
         this.mestres = new ArrayList<CS_Processamento>();
         this.processadoresDisponiveis = numeroProcessadores;
         this.tarefaEmExecucao = new ArrayList<Tarefa>(numeroProcessadores);
+        maquinasfalhadas = new HashMap<String, CentroServico>();
+        linksfalhados = new HashMap<String, CentroServico>();
+        inoperante = false;
+        this.processadorestotal = numeroProcessadores;
     }
 
     @Override
@@ -94,6 +108,18 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        //System.out.println("Chegando tarefa" + cliente.getIdentificador() + " time: " + simulacao.getTime(this));
+        
+        if(verificarFalhaRecurso(simulacao, cliente)){
+        	processadoresDisponiveis = processadorestotal;
+            return;
+        }
+        
+        if(!verificarRota((CS_Processamento) cliente.getOrigem())){
+        	processadoresDisponiveis = processadorestotal;
+            return;
+        }
+            
         if (cliente.getEstado() != Tarefa.CANCELADO) {
            cliente.iniciarEsperaProcessamento(simulacao.getTime(this));
             if (processadoresDisponiveis != 0) {
@@ -113,7 +139,18 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
     }
 
     @Override
-    public void atendimento(Simulacao simulacao, Tarefa cliente) {
+    public void atendimento(Simulacao simulacao, Tarefa cliente) { 
+    	
+    	  if(verificarFalhaRecurso(simulacao, cliente)){
+          	processadoresDisponiveis = processadorestotal;
+              return;
+          }
+          
+          if(!verificarRota((CS_Processamento) cliente.getOrigem())){
+          	processadoresDisponiveis = processadorestotal;
+              return;
+          }
+        
         cliente.finalizarEsperaProcessamento(simulacao.getTime(this));
         cliente.iniciarAtendimentoProcessamento(simulacao.getTime(this));
         tarefaEmExecucao.add(cliente);
@@ -140,11 +177,33 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
             //Event adicionado a lista de evntos futuros
             simulacao.addEventoFuturo(evtFut);
         }
-    }
+    }  
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+    	
+    	 if(verificarFalhaRecurso(simulacao, cliente)){
+         processadoresDisponiveis = processadorestotal;
+             return;
+         }
+          
+         if(!verificarRota((CS_Processamento) cliente.getOrigem())){
+         	processadoresDisponiveis = processadorestotal;
+             return;
+         }
+          
         //Incrementa o número de Mbits transmitido por este link
+        int index = mestres.indexOf(cliente.getOrigem());
+        List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
+        if(!linksfalhados.isEmpty()){
+            for(CentroServico cs : caminho){
+                if(linksfalhados.containsKey(cs.getId())){
+                    caminho = CS_Maquina.getMenorCaminho(this, (CS_Processamento) cliente.getOrigem());
+                    break;
+                }
+            }
+        }
+        
         this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
         //Incrementa o tempo de processamento
         double tempoProc = this.tempoProcessar(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
@@ -156,8 +215,6 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
         cliente.calcEficiencia(this.getPoderComputacional());
         //Devolve tarefa para o mestre
         if (mestres.contains(cliente.getOrigem())) {
-            int index = mestres.indexOf(cliente.getOrigem());
-            List<CentroServico> caminho = new ArrayList<CentroServico>((List<CentroServico>) caminhoMestre.get(index));
             cliente.setCaminho(caminho);
             //Gera evento para chegada da tarefa no proximo servidor
             EventoFuturo evtFut = new EventoFuturo(
@@ -170,7 +227,7 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
         } else {
             //buscar menor caminho!!!
             CS_Processamento novoMestre = (CS_Processamento) cliente.getOrigem();
-            List<CentroServico> caminho = new ArrayList<CentroServico>(
+            caminho = new ArrayList<CentroServico>(
                     CS_Maquina.getMenorCaminhoIndireto(this, novoMestre));
             this.addMestre(novoMestre);
             this.caminhoMestre.add(caminho);
@@ -218,14 +275,43 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
                     case Mensagens.DEVOLVER_COM_PREEMPCAO:
                         atenderDevolucaoPreemptiva(simulacao, mensagem);
                         break;
-                    case Mensagens.FALHAR:
-                        atenderFalha(simulacao, mensagem);
-                        break;
+                }
+            }
+            if(mensagem.getTarefa() == null){
+                switch (mensagem.getTipo()){
+                    case Mensagens.NOTIFICAR_FALHA:
+                        atenderFalhaHardware(mensagem);
+                    break;
+                        
+                    case Mensagens.NOTIFICAR_RECUPERACAO:
+                        atenderRecuperacaoFalhaHardware(mensagem);
+                    break;
                 }
             }
         }
     }
-
+    
+    public void atenderFalhaHardware(Mensagem msg){
+        CentroServico maq = msg.getOrigem();
+        if(maq instanceof CS_Maquina)
+            maquinasfalhadas.put(maq.getId(), maq);
+        
+        if(maq instanceof CS_Link){
+            linksfalhados.put(maq.getId(), maq);
+        }
+        
+    }
+    
+    public void atenderRecuperacaoFalhaHardware(Mensagem msg){
+        CentroServico maq = msg.getOrigem();
+        if(maq instanceof CS_Maquina)
+            maquinasfalhadas.remove(maq.getId());
+        
+        if(maq instanceof CS_Link){
+            linksfalhados.remove(maq.getId());
+        }
+    }
+    
     @Override
     public void determinarCaminhos() throws LinkageError {
         //Instancia objetos
@@ -456,5 +542,78 @@ public class CS_Maquina extends CS_Processamento implements Mensagens, Vertice {
     @Override
     public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public boolean isInoperante() {
+        return this.inoperante;
+    }
+
+    private boolean verificarFalhaRecurso(Simulacao sim, Tarefa cliente){
+        if(inicioFalha == -1)
+            return false;
+        
+        if(sim.getTime(this) >= inicioFalha && sim.getTime(this) <= fimFalha)
+            return true;
+            
+        return inoperante;
+    }
+    
+    public boolean verificarRota(Tarefa cliente){
+        if(linksfalhados.isEmpty())
+            return true;
+        
+        CS_Processamento origem = (CS_Processamento) cliente.getOrigem();
+        List<CentroServico> caminho = CS_Mestre.getMenorCaminho(this, origem);
+        
+        if(caminho == null)
+            return false;
+        else
+            cliente.setCaminho(caminho);
+        
+        return true;
+    }
+    
+    @Override
+    public double getInicioFalha() {
+        return this.inicioFalha;
+    }
+
+    @Override
+    public void setInicioFalha(double inicioFalha) {
+        super.getMetrica().setTempoFalha(inicioFalha);
+        this.inicioFalha = inicioFalha;
+    }
+
+    @Override
+    public double getFimFalha() {
+        return this.fimFalha;
+    }
+
+    @Override
+    public void setFimFalha(double fimFalha) {
+        super.getMetrica().setTempoRecuperacao(fimFalha);
+        this.fimFalha = fimFalha;
+    }
+    
+    public boolean verificarLinks(){
+        if(linksfalhados.isEmpty())
+            return true;
+        
+        return false;
+    }
+    
+    private boolean verificarRota(CS_Processamento mestre){
+        if(CS_Maquina.getMenorCaminho(this, mestre) == null)
+            return false;
+        
+         if(CS_Maquina.getMenorCaminho(mestre, this) == null)
+            return false;
+         
+         return true;
+    }
+    
+    public void recalcularMflops(double tempo){
+        
     }
 }

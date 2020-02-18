@@ -5,6 +5,7 @@
 package ispd.motor;
 
 import ispd.escalonador.Mestre;
+import ispd.motor.falha.Falha;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
@@ -26,11 +27,15 @@ public class SimulacaoSequencial extends Simulacao {
 
     private double time = 0;
     private PriorityQueue<EventoFuturo> eventos;
+    private Falha falhaprocessamento;
+    private Falha falhacomunicacao;
     
-    public SimulacaoSequencial(ProgressoSimulacao janela, RedeDeFilas redeDeFilas, List<Tarefa> tarefas) throws IllegalArgumentException {
+    public SimulacaoSequencial(ProgressoSimulacao janela, RedeDeFilas redeDeFilas, List<Tarefa> tarefas, Falha falhaprocessamento, Falha falhacomunicacao) throws IllegalArgumentException {
         super(janela, redeDeFilas,tarefas);
         this.time = 0;
         this.eventos = new PriorityQueue<EventoFuturo>();
+        this.falhaprocessamento = falhaprocessamento;
+        this.falhacomunicacao = falhacomunicacao;
 
         if (redeDeFilas == null) {
             throw new IllegalArgumentException("The model has no icons.");
@@ -73,6 +78,12 @@ public class SimulacaoSequencial extends Simulacao {
     @Override
     public void simular() {
         //inicia os escalonadores
+        ArrayList<CentroServico> maqsfalhadas = new ArrayList<CentroServico>(super.getRedeDeFilas().getMaquinas());
+        ArrayList<CentroServico> linksfalhados = new ArrayList<CentroServico>(super.getRedeDeFilas().getLinks());
+
+        falhaprocessamento.gerarFalha(maqsfalhadas, super.getRedeDeFilas(), this);
+        falhacomunicacao.gerarFalha(linksfalhados, super.getRedeDeFilas(), this);
+        
         iniciarEscalonadores();
         //adiciona chegada das tarefas na lista de eventos futuros
         addEventos(getTarefas());
@@ -215,5 +226,13 @@ public class SimulacaoSequencial extends Simulacao {
                     break;
             }
         }
+        
+        
+        
+    }
+
+    @Override
+    public Falha getFalha() {
+        return falhaprocessamento;
     }
 }

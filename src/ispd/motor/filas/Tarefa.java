@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author denison_usuario
  */
-public class Tarefa implements Cliente {
+public class Tarefa extends Cliente {
     //Estados que a tarefa pode estar
 
     public static final int PARADO = 1;
@@ -30,6 +30,10 @@ public class Tarefa implements Cliente {
     private int identificador;
     private boolean copia;
     private List<CS_Processamento> historicoProcessamento = new ArrayList<CS_Processamento>();
+    private int nucleosAlocados = 0;
+    private double mflopsAlocados;
+    
+    ArrayList<Tarefa> subTarefas;
 
     /**
      * Indica a quantidade de mflops já processados no momento de um bloqueio
@@ -54,7 +58,7 @@ public class Tarefa implements Cliente {
     /**
      * Local de destino da mensagem/tarefa
      */
-    private CentroServico localProcessamento;
+    private CentroServico localProcessamento = null;
     /**
      * Caminho que o pacote deve percorrer até o destino O destino é o ultimo
      * item desta lista
@@ -86,6 +90,8 @@ public class Tarefa implements Cliente {
         this.mflopsProcessado = 0;
         this.tempoInicial = new ArrayList<Double>();
         this.tempoFinal = new ArrayList<Double>();
+        this.id = Cliente.atribuirIdGlobal();
+        this.subTarefas = new ArrayList<Tarefa>();
     }
 
     public Tarefa(int id, String proprietario, String aplicacao, CentroServico origem, double arquivoEnvio, double arquivoRecebimento, double tamProcessamento, double tempoCriacao) {
@@ -104,6 +110,8 @@ public class Tarefa implements Cliente {
         this.mflopsProcessado = 0;
         this.tempoInicial = new ArrayList<Double>();
         this.tempoFinal = new ArrayList<Double>();
+        this.id = Cliente.atribuirIdGlobal();
+        this.subTarefas = new ArrayList<Tarefa>();
     }
 
     public Tarefa(Tarefa tarefa) {
@@ -122,6 +130,12 @@ public class Tarefa implements Cliente {
         this.mflopsProcessado = 0;
         this.tempoInicial = new ArrayList<Double>();
         this.tempoFinal = new ArrayList<Double>();
+        this.id = Cliente.atribuirIdGlobal();
+        this.subTarefas = new ArrayList<Tarefa>();
+        this.localProcessamento = tarefa.getLocalProcessamento();
+        
+        for(int i = 0; i < tarefa.subTarefas.size(); i++)
+            this.subTarefas.add(new Tarefa(tarefa.subTarefas.get(i)));
     }
 
     public double getTamComunicacao() {
@@ -139,7 +153,11 @@ public class Tarefa implements Cliente {
     public CentroServico getOrigem() {
         return origem;
     }
-
+    
+    public void setOrigem(CentroServico cs){
+        origem = cs;
+    }
+    
     public CentroServico getLocalProcessamento() {
         return localProcessamento;
     }
@@ -299,4 +317,42 @@ public class Tarefa implements Cliente {
     public double getArquivoEnvio() {
         return arquivoEnvio;
     }
+
+    public int getNucleosAlocados() {
+        return nucleosAlocados;
+    }
+
+    public void setNucleosAlocados(int nucleosAlocados) {
+        this.nucleosAlocados = nucleosAlocados;
+    }
+
+    public double getMflopsAlocados() {
+        return mflopsAlocados;
+    }
+
+    public void setMflopsAlocados(double mflopsAlocados) {
+        this.mflopsAlocados = mflopsAlocados;
+    }
+
+    public void setTamProcessamento(double tamProcessamento) {
+        this.tamProcessamento = tamProcessamento;
+    }
+    
+    public void addSubTarefa(Tarefa tarefa){
+        subTarefas.add(tarefa);
+    }
+    
+    public Tarefa removerSubTarefa(int index){
+        return subTarefas.remove(index);
+    }
+    
+    public boolean subtarefas(){
+        return !subTarefas.isEmpty();
+    }
+
+    public ArrayList<Tarefa> getSubTarefas() {
+        return subTarefas;
+    }
+    
+    
 }

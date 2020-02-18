@@ -5,12 +5,15 @@
 package ispd.motor.filas.servidores.implementacao;
 
 import ispd.motor.EventoFuturo;
+import ispd.motor.Mensagens;
 import ispd.motor.Simulacao;
+import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,7 +29,8 @@ public class CS_Link extends CS_Comunicacao {
     private boolean linkDisponivel;
     private boolean linkDisponivelMensagem;
     private double tempoTransmitirMensagem;
-
+    private CentroServico maquinaFalhada;
+    
     public CS_Link(String id, double LarguraBanda, double Ocupacao, double Latencia) {
         super(id, LarguraBanda, Ocupacao, Latencia);
         this.conexoesEntrada = null;
@@ -57,6 +61,11 @@ public class CS_Link extends CS_Comunicacao {
 
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        if(inoperante){
+        	linkDisponivel = true;
+            return;
+        }
+        
         cliente.iniciarEsperaComunicacao(simulacao.getTime(this));
         if (linkDisponivel) {
             //indica que recurso está ocupado
@@ -75,9 +84,13 @@ public class CS_Link extends CS_Comunicacao {
 
     @Override
     public void atendimento(Simulacao simulacao, Tarefa cliente) {
+        if(verificarFalhaAtendimento(simulacao, cliente)){
+        	linkDisponivel = true;
+            return;
+        }
+        
         if (!conexoesSaida.equals(cliente.getCaminho().get(0))) {
-            System.out.println("link " + this.getId() + " tarefa " + cliente.getIdentificador() + " tempo " + simulacao.getTime(this) + " local " + cliente.getCaminho().get(0).getId());
-            throw new IllegalArgumentException("O destino da mensagem é um recurso sem conexão com este link");
+            throw new IllegalArgumentException("O destino da mensagem (" + cliente.getCaminho().get(0).getId() +") é um recurso sem conexão com este link");
         } else {
             cliente.finalizarEsperaComunicacao(simulacao.getTime(this));
             cliente.iniciarAtendimentoComunicacao(simulacao.getTime(this));
@@ -90,9 +103,35 @@ public class CS_Link extends CS_Comunicacao {
             simulacao.addEventoFuturo(evtFut);
         }
     }
-
+    
+    private boolean verificarFalhaAtendimento(Simulacao sim, Tarefa cliente){
+        if(inicioFalha == -1)
+            return false;
+        
+        if(inoperante){        
+            linkDisponivel = true;
+            return true;
+        }
+        
+        Double next = sim.getTime(this) + tempoTransmitir(cliente.getTamComunicacao());
+        
+        if(next >= inicioFalha && sim.getTime(this) < inicioFalha){
+            inoperante = true;
+            filaPacotes.clear();
+            return true;
+        }
+            
+        return inoperante;
+    }
+    
+   
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        if(inoperante){
+        	linkDisponivel = true;
+            return;
+        }
+        
         //Incrementa o número de Mbits transmitido por este link
         this.getMetrica().incMbitsTransmitidos(cliente.getTamComunicacao());
         //Incrementa o tempo de transmissão
@@ -124,7 +163,11 @@ public class CS_Link extends CS_Comunicacao {
 
     @Override
     public void requisicao(Simulacao simulacao, Mensagem cliente, int tipo) {
+        if(cliente.getTarefa() == null)
+            return;
+        
         if (tipo == EventoFuturo.SAIDA_MENSAGEM) {
+            
             tempoTransmitirMensagem += tempoTransmitir(cliente.getTamComunicacao());
             //Incrementa o número de Mbits transmitido por este link
             this.getMetrica().incMbitsTransmitidos(cliente.getTamComunicacao());
@@ -161,8 +204,9 @@ public class CS_Link extends CS_Comunicacao {
         } else {
             filaMensagens.add(cliente);
         }
+        
     }
-
+    
     @Override
     public Integer getCargaTarefas() {
         if (linkDisponivel && linkDisponivelMensagem) {
@@ -171,4 +215,34 @@ public class CS_Link extends CS_Comunicacao {
             return (filaMensagens.size() + filaPacotes.size()) + 1;
         }
     }
+
+    @Override
+    public void limparEscalonador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public void setInicioFalha(double t){
+        this.getMetrica().setTempoFalha(t);  
+        super.setInicioFalha(t);
+        inicioFalha = t;
+    }
+    
+    @Override
+    public void setFimFalha(double t){
+        this.getMetrica().setTempoRecuperacao(t);  
+        fimFalha = t;
+    }
+
+    @Override
+    public boolean isInoperante() {
+        return inoperante;
+    }
+    
+    @Override
+    public void setInoperante(boolean inoperante) {
+        this.inoperante = inoperante;
+    }
+    
+    
 }

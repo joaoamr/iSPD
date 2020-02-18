@@ -11,11 +11,34 @@ import java.util.List;
  *
  * @author denison_usuario
  */
-public interface Cliente {
-    public double getTamComunicacao();
-    public double getTamProcessamento();
-    public double getTimeCriacao();
-    public CentroServico getOrigem();
-    public List<CentroServico> getCaminho();
-    public void setCaminho(List<CentroServico> caminho);
+public abstract class Cliente {
+    protected CentroServico ultimoCS = null;
+    protected int id;
+    private static int globalIndex = 0;
+    
+    public abstract double getTamComunicacao();
+    public abstract double getTamProcessamento();
+    public abstract double getTimeCriacao();
+    public abstract CentroServico getOrigem();
+    public abstract List<CentroServico> getCaminho();
+    public abstract void setCaminho(List<CentroServico> caminho);
+    
+    public void setUltimoCS(CentroServico cs){
+        ultimoCS = cs;
+    }
+    
+    public CentroServico getUltimoCS(){
+        return ultimoCS;
+    }
+
+    public final int getId() {
+        return id;
+    }
+    
+    public static final int atribuirIdGlobal(){
+        int thisid = globalIndex;
+        globalIndex++;
+        return thisid;
+    }
+    
 }

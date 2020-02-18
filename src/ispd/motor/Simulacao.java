@@ -4,17 +4,20 @@
  */
 package ispd.motor;
 
+import ispd.motor.falha.Falha;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.metricas.Metricas;
 import java.awt.Color;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -80,16 +83,26 @@ public abstract class Simulacao {
     
     
     public void iniciarAlocadoresCloud() {
+        for(CS_MaquinaCloud maq : redeDeFilasCloud.getMaquinasCloud())
+            if(maq.getAlocador() != null)
+                maq.getAlocador().iniciar(this);
+        
         for (CS_Processamento mst : redeDeFilasCloud.getMestres()) {
             CS_VMM mestre = (CS_VMM) mst;
             //utiliza a classe de escalonamento diretamente 
             //pode ser modificado para gerar um evento 
             //mas deve ser o primeiro evento executado nos mestres
-            System.out.println("VMM " +  mst.getId()+ " iniciando o alocador" + mestre.getAlocadorVM().toString());
-            mestre.getAlocadorVM().iniciar();
+            System.out.println("VMM " +  mst.getId()+ " iniciando o alocador" + mestre.getAlocador().toString());
+            long tempoResolucao = System.currentTimeMillis();
+            mestre.getAlocador().iniciar(this);
+            tempoResolucao = System.currentTimeMillis() - tempoResolucao;
+            System.out.println("Tempo de resolucao: " + tempoResolucao);
+            double c = mestre.getAlocador().computarCustoDeRede();
+            int n = mestre.getAlocador().maquinasAtivas();
             
-            
+            JOptionPane.showMessageDialog(null, "Processing time: " + tempoResolucao + "\nNetwork costs: " + c + "\nActives PMs: " + n, "Results", JOptionPane.OK_OPTION);
         }
+       
     }
     
     public void iniciarEscalonadoresCloud(){
@@ -119,4 +132,6 @@ public abstract class Simulacao {
         janela.println("OK", Color.green);
         return metrica;
     }
+    
+    public abstract Falha getFalha();
 }

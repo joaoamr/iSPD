@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ispd.gui.auxiliar.ParesOrdenadosUso;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Classe abstrata que representa os servidores de processamento do modelo de fila,
@@ -32,15 +33,18 @@ public abstract class CS_Processamento extends CentroServico {
     private double PoderComputacionalDisponivelPorProcessador;
     private MetricasProcessamento metrica;
     private List<ParesOrdenadosUso> lista_pares = new ArrayList<ParesOrdenadosUso>();
+    public static HashMap<String, List> mapaDeCaminhos;
+    
+    public static void iniciarMapa(){
+        mapaDeCaminhos = new HashMap<String, List>(600000);
+    }
     
     public CS_Processamento(String id, String proprietario, double PoderComputacional, int numeroProcessadores, double Ocupacao, int numeroMaquina) {
         this.poderComputacional = PoderComputacional;
         this.numeroProcessadores = numeroProcessadores;
         this.Ocupacao = Ocupacao;
         this.metrica = new MetricasProcessamento(id, numeroMaquina, proprietario);
-        this.PoderComputacionalDisponivelPorProcessador =
-                (this.poderComputacional - (this.poderComputacional * this.Ocupacao))
-                / this.numeroProcessadores;
+        this.PoderComputacionalDisponivelPorProcessador = this.poderComputacional - (this.poderComputacional * this.Ocupacao);
     }
     
     
@@ -185,22 +189,24 @@ public abstract class CS_Processamento extends CentroServico {
                 caminho.add(caminhoItem);
             } else {
                 ArrayList<CentroServico> lista = (ArrayList<CentroServico>) atual.getConexoesSaida();
-                for (CentroServico cs : lista) {
-                    Object caminhoItem[] = new Object[4];
-                    caminhoItem[0] = atual;
-                    if (cs instanceof CS_Processamento && cs != destino) {
-                        caminhoItem[1] = Double.MAX_VALUE;
-                        caminhoItem[2] = null;
-                    } else if (cs instanceof CS_Comunicacao) {
-                        CS_Comunicacao comu = (CS_Comunicacao) cs;
-                        caminhoItem[1] = comu.tempoTransmitir(10000) + acumulado;
-                        caminhoItem[2] = cs;
-                    } else {
-                        caminhoItem[1] = 0.0 + acumulado;
-                        caminhoItem[2] = cs;
+                for (CentroServico cs : lista){
+                    if(!cs.isInoperante()){
+                        Object caminhoItem[] = new Object[4];
+                        caminhoItem[0] = atual;
+                        if (cs instanceof CS_Processamento && cs != destino) {
+                            caminhoItem[1] = Double.MAX_VALUE;
+                            caminhoItem[2] = null;
+                        } else if (cs instanceof CS_Comunicacao) {
+                            CS_Comunicacao comu = (CS_Comunicacao) cs;
+                            caminhoItem[1] = comu.tempoTransmitir(10000) + acumulado;
+                            caminhoItem[2] = cs;
+                        } else {
+                            caminhoItem[1] = 0.0 + acumulado;
+                            caminhoItem[2] = cs;
+                        }
+                        caminhoItem[3] = acumulado;
+                        caminho.add(caminhoItem);
                     }
-                    caminhoItem[3] = acumulado;
-                    caminho.add(caminhoItem);
                 }
             }
             //Marca que o nó atual foi expandido
@@ -338,6 +344,17 @@ public abstract class CS_Processamento extends CentroServico {
     }
     
     public static List<CentroServico> getMenorCaminhoCloud(CS_Processamento origem, CS_Processamento destino) {
+        String par = origem.getId() + "&" + destino.getId();
+        
+        boolean b = false;
+        
+        if(mapaDeCaminhos.containsKey(par)){
+            if(mapaDeCaminhos.get(par) == null)
+                return null;
+            
+            return new ArrayList<CentroServico>(mapaDeCaminhos.get(par));
+        }
+        
         //cria vetor com distancia acumulada
         List<CentroServico> nosExpandidos = new ArrayList<CentroServico>();
         List<Object[]> caminho = new ArrayList<Object[]>();
@@ -418,8 +435,10 @@ public abstract class CS_Processamento extends CentroServico {
             for (int j = inverso.size() - 1; j >= 0; j--) {
                 menorCaminho.add(inverso.get(j));
             }
-            return menorCaminho;
+            try {mapaDeCaminhos.put(par, menorCaminho); } catch (Exception e){};            
+            return new ArrayList<CentroServico>(menorCaminho);
         }
+        try { mapaDeCaminhos.put(par, null); } catch (Exception e){};
         return null;
     }
 
@@ -525,6 +544,10 @@ public abstract class CS_Processamento extends CentroServico {
     public List getListaProcessamento(){
         Collections.sort(lista_pares);
         return (this.lista_pares);
+    }
+    
+    public void limparEscalonador() {
+        
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class CarregarAlloc {
     private static final String DIRETORIO = ".";
-    private static final String CAMINHO_CLASSE = "ispd.externo.cloudAlloc.";
+    private static final String CAMINHO_CLASSE = "ispd.externo.cloudAlloc.global.";
     private static URLClassLoader loader = null;
 
     /**
@@ -29,7 +29,7 @@ public class CarregarAlloc {
      * @param nome
      * @return Nova instancia do objeto Escalonador
      */
-    public static Alocacao getNewAlocadorVM(String nome) {
+    public static AlocadorGlobal getNewAlocadorVM(String nome) {
         if (loader == null) {
             File diretorio = new File(DIRETORIO);
             if (diretorio.exists()) {
@@ -45,7 +45,7 @@ public class CarregarAlloc {
         }
         try {
             Class cl = loader.loadClass(CAMINHO_CLASSE + nome);
-            Alocacao alocadorVM = (Alocacao) cl.newInstance();
+            AlocadorGlobal alocadorVM = (AlocadorGlobal) cl.newInstance();
             //Escalonador escalonador = (Escalonador) Class.forName("novoescalonador."+nome, true, loader).newInstance();
             return alocadorVM;
         } catch (RuntimeException ex) {

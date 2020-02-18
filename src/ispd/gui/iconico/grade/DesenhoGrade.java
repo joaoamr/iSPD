@@ -869,4 +869,8 @@ public class DesenhoGrade extends AreaDesenho {
     public Set<Vertice> getVertices() {
         return vertices;
     }
+    
+    public Set<Aresta> getArestas() {
+        return arestas;
+    }
 }

@@ -22,6 +22,9 @@ public interface Mensagens {
     public static final int FALHAR = 7;
     public static final int ALOCAR_ACK = 8;
     public static final int DESLIGAR = 9; 
+    public static final int REPASSAR_ACK = 10;
+    public static final int NOTIFICAR_FALHA = 11;
+    public static final int NOTIFICAR_RECUPERACAO = 12;
 
     public void atenderCancelamento(Simulacao simulacao, Mensagem mensagem);
     public void atenderParada(Simulacao simulacao, Mensagem mensagem);

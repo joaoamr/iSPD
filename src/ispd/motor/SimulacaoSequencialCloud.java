@@ -7,6 +7,7 @@ package ispd.motor;
 import ispd.alocacaoVM.VMM;
 import ispd.escalonador.Mestre;
 import ispd.escalonadorCloud.MestreCloud;
+import ispd.motor.falha.Falha;
 import ispd.motor.filas.Cliente;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.RedeDeFilas;
@@ -16,6 +17,7 @@ import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_Maquina;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
+import ispd.motor.filas.servidores.implementacao.CS_MasterVirtualMac;
 import ispd.motor.filas.servidores.implementacao.CS_Mestre;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
@@ -29,7 +31,6 @@ import java.util.PriorityQueue;
  * @author denison_usuario
  */
 public class SimulacaoSequencialCloud extends Simulacao {
-
     private double time = 0;
     private PriorityQueue<EventoFuturo> eventos;
     
@@ -68,6 +69,16 @@ public class SimulacaoSequencialCloud extends Simulacao {
             mst.determinarCaminhos(); //mestre encontra caminho para seus escravos
         }
         
+        for (CS_Processamento mst : redeDeFilas.getVMs()) {
+            if(mst instanceof CS_MasterVirtualMac){
+                CS_MasterVirtualMac temp = (CS_MasterVirtualMac) mst;
+                MestreCloud aux = (MestreCloud) mst;
+                //Cede acesso ao mestre a fila de eventos futuros
+                aux.setSimulacao(this);
+                temp.setSimulacaoAlloc(this);
+            }
+        }
+        
         janela.incProgresso(5);
         janela.println("OK", Color.green);
         
@@ -88,6 +99,7 @@ public class SimulacaoSequencialCloud extends Simulacao {
 
     @Override
     public void simular() {
+        
         //inicia os escalonadores
          System.out.println("---------------------------------------");
         iniciarEscalonadoresCloud();
@@ -175,6 +187,12 @@ public class SimulacaoSequencialCloud extends Simulacao {
             //que seria criado anteriormente
             EventoFuturo eventoAtual = eventos.poll();
             time = eventoAtual.getTempoOcorrencia();
+            
+            if(eventoAtual.estaCancelado())
+                continue;   
+                
+            //eventoAtual.getCliente().setUltimoCS(eventoAtual.getServidor());
+            
             switch (eventoAtual.getTipo()) {
                 case EventoFuturo.CHEGADA:
                     eventoAtual.getServidor().chegadaDeCliente(this, (Tarefa) eventoAtual.getCliente());
@@ -261,5 +279,9 @@ public class SimulacaoSequencialCloud extends Simulacao {
             
         }
         
+    }
+    
+    public Falha getFalha(){
+        return null;
     }
 }

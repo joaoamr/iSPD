@@ -47,13 +47,13 @@ public class EscolherClasse extends javax.swing.JDialog {
         jPanelEscolherNovo = new javax.swing.JPanel();
         jRadioGrid = new javax.swing.JRadioButton();
         jRadioIaaS = new javax.swing.JRadioButton();
-        jRadioPaaS = new javax.swing.JRadioButton();
         jButtonEscNovoOK = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
+        jRadioGrid.setSelected(true);
         jRadioGrid.setText("Grid");
         jRadioGrid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -61,81 +61,65 @@ public class EscolherClasse extends javax.swing.JDialog {
             }
         });
 
-        jRadioIaaS.setText("Cloud - IaaS");
+        jRadioIaaS.setText("Cloud");
         jRadioIaaS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioIaaSActionPerformed(evt);
             }
         });
 
-        jRadioPaaS.setText("Cloud - PaaS");
-        jRadioPaaS.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioPaaSActionPerformed(evt);
-            }
-        });
-
-        jButtonEscNovoOK.setText("OK!");
+        jButtonEscNovoOK.setText("Ok");
         jButtonEscNovoOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonEscNovoOKActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Choose the service that do you want to model");
+        jLabel1.setText("Choose the kind of service you want to model");
 
         javax.swing.GroupLayout jPanelEscolherNovoLayout = new javax.swing.GroupLayout(jPanelEscolherNovo);
         jPanelEscolherNovo.setLayout(jPanelEscolherNovoLayout);
         jPanelEscolherNovoLayout.setHorizontalGroup(
             jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelEscolherNovoLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButtonEscNovoOK)
-                .addGap(33, 33, 33))
             .addGroup(jPanelEscolherNovoLayout.createSequentialGroup()
-                .addGroup(jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelEscolherNovoLayout.createSequentialGroup()
-                        .addGap(132, 132, 132)
-                        .addGroup(jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioGrid)
-                            .addComponent(jRadioIaaS)
-                            .addComponent(jRadioPaaS)))
-                    .addGroup(jPanelEscolherNovoLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jLabel1)))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addGroup(jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonEscNovoOK)
+                    .addGroup(jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1)
+                        .addGroup(jPanelEscolherNovoLayout.createSequentialGroup()
+                            .addGap(86, 86, 86)
+                            .addGroup(jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jRadioIaaS)
+                                .addComponent(jRadioGrid)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelEscolherNovoLayout.setVerticalGroup(
             jPanelEscolherNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEscolherNovoLayout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jRadioGrid)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jRadioIaaS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioPaaS)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonEscNovoOK)
-                .addContainerGap())
+                .addGap(42, 42, 42))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanelEscolherNovo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelEscolherNovo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanelEscolherNovo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelEscolherNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -147,7 +131,6 @@ public class EscolherClasse extends javax.swing.JDialog {
         if(jRadioGrid.isSelected()){
             jRadioGrid.setSelected(true);
             jRadioIaaS.setSelected(false);
-            jRadioPaaS.setSelected(false);
         }
     }//GEN-LAST:event_jRadioGridActionPerformed
 
@@ -156,18 +139,8 @@ public class EscolherClasse extends javax.swing.JDialog {
         if(jRadioIaaS.isSelected()){
             jRadioGrid.setSelected(false);
             jRadioIaaS.setSelected(true);
-            jRadioPaaS.setSelected(false);
         }
     }//GEN-LAST:event_jRadioIaaSActionPerformed
-
-    private void jRadioPaaSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioPaaSActionPerformed
-        // TODO add your handling code here:
-        if(jRadioPaaS.isSelected()){
-            jRadioGrid.setSelected(false);
-            jRadioIaaS.setSelected(false);
-            jRadioPaaS.setSelected(true);
-        }
-    }//GEN-LAST:event_jRadioPaaSActionPerformed
 
     private void jButtonEscNovoOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEscNovoOKActionPerformed
         // TODO add your handling code here:
@@ -181,11 +154,6 @@ public class EscolherClasse extends javax.swing.JDialog {
             
 //abrir interface IaaS
         }
-        else if(jRadioPaaS.isSelected()){
-             setEscolha(PAAS);
-            
-//abrir código PaaS
-        }
         this.setVisible(false);
     }//GEN-LAST:event_jButtonEscNovoOKActionPerformed
     /**
@@ -197,6 +165,5 @@ public class EscolherClasse extends javax.swing.JDialog {
     private javax.swing.JPanel jPanelEscolherNovo;
     private javax.swing.JRadioButton jRadioGrid;
     private javax.swing.JRadioButton jRadioIaaS;
-    private javax.swing.JRadioButton jRadioPaaS;
     // End of variables declaration//GEN-END:variables
 }

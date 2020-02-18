@@ -5,6 +5,7 @@ import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
 import ispd.motor.SimulacaoSequencial;
 import ispd.motor.SimulacaoSequencialCloud;
+import ispd.motor.falha.Falha;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
@@ -34,9 +35,14 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
     /**
      * Creates new form AguardaSimulacao
      */
-    public JSimulacao(java.awt.Frame parent, boolean modal, Document modelo, String modeloTexto, ResourceBundle plavras, int tipoModelo) {
+    private Falha falhaprocessamento;
+    private Falha falhacomunicacao;
+    
+    public JSimulacao(java.awt.Frame parent, boolean modal, Document modelo, String modeloTexto, ResourceBundle plavras, int tipoModelo, Falha falhaprocessamento, Falha falhacomunicao) {
         super(parent, modal);
         this.palavras = plavras;
+        this.falhaprocessamento = falhaprocessamento;
+        this.falhacomunicacao = falhacomunicao;
         this.tipoModelo = tipoModelo;
         this.progrSim = new ProgressoSimulacao() {
             @Override
@@ -229,7 +235,7 @@ public class JSimulacao extends javax.swing.JDialog implements Runnable {
                 incProgresso(10);//[10%] --> 45%
                 progrSim.println("OK", Color.green);
                 //Verifica recursos do modelo e define roteamento
-                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas, falhaprocessamento, falhacomunicacao);//[10%] --> 55 %
                 //Realiza asimulação
                 progrSim.println("Simulating.");
                 //recebe instante de tempo em milissegundos ao iniciar a simulação

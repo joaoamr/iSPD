@@ -1,6 +1,7 @@
 package ispd.motor.filas.servidores;
 
 import ispd.motor.Simulacao;
+import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 
@@ -47,8 +48,66 @@ public abstract class CentroServico {
      */
     public abstract Object getConexoesSaida();
     /**
-     * Indica o númro de tarefas sendo atendidas ou na fila do centro de serviço
+     * Indica o número de tarefas sendo atendidas ou na fila do centro de serviço
      * @return número de tarefas
      */
+    
+    public void setInicioFalha(double t){
+        inicioFalha = t;
+    }
+    /**
+     * Atribui a marca de tempo inicial em que o recurso ficará indisponível
+     */
+    
+    public void setFimFalha(double t){
+        fimFalha = t;
+    }
+    /**
+     * Atribui a marca de tempo em que o recurso volta a estar disponível
+     */
+    
+    public double getInicioFalha(){
+        return inicioFalha;
+    }
+    /**
+     * Retorna a marca de tempo inicial em que o recurso ficará indisponível
+     */
+    
+    public double getFimFalha(){
+        return fimFalha;
+    }
+    /**
+     * Retorna a marca de tempo em que o recurso volta a estar disponível
+     */
+    
     public abstract Integer getCargaTarefas();
+
+    public abstract void limparEscalonador();
+    
+    protected double inicioFalha = -1;
+    
+    protected double fimFalha = -1;
+    
+    protected boolean semrota = false;
+
+    protected boolean inoperante = false;
+
+    public boolean isInoperante() {
+        return inoperante;
+    }
+
+    public void setInoperante(boolean inoperante) {
+        this.inoperante = inoperante;
+    }
+
+    public boolean isSemRota() {
+        return semrota;
+    }
+
+    public void setSemRota(boolean semrota) {
+        this.semrota = semrota;
+    }
+    
+    
+    
 }

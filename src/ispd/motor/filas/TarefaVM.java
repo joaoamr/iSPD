@@ -5,6 +5,7 @@
  */
 package ispd.motor.filas;
 
+import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 
@@ -18,7 +19,7 @@ public class TarefaVM extends Tarefa {
     private CS_VirtualMac VM_enviada;
     
     public TarefaVM(CentroServico origem, CS_VirtualMac VM, double arquivoEnvio, double tempoCriacao){
-        super(0,VM.getProprietario(),VM.getId(), origem, arquivoEnvio, 0, tempoCriacao);
+        super(0,VM.getProprietario(),VM.getId(), origem, 0 /* arquvo*/, 0, tempoCriacao);
         this.VM_enviada = VM;
     }
 

@@ -13,6 +13,7 @@ import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -208,8 +209,13 @@ public class Metricas implements Serializable {
         for (int i = 0; i < rede.getMaquinas().size(); i++) {
             mediaPoder += rede.getMaquinas().get(i).getPoderComputacional();
         }
+        
+        List<Tarefa> total = new ArrayList<Tarefa>(tarefas);
+        for(int i = 0; i < tarefas.size(); i++)
+            total.addAll(tarefas.get(i).getSubTarefas());
+        
         mediaPoder = mediaPoder / rede.getMaquinas().size();
-        for (Tarefa no : tarefas) {
+        for (Tarefa no : total) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
 
                 Double suij;
@@ -259,13 +265,17 @@ public class Metricas implements Serializable {
         this.numTarefasCanceladas = 0;
         this.MflopsDesperdicio = 0;
         this.numTarefas = 0;
+        
+        List<Tarefa> total = new ArrayList<Tarefa>(tarefas);
+        for(int i = 0; i < tarefas.size(); i++)
+            total.addAll(tarefas.get(i).getSubTarefas());
 
         Double mediaPoder = 0.0;
         for (int i = 0; i < rede.getVMs().size(); i++) {
             mediaPoder += rede.getVMs().get(i).getPoderComputacional();
         }
         mediaPoder = mediaPoder / rede.getVMs().size();
-        for (Tarefa no : tarefas) {
+        for (Tarefa no : total) {
             if (no.getEstado() == Tarefa.CONCLUIDO) {
 
                 Double suij;
@@ -407,7 +417,7 @@ public class Metricas implements Serializable {
         MetricasAlocacao mtRej = new MetricasAlocacao("Rejected");
         for (CS_Processamento mst : redeDeFilas.getMestres()) {
             CS_VMM aux = (CS_VMM) mst;
-            for (int i = 0; i < aux.getAlocadorVM().getVMsRejeitadas().size(); i++) {
+            for (int i = 0; i < aux.getAlocador().getVMsRejeitadas().size(); i++) {
                 mtRej.incVMsAlocadas();
             }
         }

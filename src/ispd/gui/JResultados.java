@@ -66,6 +66,7 @@ public class JResultados extends javax.swing.JDialog {
      * terminal
      */
     public JResultados(Metricas metricas, RedeDeFilas rdf, List tarefas) {
+        this.rdf = rdf;
         html.setMetricasGlobais(metricas.getMetricasGlobais());
         tabelaRecurso = setTabelaRecurso(metricas);
         getResultadosTarefas(metricas);
@@ -105,6 +106,7 @@ public class JResultados extends javax.swing.JDialog {
      */
     public JResultados(java.awt.Frame parent, Metricas metricas, RedeDeFilas rdf, List<Tarefa> tarefas) {
         super(parent, true);
+        this.rdf = rdf;
         this.tarefas = tarefas;
         gerarGraficosProcessamento(metricas.getMetricasProcessamento());
         gerarGraficosComunicacao(metricas.getMetricasComunicacao());
@@ -172,7 +174,7 @@ public class JResultados extends javax.swing.JDialog {
         jScrollPaneUsuario = new javax.swing.JScrollPane();
         jTextAreaUsuario = new javax.swing.JTextArea();
         jScrollPaneRecurso = new javax.swing.JScrollPane();
-        Object[] colunas = {"Label", "Owner", "Processing performed", "Communication performed"};
+        Object[] colunas = {"Label", "Owner", "Processing performed", "Communication performed", "Failure", "Recovery"};
         jTableRecurso = new javax.swing.JTable();
         jPanelProcessamento = new javax.swing.JPanel();
         jToolBarProcessamento = new javax.swing.JToolBar();
@@ -544,10 +546,11 @@ public class JResultados extends javax.swing.JDialog {
     private ChartPanel graficoEstadoTarefa2;
     private double poderComputacionalTotal = 0;
     private SalvarResultadosHTML html = new SalvarResultadosHTML();
+    private RedeDeFilas rdf;
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results\n\n";
-        texto += String.format("\tTotal Simulated Time = %g \n", globais.getTempoSimulacao());
+        texto += String.format("\tTotal Simulated Time = %g \n", getTempoTotal());
         texto += String.format("\tSatisfaction = %g %%\n", globais.getSatisfacaoMedia());
         texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeComputacao());
         texto += String.format("\tIdleness of communication resources = %g %%\n", globais.getOciosidadeComunicacao());
@@ -1022,11 +1025,13 @@ public class JResultados extends javax.swing.JDialog {
 
     private Object[][] setTabelaRecurso(Metricas metricas) {
         List<Object[]> tabela = new ArrayList<Object[]>();
-        //linha [Nome] [Proprietario] [Processamento] [comunicacao]
+        //linha [Nome] [Proprietario] [Processamento] [comunicacao] [falha]
         String nome;
         String prop;
         Double proc;
         Double comu;
+        String falha;
+        String recuperacao;
         if (metricas.getMetricasProcessamento() != null) {
             for (Map.Entry<String, MetricasProcessamento> entry : metricas.getMetricasProcessamento().entrySet()) {
                 MetricasProcessamento maq = entry.getValue();
@@ -1036,9 +1041,17 @@ public class JResultados extends javax.swing.JDialog {
                     nome = maq.getId() + " node " + maq.getnumeroMaquina();
                 }
                 prop = maq.getProprietario();
-                proc = maq.getSegundosDeProcessamento();
+                proc = maq.getMFlopsProcessados();
                 comu = 0.0;
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                if(maq.getTempoFalha() == -1)
+                {
+                    falha = "-";
+                    recuperacao = "-";
+                }else{
+                    falha = String.valueOf(maq.getTempoFalha());
+                    recuperacao = String.valueOf(maq.getTempoRecuperacao());
+                }
+                tabela.add(Arrays.asList(nome, prop, proc, comu, falha, recuperacao).toArray());
             }
         }
         if (metricas.getMetricasComunicacao() != null) {
@@ -1048,10 +1061,18 @@ public class JResultados extends javax.swing.JDialog {
                 prop = "---";
                 proc = 0.0;
                 comu = link.getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                if(link.getTempoFalha() == -1)
+                {
+                    falha = "-";
+                    recuperacao = "-";
+                }else{
+                    falha = String.valueOf(link.getTempoFalha());
+                    recuperacao = String.valueOf(link.getTempoRecuperacao());
+                }
+                tabela.add(Arrays.asList(nome, prop, proc, comu, falha, recuperacao).toArray());
             }
         }
-        Object[][] temp = new Object[tabela.size()][4];
+        Object[][] temp = new Object[tabela.size()][5];
         for (int i = 0; i < tabela.size(); i++) {
             temp[i] = tabela.get(i);
         }
@@ -1092,5 +1113,16 @@ public class JResultados extends javax.swing.JDialog {
         public int compareTo(tempo_uso_usuario o) {
             return tempo.compareTo(o.tempo);
         }
+    }
+    private double getTempoTotal(){
+        double t = 0;
+        for(int i = 0; i < rdf.getMestres().size(); i++){
+            double temp = ((CS_Mestre)rdf.getMestres().get(i)).getTempofinal();
+            
+            if(temp > t)
+                t = temp;
+        }
+        
+        return t;
     }
 }

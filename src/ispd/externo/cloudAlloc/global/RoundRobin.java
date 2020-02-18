@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ispd.externo.cloudAlloc;
+package ispd.externo.cloudAlloc.global;
 
-import ispd.alocacaoVM.Alocacao;
+import ispd.alocacaoVM.AlocadorGlobal;
+import ispd.alocacaoVM.AlocadorLocal;
+import ispd.motor.Simulacao;
+import ispd.motor.filas.TarefaVM;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
@@ -20,24 +23,25 @@ import java.util.ListIterator;
  *
  * @author Diogo Tavares
  */
-public class FirstFit extends Alocacao {
+public class RoundRobin extends AlocadorGlobal {
 
-    private boolean fit;
-    private int maqIndex;
+    private ListIterator<CS_Processamento> maqFisica;
+   
 
-    public FirstFit() {
+    public RoundRobin() {
+        
         this.maquinasVirtuais = new ArrayList<CS_VirtualMac>();
-        this.maquinasFisicas = new ArrayList<CS_Processamento>();
+        this.maquinasFisicas = new LinkedList<CS_Processamento>();
         this.VMsRejeitadas = new ArrayList<CS_VirtualMac>();
-
     }
 
     @Override
-    public void iniciar() {
-        fit = true;
-        maqIndex = 0;
+    public void iniciar(Simulacao simulacao) {
+     //trecho de teste.. excluir depois
+        //fim do trecho de teste
+        maqFisica = maquinasFisicas.listIterator(0);
+        if (!maquinasVirtuais.isEmpty()) {
 
-        if (!maquinasFisicas.isEmpty() && !maquinasVirtuais.isEmpty()) {
             escalonar();
         }
     }
@@ -49,36 +53,30 @@ public class FirstFit extends Alocacao {
 
     @Override
     public CS_Processamento escalonarRecurso() {
-        if (fit) {
-            return maquinasFisicas.get(0);
+        if (maqFisica.hasNext()) {
+            return maqFisica.next();
         } else {
-            return maquinasFisicas.get(maqIndex);
+            maqFisica = maquinasFisicas.listIterator(0);
+            return maqFisica.next();
         }
     }
 
     @Override
-    public List<CentroServico> escalonarRota(CentroServico destino) {
-        int index = maquinasFisicas.indexOf(destino);
-        return new ArrayList<CentroServico>((List<CentroServico>) caminhoMaquina.get(index));
-    }
-
-    @Override
     public void escalonar() {
+        
 
         while (!(maquinasVirtuais.isEmpty())) {
             int num_escravos;
             num_escravos = maquinasFisicas.size();
+            
 
             CS_VirtualMac auxVM = escalonarVM();
 
             while (num_escravos >= 0) {
-                if (num_escravos > 0) { //caso existam máquinas livres
+                if (num_escravos > 0) {//caso existam máquinas livres
                     CS_Processamento auxMaq = escalonarRecurso(); //escalona o recurso
-                    maqIndex++;
-
                     if (auxMaq instanceof CS_VMM) {
-
-                        System.out.println(auxMaq.getId() + " é um VMM, a VM será redirecionada");
+                        
                         auxVM.setCaminho(escalonarRota(auxMaq));
                         //salvando uma lista de VMMs intermediarios no caminho da vm e seus respectivos caminhos
                         //CS_VMM maq = (CS_VMM) auxMaq;
@@ -87,41 +85,28 @@ public class FirstFit extends Alocacao {
                         //int index = inter.indexOf((CS_VMM) auxMaq);
                         //ArrayList<CentroServico> caminhoInter = new ArrayList<CentroServico>(escalonarRota(auxMaq));
                         //auxVM.addCaminhoIntermediario(index, caminhoInter);
-                        System.out.println(auxVM.getId() + " enviada para " + auxMaq.getId());
                         VMM.enviarVM(auxVM);
-                        System.out.println("---------------------------------------");
                         break;
                     } else {
                         CS_MaquinaCloud maq = (CS_MaquinaCloud) auxMaq;
-                        double memoriaMaq = maq.getMemoriaDisponivel();
-                        double memoriaNecessaria = auxVM.getMemoriaDisponivel();
-                        double discoMaq = maq.getDiscoDisponivel();
-                        double discoNecessario = auxVM.getDiscoDisponivel();
-                        int maqProc = maq.getProcessadoresDisponiveis();
-                        int procVM = auxVM.getProcessadoresDisponiveis();
-
-                        if ((memoriaNecessaria <= memoriaMaq && discoNecessario <= discoMaq && procVM <= maqProc)) {
-                            maq.setMemoriaDisponivel(memoriaMaq - memoriaNecessaria);
-                            maq.setDiscoDisponivel(discoMaq - discoNecessario);
-                            maq.setProcessadoresDisponiveis(maqProc - procVM);
-                            auxVM.setMaquinaHospedeira((CS_MaquinaCloud) auxMaq);
+                        AlocadorLocal local = maq.getAlocador();
+                        
+                        if (local.encaixarVm(auxVM)) {
+                            local.adicionarVm(auxVM);
                             auxVM.setCaminho(escalonarRota(auxMaq));
                             VMM.enviarVM(auxVM);
-                            maqIndex = 0;
-                            fit = true;
+  
                             break;
+
                         } else {
                             num_escravos--;
-                            fit = false;
                         }
                     }
                 } else {
                     auxVM.setStatus(CS_VirtualMac.REJEITADA);
                     VMsRejeitadas.add(auxVM);
-                    maqIndex = 0;
                     num_escravos--;
                 }
-
             }
         }
 

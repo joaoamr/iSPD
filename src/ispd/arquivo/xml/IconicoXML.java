@@ -592,7 +592,7 @@ public class IconicoXML {
                     Element slave = (Element) slaves.item(j);
                     CentroServico maq = centroDeServicos.get(Integer.parseInt(slave.getAttribute("id")));
                     if (maq instanceof CS_Processamento) {
-                        mestre.addEscravo((CS_Processamento) maq);
+                        mestre.addEscravo((CS_MaquinaCloud) maq);
                         if (maq instanceof CS_MaquinaCloud) {
                             CS_MaquinaCloud maqTemp = (CS_MaquinaCloud) maq;
                             //trecho de debbuging

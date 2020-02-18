@@ -22,6 +22,8 @@ import ispd.gui.configuracao.JPanelConfigIcon;
 import ispd.gui.iconico.grade.DesenhoGrade;
 import ispd.gui.iconico.grade.ItemGrade;
 import ispd.gui.iconico.grade.VirtualMachine;
+import ispd.motor.falha.Falha;
+import ispd.motor.falha.FalhaExponencial;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -66,7 +68,8 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
     private EscolherClasse ChooseClass; //janela de escolha de qual tipo de serviço irá ser modelado
     private ConfigurarVMs JanelaVM; //janela de configuração de máquinas virtuais para IaaS
     private int tipoModelo; //define se o modelo é GRID, IAAS ou PAAS;
-
+    private EscolherFalhas escolherfalhas;
+    
     public int getTipoModelo() {
         return tipoModelo;
     }
@@ -80,6 +83,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
      */
     public JPrincipal() {
         //Utiliza o idioma do sistema como padrão
+        escolherfalhas = new EscolherFalhas();
         Locale locale = Locale.getDefault();
         palavras = ResourceBundle.getBundle("ispd.idioma.Idioma", locale);
         String[] exts = {".ims", ".imsx", ".wmsx"};
@@ -147,6 +151,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jButtonTarefas = new javax.swing.JButton();
         jButtonConfigVM = new javax.swing.JButton();
         jButtonUsuarios = new javax.swing.JButton();
+        jButtonFalha = new javax.swing.JButton();
         jButtonSimular = new javax.swing.JButton();
         jScrollPaneProperties = new javax.swing.JScrollPane();
         jPanelPropriedades = new ispd.gui.configuracao.JPanelSimples();
@@ -328,6 +333,20 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 }
             });
             jToolBar.add(jButtonUsuarios);
+
+            jButtonFalha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/window-close.png"))); // NOI18N
+            jButtonFalha.setText("Failure");
+            jButtonFalha.setToolTipText("Select hardware failure");
+            jButtonFalha.setEnabled(false);
+            jButtonFalha.setFocusable(false);
+            jButtonFalha.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+            jButtonFalha.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+            jButtonFalha.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButtonFalhaActionPerformed(evt);
+                }
+            });
+            jToolBar.add(jButtonFalha);
 
             jButtonSimular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ispd/gui/imagens/system-run.png"))); // NOI18N
             jButtonSimular.setText(palavras.getString("Simulate")); // NOI18N
@@ -870,7 +889,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
 
     private void jButtonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSimularActionPerformed
         // TODO add your handling code here:
-        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho.getGrade(), aDesenho.toString(), palavras, tipoModelo);
+        JSimulacao janelaSimulacao = new JSimulacao(this, true, aDesenho.getGrade(), aDesenho.toString(), palavras, tipoModelo, escolherfalhas.getFalhaProcessamento(), escolherfalhas.getFalhacomunicacao());
         janelaSimulacao.iniciarSimulacao();
         janelaSimulacao.setLocationRelativeTo(this);
         janelaSimulacao.setVisible(true);
@@ -906,6 +925,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                 break;
             case EscolherClasse.IAAS:
                 jButtonConfigVM.setVisible(true);
+                jButtonFalha.setVisible(false);
                 break;
             case EscolherClasse.PAAS:
                 jButtonConfigVM.setVisible(false);
@@ -948,6 +968,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
                                     break;
                                 case EscolherClasse.IAAS:
                                     jButtonConfigVM.setVisible(true);
+                                    jButtonFalha.setVisible(false);
                                     break;
                                 case EscolherClasse.PAAS:
                                     jButtonConfigVM.setVisible(false);
@@ -1509,8 +1530,14 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuFerramentasActionPerformed
 
+    private void jButtonFalhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFalhaActionPerformed
+        escolherfalhas.update(aDesenho);
+        escolherfalhas.setVisible(true);
+    }//GEN-LAST:event_jButtonFalhaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonConfigVM;
+    private javax.swing.JButton jButtonFalha;
     private javax.swing.JButton jButtonSimular;
     private javax.swing.JButton jButtonTarefas;
     private javax.swing.JButton jButtonUsuarios;
@@ -1734,6 +1761,7 @@ public class JPrincipal extends javax.swing.JFrame implements KeyListener {
         jButtonTarefas.setEnabled(opcao);
         jButtonUsuarios.setEnabled(opcao);
         jButtonConfigVM.setEnabled(opcao);
+        jButtonFalha.setEnabled(opcao);
         //Arquivo
         jMenuItemSalvar.setEnabled(opcao);
         jMenuItemSalvarComo.setEnabled(opcao);

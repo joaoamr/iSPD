@@ -35,4 +35,6 @@ public interface MestreCloud {
 
     public Tarefa criarCopia(Tarefa get);
     public Simulacao getSimulacao();
+    public double getTempoFinal();
+    
 }

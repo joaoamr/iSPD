@@ -16,13 +16,14 @@ import ispd.motor.filas.servidores.CS_Comunicacao;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  *
  * @author denison_usuario
  */
-public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Vertice {
+public final class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Vertice {
 
     private List<CS_Comunicacao> conexoesEntrada;
     private List<CS_Comunicacao> conexoesSaida;
@@ -31,6 +32,12 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
     private boolean maqDisponivel;
     private boolean escDisponivel;
     private int tipoEscalonamento;
+    private ArrayList<CS_Maquina> escravos;
+    private HashMap<String, CentroServico> maquinasfalhadas;
+    private HashMap<String, CentroServico> linksfalhados;
+    private HashMap<String, List> conexoesfalhadas;
+    private HashMap<CS_Processamento, ArrayList<CentroServico>> caminhos = new HashMap<CS_Processamento, ArrayList<CentroServico>>();
+    private double tempofinal;
     
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
@@ -48,11 +55,18 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
         this.conexoesEntrada = new ArrayList<CS_Comunicacao>();
         this.conexoesSaida = new ArrayList<CS_Comunicacao>();
         this.tipoEscalonamento = ENQUANTO_HOUVER_TAREFAS;
+        escravos = new ArrayList<CS_Maquina>();
+        maquinasfalhadas = new HashMap<String, CentroServico>();
+        escalonador.setMaquinasfalhadas(maquinasfalhadas);
+        linksfalhados = new HashMap<String, CentroServico>();   
+        conexoesfalhadas = new HashMap<String, List>();
+        tempofinal = 0;
     }
-
     //Métodos do centro de serviços
     @Override
     public void chegadaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        CentroServico maq;
+        
         if (cliente.getEstado() != Tarefa.CANCELADO) {
             //Tarefas concluida possuem tratamento diferencial
             if (cliente.getEstado() == Tarefa.CONCLUIDO) {
@@ -60,15 +74,24 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
                 if (!cliente.getOrigem().equals(this)) {
                     //encaminhar tarefa!
                     //Gera evento para chegada da tarefa no proximo servidor
+                    for(int i = 0; i < cliente.getCaminho().size(); i++) {
+                        maq = (CS_Maquina)cliente.getCaminho().get(i);
+                    }
+                    
+                    if(cliente.getCaminho().isEmpty())
+                        return;
+                    
                     EventoFuturo evtFut = new EventoFuturo(
                             simulacao.getTime(this),
                             EventoFuturo.CHEGADA,
                             cliente.getCaminho().remove(0),
                             cliente);
                     //Event adicionado a lista de evntos futuros
+                    
                     simulacao.addEventoFuturo(evtFut);
                 }
                 this.escalonador.addTarefaConcluida(cliente);
+                tempofinal = simulacao.getTime(this);
                 if (tipoEscalonamento == QUANDO_RECEBE_RESULTADO || tipoEscalonamento == AMBOS) {
                     if (this.escalonador.getFilaTarefas().isEmpty()) {
                         this.escDisponivel = true;
@@ -110,6 +133,31 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
 
     @Override
     public void saidaDeCliente(Simulacao simulacao, Tarefa cliente) {
+        CS_Maquina maq;
+        cliente.setUltimoCS(this);
+        if(maquinasfalhadas.containsKey(cliente.getCSLProcessamento().getId())){
+            EventoFuturo evtFut = new EventoFuturo(
+                        simulacao.getTime(this),
+                        EventoFuturo.CHEGADA,
+                        this, cliente);
+            //Event adicionado a lista de evntos futuros
+            simulacao.addEventoFuturo(evtFut);
+            return;
+        }
+        
+        if(!verificarRota(cliente)){
+        	if (tipoEscalonamento == ENQUANTO_HOUVER_TAREFAS || tipoEscalonamento == AMBOS) {
+                //se fila de tarefas do servidor não estiver vazia escalona proxima tarefa
+                if (!escalonador.getFilaTarefas().isEmpty()) {
+                    executarEscalonamento();
+                } else {
+                    this.escDisponivel = true;
+                }
+        	}
+        	
+            return;
+        }
+        
         if (cliente.getEstado() == Tarefa.PROCESSANDO) {
             //Incrementa o número de Mbits transmitido por este link
             this.getMetrica().incMflopsProcessados(cliente.getTamProcessamento() - cliente.getMflopsProcessado());
@@ -136,6 +184,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
             }
         } else {
             //Gera evento para chegada da tarefa no proximo servidor
+            
             EventoFuturo evtFut = new EventoFuturo(
                     simulacao.getTime(this),
                     EventoFuturo.CHEGADA,
@@ -155,7 +204,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
 
     @Override
     public void requisicao(Simulacao simulacao, Mensagem mensagem, int tipo) {
-        if (tipo == EventoFuturo.ESCALONAR) {
+       if (tipo == EventoFuturo.ESCALONAR) {
             escalonador.escalonar();
         } else if (mensagem != null) {
             if (mensagem.getTipo() == Mensagens.ATUALIZAR) {
@@ -174,6 +223,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
                     case Mensagens.DEVOLVER_COM_PREEMPCAO:
                         atenderDevolucaoPreemptiva(simulacao, mensagem);
                         break;
+                
                 }
             } else if(mensagem.getTipo() == Mensagens.RESULTADO_ATUALIZAR){
                 atenderRetornoAtualizacao(simulacao, mensagem);
@@ -181,13 +231,94 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
                 //encaminhando mensagem para o destino
                 this.enviarMensagem(mensagem.getTarefa(), (CS_Processamento) mensagem.getTarefa().getLocalProcessamento(), mensagem.getTipo());
             }
+            
+            if(mensagem.getTarefa() == null){
+                switch (mensagem.getTipo()){
+                    case Mensagens.NOTIFICAR_FALHA:
+                        atenderFalhaHardware(simulacao, mensagem);
+                    break;
+                        
+                    case Mensagens.NOTIFICAR_RECUPERACAO:
+                        atenderRecuperacaoFalhaHardware(simulacao, mensagem);
+                    break;
+                }
+            }
         }
     }
 
+    public void atenderFalhaHardware(Simulacao sim, Mensagem msg){
+        CentroServico maq = msg.getOrigem();
+        maq.setInoperante(true);
+        if (maq instanceof CS_Maquina){            
+            maquinasfalhadas.put(maq.getId(), maq);
+            escalonador.recuperarTarefas((CS_Processamento) maq, sim); 
+        }
+        if (maq instanceof CS_Link){
+            linksfalhados.put(maq.getId(), maq);
+            CS_Link link = (CS_Link)maq;
+            CentroServico saida = link.getConexoesSaida();
+            CentroServico entrada = link.getConexoesEntrada();
+            if(saida != this){
+                if(CS_Mestre.getMenorCaminho(this, (CS_Processamento) saida) == null ||
+                   CS_Mestre.getMenorCaminho((CS_Processamento) saida, this) == null) {
+                    maquinasfalhadas.put(saida.getId(), saida);
+                    escalonador.recuperarTarefas((CS_Processamento) saida, sim);
+                }
+            }
+            
+            if(entrada != this){
+                if(CS_Mestre.getMenorCaminho(this, (CS_Processamento) entrada) == null ||
+                   CS_Mestre.getMenorCaminho((CS_Processamento) entrada, this) == null){
+                    maquinasfalhadas.put(entrada.getId(), entrada);
+                    escalonador.recuperarTarefas((CS_Processamento) entrada, sim);
+                    if(maquinasfalhadas.size() == escravos.size())
+                        escDisponivel = true;
+                }
+            }
+            
+        }
+    }
+    
+    public void atenderRecuperacaoFalhaHardware(Simulacao sim, Mensagem msg){
+    	CentroServico maq = msg.getOrigem();
+        maq.setInoperante(false);
+        
+        if(maq instanceof CS_Maquina){
+            if(CS_Mestre.getMenorCaminho(this, (CS_Processamento) maq) != null &&
+               CS_Mestre.getMenorCaminho((CS_Processamento) maq, this) != null) {
+                maquinasfalhadas.remove(maq.getId());
+                escalonador.recuperarServico(sim);
+            }
+        }
+        
+        if (maq instanceof CS_Link){
+            linksfalhados.remove(maq.getId(), maq);
+            CS_Link link = (CS_Link)maq;
+            CentroServico saida = link.getConexoesSaida();
+            CentroServico entrada = link.getConexoesEntrada();
+            if(saida != this && !saida.isInoperante()){
+                if(CS_Mestre.getMenorCaminho(this, (CS_Processamento) saida) != null &&
+                   CS_Mestre.getMenorCaminho((CS_Processamento) saida, this) != null){
+                    maquinasfalhadas.remove(saida.getId());
+                    escalonador.recuperarServico(sim);
+                }
+                    
+            }
+            
+            if(entrada != this && !saida.isInoperante()){
+                if(CS_Mestre.getMenorCaminho(this, (CS_Processamento) entrada) != null &&
+                   CS_Mestre.getMenorCaminho((CS_Processamento) entrada, this) != null){
+                    maquinasfalhadas.remove(entrada.getId());
+                    escalonador.recuperarServico(sim);
+                }
+            }
+        }
+    }
+    
     //métodos do Mestre
     @Override
     public void enviarTarefa(Tarefa tarefa) {
-        //Gera evento para atender proximo cliente da lista
+        //Gera evento para atender proximo cliente da lista           
         EventoFuturo evtFut = new EventoFuturo(
                 simulacao.getTime(this),
                 EventoFuturo.SAÍDA,
@@ -219,6 +350,7 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
 
     @Override
     public void enviarMensagem(Tarefa tarefa, CS_Processamento escravo, int tipo) {
+        tarefa.setUltimoCS(this);
         Mensagem msg = new Mensagem(this, tipo, tarefa);
         msg.setCaminho(escalonador.escalonarRota(escravo));
         EventoFuturo evtFut = new EventoFuturo(
@@ -284,8 +416,13 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
 
     public void addEscravo(CS_Processamento maquina) {
         escalonador.addEscravo(maquina);
+        escravos.add((CS_Maquina) maquina);
     }
 
+    public void removerEscravo(CS_Processamento maquina) {
+        escravos.remove(maquina.getId());
+    }
+    
     @Override
     public List<CS_Comunicacao> getConexoesSaida() {
         return this.conexoesSaida;
@@ -478,7 +615,22 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
         //Event adicionado a lista de evntos futuros
         simulacao.addEventoFuturo(evtFut);
     }
-
+    
+    private boolean verificarRota(Tarefa cliente){
+        if(linksfalhados.isEmpty())
+            return true;
+        
+        List<CentroServico> caminho = cliente.getCaminho();
+        for(CentroServico cs : caminho){
+            if(linksfalhados.containsKey(cs.getId())){
+                List<CentroServico> novocaminho = CS_Mestre.getMenorCaminho(this, cliente.getCSLProcessamento());
+                cliente.setCaminho(caminho);
+                break;
+            }
+        }
+        return true;
+    }
+    
     @Override
     public void atenderRetornoAtualizacao(Simulacao simulacao, Mensagem mensagem) {
         escalonador.resultadoAtualizar(mensagem);
@@ -502,5 +654,14 @@ public class CS_Mestre extends CS_Processamento implements Mestre, Mensagens, Ve
     @Override
     public void atenderDesligamento(Simulacao simulacao, Mensagem mensagem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public double getTempofinal() {
+        return tempofinal;
+    } 
+
+    @Override
+    public void liberarEscalonador() {
+        escDisponivel = true;
     }
 }

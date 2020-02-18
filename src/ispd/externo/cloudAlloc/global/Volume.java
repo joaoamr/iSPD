@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ispd.externo.cloudAlloc;
+package ispd.externo.cloudAlloc.global;
 
-import ispd.alocacaoVM.Alocacao;
+import ispd.alocacaoVM.AlocadorGlobal;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.filas.servidores.implementacao.CS_MaquinaCloud;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import ispd.alocacaoVM.ComparaRequisitos;
 import ispd.alocacaoVM.ComparaVolume;
+import ispd.motor.Simulacao;
 
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
 import java.util.Collections;
@@ -24,7 +25,7 @@ import java.util.Collections;
  *
  * @author Diogo Tavares
  */
-public class Volume extends Alocacao {
+public class Volume extends AlocadorGlobal {
 
     private boolean fit;
     private int maqIndex;
@@ -46,7 +47,7 @@ public class Volume extends Alocacao {
     }
 
     @Override
-    public void iniciar() {
+    public void iniciar(Simulacao simulacao) {
         fit = true;
         maqIndex = 0;
         VMsOrdenadas = new ArrayList<CS_VirtualMac>(maquinasVirtuais);

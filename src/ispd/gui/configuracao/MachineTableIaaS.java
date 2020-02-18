@@ -218,7 +218,7 @@ public class MachineTableIaaS extends AbstractTableModel {
                     case CORES:
                         return "Cores";
                     case VMM:
-                        return "VMM";
+                        return "Master Node";
                     case SCHED:
                         return palavras.getString("Scheduling algorithm");
                     case SLAVE:
@@ -230,7 +230,7 @@ public class MachineTableIaaS extends AbstractTableModel {
                     case CPDK:
                         return "Cost per Disk";
                     case VMMP:
-                        return ("VMM allocated policy");
+                        return ("Placement algorithm");
                 }
             case VALUE:
                 if (maquina != null) {

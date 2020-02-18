@@ -6,6 +6,7 @@ package ispd.motor.filas.servidores.implementacao;
 
 import ispd.motor.Simulacao;
 import ispd.motor.EventoFuturo;
+import ispd.motor.SimulacaoSequencial;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Comunicacao;
@@ -110,4 +111,10 @@ public class CS_Internet extends CS_Comunicacao implements Vertice {
     public Integer getCargaTarefas() {
         return pacotes;
     }
+
+    @Override
+    public void limparEscalonador() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

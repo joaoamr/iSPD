@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author denison_usuario
  */
-public class Mensagem implements Cliente {
+public class Mensagem extends Cliente {
     
     private int tipo;
     private Tarefa tarefa;
@@ -26,21 +26,31 @@ public class Mensagem implements Cliente {
     public Mensagem(CS_Processamento origem, int tipo) {
         this.origem = origem;
         this.tipo = tipo;
-        this.tamComunicacao = 0.011444091796875;
+        this.tamComunicacao = 0;
+        id = Cliente.atribuirIdGlobal();
+    }
+    
+    public Mensagem(CentroServico origem, int tipo) {
+        this.origem = origem;
+        this.tipo = tipo;
+        this.tamComunicacao = 0;
+        id = Cliente.atribuirIdGlobal();
     }
     
     public Mensagem(CS_Processamento origem, int tipo, Tarefa tarefa) {
         this.origem = origem;
         this.tipo = tipo;
-        this.tamComunicacao = 0.011444091796875;
+        this.tamComunicacao = 0;
         this.tarefa = tarefa;
         this.caminho = new ArrayList<CentroServico>();
+        id = Cliente.atribuirIdGlobal();
     }
     
     public Mensagem(CS_Processamento origem, double tamComunicacao, int tipo) {
         this.origem = origem;
         this.tipo = tipo;
-        this.tamComunicacao = tamComunicacao; 
+        this.tamComunicacao = 0; 
+        id = Cliente.atribuirIdGlobal();
     }
     
     @Override

@@ -223,7 +223,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Object[] colunas = {&quot;Label&quot;, &quot;Owner&quot;, &quot;Processing performed&quot;, &quot;Communication performed&quot;};"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Object[] colunas = {&quot;Label&quot;, &quot;Owner&quot;, &quot;Processing performed&quot;, &quot;Communication performed&quot;, &quot;Failure&quot;, &quot;Recovery&quot;};"/>
               </AuxValues>
             </Component>
           </SubComponents>

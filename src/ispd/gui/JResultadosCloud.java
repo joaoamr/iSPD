@@ -13,12 +13,16 @@ package ispd.gui;
 import ispd.gui.auxiliar.ParesOrdenadosUso;
 import ispd.arquivo.SalvarResultadosHTML;
 import ispd.arquivo.interpretador.cargas.Interpretador;
+import ispd.escalonadorCloud.MestreCloud;
 import ispd.gui.auxiliar.FiltroDeArquivos;
 import ispd.gui.auxiliar.HtmlPane;
 import ispd.motor.filas.RedeDeFilasCloud;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
+import ispd.motor.filas.servidores.CentroServico;
+import ispd.motor.filas.servidores.implementacao.CS_MasterVirtualMac;
 import ispd.motor.filas.servidores.implementacao.CS_VMM;
+import ispd.motor.filas.servidores.implementacao.CS_VirtualMac;
 import ispd.motor.metricas.Metricas;
 import ispd.motor.metricas.MetricasComunicacao;
 import ispd.motor.metricas.MetricasGlobais;
@@ -67,7 +71,10 @@ public class JResultadosCloud extends javax.swing.JDialog {
      * Cria no JResultado sem carregar parte gráfica para utilizar no modo
      * terminal
      */
+    private RedeDeFilasCloud rdf;
+    
     public JResultadosCloud(Metricas metricas, RedeDeFilasCloud rdf, List tarefas) {
+        this.rdf = rdf;
         html.setMetricasGlobais(metricas.getMetricasGlobais());
         tabelaRecurso = setTabelaRecurso(metricas);
         getResultadosTarefas(metricas);
@@ -111,6 +118,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
      */
     public JResultadosCloud(java.awt.Frame parent, Metricas metricas, RedeDeFilasCloud rdf, List<Tarefa> tarefas) {
         super(parent, true);
+        this.rdf = rdf;
         this.tarefas = tarefas;
         gerarGraficosProcessamento(metricas.getMetricasProcessamento());
         gerarGraficosComunicacao(metricas.getMetricasComunicacao());
@@ -119,6 +127,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
         tabelaRecurso = setTabelaRecurso(metricas);
         initComponents();
         this.jTextAreaGlobal.setText(getResultadosGlobais(metricas.getMetricasGlobais()));
+        this.jTextAreaCommunicationOverview.setText(getResultadosComunicacao(metricas));
         html.setMetricasGlobais(metricas.getMetricasGlobais());
         this.jTextAreaTarefa.setText(getResultadosTarefas(metricas));
         html.setMetricasTarefas(metricas);
@@ -181,7 +190,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
         jScrollPaneUsuario = new javax.swing.JScrollPane();
         jTextAreaUsuario = new javax.swing.JTextArea();
         jScrollPaneRecurso = new javax.swing.JScrollPane();
-        Object[] colunas = {"Label", "Owner", "Processing performed", "Communication performed"};
+        Object[] colunas = {"Label", "Owner", "Host", "Processing performed", "Communication performed"};
         jTableRecurso = new javax.swing.JTable();
         jPanelProcessamento = new javax.swing.JPanel();
         jToolBarProcessamento = new javax.swing.JToolBar();
@@ -211,6 +220,9 @@ public class JResultadosCloud extends javax.swing.JDialog {
         jButtonMem = new javax.swing.JButton();
         jButtonProc = new javax.swing.JButton();
         jScrollPaneCustos = new javax.swing.JScrollPane();
+        jPanelCommunicationOverview = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextAreaCommunicationOverview = new javax.swing.JTextArea();
         jTabbedPane2 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -533,6 +545,23 @@ public class JResultadosCloud extends javax.swing.JDialog {
 
         jTabbedPaneGrid.addTab("Chart of the cost of utilization", jPanelCusto);
 
+        jTextAreaCommunicationOverview.setColumns(20);
+        jTextAreaCommunicationOverview.setRows(5);
+        jScrollPane1.setViewportView(jTextAreaCommunicationOverview);
+
+        javax.swing.GroupLayout jPanelCommunicationOverviewLayout = new javax.swing.GroupLayout(jPanelCommunicationOverview);
+        jPanelCommunicationOverview.setLayout(jPanelCommunicationOverviewLayout);
+        jPanelCommunicationOverviewLayout.setHorizontalGroup(
+            jPanelCommunicationOverviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+        );
+        jPanelCommunicationOverviewLayout.setVerticalGroup(
+            jPanelCommunicationOverviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+        );
+
+        jTabbedPaneGrid.addTab("Communication Overview", jPanelCommunicationOverview);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -546,7 +575,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPaneGrid, javax.swing.GroupLayout.PREFERRED_SIZE, 386, Short.MAX_VALUE)
+            .addComponent(jTabbedPaneGrid, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -671,11 +700,13 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private javax.swing.JButton jButtonSalvarTraces;
     private javax.swing.JButton jButtonTotal;
     private javax.swing.JPanel jPanelAlocacao;
+    private javax.swing.JPanel jPanelCommunicationOverview;
     private javax.swing.JPanel jPanelComunicacao;
     private javax.swing.JPanel jPanelCusto;
     private javax.swing.JPanel jPanelGlobal;
     private javax.swing.JPanel jPanelProcessamento;
     private javax.swing.JPanel jPanelProcessamentoTempo;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneAlocacao;
     private javax.swing.JScrollPane jScrollPaneComunicacao;
     private javax.swing.JScrollPane jScrollPaneCustos;
@@ -688,6 +719,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPaneGrid;
     private javax.swing.JTable jTableRecurso;
+    private javax.swing.JTextArea jTextAreaCommunicationOverview;
     private javax.swing.JTextArea jTextAreaGlobal;
     private javax.swing.JTextArea jTextAreaTarefa;
     private javax.swing.JTextArea jTextAreaUsuario;
@@ -722,7 +754,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
 
     private String getResultadosGlobais(MetricasGlobais globais) {
         String texto = "\t\tSimulation Results:\n\n";
-        texto += String.format("\tTotal Simulated Time = %g \n", globais.getTempoSimulacao());
+        texto += String.format("\tTotal Simulated Time = %g \n",getTempoTotal());
         texto += String.format("\tSatisfaction = %g %%\n", globais.getSatisfacaoMedia());
         texto += String.format("\tIdleness of processing resources = %g %%\n", globais.getOciosidadeComputacao());
         texto += String.format("\tIdleness of communication resources = %g %%\n", globais.getOciosidadeComunicacao());
@@ -765,6 +797,25 @@ public class JResultadosCloud extends javax.swing.JDialog {
         return texto;
     }
 
+    private String getResultadosComunicacao(Metricas metrica){
+        String texto = "\n\n\t\tCOMMUNICATION OVERVIEW\n ";
+        int n = metrica.getMetricasComunicacao().size();
+        int usednodes = 0;
+        double mbitstransmitidos = 0;
+        texto += String.format("   Total number of nodes: %d .\n", n);
+        for (int i = 0; i < n; i++){
+            if(rdf.getLinks().get(i).getMetrica().getMbitsTransmitidos() != 0){
+                mbitstransmitidos += rdf.getLinks().get(i).getMetrica().getMbitsTransmitidos();
+                usednodes++;
+            }
+        }
+        texto += String.format("    Used nodes: %d .\n", usednodes);
+        texto += String.format("    Total traffic : %g .\n", mbitstransmitidos);
+        texto += String.format("    Average traffic per node %g .\n", mbitstransmitidos/n);
+        
+        return texto;
+    }
+    
     private JFreeChart[] gerarGraficoProcessamentoTempoUser(List<Tarefa> tarefas, RedeDeFilasCloud rdf) {
         ArrayList<tempo_uso_usuario> lista = new ArrayList<tempo_uso_usuario>();
         int numberUsers = rdf.getUsuarios().size();
@@ -1208,6 +1259,7 @@ public class JResultadosCloud extends javax.swing.JDialog {
         //linha [Nome] [Proprietario] [Processamento] [comunicacao]
         String nome;
         String prop;
+        String host;
         Double proc;
         Double comu;
         if (metricas.getMetricasProcessamento() != null) {
@@ -1221,7 +1273,8 @@ public class JResultadosCloud extends javax.swing.JDialog {
                 prop = maq.getProprietario();
                 proc = maq.getSegundosDeProcessamento();
                 comu = 0.0;
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                host = maq.getHostid();
+                tabela.add(Arrays.asList(nome, prop, host, proc, comu).toArray());
             }
         }
         if (metricas.getMetricasComunicacao() != null) {
@@ -1229,12 +1282,13 @@ public class JResultadosCloud extends javax.swing.JDialog {
                 MetricasComunicacao link = entry.getValue();
                 nome = link.getId();
                 prop = "---";
+                host = "---";
                 proc = 0.0;
                 comu = link.getSegundosDeTransmissao();
-                tabela.add(Arrays.asList(nome, prop, proc, comu).toArray());
+                tabela.add(Arrays.asList(nome, prop, host, proc, comu).toArray());
             }
         }
-        Object[][] temp = new Object[tabela.size()][4];
+        Object[][] temp = new Object[tabela.size()][5];
         for (int i = 0; i < tabela.size(); i++) {
             temp[i] = tabela.get(i);
         }
@@ -1384,5 +1438,26 @@ public class JResultadosCloud extends javax.swing.JDialog {
         public int compareTo(tempo_uso_usuario o) {
             return tempo.compareTo(o.tempo);
         }
+    }
+    
+    private double getTempoTotal(){
+        double t = 0;
+        for(int i = 0; i < rdf.getMestres().size(); i++){
+            double temp = ((MestreCloud)rdf.getMestres().get(i)).getTempoFinal();
+            
+            if(temp > t)
+                t = temp;
+        }
+        
+         for(int i = 0; i < rdf.getVMs().size(); i++){
+            CentroServico cs = rdf.getVMs().get(i);
+            if (cs instanceof CS_MasterVirtualMac){
+                double temp = ((MestreCloud)cs).getTempoFinal();
+                if(temp > t)
+                    t = temp;
+            }
+        }
+        
+        return t;
     }
 }

@@ -10,6 +10,7 @@ import ispd.motor.ProgressoSimulacao;
 import ispd.motor.Simulacao;
 import ispd.motor.SimulacaoParalela;
 import ispd.motor.SimulacaoSequencial;
+import ispd.motor.falha.FalhaExponencial;
 import ispd.motor.filas.RedeDeFilas;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.metricas.Metricas;
@@ -249,7 +250,7 @@ public class Terminal {
                 //Verifica recursos do modelo e define roteamento
                 Simulacao sim;
                 if (!paralelo) {
-                    sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                    sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas, new FalhaExponencial(0, 0, 0), new FalhaExponencial(0, 0, 0));//[10%] --> 55 %
                 } else {
                     System.out.println("Execução paralela da simulação");
                     sim = new SimulacaoParalela(progrSim, redeDeFilas, tarefas, numThreads);
@@ -406,7 +407,7 @@ public class Terminal {
             for (int i = 1; i <= numExecucoes; i++) {
                 RedeDeFilas redeDeFilas = IconicoXML.newRedeDeFilas(modelo);
                 List<Tarefa> tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
-                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas, new FalhaExponencial(0, 0, 0), new FalhaExponencial(0, 0, 0));//[10%] --> 55 %
                 sim.simular();//[30%] --> 85%
                 Metricas temp = sim.getMetricas();
                 metricas.addMetrica(temp);
@@ -566,7 +567,7 @@ public class Terminal {
                 redeDeFilas = IconicoXML.newRedeDeFilas(modelo);
                 List<Tarefa> tarefas = IconicoXML.newGerarCarga(modelo).toTarefaList(redeDeFilas);
                 //Verifica recursos do modelo e define roteamento
-                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas);//[10%] --> 55 %
+                Simulacao sim = new SimulacaoSequencial(progrSim, redeDeFilas, tarefas,new FalhaExponencial(0, 0, 0), new FalhaExponencial(0, 0, 0));//[10%] --> 55 %
                 //Realiza asimulação
                 sim.simular();//[30%] --> 85%
                 if (arquivoOut == null) {

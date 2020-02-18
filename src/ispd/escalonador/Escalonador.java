@@ -8,11 +8,15 @@
  */
 package ispd.escalonador;
 
+import ispd.motor.EventoFuturo;
+import ispd.motor.Simulacao;
 import ispd.motor.filas.Mensagem;
 import ispd.motor.filas.Tarefa;
 import ispd.motor.filas.servidores.CS_Processamento;
 import ispd.motor.filas.servidores.CentroServico;
 import ispd.motor.metricas.MetricasUsuarios;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -34,14 +38,19 @@ public abstract class Escalonador {
     
     
     protected List<CS_Processamento> escravos;
+    protected HashMap<String, CentroServico> maquinasfalhadas;
     protected List<List> filaEscravo;
     protected List<Tarefa> tarefas;
     protected MetricasUsuarios metricaUsuarios;
     protected Mestre mestre;
+    protected boolean parado = false;
+    protected HashSet<String> indices = new HashSet<String>();
+    
     /**
      * Armazena os caminhos possiveis para alcançar cada escravo
      */
     protected List<List> caminhoEscravo;
+   
 
     //Métodos
 
@@ -73,7 +82,15 @@ public abstract class Escalonador {
     }
 
     public void addEscravo(CS_Processamento maquina) {
-        this.escravos.add(maquina);
+        if(!indices.contains(maquina.getId())){
+            this.indices.add(maquina.getId());
+            this.escravos.add(maquina);
+        }
+    }
+    
+    public void removerEscravo(CS_Processamento maquina) {
+        this.escravos.remove(maquina);
+        indices.remove(maquina.getId());
     }
     
     public void addTarefaConcluida(Tarefa tarefa) {
@@ -115,4 +132,33 @@ public abstract class Escalonador {
         int index = escravos.indexOf(mensagem.getOrigem());
         filaEscravo.set(index, mensagem.getFilaEscravo());
     }
+    
+    public void recuperarServico(Simulacao sim){
+        if(!parado)
+            return;
+        
+        mestre.liberarEscalonador();
+        
+        while(!tarefas.isEmpty()){
+            EventoFuturo evtFut = new EventoFuturo(
+                sim.getTime(mestre) + 0.5,
+                EventoFuturo.CHEGADA,
+                (CentroServico)mestre, tarefas.remove(0));
+              
+            sim.addEventoFuturo(evtFut);
+        }
+    }
+
+    public HashMap<String, CentroServico> getMaquinasfalhadas() {
+        return maquinasfalhadas;
+    }
+
+    public void setMaquinasfalhadas(HashMap<String, CentroServico> maquinasfalhadas) {
+        this.maquinasfalhadas = maquinasfalhadas;
+    }
+    
+    public void recuperarTarefas(CS_Processamento maq, Simulacao sim){
+        
+    }
+    
 }

@@ -22,11 +22,15 @@ public class MetricasComunicacao implements Serializable {
      */
     private double SegundosDeTransmissao;
     private String id;
+    private double tempofalha;
+    private double temporecuperacao;
     
     public MetricasComunicacao(String id) {
         this.id = id;
         this.MbitsTransmitidos = 0;
         this.SegundosDeTransmissao = 0;
+        this.tempofalha = -1;
+        this.temporecuperacao = -1;
     }
 
     public void incMbitsTransmitidos(double MbitsTransmitidos) {
@@ -56,4 +60,22 @@ public class MetricasComunicacao implements Serializable {
     void setSegundosDeTransmissao(double d) {
         this.SegundosDeTransmissao = d;
     }
+
+    public double getTempoFalha() {
+        return tempofalha;
+    }
+
+    public void setTempoFalha(double tempofalha) {
+        this.tempofalha = tempofalha;
+    }
+
+    public double getTempoRecuperacao() {
+        return temporecuperacao;
+    }
+
+    public void setTempoRecuperacao(double temporecuperacao) {
+        this.temporecuperacao = temporecuperacao;
+    }
+    
+    
 }

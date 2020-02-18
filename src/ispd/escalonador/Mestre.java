@@ -32,4 +32,6 @@ public interface Mestre {
 
     public Tarefa criarCopia(Tarefa get);
     public Simulacao getSimulacao();
+    public void liberarEscalonador();
+    
 }

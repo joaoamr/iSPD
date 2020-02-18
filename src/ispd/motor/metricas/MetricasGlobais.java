@@ -30,6 +30,7 @@ public class MetricasGlobais implements Serializable {
     private double custoTotalMem;
     private int totaldeVMs;
     private int numVMsRejeitadas;
+    private int totalHostAtivos;
    
 
     public MetricasGlobais(double tempoSimulacao, double satisfacaoMedia, double ociosidadeComputacao, double ociosidadeComunicacao, double eficiencia, double custoTotalDisco, double custoTotalProc, double custoTotalMem, int total) {
@@ -66,6 +67,7 @@ public class MetricasGlobais implements Serializable {
         this.totaldeVMs = getTotalVMs(redeDeFilas);
         this.numVMsRejeitadas = getNumVMsRejeitadas(redeDeFilas);
         this.total = 0;
+        this.totalHostAtivos = getTotalHostsAtivos(redeDeFilas);
     }
 
     public MetricasGlobais() {
@@ -88,6 +90,16 @@ public class MetricasGlobais implements Serializable {
             }
         }
         return custoTotalDisco;
+    }
+    
+    public int getTotalHostsAtivos(RedeDeFilasCloud redeDeFilas){
+        int n = 0;
+        for(int i = 0; i < redeDeFilas.getMaquinasCloud().size(); i++)
+            if(redeDeFilas.getMaquinasCloud().get(i).getVMs().size() > 0){
+                n++;
+            }
+     
+        return n;
     }
 
     public double getCustoTotalDisco() {
@@ -159,7 +171,7 @@ public class MetricasGlobais implements Serializable {
         int totalRejeitadas = 0;
         for (CS_Processamento aux : redeDeFilas.getMestres()) {
             CS_VMM auxVMM = (CS_VMM) aux;
-            totalRejeitadas += auxVMM.getAlocadorVM().getVMsRejeitadas().size();
+            totalRejeitadas += auxVMM.getAlocador().getVMsRejeitadas().size();
         }
         return totalRejeitadas;
     }
@@ -268,7 +280,11 @@ public class MetricasGlobais implements Serializable {
     public int getTotaldeVMs() {
         return totaldeVMs;
     }
-
+    
+    public int getTotalHostsAtivos(){
+        return totalHostAtivos;
+    }
+    
     public void add(MetricasGlobais global) {
         tempoSimulacao += global.getTempoSimulacao();
         satisfacaoMedia += global.getSatisfacaoMedia();

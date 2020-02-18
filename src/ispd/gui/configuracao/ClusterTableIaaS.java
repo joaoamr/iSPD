@@ -188,7 +188,7 @@ public class ClusterTableIaaS extends AbstractTableModel{
                     case LATEN:
                         return palavras.getString("Latency");
                     case VMM:
-                        return "VMM";
+                        return "Master Node";
                     case SCHED:
                         return palavras.getString("Scheduling algorithm");
                     case CPP:
@@ -198,7 +198,7 @@ public class ClusterTableIaaS extends AbstractTableModel{
                     case CPDK:
                         return "Cost per Disk";
                     case VMMP:
-                        return ("VMM allocated policy");
+                        return ("Master Node allocated policy");
                 }
             case VALUE:
                 if (cluster != null) {

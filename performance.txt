@@ -1,0 +1,512 @@
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 441263.298626 
+Actives PMs: 23 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 210486.711144 
+Actives PMs: 10 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 198998.347025 
+Actives PMs: 11 
+Processing time: 227.691000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 1021777.413653 
+Actives PMs: 10 
+Processing time: 1.838000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 972693.506428 
+Actives PMs: 11 
+Processing time: 327.291000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 211449.362535 
+Actives PMs: 11 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 199523.316680 
+Actives PMs: 11 
+Processing time: 133.753000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 211449.362535 
+Actives PMs: 11 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 512 
+Total traffic: 1785693.647519 
+Actives PMs: 23 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 512 
+Total traffic: 1707815.715853 
+Actives PMs: 23 
+Processing time: 3395.485000 
+
+
+
+Algorithm ff 
+Allocated VMs: 512 
+Total traffic: 1785693.647519 
+Actives PMs: 23 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 512 
+Total traffic: 4374197.653274 
+Actives PMs: 19 
+Processing time: 1.591000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 512 
+Total traffic: 4178738.143334 
+Actives PMs: 19 
+Processing time: 4093.646000 
+
+
+
+Algorithm ff 
+Allocated VMs: 512 
+Total traffic: 4374197.653274 
+Actives PMs: 19 
+Processing time: 1.900000 
+
+
+
+Algorithm ffd 
+Allocated VMs: 512 
+Total traffic: 4390804.028776 
+Actives PMs: 19 
+Processing time: 1.943000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 203889.096432 
+Actives PMs: 13 
+Processing time: 112.431000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 211460.583016 
+Actives PMs: 13 
+Processing time: 0.000000 
+
+
+
+Algorithm eajoint 
+Allocated VMs: 256 
+Total traffic: 735810.038080 
+Actives PMs: 221 
+Processing time: 185.200000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 211460.583016 
+Actives PMs: 13 
+Processing time: 0.000000 
+
+
+
+Algorithm eajoint 
+Allocated VMs: 256 
+Total traffic: 212547.793563 
+Actives PMs: 14 
+Processing time: 187.394000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 211460.583016 
+Actives PMs: 13 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 192 
+Total traffic: 902653.936832 
+Actives PMs: 16 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 202 
+Total traffic: 966095.910342 
+Actives PMs: 16 
+Processing time: 161.987000 
+
+
+
+Algorithm ff 
+Allocated VMs: 192 
+Total traffic: 902653.936832 
+Actives PMs: 16 
+Processing time: 0.001000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 673408.656622 
+Actives PMs: 21 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 654367.533056 
+Actives PMs: 22 
+Processing time: 330.305000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 673408.656622 
+Actives PMs: 21 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 916547.639042 
+Actives PMs: 20 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 892532.798072 
+Actives PMs: 21 
+Processing time: 187.166000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 916547.639042 
+Actives PMs: 20 
+Processing time: 0.001000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 525844.000000 
+Actives PMs: 20 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 533126.000000 
+Actives PMs: 20 
+Processing time: 398.068000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 525844.000000 
+Actives PMs: 20 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 158489493.581716 
+Actives PMs: 21 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 159151366.714357 
+Actives PMs: 21 
+Processing time: 424.270000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 158489493.581716 
+Actives PMs: 21 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 63819724.000000 
+Actives PMs: 26 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 61934732.000000 
+Actives PMs: 28 
+Processing time: 299.109000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 63819724.000000 
+Actives PMs: 26 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 76963874.000000 
+Actives PMs: 26 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 75218012.000000 
+Actives PMs: 28 
+Processing time: 540.972000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 76963874.000000 
+Actives PMs: 26 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 117068524.000000 
+Actives PMs: 26 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 114558493.000000 
+Actives PMs: 28 
+Processing time: 655.285000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 117068524.000000 
+Actives PMs: 26 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 128 
+Total traffic: 20202656.000000 
+Actives PMs: 50 
+Processing time: 0.001000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 128 
+Total traffic: 21703490.000000 
+Actives PMs: 58 
+Processing time: 66.238000 
+
+
+
+Algorithm ff 
+Allocated VMs: 128 
+Total traffic: 20202656.000000 
+Actives PMs: 50 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 63815345.000000 
+Actives PMs: 27 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 256 
+Total traffic: 62240337.000000 
+Actives PMs: 28 
+Processing time: 644.024000 
+
+
+
+Algorithm ff 
+Allocated VMs: 256 
+Total traffic: 63815345.000000 
+Actives PMs: 27 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 128 
+Total traffic: 15808114.000000 
+Actives PMs: 44 
+Processing time: 0.001000 
+
+
+
+Algorithm ff 
+Allocated VMs: 128 
+Total traffic: 7454763.000000 
+Actives PMs: 14 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 128 
+Total traffic: 7675770.000000 
+Actives PMs: 15 
+Processing time: 21.158000 
+
+
+
+Algorithm ff 
+Allocated VMs: 128 
+Total traffic: 7454763.000000 
+Actives PMs: 14 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 64 
+Total traffic: 1668266.000000 
+Actives PMs: 7 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 64 
+Total traffic: 1617424.000000 
+Actives PMs: 7 
+Processing time: 3.861000 
+
+
+
+Algorithm ff 
+Allocated VMs: 64 
+Total traffic: 1668266.000000 
+Actives PMs: 7 
+Processing time: 0.000000 
+
+
+
+Algorithm eajoint 
+Allocated VMs: 64 
+Total traffic: 1674999.000000 
+Actives PMs: 8 
+Processing time: 1.013000 
+
+
+
+Algorithm ff 
+Allocated VMs: 64 
+Total traffic: 1668266.000000 
+Actives PMs: 7 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 64 
+Total traffic: 1617424.000000 
+Actives PMs: 7 
+Processing time: 4.113000 
+
+
+
+Algorithm ff 
+Allocated VMs: 64 
+Total traffic: 1668266.000000 
+Actives PMs: 7 
+Processing time: 0.000000 
+
+
+
+Algorithm ff 
+Allocated VMs: 64 
+Total traffic: 1668266.000000 
+Actives PMs: 7 
+Processing time: 0.000000 
+
+
+
+Algorithm klvmp 
+Allocated VMs: 64 
+Total traffic: 1663152.000000 
+Actives PMs: 7 
+Processing time: 0.032000 
+
+
+

@@ -21,6 +21,7 @@ public abstract class CS_Comunicacao extends CentroServico {
     private double latencia;
     private MetricasComunicacao metrica;
     private double larguraBandaDisponivel;
+    private int nivel = 0;
 
     public CS_Comunicacao(String id, double LarguraBanda, double Ocupacao, double Latencia) {
         this.larguraBanda = LarguraBanda;
@@ -33,6 +34,15 @@ public abstract class CS_Comunicacao extends CentroServico {
     public MetricasComunicacao getMetrica() {
         return metrica;
     }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+    
 
     @Override
     public String getId(){
@@ -57,6 +67,10 @@ public abstract class CS_Comunicacao extends CentroServico {
      */
     public double tempoTransmitir(double Mbits){
         return ( Mbits / larguraBandaDisponivel ) + latencia;
+    }
+    
+    public void preverTempoSaida(double comunicacao, double chegada){
+        
     }
 
 }

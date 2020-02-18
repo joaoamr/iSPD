@@ -20,12 +20,14 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
     public static final int MENSAGEM = 5;
     public static final int SAIDA_MENSAGEM = 6;
     public static final int ALOCAR_VMS = 7;
+    public static final int REESCALONAR = 8;
     
     
     private Double tempoOcorrencia;
     private int tipoDeEvento;
     private CentroServico recurso;
     private Cliente cliente;
+    private boolean cancelado = false;
 
     /**
      * Criacao de novo evento
@@ -77,4 +79,14 @@ public class EventoFuturo implements Comparable<EventoFuturo> {
     public int compareTo(EventoFuturo o) {
         return tempoOcorrencia.compareTo(o.tempoOcorrencia);
     }
+
+    public boolean estaCancelado() {
+        return cancelado;
+    }
+
+    public void cancelar() {
+        cancelado = true;
+    }
+    
+    
 }
